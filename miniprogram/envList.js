@@ -19,5 +19,5 @@ module.exports = {
   envList,
   isMac,
   // 默认使用第一个环境
-  envId: envList.length > 0 ? envList[0].envId : ''
+  envId: envList.length > 0 ? envList[0].envId : "",
 };
