@@ -1,0 +1,46 @@
+<view class="desktop">
+  
+  <view class="window-frame">
+    <view class="title-bar">
+      <view class="title-text">火星文转换器.exe - 无标题</view>
+      <view class="btn-close" bindtap="goBack">×</view>
+    </view>
+
+    <view class="menu-bar">
+      <text>文件(F)</text>
+      <text>编辑(E)</text>
+      <text>格式(O)</text>
+      <text>帮助(H)</text>
+    </view>
+
+    <view class="window-body">
+      
+      <view class="label">请输入正常人类语言：</view>
+      <textarea 
+        class="input-area" 
+        placeholder="在这里打字..." 
+        placeholder-style="color:#aaa;"
+        bindinput="onInput"
+        value="{{inputText}}"
+        maxlength="100"
+      ></textarea>
+
+      <view class="action-area">
+        <view class="retro-btn" hover-class="btn-hover" bindtap="convertToMars">
+          ↓ 一键非主流 ↓
+        </view>
+      </view>
+
+      <view class="label">转换结果 (已复制到剪贴板)：</view>
+      <view class="output-area">
+        <text selectable="true">{{outputText}}</text>
+      </view>
+
+    </view>
+
+    <view class="status-bar">
+      <text>行 1, 列 1</text>
+    </view>
+  </view>
+
+</view>

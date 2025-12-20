@@ -1,0 +1,30 @@
+{
+  "name": "old-story-miniprogram",
+  "version": "1.0.0",
+  "description": "电子包浆工坊 - 一个充满怀旧风格的微信小程序",
+  "main": "index.js",
+  "scripts": {
+    "deploy:cloud": "bash uploadCloudFunction.sh",
+    "dev": "echo '请在微信开发者工具中打开项目进行开发'",
+    "build": "echo '请在微信开发者工具中点击上传进行构建'",
+    "test": "echo '暂无测试配置'",
+    "lint": "echo '暂无代码检查配置'"
+  },
+  "keywords": [
+    "miniprogram",
+    "wechat",
+    "retro",
+    "windows98",
+    "text-converter",
+    "mars-text"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "engines": {
+    "node": ">=12.0.0"
+  }
+}

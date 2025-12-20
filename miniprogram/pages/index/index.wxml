@@ -1,0 +1,49 @@
+<view class="desktop">
+  
+  <view class="window-frame">
+    <view class="title-bar">
+      <view class="title-text">
+        <image class="title-icon" src="/images/icon_computer.png" mode="aspectFit" wx:if="{{false}}"></image> 电子包浆工坊.exe
+      </view>
+      <view class="btn-close">×</view>
+    </view>
+
+    <view class="window-body">
+      <view class="intro-text">欢迎使用 V1.0</view>
+      <view class="intro-sub">请选择你要进行的操作：</view>
+
+      <view class="grid-menu">
+        <view class="menu-item" bindtap="onTapMars">
+          <view class="icon-box">👽</view>
+          <text>火星文转换</text>
+        </view>
+
+        <view class="menu-item" bindtap="onTapAvatar">
+          <view class="icon-box">📷</view>
+          <text>非主流大头贴</text>
+        </view>
+
+        <view class="menu-item" bindtap="onTapAbout">
+          <view class="icon-box">💾</view>
+          <text>关于我们</text>
+        </view>
+      </view>
+      
+    </view>
+
+    <view class="status-bar">
+      <text>对象: 0</text>
+      <text>内存: 64KB</text>
+    </view>
+  </view>
+
+  <view class="task-bar">
+    <view class="btn-start">
+      <view class="win-logo">❖</view>
+      开始
+    </view>
+    <view class="task-item active">电子包浆工坊</view>
+    <view class="time-display">23:09</view>
+  </view>
+
+</view>
