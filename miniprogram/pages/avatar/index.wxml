@@ -1,0 +1,66 @@
+<view class="desktop">
+  <view class="window-frame">
+    <view class="title-bar">
+      <view class="title-text">大头贴机_v1.0.exe</view>
+      <view class="btn-close" bindtap="goBack">×</view>
+    </view>
+
+    <view class="menu-bar">
+      <text>图像(I)</text>
+      <text>特效(E)</text>
+      <text>帮助(H)</text>
+    </view>
+
+    <view class="window-body">
+      <view class="preview-area">
+        <image class="user-photo" src="{{tempImagePath}}" mode="aspectFill" wx:if="{{tempImagePath}}"></image>
+        <view class="placeholder" wx:else bindtap="onChooseImage">
+          <text>点击此处\n加载照片</text>
+        </view>
+        
+        <image class="border-overlay" src="{{currentBorder}}" mode="aspectFill" wx:if="{{currentBorder}}"></image>
+        
+        <view class="filter-layer {{currentFilter}}"></view>
+      </view>
+
+      <view class="control-panel">
+        <view class="label">选择边框:</view>
+        <scroll-view scroll-x="true" class="border-list">
+          <view class="border-item {{item.id === selectedBorderId ? 'active' : ''}}" 
+                wx:for="{{borderList}}" 
+                wx:key="id" 
+                bindtap="onSelectBorder" 
+                data-id="{{item.id}}" 
+                data-src="{{item.src}}">
+            <view class="border-preview" style="border-color: {{item.color}}"></view>
+            <text>{{item.name}}</text>
+          </view>
+        </scroll-view>
+
+        <view class="label">特效滤镜:</view>
+        <view class="filter-options">
+          <view class="retro-btn sm-btn {{currentFilter === '' ? 'active-btn' : ''}}" bindtap="setFilter" data-type="">无</view>
+          <view class="retro-btn sm-btn {{currentFilter === 'matrix-green' ? 'active-btn' : ''}}" bindtap="setFilter" data-type="matrix-green">黑客</view>
+          <view class="retro-btn sm-btn {{currentFilter === 'old-noise' ? 'active-btn' : ''}}" bindtap="setFilter" data-type="old-noise">做旧</view>
+          <view class="retro-btn sm-btn {{currentFilter === 'over-exposure' ? 'active-btn' : ''}}" bindtap="setFilter" data-type="over-exposure">过曝</view>
+        </view>
+      </view>
+
+      <view class="action-area">
+        <view class="retro-btn" hover-class="btn-hover" bindtap="onChooseImage">
+          📂 打开照片
+        </view>
+        <view class="retro-btn primary-btn" hover-class="btn-hover" bindtap="onSaveImage">
+          💾 生成并保存
+        </view>
+      </view>
+
+      <canvas type="2d" id="photoCanvas" class="offscreen-canvas"></canvas>
+    </view>
+
+    <view class="status-bar">
+      <text>就绪</text>
+      <text>30万像素</text>
+    </view>
+  </view>
+</view>

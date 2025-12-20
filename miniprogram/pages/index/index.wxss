@@ -204,3 +204,158 @@ page {
   padding: 2px 10px;
   font-size: 12px;
 }
+
+/* 开始菜单容器 */
+.start-menu {
+  position: absolute;
+  bottom: 38px; /* 任务栏高度 + 间隙 */
+  left: 2px;
+  width: 180px;
+  background: #c0c0c0;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #000;
+  border-bottom: 2px solid #000;
+  display: flex;
+  z-index: 100;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+}
+
+.start-side-bar {
+  width: 25px;
+  background: #000080; /* 深蓝条 */
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 5px;
+}
+
+.os-ver {
+  color: #fff;
+  font-weight: bold;
+  transform: rotate(-90deg); /* 竖排文字效果 */
+  white-space: nowrap;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.start-list {
+  flex: 1;
+  padding: 2px;
+}
+
+.start-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 10px;
+  font-size: 14px;
+  color: #000;
+}
+
+.start-item:active {
+  background: #000080;
+  color: #fff;
+}
+
+.start-icon {
+  margin-right: 10px;
+  font-size: 16px;
+  width: 20px;
+  text-align: center;
+}
+
+.divider {
+  height: 1px;
+  background: #808080;
+  border-bottom: 1px solid #fff;
+  margin: 4px 2px;
+}
+
+/* 补充：开始按钮按下的状态 */
+.btn-start.active {
+  border-top: 2px solid #000;
+  border-left: 2px solid #000;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  background: #d4d0c8;
+  padding: 3px 5px 1px 7px; /* 位移模拟 */
+}
+
+/* --- 开始菜单样式 --- */
+.start-menu {
+  position: absolute;
+  bottom: 38px; /* 任务栏高度(35px) + 一点间隙 */
+  left: 2px;
+  width: 180px;
+  background: #c0c0c0;
+  /* 经典的凸起边框 */
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #000;
+  border-bottom: 2px solid #000;
+  display: flex;
+  z-index: 100;
+  box-shadow: 4px 4px 10px rgba(0,0,0,0.5); /* 增加一点阴影让它浮起来 */
+}
+
+.start-side-bar {
+  width: 25px;
+  background: #000080; /* 经典深蓝条 */
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 5px;
+}
+
+.os-ver {
+  color: #fff;
+  font-weight: bold;
+  transform: rotate(-90deg); /* 竖排文字 */
+  white-space: nowrap;
+  font-size: 14px;
+  margin-bottom: 10px;
+  letter-spacing: 1px;
+}
+
+.start-list {
+  flex: 1;
+  padding: 2px;
+}
+
+.start-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 10px;
+  font-size: 14px;
+  color: #000;
+}
+
+/* 菜单项悬停/点击效果：蓝底白字 */
+.start-item:active {
+  background: #000080;
+  color: #fff;
+}
+
+.start-icon {
+  margin-right: 10px;
+  font-size: 16px;
+  width: 20px;
+  text-align: center;
+}
+
+.divider {
+  height: 1px;
+  background: #808080;
+  border-bottom: 1px solid #fff; /* 凹陷分割线 */
+  margin: 4px 2px;
+}
+
+/* 开始按钮被按下时的状态：凹陷 */
+.btn-start.active {
+  border-top: 2px solid #000;
+  border-left: 2px solid #000;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  background: #d4d0c8;
+  padding: 3px 5px 1px 7px; /* 模拟位移 */
+}

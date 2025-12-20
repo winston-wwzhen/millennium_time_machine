@@ -2,9 +2,7 @@
   
   <view class="window-frame">
     <view class="title-bar">
-      <view class="title-text">
-        <image class="title-icon" src="/images/icon_computer.png" mode="aspectFit" wx:if="{{false}}"></image> 电子包浆工坊.exe
-      </view>
+      <view class="title-text">电子包浆工坊.exe</view>
       <view class="btn-close">×</view>
     </view>
 
@@ -28,7 +26,6 @@
           <text>关于我们</text>
         </view>
       </view>
-      
     </view>
 
     <view class="status-bar">
@@ -37,13 +34,32 @@
     </view>
   </view>
 
+  <view class="start-menu" wx:if="{{isStartMenuOpen}}">
+    <view class="start-side-bar">
+      <text class="os-ver">Old Story 98</text>
+    </view>
+    <view class="start-list">
+      <view class="start-item" bindtap="onMenuClick" data-action="run">
+        <view class="start-icon">💻</view> 运行(R)...
+      </view>
+      <view class="start-item" bindtap="onTapAbout">
+        <view class="start-icon">❓</view> 帮助(H)
+      </view>
+      <view class="divider"></view>
+      <view class="start-item" bindtap="onMenuClick" data-action="shutdown">
+        <view class="start-icon">🔌</view> 关闭系统(U)...
+      </view>
+    </view>
+  </view>
   <view class="task-bar">
-    <view class="btn-start">
+    <view class="btn-start {{isStartMenuOpen ? 'active' : ''}}" bindtap="toggleStartMenu">
       <view class="win-logo">❖</view>
       开始
     </view>
+    
     <view class="task-item active">电子包浆工坊</view>
-    <view class="time-display">23:09</view>
+    
+    <view class="time-display">{{currentTime}}</view>
   </view>
 
 </view>
