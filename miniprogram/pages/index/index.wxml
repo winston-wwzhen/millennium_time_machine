@@ -18,6 +18,10 @@
       <text class="icon-emoji">💬</text>
       <text class="icon-text">QCIO</text>
     </view>
+    <view class="desktop-icon" bindtap="openBrowser" hover-class="icon-active">
+      <text class="icon-emoji">🌐</text>
+      <text class="icon-text">Outnet Explorer</text>
+    </view>
     <view class="desktop-icon" bindtap="openMars" hover-class="icon-active">
       <text class="icon-emoji">🪐</text>
       <text class="icon-text">巴别塔翻译</text>
@@ -34,6 +38,10 @@
     <view class="desktop-icon" bindtap="openStarExplorer" hover-class="icon-active">
       <text class="icon-emoji">🌌</text>
       <text class="icon-text glitch-text" data-text="星域探险">葬爱·心碎.exe</text>
+    </view>
+    <view class="desktop-icon" bindtap="goToSpace" hover-class="icon-active">
+      <text class="icon-emoji">🪐</text>
+      <text class="icon-text">我的空间</text>
     </view>
   </view>
 

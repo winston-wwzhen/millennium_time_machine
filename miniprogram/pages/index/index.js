@@ -225,6 +225,18 @@ Page({
     this.closeStartMenu();
   },
 
+  openBrowser() {
+    wx.navigateTo({
+      url: '/pages/browser/index'
+    });
+  },
+  
+  goToSpace() {
+    wx.navigateTo({
+      url: '/pages/space/index'
+    });
+  },
+
   // 🗑️ 回收站 (装饰性功能)
   openRecycle() {
     wx.showToast({

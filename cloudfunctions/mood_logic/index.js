@@ -6,11 +6,11 @@ const db = cloud.database();
 const _ = db.command;
 const $ = db.command.aggregate;
 
-// 配置：心情种子类型
+// 💾 配置表：情绪种子 (增加了产量和单价)
 const MOOD_TYPES = {
-  sadness: { name: '忧伤.exe', time: 60, reward: 10 }, // 测试用：60秒成熟
-  lonely: { name: '寂寞.bat', time: 1800, reward: 50 }, // 30分钟
-  love: { name: '初恋.dll', time: 3600, reward: 100 }   // 60分钟
+  sadness: { name: '忧伤.exe', time: 60, baseOutput: 10, price: 5 },   // 1分钟，产10个，单价5
+  lonely:  { name: '寂寞.bat', time: 1800, baseOutput: 20, price: 10 }, // 30分钟
+  love:    { name: '初恋.dll', time: 3600, baseOutput: 50, price: 20 }  // 60分钟
 };
 
 exports.main = async (event, context) => {
@@ -18,101 +18,131 @@ exports.main = async (event, context) => {
   const openid = wxContext.OPENID;
   const { action, moodType, targetId } = event;
 
-  // 1. 获取我的状态
+  // 1. 获取我的状态 (保持不变，但前端会拿到更多字段)
   if (action === 'getMyStatus') {
     const res = await db.collection('mood_garden').where({ _openid: openid }).get();
     return { code: 200, data: res.data[0] || null };
   }
 
-  // 2. 开始编译 (种菜)
+  // 2. 🌱 开始编译 (种菜) - 改造：初始化产量
   if (action === 'startCompile') {
-    if (!MOOD_TYPES[moodType]) return { code: 400, msg: '错误的心情代码' };
+    if (!MOOD_TYPES[moodType]) return { code: 400, msg: '错误的代码类型' };
     
+    const config = MOOD_TYPES[moodType];
     const startTime = Date.now();
-    const endTime = startTime + (MOOD_TYPES[moodType].time * 1000);
+    const endTime = startTime + (config.time * 1000);
     
-    // 更新或创建记录
-    // 注意：这里简化逻辑，假设每人只有一块地
-    const check = await db.collection('mood_garden').where({ _openid: openid }).get();
-    
-    const data = {
+    const gardenData = {
       _openid: openid,
-      nickName: event.nickName || '匿名黑客', // 前端传来的昵称
-      avatarUrl: event.avatarUrl || '',       // 前端传来的头像
+      nickName: event.nickName || '匿名黑客',
+      avatarUrl: event.avatarUrl || '',
       currentMood: moodType,
-      moodName: MOOD_TYPES[moodType].name,
+      moodName: config.name,
       startTime,
       endTime,
-      status: 'compiling', // compiling, finished
-      stealedBy: []        // 被谁偷过
+      status: 'compiling',
+      
+      // ✨ 新增经济字段
+      totalOutput: config.baseOutput, // 总产量
+      remainingOutput: config.baseOutput, // 剩余产量 (被偷会减少)
+      stealedBy: [], // 记录谁来过 [ {openid, amount} ]
+      lastModified: Date.now()
     };
 
+    // 更新或创建 (upsert)
+    const check = await db.collection('mood_garden').where({ _openid: openid }).get();
     if (check.data.length > 0) {
-      await db.collection('mood_garden').where({ _openid: openid }).update({ data });
+      await db.collection('mood_garden').where({ _openid: openid }).update({ data: gardenData });
     } else {
-      await db.collection('mood_garden').add({ data });
+      await db.collection('mood_garden').add({ data: gardenData });
     }
-    return { code: 200, msg: '开始编译...' };
+    return { code: 200, msg: '进程启动，编译中...' };
   }
 
-  // 3. 收取数据 (收菜)
+  // 3. 🖐️ 复制数据 (偷菜) - 改造：真实扣除产量
+  if (action === 'copyData') {
+    if (!targetId) return { code: 400, msg: '目标丢失' };
+    
+    // 事务处理建议：虽然这里没用 transaction，但并发量不大先这样写
+    const target = await db.collection('mood_garden').doc(targetId).get();
+    if (!target.data) return { code: 404, msg: '目标已下线' };
+    
+    // 检查是否已经偷过
+    const hasStealed = (target.data.stealedBy || []).some(record => record.openid === openid);
+    if (hasStealed) {
+      return { code: 403, msg: '防火墙警告：同一IP无法重复访问' };
+    }
+
+    // 检查是否有剩余
+    if (target.data.remainingOutput <= 0) {
+      return { code: 400, msg: '数据已被清空，无法复制' };
+    }
+
+    // 🎲 随机偷取量 (1 到 2 个单位，或者总量的 10%)
+    const stealAmount = Math.max(1, Math.floor(target.data.totalOutput * 0.1));
+    // 确保不偷成负数
+    const actualSteal = Math.min(stealAmount, target.data.remainingOutput);
+
+    // 更新受害者数据 (减少剩余产量，记录小偷)
+    await db.collection('mood_garden').doc(targetId).update({
+      data: {
+        remainingOutput: _.inc(-actualSteal),
+        stealedBy: _.push({ openid: openid, amount: actualSteal, time: Date.now() })
+      }
+    });
+
+    // ✨ TODO: 应该在这里把 actualSteal 加到【我的背包】里
+    // 暂时先返回给前端显示爽一下
+    return { 
+      code: 200, 
+      msg: `入侵成功！复制了 ${actualSteal} 个数据碎片`, 
+      data: { stolenAmount: actualSteal } 
+    };
+  }
+
+  // 4. 💰 收取数据 (收菜) - 改造：结算入库
   if (action === 'collect') {
     const record = await db.collection('mood_garden').where({ _openid: openid }).get();
-    if (!record.data[0]) return { code: 400, msg: '没有数据' };
+    if (!record.data[0]) return { code: 400, msg: '没有运行的进程' };
     
     const item = record.data[0];
     if (Date.now() < item.endTime) return { code: 400, msg: '编译尚未完成' };
 
-    // 重置状态
+    const gain = item.remainingOutput; // 最终收获量
+
+    // 重置花园状态
     await db.collection('mood_garden').where({ _openid: openid }).update({
-      data: { status: 'idle', currentMood: null }
+      data: { status: 'idle', currentMood: null, remainingOutput: 0 }
     });
     
-    // TODO: 这里可以给用户加积分/碎片
-    return { code: 200, msg: '数据回收成功！内存已释放。' };
+    // ✨ TODO: 将 gain * price 转换为金币，或直接存入 inventory 集合
+    // await db.collection('user_assets')....
+    
+    let msg = `回收成功！获得 ${gain} 个碎片。`;
+    if (gain < item.totalOutput) {
+      msg += ` (部分数据在网络传输中丢失/被盗)`;
+    }
+
+    return { code: 200, msg: msg, gain: gain };
   }
 
-  // 4. 扫描网络邻居 (随机获取一个可偷的目标)
+  // 5. 扫描 (逻辑基本不变，可以增加只扫能偷的人)
   if (action === 'scanNetwork') {
-    // 逻辑：随机找一个 endTime < now 的记录，且不是自己
     const now = Date.now();
-    
-    // 使用聚合查询随机抽样
     const res = await db.collection('mood_garden').aggregate()
       .match({
-        _openid: _.neq(openid), // 不是自己
-        endTime: _.lt(now),     // 已经成熟
-        status: 'compiling'     // 还没被主人收走
+        _openid: _.neq(openid), 
+        endTime: _.lt(now),     // 已成熟
+        status: 'compiling',
+        remainingOutput: _.gt(0) // 还有得偷
       })
-      .sample({ size: 1 })      // 随机取1个
+      .sample({ size: 1 })
       .end();
 
     if (res.list.length === 0) {
-      return { code: 404, msg: '当前网络寂静无声...' };
+      return { code: 404, msg: '局域网扫描完毕，未发现可入侵端口。' };
     }
     return { code: 200, data: res.list[0] };
-  }
-
-  // 5. 复制数据 (偷菜)
-  if (action === 'copyData') {
-    if (!targetId) return { code: 400, msg: '目标丢失' };
-    
-    const target = await db.collection('mood_garden').doc(targetId).get();
-    if (!target.data) return { code: 404, msg: '目标不存在' };
-    
-    // 检查是否偷过
-    if (target.data.stealedBy && target.data.stealedBy.includes(openid)) {
-      return { code: 403, msg: '你已经访问过该端口了' };
-    }
-
-    // 记录偷取
-    await db.collection('mood_garden').doc(targetId).update({
-      data: {
-        stealedBy: _.push(openid)
-      }
-    });
-
-    return { code: 200, msg: `成功复制了 [${target.data.moodName}] 的碎片` };
   }
 
   return { code: 400, msg: '未知指令' };

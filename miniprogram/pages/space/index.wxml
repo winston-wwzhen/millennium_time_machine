@@ -12,8 +12,9 @@
     <view class="window-body">
       <view class="menu-bar">
         <view class="menu-item" bindtap="scanNetwork">
-          <text>网上邻居(N)</text> </view>
-        <view class="menu-item">
+          <text>网上邻居(N)</text>
+        </view>
+        <view class="menu-item" bindtap="openInventory">
           <text>查看(V)</text>
         </view>
       </view>
@@ -30,28 +31,34 @@
               <text wx:if="{{selectedMood === item.type}}"> ←</text>
             </view>
           </view>
+          
           <button class="win98-btn" bindtap="startCompile">开始编译</button>
         </block>
 
         <block wx:else>
           <view class="process-info">
-            <text>正在处理: {{myStatus.moodName}}</text>
+            <text>进程: {{myStatus.moodName}}</text>
+            
+            <view style="display: flex; justify-content: space-between; margin-top: 10rpx;">
+              <text>完整性: {{myStatus.remainingOutput}}/{{myStatus.totalOutput}}</text>
+              <text wx:if="{{myStatus.remainingOutput < myStatus.totalOutput}}" style="color: red;">[警告: 数据泄漏]</text>
+            </view>
+
             <text wx:if="{{progress < 100}}">剩余时间: {{timeLeftStr}}</text>
-            <text wx:else style="color: green;">编译完成!</text>
+            <text wx:else style="color: green; font-weight: bold;">编译完成! (可回收)</text>
           </view>
           
-          <view class="progress-bar-container bevel-inset">
-            <view class="progress-blocks">
-              <view class="p-block" 
-                    wx:for="{{[1,2,3,4,5,6,7,8,9,10]}}" 
-                    wx:key="*this"
-                    style="opacity: {{progress >= item*10 ? 1 : 0}}"></view>
+          <button class="win98-btn" wx:if="{{progress >= 100}}" bindtap="collect">
+            回收数据 (收)
+          </button>
+
+          <view class="log-area bevel-inset" style="margin-top: 20rpx; height: 100rpx; background: #FFF; overflow-y: scroll; padding: 10rpx;">
+            <view wx:if="{{myStatus.stealedBy.length === 0}}" style="color: #999;">暂无访问记录...</view>
+            <view wx:for="{{myStatus.stealedBy}}" wx:key="index" style="font-size: 24rpx; color: red;">
+              [!ALERT] 遭到入侵! 损失 {{item.amount}} 碎片
             </view>
           </view>
 
-          <button class="win98-btn" wx:if="{{progress >= 100}}" bindtap="collect">
-            保存数据 (收)
-          </button>
         </block>
 
       </view>
@@ -81,6 +88,47 @@
       <view class="dialog-footer">
         <button class="win98-btn" bindtap="copyData">复制数据</button>
         <button class="win98-btn" bindtap="closeTargetWindow">断开连接</button>
+      </view>
+    </view>
+  </view>
+
+  <view class="window-container modal-window" wx:if="{{showInventory}}" style="top: 15vh; z-index: 200;">
+    <view class="title-bar active">
+      <view class="title-text">资源管理器 (Inventory)</view>
+      <view class="title-controls">
+        <view class="control-box" bindtap="closeInventory">×</view>
+      </view>
+    </view>
+    <view class="window-body">
+      <view class="inventory-header bevel-inset" style="background: #FFF; padding: 10rpx; margin-bottom: 20rpx;">
+        <view>算力(Coins): <text style="color: blue; font-weight: bold;">{{inventory.coins}} BIT</text></view>
+      </view>
+
+      <view class="inventory-grid">
+        <view style="font-size: 24rpx; margin-bottom: 10rpx;">已捕获的情绪碎片:</view>
+        <view class="fragment-list bevel-inset" style="background: #FFF; min-height: 150rpx; padding: 10rpx;">
+          
+          <block wx:if="{{!inventory.fragments || (inventory.fragments.sadness === 0 && inventory.fragments.lonely === 0 && inventory.fragments.love === 0)}}">
+            <view style="padding: 20rpx; color: #888; text-align: center;">(空)</view>
+          </block>
+          
+          <view class="frag-item" wx:if="{{inventory.fragments.sadness}}">
+            <text>💧 忧伤源代码</text>
+            <text>x{{inventory.fragments.sadness}}</text>
+          </view>
+           <view class="frag-item" wx:if="{{inventory.fragments.lonely}}">
+            <text>🚬 寂寞脚本</text>
+            <text>x{{inventory.fragments.lonely}}</text>
+          </view>
+           <view class="frag-item" wx:if="{{inventory.fragments.love}}">
+            <text>🍬 初恋DLL</text>
+            <text>x{{inventory.fragments.love}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="dialog-footer">
+        <button class="win98-btn" bindtap="closeInventory">确定</button>
       </view>
     </view>
   </view>

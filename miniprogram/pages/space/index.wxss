@@ -1,6 +1,10 @@
+/* miniprogram/pages/space/index.wxss */
+
+/* === 全局与桌面背景 === */
 page {
-  background-color: #008080;
-  font-family: "SimSun", serif;
+  background-color: #008080; /* 经典的 Windows 默认青色背景 */
+  font-family: "SimSun", "宋体", serif; /* 强制使用衬线体模拟像素风 */
+  overflow: hidden;
 }
 
 .win98-desktop {
@@ -9,15 +13,18 @@ page {
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
 }
 
+/* === 通用窗口容器 (模拟 Win98 窗口) === */
 .window-container {
-  background: #C0C0C0;
-  border-top: 2rpx solid #FFF;
-  border-left: 2rpx solid #FFF;
-  border-right: 2rpx solid #000;
-  border-bottom: 2rpx solid #000;
-  box-shadow: 4rpx 4rpx 0 #000;
+  background: #C0C0C0; /* 标准银灰 */
+  /* 3D 凸起边框效果 */
+  border-top: 2rpx solid #DFDFDF;
+  border-left: 2rpx solid #DFDFDF;
+  border-right: 2rpx solid #000000;
+  border-bottom: 2rpx solid #000000;
+  box-shadow: 2rpx 2rpx 0 #000000; 
   padding: 4rpx;
   display: flex;
   flex-direction: column;
@@ -25,82 +32,271 @@ page {
 
 .main-window {
   width: 90vw;
-  height: 60vh;
+  height: 70vh; /* 稍微调高一点以容纳更多内容 */
+  z-index: 10;
 }
 
 .modal-window {
   position: absolute;
   width: 80vw;
   z-index: 100;
+  box-shadow: 10rpx 10rpx 0 rgba(0,0,0,0.5); /* 弹窗加重阴影 */
 }
 
-/* 标题栏 */
+/* === 标题栏 === */
 .title-bar {
-  background: #808080; /* 未激活是灰色 */
+  background: #808080; /* 未激活状态为灰色 */
   padding: 4rpx 8rpx;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: 4rpx;
 }
+
+/* 激活状态的标题栏 (深蓝) */
 .title-bar.active, .main-window .title-bar {
-  background: #000080; /* 激活是深蓝 */
+  background: #000080;
 }
-.title-text { color: white; font-weight: bold; font-size: 28rpx; }
-.title-controls { display: flex; gap: 4rpx; }
+
+.title-text { 
+  color: white; 
+  font-weight: bold; 
+  font-size: 28rpx; 
+  letter-spacing: 1rpx;
+}
+
+.title-controls { 
+  display: flex; 
+  gap: 4rpx; 
+}
+
 .control-box {
-  width: 32rpx; height: 32rpx; background: #C0C0C0;
-  border-top: 2rpx solid #FFF; border-left: 2rpx solid #FFF;
-  border-right: 2rpx solid #000; border-bottom: 2rpx solid #000;
-  display: flex; align-items: center; justify-content: center;
+  width: 32rpx; 
+  height: 32rpx; 
+  background: #C0C0C0;
+  border-top: 2rpx solid #FFF; 
+  border-left: 2rpx solid #FFF;
+  border-right: 2rpx solid #000; 
+  border-bottom: 2rpx solid #000;
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  font-size: 24rpx;
+  font-weight: bold;
+  line-height: 28rpx;
+}
+.control-box:active {
+  border-top: 2rpx solid #000;
+  border-left: 2rpx solid #000;
+  border-right: 2rpx solid #FFF;
+  border-bottom: 2rpx solid #FFF;
+  padding-top: 2rpx; /* 模拟按下位移 */
+  padding-left: 2rpx;
 }
 
-/* 菜单栏 */
+/* === 窗口主体 === */
+.window-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 4rpx;
+  gap: 10rpx;
+}
+
+/* === 菜单栏 === */
 .menu-bar {
-  display: flex; gap: 20rpx; padding: 4rpx 10rpx;
-  border-bottom: 1rpx solid #808080; margin-bottom: 10rpx;
+  display: flex; 
+  gap: 20rpx; 
+  padding: 4rpx 10rpx;
+  margin-bottom: 6rpx;
 }
-.menu-item text { text-decoration: underline; font-size: 28rpx; }
 
-/* 状态区 (白色背景凹陷) */
+.menu-item text { 
+  font-size: 28rpx; 
+  color: #000;
+}
+.menu-item text:first-letter {
+  text-decoration: underline; /* 模拟快捷键下划线 */
+}
+
+/* === 状态内容区 (白色凹陷背景) === */
 .status-area {
-  flex: 1; background: #FFF; padding: 20rpx;
-  display: flex; flex-direction: column; gap: 20rpx;
+  flex: 1; 
+  background: #FFF; 
+  padding: 20rpx;
+  display: flex; 
+  flex-direction: column; 
+  gap: 20rpx;
+  overflow-y: auto;
 }
 
-/* 进度条 */
+.prompt-text {
+  font-size: 28rpx;
+  margin-bottom: 10rpx;
+}
+
+/* === 选项组 === */
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+.radio-item { 
+  padding: 10rpx;
+  border: 1rpx dashed transparent; 
+  font-size: 28rpx;
+  display: flex;
+  align-items: center;
+}
+
+/* 选中项高亮 (模拟 Win 高亮色) */
+.radio-item.active { 
+  background: #000080; 
+  color: #FFF; 
+  border-color: #FFFF00;
+}
+
+/* === 进度显示 === */
+.process-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+  font-size: 26rpx;
+  margin-bottom: 10rpx;
+}
+
 .progress-bar-container {
-  height: 40rpx; background: #C0C0C0; padding: 4rpx;
+  height: 40rpx; 
+  background: #C0C0C0; 
+  padding: 4rpx;
+  position: relative;
 }
+
 .progress-blocks {
-  width: 100%; height: 100%; display: flex; gap: 4rpx;
+  width: 100%; 
+  height: 100%; 
+  display: flex; 
+  gap: 4rpx;
 }
+
 .p-block {
-  flex: 1; background: #000080;
+  flex: 1; 
+  background: #000080;
 }
 
-/* 按钮 */
+/* === 底部状态栏 === */
+.status-bar {
+  height: 40rpx;
+  background: #C0C0C0;
+  display: flex;
+  align-items: center;
+  padding: 0 10rpx;
+  font-size: 24rpx;
+  color: #333;
+}
+
+/* === 按钮样式 === */
 .win98-btn {
-  margin-top: 20rpx; background: #C0C0C0;
-  border-top: 2rpx solid #FFF; border-left: 2rpx solid #FFF;
-  border-right: 2rpx solid #000; border-bottom: 2rpx solid #000;
-  font-size: 28rpx; border-radius: 0;
+  margin-top: 20rpx; 
+  background: #C0C0C0;
+  border-top: 2rpx solid #FFF; 
+  border-left: 2rpx solid #FFF;
+  border-right: 2rpx solid #000; 
+  border-bottom: 2rpx solid #000;
+  font-size: 28rpx; 
+  border-radius: 0;
+  color: #000;
+  min-height: 60rpx;
+  line-height: 60rpx;
 }
+
 .win98-btn:active {
-  border-top: 2rpx solid #000; border-left: 2rpx solid #000;
-  border-right: 2rpx solid #FFF; border-bottom: 2rpx solid #FFF;
+  border-top: 2rpx solid #000;
+  border-left: 2rpx solid #000;
+  border-right: 2rpx solid #FFF;
+  border-bottom: 2rpx solid #FFF;
+  background: #B0B0B0;
 }
 
-/* 选项 */
-.radio-item { padding: 10rpx; border: 1rpx dashed transparent; }
-.radio-item.active { background: #000080; color: #FFF; border-color: #FFFF00; }
+.win98-btn::after { border: none; } /* 去除小程序默认边框 */
 
-/* 3D 边框 */
+/* === 弹窗内容：远程连接 === */
+.target-info { 
+  display: flex; 
+  gap: 20rpx; 
+  padding: 20rpx; 
+}
+
+.target-avatar { 
+  width: 100rpx; 
+  height: 100rpx;
+  background: #FFF; 
+  display: block;
+}
+
+.target-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 26rpx;
+}
+
+/* === [新增] 弹窗内容：背包/资源管理器 === */
+.inventory-header {
+  background: #FFF;
+  padding: 10rpx;
+  margin-bottom: 10rpx;
+  font-size: 26rpx;
+}
+
+.inventory-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+  flex: 1;
+}
+
+.fragment-list {
+  background: #FFF;
+  flex: 1;
+  padding: 10rpx;
+  overflow-y: auto;
+  min-height: 200rpx;
+}
+
+.frag-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12rpx 0;
+  border-bottom: 1rpx dashed #808080;
+  font-size: 26rpx;
+}
+
+.frag-item:last-child {
+  border-bottom: none;
+}
+
+/* === 底部按钮区 === */
+.dialog-footer { 
+  display: flex; 
+  justify-content: flex-end; 
+  gap: 20rpx; 
+  margin-top: 10rpx;
+  padding-bottom: 10rpx;
+}
+
+.dialog-footer .win98-btn {
+  margin-top: 0;
+  width: 180rpx;
+}
+
+/* === 辅助样式：3D 凹陷边框 === */
 .bevel-inset {
-  border-top: 2rpx solid #808080; border-left: 2rpx solid #808080;
-  border-right: 2rpx solid #FFF; border-bottom: 2rpx solid #FFF;
+  border-top: 2rpx solid #808080; 
+  border-left: 2rpx solid #808080;
+  border-right: 2rpx solid #FFF;
+  border-bottom: 2rpx solid #FFF;
 }
-
-/* 弹窗内容 */
-.target-info { display: flex; gap: 20rpx; padding: 20rpx; }
-.target-avatar { width: 100rpx; height: 100rpx; background: #FFF; }
-.dialog-footer { display: flex; justify-content: flex-end; gap: 20rpx; margin-top: 20rpx;}

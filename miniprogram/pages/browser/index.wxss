@@ -1,0 +1,174 @@
+/* browser/index.wxss */
+page {
+  background-color: #008080; /* 桌面背景色 */
+  height: 100vh;
+  overflow: hidden;
+  font-family: 'SimSun', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 整个浏览器窗口，模拟非全屏窗口感，稍微留一点边距 */
+.browser-window {
+  margin-top: 170rpx;
+  width: 100%;
+  height: 100%;
+  background-color: #c0c0c0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  border-top: 2rpx solid #fff;
+  border-left: 2rpx solid #fff;
+  border-right: 2rpx solid #000;
+  border-bottom: 2rpx solid #000;
+}
+
+/* === 通用 3D 边框类 === */
+.bevel-inset {
+  border-top: 2rpx solid #808080;
+  border-left: 2rpx solid #808080;
+  border-right: 2rpx solid #fff;
+  border-bottom: 2rpx solid #fff;
+}
+.bevel-outset {
+  border-top: 2rpx solid #fff;
+  border-left: 2rpx solid #fff;
+  border-right: 2rpx solid #000;
+  border-bottom: 2rpx solid #000;
+}
+
+/* 1. 标题栏 */
+.title-bar {
+  background: #000080;
+  padding: 4rpx 8rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.title-left { display: flex; align-items: center; gap: 8rpx; }
+.win-icon { font-size: 24rpx; }
+.title-text { color: #fff; font-size: 24rpx; font-weight: bold; letter-spacing: 1rpx; }
+.title-controls { display: flex; gap: 4rpx; }
+.control-btn {
+  width: 32rpx; height: 32rpx;
+  background: #c0c0c0;
+  font-size: 20rpx;
+  display: flex; align-items: center; justify-content: center;
+  border-top: 2rpx solid #fff; border-left: 2rpx solid #fff;
+  border-right: 2rpx solid #000; border-bottom: 2rpx solid #000;
+}
+.control-btn:active {
+  border-top: 2rpx solid #000; border-left: 2rpx solid #000;
+  border-right: 2rpx solid #fff; border-bottom: 2rpx solid #fff;
+}
+
+/* 2. 菜单栏 */
+.menu-bar {
+  display: flex;
+  padding: 2rpx 10rpx;
+  border-bottom: 2rpx solid #808080;
+  font-size: 24rpx;
+  align-items: center;
+}
+.menu-item { margin-right: 20rpx; padding: 2rpx 8rpx; }
+.menu-item:active { background: #000080; color: #fff; }
+.win-logo { margin-left: auto; font-size: 30rpx; opacity: 0.5; }
+
+/* 3. 工具栏 */
+.toolbar {
+  display: flex;
+  align-items: center;
+  padding: 6rpx 10rpx;
+  border-bottom: 2rpx solid #808080;
+  gap: 4rpx;
+}
+.tool-btn {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 4rpx 12rpx;
+  border: 1px solid transparent;
+}
+.btn-active {
+  border-top: 1rpx solid #fff; border-left: 1rpx solid #fff;
+  border-right: 1rpx solid #000; border-bottom: 1rpx solid #000;
+}
+.tool-btn text { font-size: 32rpx; line-height: 1; }
+.tool-btn .btn-text { font-size: 20rpx; margin-top: 4rpx; }
+.divider-v { width: 2rpx; height: 50rpx; background: #808080; border-right: 1px solid #fff; margin: 0 10rpx; }
+
+/* 4. 地址栏 */
+.address-bar {
+  display: flex; align-items: center;
+  padding: 6rpx 10rpx;
+  font-size: 24rpx;
+  gap: 10rpx;
+}
+.input-wrapper {
+  flex: 1;
+  background: #fff;
+  display: flex; align-items: center;
+  height: 40rpx;
+  padding: 0 4rpx;
+}
+.url-input { flex: 1; height: 100%; font-size: 24rpx; }
+.dropdown-arrow { background: #c0c0c0; padding: 0 8rpx; height: 100%; display: flex; align-items: center; border-left: 1px solid #808080; font-size: 16rpx;}
+.go-btn {
+  padding: 4rpx 12rpx;
+  font-size: 24rpx;
+  background: #c0c0c0;
+  border-top: 2rpx solid #fff; border-left: 2rpx solid #fff;
+  border-right: 2rpx solid #000; border-bottom: 2rpx solid #000;
+}
+.go-btn:active {
+  border-top: 2rpx solid #000; border-left: 2rpx solid #000;
+  border-right: 2rpx solid #fff; border-bottom: 2rpx solid #fff;
+}
+
+/* 5. 视口与网页内容 */
+.viewport {
+  flex: 1;
+  margin: 4rpx;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* 网页通用样式 */
+.web-page { padding: 30rpx; color: #000; }
+.loading-screen { padding: 50rpx; display: flex; flex-direction: column; align-items: center; gap: 20rpx; }
+.loading-text { font-size: 24rpx; }
+
+/* 首页样式 */
+.home-page { text-align: center; }
+.portal-header { margin-bottom: 40rpx; }
+.portal-title { display: block; font-size: 40rpx; font-weight: bold; color: #000080; }
+.portal-subtitle { font-size: 24rpx; color: #666; letter-spacing: 2rpx; }
+.marquee-box { background: #ffffcc; padding: 10rpx; margin-bottom: 40rpx; }
+.marquee-text { font-size: 24rpx; color: #d00; }
+.link-group { text-align: left; width: 80%; margin: 0 auto; }
+.group-title { font-weight: bold; margin-bottom: 10rpx; display: block; border-bottom: 1px solid #ccc; }
+.web-link { 
+  color: blue; text-decoration: underline; margin-bottom: 16rpx; font-size: 28rpx; cursor: pointer;
+}
+.ad-banner { margin-top: 60rpx; background: #c0c0c0; padding: 20rpx; font-weight: bold; animation: flash 1s infinite; }
+
+/* 404 样式 */
+.error-page .h1 { font-size: 32rpx; font-weight: normal; margin-bottom: 20rpx; display: block;}
+.error-page .p { font-size: 24rpx; margin-bottom: 10rpx; display: block;}
+.divider-h { height: 2rpx; background: #ccc; margin: 20rpx 0; }
+.ul { margin-left: 20rpx; }
+.li { display: block; font-size: 24rpx; margin-bottom: 6rpx; }
+
+/* 6. 状态栏 */
+.status-bar {
+  height: 44rpx;
+  background: #c0c0c0;
+  display: flex;
+  align-items: center;
+  padding: 0 10rpx;
+  font-size: 22rpx;
+  gap: 10rpx;
+  margin: 2rpx;
+}
+
+@keyframes flash { 0% {color: red;} 50% {color: blue;} 100% {color: red;} }
