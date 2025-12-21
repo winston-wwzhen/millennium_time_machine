@@ -39,7 +39,7 @@ Page({
       
       const petSize = 120 * ratio; // 狮子大小 120rpx
       const taskbarHeight = 60 * ratio; // 任务栏高度 (约56rpx) + 一点缝隙
-      const margin = 20 * ratio; // 边距 20rpx
+      const margin = 60 * ratio; // 边距 20rpx
       
       this.setData({
         // 放在右下角，且位于任务栏上方
@@ -112,16 +112,11 @@ Page({
 
   // 点击小狮子
   onPetTap() {
-    // 1. 震动反馈
-    wx.vibrateShort();
-    
-    // 2. 随机说一句话
     const randomIndex = Math.floor(Math.random() * LION_QUOTES.length);
     const msg = LION_QUOTES[randomIndex];
     
     this.setData({ petMessage: msg });
 
-    // 3. 3秒后气泡自动消失
     setTimeout(() => {
       // 只有当前消息没变时才清除（防止覆盖新触发的消息）
       if (this.data.petMessage === msg) {

@@ -50,7 +50,7 @@ Page({
 
       // 4. 【关键修改】调用名为 'chat' 的云函数
       const res = await wx.cloud.callFunction({
-        name: 'chat', // 👈 这里改成了新建的云函数名
+        name: 'chat',
         data: {
           userMessage: text,
           history: history

@@ -10,7 +10,7 @@
 
 /* === 1. 桌面图标区域 === */
 .icon-column {
-  padding: 20rpx;
+  padding: 160rpx 30rpx;
   display: flex;
   flex-direction: column; /* 纵向排列 */
   flex-wrap: wrap; /* 满了自动换列 */
