@@ -24,7 +24,7 @@
     </view>
     <view class="desktop-icon" bindtap="openTranslator" hover-class="icon-active">
       <text class="icon-emoji">💔</text>
-      <text class="icon-text">心情转译</text>
+      <text class="icon-text">空间签名</text>
     </view>
     <view class="desktop-icon" bindtap="openAvatar" hover-class="icon-active">
       <text class="icon-emoji">📸</text>

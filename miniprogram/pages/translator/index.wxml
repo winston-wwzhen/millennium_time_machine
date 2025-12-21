@@ -1,7 +1,7 @@
 <view class="container">
   <view class="window-frame">
     <view class="title-bar">
-      <view class="title">💔 心情转译机 v2.0</view>
+      <view class="title"> 签名生成器</view>
       <view class="controls">
         <view class="btn" hover-class="btn-active" bindtap="onMinimize">_</view>
         <view class="btn" hover-class="btn-active" bindtap="onMaximize">□</view>
