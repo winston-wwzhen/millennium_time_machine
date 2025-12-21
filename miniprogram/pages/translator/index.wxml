@@ -1,46 +1,46 @@
-<view class="desktop">
+<view class="container">
   <view class="window-frame">
     <view class="title-bar">
-      <view class="title-text">情绪转译器.exe - 语言净化中</view>
-      <view class="btn-close" bindtap="goBack">×</view>
+      <view class="title">💔 心情转译机 v2.0</view>
+      <view class="controls">
+        <view class="btn" hover-class="btn-active" bindtap="onMinimize">_</view>
+        <view class="btn" hover-class="btn-active" bindtap="onMaximize">□</view>
+        <view class="btn close-btn" hover-class="btn-active" bindtap="onClose">×</view>
+      </view>
     </view>
-
-    <view class="menu-bar">
-      <text>模式(M)</text>
-      <text>净化(C)</text>
-      <text>帮助(H)</text>
-    </view>
-
-    <view class="window-body">
-      <view class="section-label">👇 在这里释放你的愤怒 (已开启隐私保护):</view>
+    
+    <view class="content-area">
+      <view class="label">输入你的大白话：</view>
       <textarea 
-        class="input-area angry-input" 
-        placeholder="例如：老板真是个脑残，天天就知道开会..." 
-        placeholder-style="color:#aaa;" 
-        bindinput="onInput"
-        value="{{inputText}}"
-        maxlength="200"
+        class="input-box" 
+        placeholder="例如：今天不想上班..." 
+        bindinput="onInput" 
+        maxlength="100"
       ></textarea>
 
-      <view class="action-area">
-        <view class="progress-bar-border" wx:if="{{isProcessing}}">
-          <view class="progress-bar-fill"></view>
-        </view>
-        <view class="retro-btn primary-btn" wx:else bindtap="translateEmotion">
-          ✨ 一键瑞思拜 (Respect) ✨
-        </view>
+      <view class="action-box">
+        <button 
+          class="retro-btn {{isLoading ? 'disabled' : ''}}" 
+          bindtap="onTranslate"
+          disabled="{{isLoading}}"
+        >
+          {{isLoading ? '正在注入忧伤...' : '开始转译'}}
+        </button>
       </view>
 
-      <view class="section-label">👇 2005年文明用语转换结果:</view>
-      <view class="output-area peaceful-output">
-        <text user-select="true" wx:if="{{outputText}}">{{outputText}}</text>
-        <view class="placeholder-text" wx:else>等待净化...</view>
+      <view class="result-box" wx:if="{{resultText}}">
+        <view class="label">QQ签名预览：</view>
+        <view class="output-text" bindtap="onCopy">
+          {{resultText}}
+        </view>
+        <view class="tip" wx:if="{{!isLoading}}">（点击文字复制）</view>
       </view>
-      
+
     </view>
-
+    
     <view class="status-bar">
-      <text>状态: {{statusText}}</text>
+      <text>状态: {{isLoading ? '处理中...' : '就绪'}}</text>
+      <text class="right">Memory: 256MB</text>
     </view>
   </view>
 </view>

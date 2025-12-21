@@ -1,92 +1,73 @@
-<movable-area class="desktop">
+<movable-area class="desktop" bindtap="closeStartMenu">
   
-  <view class="window-frame">
-    <view class="title-bar">
-      <view class="title-text">千禧时光机.exe</view>
-      <view class="btn-close">×</view>
+  <view class="icon-column">
+    <view class="desktop-icon" bindtap="openAbout" hover-class="icon-active">
+      <text class="icon-emoji">💻</text>
+      <text class="icon-text">{{username}}的电脑</text> 
     </view>
-
-    <view class="window-body">
-      <view class="intro-text">欢迎使用 V1.0</view>
-      <view class="intro-sub">请选择你要进行的操作：</view>
-
-      <view class="grid-menu">
-        <view class="menu-item" bindtap="onTapMars">
-          <view class="icon-box">👽</view>
-          <text>火星文转换</text>
-        </view>
-
-        <view class="menu-item" bindtap="onTapAvatar">
-          <view class="icon-box">📷</view>
-          <text>非主流大头贴</text>
-        </view>
-
-        <view class="menu-item" bindtap="onTapAIChat">
-          <view class="icon-box">🐧</view>
-          <text>我的网友</text>
-        </view>
-
-        <view class="menu-item" bindtap="onTapTranslator">
-          <view class="icon-box">♻️</view>
-          <text>情绪转译器</text>
-        </view>
-
-        <view class="menu-item" bindtap="onTapAbout">
-          <view class="icon-box">💾</view>
-          <text>关于我们</text>
-        </view>
-      </view>
+    <view class="desktop-icon" hover-class="icon-active">
+      <text class="icon-emoji">📂</text>
+      <text class="icon-text">{{username}}的文档</text>
     </view>
-
-    <view class="status-bar">
-      <text>对象: 0</text>
-      <text>内存: 64KB</text>
+    <view class="desktop-icon" bindtap="openRecycle" hover-class="icon-active">
+      <text class="icon-emoji">🗑️</text>
+      <text class="icon-text">回收站</text>
+    </view>
+    <view style="height: 20rpx;"></view>
+    <view class="desktop-icon" bindtap="openChat" hover-class="icon-active">
+      <text class="icon-emoji">💬</text>
+      <text class="icon-text">我的网友</text>
+    </view>
+    <view class="desktop-icon" bindtap="openMars" hover-class="icon-active">
+      <text class="icon-emoji">🪐</text>
+      <text class="icon-text">火星文转换</text>
+    </view>
+    <view class="desktop-icon" bindtap="openTranslator" hover-class="icon-active">
+      <text class="icon-emoji">💔</text>
+      <text class="icon-text">心情转译</text>
+    </view>
+    <view class="desktop-icon" bindtap="openAvatar" hover-class="icon-active">
+      <text class="icon-emoji">📸</text>
+      <text class="icon-text">大头贴</text>
     </view>
   </view>
 
   <movable-view 
-    class="pet-container" 
+    class="pet-lion" 
+    direction="all" 
     x="{{petX}}" 
     y="{{petY}}" 
-    direction="all"
-    bindtap="onTapPet"
+    bindtap="onPetTap"
   >
-    <view class="pet-bubble" wx:if="{{showBubble}}">
-      <text>{{petText}}</text>
-      <view class="bubble-arrow"></view>
-    </view>
+    <view class="pet-bubble" wx:if="{{petMessage}}">{{petMessage}}</view>
     
-    <view class="pet-body {{isPetTalking ? 'bounce' : ''}}">
-      🦁
-    </view>
+    <view class="lion-body">🦁</view>
   </movable-view>
-  
-  <view class="start-menu" wx:if="{{isStartMenuOpen}}">
-    <view class="start-side-bar">
-      <text class="os-ver">Old Story 98</text>
-    </view>
-    <view class="start-list">
-      <view class="start-item" bindtap="onMenuClick" data-action="run">
-        <view class="start-icon">💻</view> 运行(R)...
-      </view>
-      <view class="start-item" bindtap="onTapAbout">
-        <view class="start-icon">❓</view> 帮助(H)
-      </view>
+
+
+  <view class="start-menu {{showStartMenu ? 'visible' : ''}}" catchtap="true">
+    <view class="sidebar"><text class="win98-text">Windows98</text></view>
+    <view class="menu-items">
+      <view class="menu-item" bindtap="openAbout"><text class="menu-emoji">ℹ️</text><text>关于系统(A)...</text></view>
+      <view class="menu-item"><text class="menu-emoji">⚙️</text><text>设置(S)</text></view>
+      <view class="menu-item"><text class="menu-emoji">❓</text><text>帮助(H)</text></view>
       <view class="divider"></view>
-      <view class="start-item" bindtap="onMenuClick" data-action="shutdown">
-        <view class="start-icon">🔌</view> 关闭系统(U)...
-      </view>
+      <view class="menu-item"><text class="menu-emoji">🚀</text><text>运行(R)...</text></view>
+      <view class="divider"></view>
+      <view class="menu-item" bindtap="onLogOff"><text class="menu-emoji">🔑</text><text>注销 {{username}}(L)...</text></view>
     </view>
   </view>
-  <view class="task-bar">
-    <view class="btn-start {{isStartMenuOpen ? 'active' : ''}}" bindtap="toggleStartMenu">
-      <view class="win-logo">❖</view>
-      开始
+
+  <view class="taskbar" catchtap="true">
+    <view class="start-btn {{showStartMenu ? 'active' : ''}}" bindtap="toggleStartMenu">
+      <text class="start-icon-emoji">💾</text><text>Start</text>
     </view>
-    
-    <view class="task-item active">千禧时光机</view>
-    
-    <view class="time-display">{{currentTime}}</view>
+    <view class="divider-v"></view>
+    <view class="running-tasks"></view>
+    <view class="tray-area">
+      <text class="tray-emoji">🔊</text>
+      <text class="time-text">{{currentTime}}</text>
+    </view>
   </view>
 
 </movable-area>

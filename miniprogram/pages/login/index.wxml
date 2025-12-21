@@ -1,0 +1,54 @@
+<view class="container">
+  <view class="login-window">
+    <view class="title-bar">
+      <view class="title-text">Welcome to Windows</view>
+      <view class="close-btn">×</view>
+    </view>
+
+    <view class="content">
+      <view class="icon-area">
+        <text style="font-size: 48px;">🔑</text>
+      </view>
+
+      <view class="form-area">
+        <view class="instruction">
+          Type a user name to log on, or use Network ID.
+        </view>
+
+        <view class="input-row">
+          <text class="label">User name:</text>
+          <input class="input" type="text" value="{{username}}" bindinput="onInputName" />
+        </view>
+        <view class="input-row">
+          <text class="label">Password:</text>
+          <input class="input" type="password" disabled value="******" />
+        </view>
+
+        <view class="divider">
+          <view class="line"></view>
+          <text class="divider-text">OR</text>
+          <view class="line"></view>
+        </view>
+
+        <view class="wechat-login-area">
+          <button 
+            class="win-btn wechat-btn {{isLoading ? 'disabled' : ''}}" 
+            bindtap="onWechatLogin"
+          >
+            💬 Log on with WeChat
+          </button>
+        </view>
+
+      </view>
+    </view>
+
+    <view class="btn-area">
+      <view class="win-btn-wrapper">
+        <button class="win-btn {{isLoading ? 'disabled' : ''}}" bindtap="onLogin">OK</button>
+      </view>
+      <view class="win-btn-wrapper">
+        <button class="win-btn" bindtap="onCancel">Cancel</button>
+      </view>
+    </view>
+  </view>
+</view>

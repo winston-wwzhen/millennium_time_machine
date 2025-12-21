@@ -1,195 +1,236 @@
+// miniprogram/pages/index/index.js
+const app = getApp();
+
+// 🦁 电子宠物语录库
+const LION_QUOTES = [
+  "踩踩空间~ 记得回访哦!",
+  "偶是系咪~ (Simi)",
+  "可以帮我挂QQ吗? 我要太阳!",
+  "上网要注意休息哦!",
+  "点我点我! 嘻嘻~",
+  "神马都是浮云...",
+  "Zzz... (打瞌睡)",
+  "你有新的短消息!",
+  "你是GG还是MM?",
+  "不要迷恋哥，哥只是个传说"
+];
+
 Page({
   data: {
-    currentTime: '00:00', // 任务栏时间
-    isStartMenuOpen: false, // 开始菜单开关状态
+    // === 系统基础数据 ===
+    username: 'Admin', // 默认用户名
+    showStartMenu: false, // 开始菜单显隐状态
+    currentTime: '', // 任务栏右下角时间
+    timer: null, // 时间定时器引用
 
-    // --- 宠物数据 ---
-    petX: 20, // 初始位置 X
-    petY: 20, // 初始位置 Y
-    petText: '',
-    showBubble: false,
-    isPetTalking: false
+    // === 🦁 电子宠物数据 ===
+    petX: 0, // 初始位置 X (会在 onLoad 中计算)
+    petY: 0, // 初始位置 Y (会在 onLoad 中计算)
+    petMessage: '', // 宠物气泡文字
+    petTimer: null, // 随机说话定时器
   },
 
+  // === 生命周期：页面加载 ===
   onLoad() {
-    this.updateTime();
-    this.timer = setInterval(() => {
-      this.updateTime();
-    }, 10000);
+    // 📐 计算小狮子的初始位置 (默认右下角)
     try {
       const sys = wx.getSystemInfoSync();
-      // 屏幕宽高
-      const screenW = sys.windowWidth;
-      const screenH = sys.windowHeight;
-
-      // 宠物尺寸：宽80px, 高100px (对应 wxss 里的 .pet-container)
-      // 任务栏高度：35px (对应 wxss 里的 .task-bar)
-      const petW = 80;
-      const petH = 100;
-      const taskBarH = 35;
-      const margin = 10; // 留一点间隙
-
-      // 计算坐标
-      const targetX = screenW - petW - margin; 
-      // Y轴要减去宠物高度、任务栏高度和间隙
-      const targetY = screenH - petH - taskBarH - margin;
-
+      const ratio = sys.windowWidth / 750; // rpx 转 px 的比例
+      
+      const petSize = 120 * ratio; // 狮子大小 120rpx
+      const taskbarHeight = 60 * ratio; // 任务栏高度 (约56rpx) + 一点缝隙
+      const margin = 20 * ratio; // 边距 20rpx
+      
       this.setData({
-        petX: targetX,
-        petY: targetY
+        // 放在右下角，且位于任务栏上方
+        petX: sys.windowWidth - petSize - margin,
+        petY: sys.windowHeight - petSize - taskbarHeight - margin
       });
     } catch (e) {
-      // 容错：如果获取失败，默认放中间
-      this.setData({ petX: 100, petY: 200 });
+      // 兜底：如果获取失败，随便放个位置
+      this.setData({ petX: 200, petY: 400 });
     }
-    this.startPetLoop();
   },
 
+  // === 生命周期：显示页面时 ===
+  onShow() {
+    // 1. 读取用户信息 (从登录页保存的缓存中获取)
+    const userInfo = wx.getStorageSync('userInfo');
+    if (userInfo && userInfo.username) {
+      this.setData({ username: userInfo.username });
+    } else {
+      // 如果未登录进入（调试情况），默认为 Admin
+      this.setData({ username: 'Admin' });
+    }
+
+    // 2. 启动任务栏时钟
+    this.updateTime(); // 先执行一次
+    this.data.timer = setInterval(() => {
+      this.updateTime();
+    }, 60000); // 每分钟更新一次
+
+    // 3. 启动小狮子随机说话
+    this.startPetTalking();
+  },
+
+  // === 生命周期：隐藏/卸载时 ===
+  onHide() {
+    this.clearTimer();
+    this.stopPetTalking();
+  },
   onUnload() {
-    if (this.timer) {
-      clearInterval(this.timer);
-    }
-
-    if (this.petTimer) clearTimeout(this.petTimer);
+    this.clearTimer();
+    this.stopPetTalking();
   },
 
-
-  onTapPet() {
-    // 如果正在说话，就强制换一句
-    this.saySomething(true); 
-    // 播放音效 (可选)
-    wx.vibrateShort();
-  },
-
-  // 2. 随机说话循环
-  startPetLoop() {
-    const loop = () => {
-      // 随机间隔 10~30秒 说一次话
-      const delay = Math.random() * 20000 + 10000;
-      
-      this.petTimer = setTimeout(() => {
-        if (!this.data.showBubble) {
-          this.saySomething();
-        }
-        loop(); // 递归调用
-      }, delay);
-    };
-    loop();
-  },
-
-  // 3. 说话动作
-  saySomething(isInteractive = false) {
-    // 语录库：2005年流行语 + AI 梗 + 贴心提示
-    const quotes = [
-      '偶会一直在桌面上陪着你哒~',
-      '神马都是浮云...',
-      '你在做神马？带偶一起玩嘛！',
-      '该休息一下了，眼睛会痛痛哦。',
-      '听说踩空间能增加人气值？',
-      '客官，给个好评亲~',
-      'CPU 运转正常，心情 100%！',
-      '你是GG还是MM呀？',
-      '主人，右下角的开始菜单里有彩蛋哦！',
-      '不要迷恋哥，哥只是个传说。'
-    ];
-
-    // 如果是用户点击触发的，加入一些互动语录
-    const interactiveQuotes = [
-      '别戳偶，痒~ >_<',
-      '再戳偶就罢工啦！',
-      '是不是无聊了？去聊聊 AI 网友吧！',
-      '蹭蹭~'
-    ];
-
-    const source = isInteractive ? quotes.concat(interactiveQuotes) : quotes;
-    const text = source[Math.floor(Math.random() * source.length)];
-
-    this.setData({
-      petText: text,
-      showBubble: true,
-      isPetTalking: true
-    });
-
-    // 3秒后消失
-    setTimeout(() => {
-      this.setData({
-        showBubble: false,
-        isPetTalking: false
-      });
-    }, 4000);
-  },
-
-  // 更新任务栏时间逻辑
+  // --- 时钟逻辑 ---
   updateTime() {
     const now = new Date();
-    const hour = now.getHours().toString().padStart(2, '0');
-    const minute = now.getMinutes().toString().padStart(2, '0');
-    this.setData({
-      currentTime: `${hour}:${minute}`
-    });
+    let hours = now.getHours();
+    const minutes = now.getMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    
+    // 转换为 12小时制
+    hours = hours % 12;
+    hours = hours ? hours : 12; 
+    
+    // 补零
+    const minutesStr = minutes < 10 ? '0' + minutes : minutes;
+    
+    const timeStr = `${hours}:${minutesStr} ${ampm}`;
+    this.setData({ currentTime: timeStr });
   },
 
+  clearTimer() {
+    if (this.data.timer) {
+      clearInterval(this.data.timer);
+      this.data.timer = null;
+    }
+  },
+
+  // --- 🦁 电子宠物互动逻辑 ---
+
+  // 点击小狮子
+  onPetTap() {
+    // 1. 震动反馈
+    wx.vibrateShort();
+    
+    // 2. 随机说一句话
+    const randomIndex = Math.floor(Math.random() * LION_QUOTES.length);
+    const msg = LION_QUOTES[randomIndex];
+    
+    this.setData({ petMessage: msg });
+
+    // 3. 3秒后气泡自动消失
+    setTimeout(() => {
+      // 只有当前消息没变时才清除（防止覆盖新触发的消息）
+      if (this.data.petMessage === msg) {
+        this.setData({ petMessage: '' });
+      }
+    }, 3000);
+  },
+
+  // 启动自动唠叨模式
+  startPetTalking() {
+    // 防止重复启动
+    if (this.data.petTimer) return;
+
+    this.data.petTimer = setInterval(() => {
+      // 30% 的概率自动说话，避免太吵
+      if (Math.random() > 0.7) {
+        this.onPetTap();
+      }
+    }, 8000); // 每8秒尝试一次
+  },
+
+  // 停止唠叨
+  stopPetTalking() {
+    if (this.data.petTimer) {
+      clearInterval(this.data.petTimer);
+      this.data.petTimer = null;
+    }
+  },
+
+  // --- 交互逻辑 ---
+
+  // 🖱️ 点击开始按钮
   toggleStartMenu() {
     this.setData({
-      isStartMenuOpen: !this.data.isStartMenuOpen
+      showStartMenu: !this.data.showStartMenu
     });
-    // 可以在这里加入点击音效
   },
 
-  // 处理开始菜单项点击
-  onMenuClick(e) {
-    const action = e.currentTarget.dataset.action;
-    this.setData({ isStartMenuOpen: false });
-
-    switch(action) {
-      case 'shutdown':
-        wx.showModal({
-          title: '正在关机...',
-          content: '现在您可以安全地关闭微信了。',
-          showCancel: false,
-          confirmText: '重启' 
-        });
-        break;
-      case 'run':
-        wx.showToast({ title: 'C:\\> System32', icon: 'none' });
-        break;
-      // 可以在这里扩展更多菜单功能
+  // 🖱️ 点击桌面空白处 (关闭开始菜单)
+  closeStartMenu() {
+    if (this.data.showStartMenu) {
+      this.setData({ showStartMenu: false });
     }
   },
 
-  onTapMars() {
-    wx.vibrateShort(); 
-    wx.navigateTo({ url: '/pages/mars/index' })
-  },
+  // 🔑 注销 (Log Off)
+  onLogOff() {
+    this.setData({ showStartMenu: false }); // 先关菜单
+    
+    wx.showModal({
+      title: 'Log Off Windows',
+      content: `Are you sure you want to log off ${this.data.username}?`,
+      confirmText: 'Yes',
+      cancelText: 'No',
+      success: (res) => {
+        if (res.confirm) {
+          // 1. 清除登录缓存
+          wx.removeStorageSync('userInfo');
+          
+          // 2. 震动反馈
+          wx.vibrateShort();
 
-  onTapAvatar() {
-    wx.vibrateShort();
-    wx.navigateTo({ url: '/pages/avatar/index' })
-  },
-
-  onTapAIChat() {
-    wx.vibrateShort();
-    wx.navigateTo({
-      url: '/pages/chat/index'
+          // 3. 跳转回登录页 (关闭所有页面)
+          wx.reLaunch({
+            url: '/pages/login/index'
+          });
+        }
+      }
     });
   },
 
-  onTapTranslator() {
-    wx.vibrateShort();
+  // --- 桌面图标跳转 ---
+
+  // ℹ️ 关于系统 (我的电脑)
+  openAbout() {
+    wx.navigateTo({ url: '/pages/about/index' });
+    this.closeStartMenu();
+  },
+
+  // 💬 我的网友 (AI聊天)
+  openChat() {
+    wx.navigateTo({ url: '/pages/chat/index' });
+    this.closeStartMenu();
+  },
+
+  // 🪐 火星文转换
+  openMars() {
+    wx.navigateTo({ url: '/pages/mars/index' });
+    this.closeStartMenu();
+  },
+
+  // 💔 心情转译机
+  openTranslator() {
     wx.navigateTo({ url: '/pages/translator/index' });
+    this.closeStartMenu();
   },
 
-  onTapAbout() {
-// 如果是从开始菜单点击，先关闭菜单
-    if (this.data.isStartMenuOpen) {
-      this.setData({ isStartMenuOpen: false });
-    }
-    
-    // 播放一个警告音效会更有趣（如果有的话）
-    
-    // 跳转到蓝屏页面
-    wx.navigateTo({
-      url: '/pages/about/index'
+  // 📸 非主流大头贴
+  openAvatar() {
+    wx.navigateTo({ url: '/pages/avatar/index' });
+    this.closeStartMenu();
+  },
+
+  // 🗑️ 回收站 (装饰性功能)
+  openRecycle() {
+    wx.showToast({
+      title: 'Recycle Bin is empty',
+      icon: 'none'
     });
+    this.closeStartMenu();
   }
 });

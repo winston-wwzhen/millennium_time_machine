@@ -1,166 +1,210 @@
-/* 继承全局复古样式 */
-page {
-  height: 100%;
-  font-family: "宋体", sans-serif;
-  overflow: hidden;
-}
-
-.desktop {
-  width: 100%;
-  height: 100%;
+/* 页面容器：经典的 Windows 桌面青色 */
+.container {
+  width: 100vw;
+  height: 100vh;
   background-color: #008080;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 20rpx;
 }
 
+/* 主窗口框架：银灰色背景 + 3D 凸起边框 */
 .window-frame {
-  width: 90%;
-  height: auto;
-  min-height: 400px;
+  width: 100%;
+  max-width: 680rpx;
   background-color: #c0c0c0;
-  border-top: 2px solid #fff;
-  border-left: 2px solid #fff;
-  border-right: 2px solid #000;
-  border-bottom: 2px solid #000;
-  box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+  /* 经典的 Windows 窗口 3D 边框写法 */
+  border-top: 2px solid #dfdfdf;
+  border-left: 2px solid #dfdfdf;
+  border-right: 2px solid #000000;
+  border-bottom: 2px solid #000000;
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
 }
 
+/* 标题栏：深蓝渐变色 */
 .title-bar {
-  background: linear-gradient(90deg, #800080, #ff69b4); /* 紫色渐变，带点神秘感 */
-  height: 28px;
+  height: 60rpx;
+  /* 98/2000 经典的渐变蓝 */
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: 0 4px;
-  margin: 3px;
+  align-items: center;
+  padding: 0 8rpx;
+  margin: 4rpx;
 }
 
-.title-text {
-  color: white;
-  font-size: 14px;
+.title {
+  color: #ffffff;
   font-weight: bold;
+  font-size: 26rpx;
+  letter-spacing: 1px;
 }
 
-.btn-close {
-  width: 20px;
-  height: 18px;
-  background: #c0c0c0;
-  border: 1px solid;
-  border-color: #fff #000 #000 #fff;
-  text-align: center;
-  line-height: 16px;
-  font-weight: bold;
-}
-
-.menu-bar {
+/* 窗口右上角的控制按钮 */
+.controls {
   display: flex;
-  gap: 15px;
-  padding: 2px 10px;
-  font-size: 14px;
-  margin-bottom: 5px;
-  border-bottom: 1px solid #808080;
+  gap: 4rpx;
 }
 
-.window-body {
-  padding: 15px;
-  flex: 1;
-}
-
-.section-label {
-  font-size: 12px;
-  margin-bottom: 5px;
-  color: #333;
-  font-weight: bold;
-}
-
-/* 输入框：愤怒红 */
-.input-area {
-  width: 100%;
-  height: 80px;
-  background: #fff0f0; /* 淡红背景 */
-  border: 2px solid;
-  border-color: #808080 #fff #fff #808080;
-  padding: 5px;
-  box-sizing: border-box;
-  font-size: 14px;
-  margin-bottom: 15px;
-  color: #8b0000;
-}
-
-/* 输出框：和平绿 */
-.output-area {
-  width: 100%;
-  min-height: 80px;
-  background: #f0fff0; /* 淡绿背景 */
-  border: 2px solid;
-  border-color: #808080 #fff #fff #808080;
-  padding: 10px;
-  box-sizing: border-box;
-  font-size: 14px;
-  color: #006400;
-}
-
-.placeholder-text {
-  color: #999;
-  font-style: italic;
-}
-
-.action-area {
-  margin-bottom: 15px;
+.controls .btn {
+  width: 32rpx;
+  height: 32rpx;
+  background-color: #c0c0c0;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #000000;
+  border-bottom: 1px solid #000000;
   display: flex;
   justify-content: center;
-  height: 35px;
-}
-
-.retro-btn {
-  background: #c0c0c0;
-  border-top: 2px solid #fff;
-  border-left: 2px solid #fff;
-  border-right: 2px solid #000;
-  border-bottom: 2px solid #000;
-  padding: 8px 30px;
-  font-size: 14px;
-  font-weight: bold;
-  display: flex;
   align-items: center;
+  font-size: 20rpx;
+  line-height: 20rpx;
+  color: #000;
+  font-weight: bold;
 }
 
-.retro-btn:active {
-  border-top: 2px solid #000;
-  border-left: 2px solid #000;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 9px 29px 7px 31px;
+/* 内容区域 */
+.content-area {
+  padding: 24rpx;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
-/* 进度条动画 */
-.progress-bar-border {
+.label {
+  font-size: 28rpx;
+  margin-bottom: 12rpx;
+  color: #000;
+}
+
+/* 输入框：3D 凹陷效果 */
+.input-box {
   width: 100%;
-  height: 25px;
-  border: 1px solid #000;
-  padding: 1px;
-  background: #fff;
+  height: 180rpx;
+  background-color: #ffffff;
+  /* 凹陷边框：左上黑，右下白 */
+  border-top: 2px solid #404040;
+  border-left: 2px solid #404040;
+  border-right: 2px solid #ffffff;
+  border-bottom: 2px solid #ffffff;
+  padding: 12rpx;
+  box-sizing: border-box;
+  font-size: 28rpx;
+  line-height: 1.5;
+  margin-bottom: 20rpx;
+  color: #333;
 }
 
-.progress-bar-fill {
-  height: 100%;
-  background: #000080;
-  width: 0%;
-  animation: loading 1.5s linear forwards;
+/* 按钮区域 */
+.action-box {
+  display: flex;
+  justify-content: flex-end; /* 按钮靠右 */
+  margin-bottom: 30rpx;
 }
 
-@keyframes loading {
-  0% { width: 0%; }
-  100% { width: 100%; }
+/* 复古按钮样式 */
+.retro-btn {
+  background-color: #c0c0c0;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #000000;
+  border-bottom: 2px solid #000000;
+  padding: 10rpx 40rpx;
+  font-size: 28rpx;
+  color: #000;
+  border-radius: 0; /* 去掉圆角 */
+  margin: 0;
+  line-height: 1.5;
+  transition: none; /* 去掉现代动画 */
 }
 
+/* 按钮点击态：变为凹陷 */
+.retro-btn:active {
+  border-top: 2px solid #000000;
+  border-left: 2px solid #000000;
+  border-right: 2px solid #ffffff;
+  border-bottom: 2px solid #ffffff;
+  transform: translate(2rpx, 2rpx); /* 物理位移 */
+}
+
+/* 按钮禁用态 */
+.retro-btn.disabled {
+  color: #808080; /* 灰色字 */
+  text-shadow: 1px 1px 0px #ffffff; /* 浮雕文字效果 */
+}
+
+/* 结果展示区：黑底绿字 (Matrix风格/CMD风格) */
+.result-box {
+  background-color: #000000;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #ffffff;
+  border-bottom: 2px solid #ffffff;
+  padding: 20rpx;
+  animation: fadeIn 0.5s ease;
+}
+
+.result-box .label {
+  color: #c0c0c0;
+  font-size: 24rpx;
+  margin-bottom: 8rpx;
+}
+
+.output-text {
+  color: #00ff00; /* 荧光绿 */
+  font-family: monospace; /* 等宽字体 */
+  font-size: 30rpx;
+  line-height: 1.6;
+  min-height: 80rpx;
+  word-break: break-all;
+}
+
+.tip {
+  font-size: 22rpx;
+  color: #666;
+  text-align: right;
+  margin-top: 10rpx;
+}
+
+/* 底部状态栏 */
 .status-bar {
-  margin-top: 10px;
-  padding: 2px 5px;
-  font-size: 12px;
-  color: #555;
+  margin: 4rpx;
+  padding: 6rpx 10rpx;
+  /* 凹陷边框 */
   border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
+  display: flex;
+  justify-content: space-between;
+  font-size: 22rpx;
+  color: #000;
+  background-color: #c0c0c0;
+}
+
+/* 简单的淡入动画 */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 控制按钮的点击态：模拟凹陷效果 */
+.controls .btn-active {
+  /* 边框反转：左上变黑，右下变白 */
+  border-top: 1px solid #000000 !important;
+  border-left: 1px solid #000000 !important;
+  border-right: 1px solid #ffffff !important;
+  border-bottom: 1px solid #ffffff !important;
+  /* 物理位移 */
+  transform: translate(1px, 1px); 
+}
+
+/* 稍微把关闭按钮的叉号调大一点，方便点击 */
+.controls .close-btn {
+  font-size: 24rpx; 
+  line-height: 28rpx;
 }

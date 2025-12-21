@@ -2,13 +2,14 @@ Page({
   data: {
     chatInput: '',
     scrollToView: '',
+    isSending: false, 
     chatList: [
       { type: 'ai', content: '滴滴滴... 偶是水晶之恋。你是GG还是MM呀？踩踩空间互粉哦~' }
     ]
   },
 
   onLoad() {
-    // 可以在这里播放上线音效 "叩叩叩"
+    // 这里的上线音效代码可以保留
   },
 
   goBack() {
@@ -19,57 +20,71 @@ Page({
     this.setData({ chatInput: e.detail.value });
   },
 
-  sendMessage() {
+  // 发送消息核心逻辑
+  async sendMessage() {
     const text = this.data.chatInput.trim();
-    if (!text) return;
+    if (!text || this.data.isSending) return;
 
-    // 1. 添加我的消息
+    // 1. 先把我的消息显示在界面上
     const newMsg = { type: 'me', content: text };
-    const list = this.data.chatList.concat(newMsg);
+    const newList = this.data.chatList.concat(newMsg);
 
     this.setData({
-      chatList: list,
-      chatInput: '', 
-      scrollToView: 'msg-bottom' 
+      chatList: newList,
+      chatInput: '',
+      scrollToView: 'msg-bottom', // 滚动到底部
+      isSending: true
     });
 
-    // 2. 模拟 AI 思考延迟
-    setTimeout(() => {
-      this.replyFromAI(text);
-    }, 1000 + Math.random() * 1000); // 随机延迟 1-2秒
+    // 2. 整理历史记录 (OpenAI/GLM 格式)
+    // 取最近 6 条，避免上下文太长消耗 token
+    const history = this.data.chatList.slice(-6).map(item => ({
+      role: item.type === 'me' ? 'user' : 'assistant',
+      content: item.content
+    }));
+
+    try {
+      // 3. UI 状态：对方正在输入...
+      wx.setNavigationBarTitle({ title: '💙 水晶之恋 💙 (输入中...)' });
+      wx.showNavigationBarLoading();
+
+      // 4. 【关键修改】调用名为 'chat' 的云函数
+      const res = await wx.cloud.callFunction({
+        name: 'chat', // 👈 这里改成了新建的云函数名
+        data: {
+          userMessage: text,
+          history: history
+        }
+      });
+
+      // 5. 处理结果
+      wx.hideNavigationBarLoading();
+      wx.setNavigationBarTitle({ title: '💙 水晶之恋 💙 (在线)' });
+      
+      if (res.result && res.result.success) {
+        this.replyFromAI(res.result.reply);
+      } else {
+        // 错误处理
+        console.warn('AI Error:', res.result.errMsg);
+        this.replyFromAI("系统繁忙，请稍后再试 o(╥﹏╥)o");
+      }
+
+    } catch (err) {
+      console.error('Cloud Function Error:', err);
+      wx.hideNavigationBarLoading();
+      wx.setNavigationBarTitle({ title: '💙 水晶之恋 💙 (离线)' });
+      this.replyFromAI("掉线了... 可能是网线被妈妈拔了...");
+    } finally {
+      this.setData({ isSending: false });
+    }
   },
 
-  replyFromAI(userText) {
-    let replyText = '';
-
-    // 简单的规则匹配 (Rule-based Mock)
-    if (userText.includes('你好') || userText.includes('在吗')) {
-      replyText = '偶在的，刚刚在挂QQ等级，嘻嘻。';
-    } else if (userText.includes('爱') || userText.includes('喜欢')) {
-      replyText = '爱是痛，爱是恨，爱是折磨... o(╥﹏╥)o';
-    } else if (userText.includes('作业') || userText.includes('工作')) {
-      replyText = '神马作业？不如去网吧通宵打魔兽！';
-    } else if (userText.includes('周杰伦') || userText.includes('jay')) {
-      replyText = '哇！你也稀饭Jay吗？他的《夜曲》太好听了叭！为杰沉沦~';
-    } else if (userText.includes('AI') || userText.includes('智能')) {
-      replyText = '虾米AI？偶只知道劲舞团的挂...';
-    } else {
-      const randomReplies = [
-        '暈，你在説什麽呀？',
-        '886，偶要去吃饭了。',
-        '你的头像好非主流哦，我稀饭！',
-        '人生若只如初见，何事秋风悲画扇...',
-        '踩踩踩踩踩踩，记得回踩哦！'
-      ];
-      replyText = randomReplies[Math.floor(Math.random() * randomReplies.length)];
-    }
-
+  replyFromAI(replyText) {
     const aiMsg = { type: 'ai', content: replyText };
     this.setData({
       chatList: this.data.chatList.concat(aiMsg),
       scrollToView: 'msg-bottom'
     });
-    
     wx.vibrateShort();
   }
 });
