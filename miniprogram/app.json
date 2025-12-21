@@ -7,7 +7,6 @@
     "pages/chat/index",
     "pages/translator/index",
     "pages/about/index",
-    "pages/minesweeper/index",
     "pages/star-explorer/index"
   ],
   "window": {

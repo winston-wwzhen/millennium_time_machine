@@ -33,7 +33,7 @@
     <view style="height: 20rpx;"></view>
     <view class="desktop-icon" bindtap="openStarExplorer" hover-class="icon-active">
       <text class="icon-emoji">🌌</text>
-      <text class="icon-text glitch-text" data-text="星域探险">星域探险</text>
+      <text class="icon-text glitch-text" data-text="星域探险">葬爱·心碎.exe</text>
     </view>
   </view>
 

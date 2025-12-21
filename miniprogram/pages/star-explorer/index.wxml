@@ -1,129 +1,102 @@
-<!-- 难度选择界面 -->
-<view class="container" wx:if="{{showDifficulty}}">
-  <view class="difficulty-header">
-    <text class="title">星域探险</text>
-    <text class="subtitle">选择你的探险难度</text>
-  </view>
+<view class="win98-desktop">
 
-  <view class="difficulty-cards">
-    <view class="difficulty-card beginner" bindtap="selectDifficulty" data-level="beginner">
-      <view class="card-icon">🌟</view>
-      <view class="card-name">新手探索者</view>
-      <view class="card-size">9×9</view>
-      <view class="card-danger">10个黑洞</view>
-      <view class="card-desc">适合初次接触星域探索的冒险者</view>
-      <view class="card-record" wx:if="{{bestRecords.beginner}}">
-        最佳记录：{{bestRecords.beginner}}秒
-      </view>
-    </view>
+<view class="window-container game-window">
+  
+  <view class="menu-overlay" wx:if="{{showGameMenu}}" catchtap="closeMenu"></view>
 
-    <view class="difficulty-card intermediate" bindtap="selectDifficulty" data-level="intermediate">
-      <view class="card-icon">🚀</view>
-      <view class="card-name">资深领航员</view>
-      <view class="card-size">16×16</view>
-      <view class="card-danger">40个黑洞</view>
-      <view class="card-desc">具备丰富经验的宇宙旅行者</view>
-      <view class="card-record" wx:if="{{bestRecords.intermediate}}">
-        最佳记录：{{bestRecords.intermediate}}秒
-      </view>
-    </view>
-
-    <view class="difficulty-card expert" bindtap="selectDifficulty" data-level="expert">
-      <view class="card-icon">💫</view>
-      <view class="card-name">传奇指挥官</view>
-      <view class="card-size">16×30</view>
-      <view class="card-danger">99个黑洞</view>
-      <view class="card-desc">只有最勇敢的才能挑战极限</view>
-      <view class="card-record" wx:if="{{bestRecords.expert}}">
-        最佳记录：{{bestRecords.expert}}秒
-      </view>
+  <view class="title-bar">
+    <view class="title-text">{{headerTitle}}</view>
+    <view class="title-controls">
+      <view class="control-box">_</view>
+      <view class="control-box" bindtap="exitGame">×</view>
     </view>
   </view>
 
-  <view class="back-button" bindtap="goBack">
-    <text class="back-icon">←</text>
-    <text class="back-text">返回桌面</text>
+  <view class="menu-bar">
+    <view class="menu-item {{showGameMenu ? 'active' : ''}}" catchtap="toggleGameMenu">
+      <text class="menu-text">选 择(S)</text>
+      
+      <view class="dropdown-menu bevel-outset" wx:if="{{showGameMenu}}">
+        <view class="menu-option" catchtap="menuRestart">
+          <text class="option-text">重 来 (F2)</text>
+        </view>
+        
+        <view class="menu-separator"></view>
+        
+        <view class="menu-option" catchtap="changeDifficulty" data-level="beginner">
+          <text class="check-mark">{{currentDifficulty === 'beginner' ? '√' : ''}}</text>
+          <text class="option-text">★微笑着流泪★</text>
+        </view>
+        
+        <view class="menu-option" catchtap="changeDifficulty" data-level="intermediate">
+          <text class="check-mark">{{currentDifficulty === 'intermediate' ? '√' : ''}}</text>
+          <text class="option-text">◆寂寞在唱歌◆</text>
+        </view>
+        
+        <view class="menu-option" catchtap="changeDifficulty" data-level="expert">
+          <text class="check-mark">{{currentDifficulty === 'expert' ? '√' : ''}}</text>
+          <text class="option-text">☣被伤过的心☣</text>
+        </view>
+
+        <view class="menu-separator"></view>
+        
+        <view class="menu-option" catchtap="exitGame">
+          <text class="option-text">离 开(X)</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="menu-item" bindtap="closeMenu">
+      <text class="menu-text">帮 助(H)</text>
+    </view>
+  </view>
+
+  <view class="window-body game-body">
+    <view class="status-panel bevel-inset">
+      <view class="led-wrapper">
+         <text class="led-label">心碎</text>
+         <view class="led-counter">{{beaconsLeft < 10 ? '00' + beaconsLeft : (beaconsLeft < 100 ? '0' + beaconsLeft : beaconsLeft)}}</view>
+      </view>
+      
+      <view class="face-btn bevel-outset" bindtap="resetGame">
+        {{gameState === 'lost' ? '(T^T)' : (gameState === 'won' ? '(>‿◠)' : '(¬_¬)')}}
+      </view>
+      
+      <view class="led-wrapper">
+         <text class="led-label">时间</text>
+         <view class="led-counter">{{timeElapsed < 10 ? '00' + timeElapsed : (timeElapsed < 100 ? '0' + timeElapsed : (timeElapsed > 999 ? 999 : timeElapsed))}}</view>
+      </view>
+    </view>
+
+    <scroll-view scroll-x scroll-y enable-flex class="board-scroll-container bevel-inset">
+      <view class="game-board" 
+            style="grid-template-columns: repeat({{difficulty[currentDifficulty].cols}}, {{cellSize}}px); width: {{difficulty[currentDifficulty].cols * cellSize}}px;">
+        
+        <view class="cell {{item.revealed ? 'revealed' : 'unrevealed'}}"
+              wx:for="{{grid}}"
+              wx:key="index"
+              data-row="{{item.row}}"
+              data-col="{{item.col}}"
+              bindtap="handleTap"
+              bindlongpress="handleLongPress"
+              style="width: {{cellSize}}px; height: {{cellSize}}px; line-height: {{cellSize}}px;">
+          
+          <block wx:if="{{!item.revealed}}">
+            <text wx:if="{{item.marked}}" class="icon icon-flag">🚬</text>
+          </block>
+          <block wx:else>
+            <text wx:if="{{item.isBlackHole}}" class="icon icon-mine">💔</text>
+            <text wx:elif="{{item.count > 0}}" class="number number-{{item.count}}">{{item.count}}</text>
+          </block>
+
+        </view>
+      </view>
+    </scroll-view>
+
+    <view class="emo-footer">
+      <text class="emo-text">{{randomQuote}}</text>
+    </view>
+    
   </view>
 </view>
-
-<!-- 游戏界面 -->
-<view class="game-container" wx:else>
-  <!-- 状态栏 -->
-  <view class="status-bar">
-    <view class="status-item">
-      <text class="status-icon">🔭</text>
-      <text class="status-label">信标</text>
-      <text class="status-value">{{beaconsLeft}}</text>
-    </view>
-
-    <view class="status-item">
-      <text class="status-icon">⏱️</text>
-      <text class="status-label">时间</text>
-      <text class="status-value">{{timeElapsed}}</text>
-    </view>
-
-    <view class="status-item">
-      <text class="status-icon">{{difficulty[currentDifficulty].icon}}</text>
-      <text class="status-label">{{difficulty[currentDifficulty].name}}</text>
-    </view>
-  </view>
-
-  <!-- 游戏棋盘 -->
-  <view class="game-board {{shake ? 'shake' : ''}}"
-        style="grid-template-columns: repeat({{difficulty[currentDifficulty].cols}}, {{cellSize}}px);"
-  >
-    <view class="cell {{item.revealed ? 'revealed' : ''}} {{item.isBlackHole && item.revealed ? 'blackhole' : ''}} {{item.marked ? 'marked' : ''}}"
-          wx:for="{{grid}}"
-          wx:key="index"
-          data-row="{{item.row}}"
-          data-col="{{item.col}}"
-          bindtap="handleTap"
-          bindlongpress="handleLongPress"
-          style="width: {{cellSize}}px; height: {{cellSize}}px;"
-    >
-      <!-- 未揭示的格子 -->
-      <view wx:if="{{!item.revealed}}" class="cell-content">
-        <text wx:if="{{item.marked}}" class="mark-icon">🔭</text>
-      </view>
-
-      <!-- 已揭示的格子 -->
-      <view wx:else class="cell-content revealed-content">
-        <!-- 黑洞 -->
-        <text wx:if="{{item.isBlackHole}}" class="blackhole-icon">⚫</text>
-        <!-- 数字 -->
-        <text wx:elif="{{item.count > 0}}" class="number-{{item.count}}">{{item.count}}</text>
-        <!-- 星星动画 -->
-        <view wx:elif="{{item.starRevealed}}" class="star-particle"></view>
-      </view>
-
-      <!-- 黑洞动画 -->
-      <view wx:for="{{blackholes}}" wx:key="id" wx:if="{{item.index === index}}"
-            class="blackhole-animation"></view>
-    </view>
-  </view>
-
-  <!-- 游戏结果提示 -->
-  <view class="game-message" wx:if="{{gameState !== 'playing'}}">
-    <text class="message-emoji">{{gameState === 'won' ? '🎉' : '💥'}}</text>
-    <text class="message-text">{{gameState === 'won' ? '探索成功！' : '坠入黑洞！'}}</text>
-    <text class="message-time">用时：{{timeElapsed}}秒</text>
-  </view>
-
-  <!-- 控制按钮 -->
-  <view class="control-buttons">
-    <button class="control-btn" bindtap="initGame" data-difficulty="{{currentDifficulty}}">
-      🔄 重新开始
-    </button>
-    <button class="control-btn" bindtap="backToDifficulty">
-      📋 选择难度
-    </button>
-  </view>
-
-  <!-- 星星动画层 -->
-  <view class="animation-layer">
-    <view class="star" wx:for="{{stars}}" wx:key="id"
-          style="left: {{item.x}}%; top: {{item.y}}%; opacity: {{item.opacity}};">
-      ✨
-    </view>
-  </view>
 </view>

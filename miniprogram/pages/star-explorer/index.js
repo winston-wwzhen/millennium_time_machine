@@ -1,172 +1,163 @@
-// 难度配置
+// miniprogram/pages/star-explorer/index.js
+
 const DIFFICULTY_LEVELS = {
   beginner: {
-    name: '新手探索者',
+    name: '★微笑着流泪★', // 原新手
+    desc: '9x9 (入门)',
     rows: 9,
     cols: 9,
-    mines: 10,
-    icon: '🌟',
-    description: '适合初次接触星域探索的冒险者'
+    mines: 10
   },
   intermediate: {
-    name: '资深领航员',
+    name: '◆寂寞在唱歌◆', // 原资深
+    desc: '16x16 (进阶)',
     rows: 16,
     cols: 16,
-    mines: 40,
-    icon: '🚀',
-    description: '具备丰富经验的宇宙旅行者'
+    mines: 40
   },
   expert: {
-    name: '传奇指挥官',
+    name: '☣被伤过的心☣', // 原传奇
+    desc: '16x30 (极限)',
     rows: 16,
     cols: 30,
-    mines: 99,
-    icon: '💫',
-    description: '只有最勇敢的才能挑战极限'
+    mines: 99
   }
 };
 
+// 随机生成的抽象语录
+const EMO_QUOTES = [
+  "错的不是我，是这个世界...",
+  "莪們是糖，甜到忧伤。",
+  "别流泪，坏人会笑。",
+  "45度角仰望天空。",
+  "葬爱家族，永远不死。"
+];
+
 Page({
   data: {
-    showDifficulty: true, // 是否显示难度选择界面
-    currentDifficulty: null,
     difficulty: DIFFICULTY_LEVELS,
-    bestRecords: {}, // 最佳记录
-
-    // 游戏数据
-    grid: [], // 一维数组存储格子数据
-    cellSize: 32, // 根据屏幕宽度动态计算
-    gameState: 'playing', // playing, won, lost
-    beaconsLeft: 0, // 剩余信标数（原旗帜）
+    currentDifficulty: 'beginner',
+    showGameMenu: false,
+    
+    grid: [],
+    cellSize: 32,
+    gameState: 'ready', // ready, playing, won, lost
+    beaconsLeft: 10,
     timeElapsed: 0,
-    shake: false, // 控制震动动画类
-
-    // 动画效果
-    stars: [], // 星星动画数组
-    blackholes: [] // 黑洞动画数组
+    
+    // 动态标题
+    headerTitle: '葬爱·扫雷.exe',
+    randomQuote: EMO_QUOTES[0],
+    
+    bestRecords: {}
   },
 
   timer: null,
-  difficultyTimer: null,
 
   onLoad() {
-    // 加载最佳记录
     this.loadBestRecords();
+    this.initGame(DIFFICULTY_LEVELS[this.data.currentDifficulty]);
+    
+    // 随机显示一句非主流语录
+    const randomIdx = Math.floor(Math.random() * EMO_QUOTES.length);
+    this.setData({ randomQuote: EMO_QUOTES[randomIdx] });
   },
 
   onUnload() {
     this.stopTimer();
-    if (this.difficultyTimer) {
-      clearTimeout(this.difficultyTimer);
-    }
   },
 
-  // 加载最佳记录
-  loadBestRecords() {
-    try {
-      const records = wx.getStorageSync('starExplorerRecords') || {};
-      this.setData({ bestRecords: records });
-    } catch (e) {
-      console.error('加载记录失败', e);
-    }
+  // --- 菜单逻辑 ---
+
+  toggleGameMenu() {
+    this.setData({
+      showGameMenu: !this.data.showGameMenu
+    });
   },
 
-  // 保存最佳记录
-  saveBestRecord() {
-    if (this.data.gameState !== 'won') return;
-
-    const level = this.data.currentDifficulty;
-    const time = this.data.timeElapsed;
-    const records = this.data.bestRecords;
-
-    if (!records[level] || time < records[level]) {
-      records[level] = time;
-      this.setData({ bestRecords: records });
-      wx.setStorageSync('starExplorerRecords', records);
-
-      wx.showToast({
-        title: '新纪录！',
-        icon: 'success'
-      });
-    }
+  closeMenu() {
+    this.setData({
+      showGameMenu: false
+    });
   },
 
-  // 选择难度
-  selectDifficulty(e) {
+  menuRestart() {
+    this.closeMenu();
+    this.resetGame();
+  },
+
+  changeDifficulty(e) {
     const level = e.currentTarget.dataset.level;
-    const difficulty = DIFFICULTY_LEVELS[level];
-
+    
     this.setData({
       currentDifficulty: level,
-      showDifficulty: false,
-      beaconsLeft: difficulty.mines
+      showGameMenu: false
     });
 
-    // 延迟初始化，让界面先切换
-    this.difficultyTimer = setTimeout(() => {
-      this.initGame(difficulty);
-    }, 300);
+    const config = DIFFICULTY_LEVELS[level];
+    const cellSize = this.calculateCellSize(config.rows, config.cols);
+    this.setData({ cellSize });
+
+    this.initGame(config);
   },
 
-  // 返回难度选择
-  backToDifficulty() {
-    this.stopTimer();
-    this.setData({
-      showDifficulty: true,
-      currentDifficulty: null,
-      gameState: 'playing',
-      shake: false,
-      stars: [],
-      blackholes: []
-    });
+  exitGame() {
+    wx.navigateBack();
   },
 
-  // 计算格子大小以适应屏幕
+  // --- 核心逻辑 ---
+
   calculateCellSize(rows, cols) {
     const { windowWidth, windowHeight } = wx.getSystemInfoSync();
-    // 考虑顶部信息栏高度
-    const availableHeight = windowHeight * 0.65;
-    const availableWidth = windowWidth * 0.9;
+    
+    // 减去窗口边框和内边距
+    const maxWidth = windowWidth - 40; 
+    const maxHeight = windowHeight - 200; // 稍微留多一点空间给顶部的语录
 
-    const cellHeight = Math.floor(availableHeight / rows);
-    const cellWidth = Math.floor(availableWidth / cols);
+    let sizeW = Math.floor(maxWidth / cols);
+    let sizeH = Math.floor(maxHeight / rows);
+    let size = Math.min(sizeW, sizeH);
 
-    return Math.min(cellHeight, cellWidth, 40); // 最大不超过40px
+    // 保证新手模式下格子够大，撑满屏幕
+    return Math.min(Math.max(size, 28), 80);
   },
 
-  // 初始化游戏
-  initGame(difficulty) {
+  initGame(config) {
     this.stopTimer();
-    const { rows, cols, mines } = difficulty;
-    const cellSize = this.calculateCellSize(rows, cols);
+    
+    // 确保尺寸正确
+    const cellSize = this.calculateCellSize(config.rows, config.cols);
+    this.setData({ cellSize });
+
+    const { rows, cols, mines } = config;
     const grid = [];
 
-    // 创建格子
+    // 生成格子
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
         grid.push({
           row: r,
           col: c,
-          isBlackHole: false, // 改为黑洞
+          index: r * cols + c,
+          isBlackHole: false,
           revealed: false,
-          marked: false, // 改为标记
-          count: 0,
-          starRevealed: false // 星星揭示动画标记
+          marked: false,
+          count: 0
         });
       }
     }
 
-    // 布置黑洞
-    let blackHolesPlaced = 0;
-    while (blackHolesPlaced < mines) {
+    // 随机布雷 (心碎)
+    let minesPlaced = 0;
+    while (minesPlaced < mines) {
       const idx = Math.floor(Math.random() * (rows * cols));
       if (!grid[idx].isBlackHole) {
         grid[idx].isBlackHole = true;
-        blackHolesPlaced++;
+        minesPlaced++;
       }
     }
 
-    // 计算周围黑洞数
+    // 计算数字
     for (let i = 0; i < grid.length; i++) {
       if (!grid[i].isBlackHole) {
         const neighbors = this.getNeighbors(grid[i].row, grid[i].col, rows, cols);
@@ -180,21 +171,94 @@ Page({
 
     this.setData({
       grid,
-      cellSize,
-      gameState: 'playing',
+      beaconsLeft: mines,
       timeElapsed: 0,
-      shake: false,
-      stars: [],
-      blackholes: []
+      gameState: 'playing'
     });
 
-    // 启动计时器
     this.timer = setInterval(() => {
-      this.setData({ timeElapsed: this.data.timeElapsed + 1 });
+      if (this.data.timeElapsed < 999) {
+        this.setData({
+          timeElapsed: this.data.timeElapsed + 1
+        });
+      }
     }, 1000);
   },
 
-  // 获取周围格子索引
+  resetGame() {
+    const config = DIFFICULTY_LEVELS[this.data.currentDifficulty];
+    // 重置时换一句语录
+    const randomIdx = Math.floor(Math.random() * EMO_QUOTES.length);
+    this.setData({ randomQuote: EMO_QUOTES[randomIdx] });
+    this.initGame(config);
+  },
+
+  // --- 交互事件 ---
+
+  handleTap(e) {
+    if (this.data.gameState !== 'playing') return;
+    if (this.data.showGameMenu) {
+      this.closeMenu();
+      return;
+    }
+
+    const { row, col } = e.currentTarget.dataset;
+    const config = DIFFICULTY_LEVELS[this.data.currentDifficulty];
+    const idx = row * config.cols + col;
+    const cell = this.data.grid[idx];
+
+    if (cell.revealed || cell.marked) return;
+
+    if (cell.isBlackHole) {
+      this.gameOver(false);
+    } else {
+      this.revealCell(idx, config.rows, config.cols);
+      this.checkWin();
+    }
+  },
+
+  handleLongPress(e) {
+    if (this.data.gameState !== 'playing') return;
+    if (this.data.showGameMenu) {
+        this.closeMenu();
+        return;
+    }
+
+    wx.vibrateShort({ type: 'heavy' });
+
+    const { row, col } = e.currentTarget.dataset;
+    const config = DIFFICULTY_LEVELS[this.data.currentDifficulty];
+    const idx = row * config.cols + col;
+    const cellPath = `grid[${idx}]`;
+    const cell = this.data.grid[idx];
+
+    if (!cell.revealed) {
+      const isMarked = !cell.marked;
+      this.setData({
+        [`${cellPath}.marked`]: isMarked,
+        beaconsLeft: this.data.beaconsLeft + (isMarked ? -1 : 1)
+      });
+    }
+  },
+
+  revealCell(idx, rows, cols) {
+    const grid = this.data.grid;
+    if (grid[idx].revealed || grid[idx].marked) return;
+
+    grid[idx].revealed = true;
+
+    if (grid[idx].count === 0) {
+      const neighbors = this.getNeighbors(grid[idx].row, grid[idx].col, rows, cols);
+      neighbors.forEach(nIdx => {
+        if (!grid[nIdx].revealed) {
+          this.revealCell(nIdx, rows, cols);
+        }
+      });
+    }
+
+    this.setData({ grid });
+  },
+
   getNeighbors(r, c, rows, cols) {
     const neighbors = [];
     for (let i = -1; i <= 1; i++) {
@@ -210,180 +274,37 @@ Page({
     return neighbors;
   },
 
-  // 处理点击 (探索)
-  handleTap(e) {
-    if (this.data.gameState !== 'playing') return;
-
-    const { row, col } = e.currentTarget.dataset;
-    const difficulty = DIFFICULTY_LEVELS[this.data.currentDifficulty];
-    const { rows, cols } = difficulty;
-    const idx = row * cols + col;
-    const cell = this.data.grid[idx];
-
-    if (cell.revealed || cell.marked) return;
-
-    if (cell.isBlackHole) {
-      this.gameOver(false);
-    } else {
-      this.revealCell(idx);
-      this.checkWin();
-    }
-  },
-
-  // 处理长按 (放置信标)
-  handleLongPress(e) {
-    if (this.data.gameState !== 'playing') return;
-
-    const { row, col } = e.currentTarget.dataset;
-    const difficulty = DIFFICULTY_LEVELS[this.data.currentDifficulty];
-    const { cols } = difficulty;
-    const idx = row * cols + col;
-    const grid = this.data.grid;
-
-    // 短震动反馈
-    wx.vibrateShort();
-
-    if (!grid[idx].revealed) {
-      grid[idx].marked = !grid[idx].marked;
-      const beaconsChange = grid[idx].marked ? -1 : 1;
-
-      // 创建标记动画
-      if (grid[idx].marked) {
-        this.createStarAnimation(e.currentTarget.offsetLeft, e.currentTarget.offsetTop);
-      }
-
-      this.setData({
-        [`grid[${idx}]`]: grid[idx],
-        beaconsLeft: this.data.beaconsLeft + beaconsChange
-      });
-    }
-  },
-
-  // 创建星星动画
-  createStarAnimation(x, y) {
-    const star = {
-      id: Date.now() + Math.random(),
-      x,
-      y,
-      opacity: 1
-    };
-
-    this.setData({
-      stars: [...this.data.stars, star]
-    });
-
-    // 2秒后移除星星
-    setTimeout(() => {
-      this.setData({
-        stars: this.data.stars.filter(s => s.id !== star.id)
-      });
-    }, 2000);
-  },
-
-  // 递归揭开
-  revealCell(idx) {
-    const grid = this.data.grid;
-    if (grid[idx].revealed || grid[idx].marked) return;
-
-    grid[idx].revealed = true;
-    grid[idx].starRevealed = true; // 触发星星动画
-
-    // 如果是0，连片揭开
-    if (grid[idx].count === 0) {
-      const difficulty = DIFFICULTY_LEVELS[this.data.currentDifficulty];
-      const { rows, cols } = difficulty;
-      const neighbors = this.getNeighbors(grid[idx].row, grid[idx].col, rows, cols);
-
-      // 延迟揭开相邻格子，创造连锁效果
-      neighbors.forEach((nIdx, i) => {
-        setTimeout(() => {
-          this.revealCell(nIdx);
-        }, i * 20);
-      });
-    }
-
-    this.setData({ grid });
-  },
-
   checkWin() {
-    const difficulty = DIFFICULTY_LEVELS[this.data.currentDifficulty];
-    const unrevealedSafeCells = this.data.grid.filter(c => !c.isBlackHole && !c.revealed);
+    const grid = this.data.grid;
+    const unrevealedSafeCells = grid.filter(c => !c.isBlackHole && !c.revealed);
     if (unrevealedSafeCells.length === 0) {
       this.gameOver(true);
     }
   },
 
-  gameOver(won) {
+  gameOver(win) {
     this.stopTimer();
     const grid = this.data.grid;
 
-    if (!won) {
-      // 失败：显示所有黑洞
-      grid.forEach((c, i) => {
-        if (c.isBlackHole) {
-          c.revealed = true;
-          // 创建黑洞吞噬动画
-          this.createBlackHoleAnimation(i);
-        }
+    if (win) {
+      grid.forEach(c => { if (c.isBlackHole) c.marked = true; });
+      this.setData({ 
+        grid,
+        gameState: 'won',
+        beaconsLeft: 0,
+        headerTitle: '☆伱是莪的唯一☆'
       });
-      // 长震动
-      wx.vibrateLong();
-      this.setData({ shake: true }); // 触发CSS震动动画
-    } else {
-      // 胜利：自动标记所有黑洞
-      grid.forEach(c => {
-        if (c.isBlackHole) c.marked = true;
-      });
-      this.setData({ beaconsLeft: 0 });
-
-      // 保存记录
       this.saveBestRecord();
-
-      // 创建庆祝星星雨
-      this.createStarRain();
-    }
-
-    this.setData({
-      grid,
-      gameState: won ? 'won' : 'lost'
-    });
-  },
-
-  // 创建黑洞动画
-  createBlackHoleAnimation(index) {
-    const blackhole = {
-      id: Date.now() + Math.random() + index,
-      index,
-      scale: 0.5
-    };
-
-    this.setData({
-      blackholes: [...this.data.blackholes, blackhole]
-    });
-  },
-
-  // 创建星星雨
-  createStarRain() {
-    const stars = [];
-    for (let i = 0; i < 20; i++) {
-      setTimeout(() => {
-        const star = {
-          id: Date.now() + Math.random() + i,
-          x: Math.random() * 100,
-          opacity: 1
-        };
-
-        this.setData({
-          stars: [...this.data.stars, star]
-        });
-
-        // 3秒后移除星星
-        setTimeout(() => {
-          this.setData({
-            stars: this.data.stars.filter(s => s.id !== star.id)
-          });
-        }, 3000);
-      }, i * 100);
+      
+      wx.showToast({ title: '爱 没 有 终 点', icon: 'none' });
+    } else {
+      grid.forEach(c => { if (c.isBlackHole) c.revealed = true; });
+      this.setData({ 
+        grid, 
+        gameState: 'lost',
+        headerTitle: '💔心碎了无痕💔'
+      });
+      wx.vibrateLong();
     }
   },
 
@@ -393,12 +314,21 @@ Page({
       this.timer = null;
     }
   },
+  
+  loadBestRecords() {
+    const records = wx.getStorageSync('starExplorerRecords') || {};
+    this.setData({ bestRecords: records });
+  },
 
-  goBack() {
-    if (this.data.showDifficulty) {
-      wx.navigateBack();
-    } else {
-      this.backToDifficulty();
+  saveBestRecord() {
+    const level = this.data.currentDifficulty;
+    const time = this.data.timeElapsed;
+    const records = this.data.bestRecords;
+
+    if (!records[level] || time < records[level]) {
+      records[level] = time;
+      this.setData({ bestRecords: records });
+      wx.setStorageSync('starExplorerRecords', records);
     }
   }
 });
