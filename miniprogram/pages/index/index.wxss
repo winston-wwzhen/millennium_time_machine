@@ -359,3 +359,69 @@ page {
   background: #d4d0c8;
   padding: 3px 5px 1px 7px; /* 模拟位移 */
 }
+
+/* === 电子宠物样式 === */
+.pet-container {
+  width: 80px;
+  height: 100px;
+  z-index: 200; /* 保证在最上层 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  pointer-events: auto; /* 确保能点击 */
+}
+
+.pet-body {
+  font-size: 40px;
+  text-shadow: 2px 2px 0px rgba(0,0,0,0.3);
+  /* 如果有图片，替换为：
+  width: 40px; 
+  height: 40px; 
+  background: url('/images/pet.gif') no-repeat center/contain; 
+  */
+}
+
+/* 弹跳动画 */
+.bounce {
+  animation: bounce 0.5s infinite alternate;
+}
+@keyframes bounce {
+  from { transform: translateY(0); }
+  to { transform: translateY(-5px); }
+}
+
+/* 气泡框 */
+.pet-bubble {
+  background: #ffffe0; /* 经典的淡黄色 */
+  border: 1px solid #000;
+  border-radius: 4px;
+  padding: 5px 8px;
+  font-size: 12px;
+  color: #000;
+  margin-bottom: 5px;
+  box-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+  position: relative;
+  max-width: 120px;
+  text-align: center;
+  font-family: "宋体", sans-serif;
+  animation: fade-in 0.3s;
+}
+
+/* 气泡小箭头 */
+.bubble-arrow {
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 6px;
+  height: 6px;
+  background: #ffffe0;
+  border-right: 1px solid #000;
+  border-bottom: 1px solid #000;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}

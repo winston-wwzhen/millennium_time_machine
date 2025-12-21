@@ -170,7 +170,7 @@ Page({
         ctx.shadowColor = 'rgba(0,0,0,0.8)'; 
         ctx.shadowBlur = 2;
         ctx.font = 'bold 18px "宋体"';
-        ctx.fillText('© 2005 电子包浆工坊', exportWidth - 210, exportHeight - 20);
+        ctx.fillText('© 2005 千禧时光机', exportWidth - 210, exportHeight - 20);
         ctx.shadowColor = 'transparent'; // 重置阴影
 
         // F. 导出并保存

@@ -1,0 +1,46 @@
+<view class="desktop">
+  <view class="window-frame">
+    <view class="title-bar">
+      <view class="title-text">情绪转译器.exe - 语言净化中</view>
+      <view class="btn-close" bindtap="goBack">×</view>
+    </view>
+
+    <view class="menu-bar">
+      <text>模式(M)</text>
+      <text>净化(C)</text>
+      <text>帮助(H)</text>
+    </view>
+
+    <view class="window-body">
+      <view class="section-label">👇 在这里释放你的愤怒 (已开启隐私保护):</view>
+      <textarea 
+        class="input-area angry-input" 
+        placeholder="例如：老板真是个脑残，天天就知道开会..." 
+        placeholder-style="color:#aaa;" 
+        bindinput="onInput"
+        value="{{inputText}}"
+        maxlength="200"
+      ></textarea>
+
+      <view class="action-area">
+        <view class="progress-bar-border" wx:if="{{isProcessing}}">
+          <view class="progress-bar-fill"></view>
+        </view>
+        <view class="retro-btn primary-btn" wx:else bindtap="translateEmotion">
+          ✨ 一键瑞思拜 (Respect) ✨
+        </view>
+      </view>
+
+      <view class="section-label">👇 2005年文明用语转换结果:</view>
+      <view class="output-area peaceful-output">
+        <text user-select="true" wx:if="{{outputText}}">{{outputText}}</text>
+        <view class="placeholder-text" wx:else>等待净化...</view>
+      </view>
+      
+    </view>
+
+    <view class="status-bar">
+      <text>状态: {{statusText}}</text>
+    </view>
+  </view>
+</view>

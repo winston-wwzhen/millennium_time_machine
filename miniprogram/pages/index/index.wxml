@@ -1,8 +1,8 @@
-<view class="desktop">
+<movable-area class="desktop">
   
   <view class="window-frame">
     <view class="title-bar">
-      <view class="title-text">电子包浆工坊.exe</view>
+      <view class="title-text">千禧时光机.exe</view>
       <view class="btn-close">×</view>
     </view>
 
@@ -21,6 +21,16 @@
           <text>非主流大头贴</text>
         </view>
 
+        <view class="menu-item" bindtap="onTapAIChat">
+          <view class="icon-box">🐧</view>
+          <text>我的网友</text>
+        </view>
+
+        <view class="menu-item" bindtap="onTapTranslator">
+          <view class="icon-box">♻️</view>
+          <text>情绪转译器</text>
+        </view>
+
         <view class="menu-item" bindtap="onTapAbout">
           <view class="icon-box">💾</view>
           <text>关于我们</text>
@@ -34,6 +44,23 @@
     </view>
   </view>
 
+  <movable-view 
+    class="pet-container" 
+    x="{{petX}}" 
+    y="{{petY}}" 
+    direction="all"
+    bindtap="onTapPet"
+  >
+    <view class="pet-bubble" wx:if="{{showBubble}}">
+      <text>{{petText}}</text>
+      <view class="bubble-arrow"></view>
+    </view>
+    
+    <view class="pet-body {{isPetTalking ? 'bounce' : ''}}">
+      🦁
+    </view>
+  </movable-view>
+  
   <view class="start-menu" wx:if="{{isStartMenuOpen}}">
     <view class="start-side-bar">
       <text class="os-ver">Old Story 98</text>
@@ -57,9 +84,9 @@
       开始
     </view>
     
-    <view class="task-item active">电子包浆工坊</view>
+    <view class="task-item active">千禧时光机</view>
     
     <view class="time-display">{{currentTime}}</view>
   </view>
 
-</view>
+</movable-area>

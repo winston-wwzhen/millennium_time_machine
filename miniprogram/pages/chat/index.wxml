@@ -1,0 +1,55 @@
+<view class="desktop">
+  <view class="window-frame chat-main">
+    <view class="title-bar chat-title-bar">
+      <view class="title-text">
+        <text>💙 水晶之恋 💙 (在线) - 对话中</text>
+      </view>
+      <view class="btn-close" bindtap="goBack">×</view>
+    </view>
+
+    <view class="menu-bar">
+      <text>文件(F)</text>
+      <text>编辑(E)</text>
+      <text>视频(V)</text>
+      <text>工具(T)</text>
+    </view>
+
+    <scroll-view class="chat-history" scroll-y="true" scroll-into-view="{{scrollToView}}">
+      <block wx:for="{{chatList}}" wx:key="index">
+        <view class="chat-item left" wx:if="{{item.type === 'ai'}}">
+          <view class="avatar ai-avatar">O</view>
+          <view class="bubble ai-bubble">
+            <text user-select="true">{{item.content}}</text>
+          </view>
+        </view>
+
+        <view class="chat-item right" wx:else>
+          <view class="bubble my-bubble">
+            <text user-select="true">{{item.content}}</text>
+          </view>
+          <view class="avatar my-avatar">M</view>
+        </view>
+      </block>
+      <view id="msg-bottom" style="height: 1px;"></view>
+    </scroll-view>
+
+    <view class="chat-toolbar">
+      <text>字体(F)</text> <text>表情(I)</text> <text>震动(N)</text>
+    </view>
+
+    <view class="chat-input-area">
+      <textarea 
+        class="chat-input" 
+        value="{{chatInput}}" 
+        bindinput="onChatInput"
+        bindconfirm="sendMessage"
+        cursor-spacing="20"
+        confirm-type="send"
+      ></textarea>
+      <view class="chat-actions">
+        <view class="retro-btn sm-btn" bindtap="goBack">关闭(C)</view>
+        <view class="retro-btn sm-btn primary" bindtap="sendMessage">发送(S)</view>
+      </view>
+    </view>
+  </view>
+</view>
