@@ -220,6 +220,12 @@ Page({
     this.closeStartMenu();
   },
 
+  // 🌌 星域探险
+  openStarExplorer() {
+    wx.navigateTo({ url: '/pages/star-explorer/index' });
+    this.closeStartMenu();
+  },
+
   // 🗑️ 回收站 (装饰性功能)
   openRecycle() {
     wx.showToast({

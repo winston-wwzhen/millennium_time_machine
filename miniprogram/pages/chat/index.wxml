@@ -7,12 +7,12 @@
       <view class="btn-close" bindtap="goBack">×</view>
     </view>
 
-    <view class="menu-bar">
+    <!-- <view class="menu-bar">
       <text>文件(F)</text>
       <text>编辑(E)</text>
       <text>视频(V)</text>
       <text>工具(T)</text>
-    </view>
+    </view> -->
 
     <view style="background:#ffffe0; color:#555; font-size:10px; padding:3px 5px; border-bottom:1px solid #808080; text-align:center; margin-bottom: 2px;">
        ⚠️ 温馨提示：对方是AI虚拟网友，内容仅供娱乐，请勿当真。

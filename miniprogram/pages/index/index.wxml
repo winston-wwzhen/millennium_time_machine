@@ -30,6 +30,11 @@
       <text class="icon-emoji">📸</text>
       <text class="icon-text">精神小伙照相馆</text>
     </view>
+    <view style="height: 20rpx;"></view>
+    <view class="desktop-icon" bindtap="openStarExplorer" hover-class="icon-active">
+      <text class="icon-emoji">🌌</text>
+      <text class="icon-text glitch-text" data-text="星域探险">星域探险</text>
+    </view>
   </view>
 
   <movable-view 
