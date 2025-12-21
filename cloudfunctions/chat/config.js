@@ -5,6 +5,6 @@ module.exports = {
   API_KEY: process.env.GLM_API_KEY, 
 
   API_URL: "https://open.bigmodel.cn/api/paas/v4/chat/completions",
-  MODEL_NAME: "GLM-4-FlashX-250414",
+  MODEL_NAME: "GLM-4.5-AirX",
   TIMEOUT: 15000 
 };

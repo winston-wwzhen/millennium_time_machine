@@ -1,137 +1,211 @@
-/* 继承全局字体 */
-page {
-  height: 100%;
-  font-family: "宋体", sans-serif;
-  overflow: hidden;
-}
+/* miniprogram/pages/mars/index.wxss */
 
+/* 全局容器：Win98 经典的青色背景 */
 .desktop {
-  width: 100%;
-  height: 100%;
-  background-color: #008080; /* 青色背景 */
+  width: 100vw;
+  height: 100vh;
+  background-color: #008080;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  font-family: "SimSun", "宋体", serif; /* 关键：使用宋体 */
 }
 
+/* 窗口外壳 */
 .window-frame {
   width: 90%;
-  background-color: #c0c0c0;
-  border-top: 2px solid #fff;
-  border-left: 2px solid #fff;
+  background-color: #c0c0c0; /* 标准灰 */
+  border-top: 2px solid #dfdfdf;
+  border-left: 2px solid #dfdfdf;
   border-right: 2px solid #000;
   border-bottom: 2px solid #000;
-  box-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
 }
 
+/* 标题栏 */
 .title-bar {
-  background: linear-gradient(90deg, #000080, #1084d0);
-  height: 28px;
+  background: linear-gradient(90deg, #000080, #1084d0); /* 经典深蓝渐变 */
+  padding: 4px;
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: 0 4px;
-  margin: 3px;
+  align-items: center;
+  color: white;
+  margin: 2px;
 }
 
 .title-text {
-  color: white;
   font-size: 14px;
   font-weight: bold;
+  margin-left: 4px;
 }
 
 .btn-close {
   width: 20px;
-  height: 18px;
+  height: 20px;
   background: #c0c0c0;
-  border: 1px solid;
-  border-color: #fff #000 #000 #fff;
+  color: black;
   text-align: center;
-  line-height: 16px;
+  line-height: 18px;
   font-weight: bold;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #000;
+  border-bottom: 1px solid #000;
+  font-size: 14px;
 }
 
-/* 菜单栏 */
+/* --- 菜单栏 (核心修改) --- */
 .menu-bar {
   display: flex;
   gap: 15px;
-  padding: 2px 10px;
-  font-size: 14px;
-  margin-bottom: 5px;
-}
-
-.window-body {
-  padding: 10px;
-}
-
-.label {
-  font-size: 14px;
-  margin-bottom: 5px;
-  color: #333;
-}
-
-/* 输入框：凹陷效果 */
-.input-area {
-  width: 100%;
-  height: 80px;
-  background: #fff;
-  border-top: 2px solid #000;
-  border-left: 2px solid #000;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 5px;
-  box-sizing: border-box;
-  font-size: 16px;
-  margin-bottom: 15px;
-}
-
-/* 按钮：凸起效果 */
-.action-area {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 15px;
-}
-
-.retro-btn {
+  padding: 2px 8px;
   background: #c0c0c0;
+  border-bottom: 1px solid #808080; /* 灰色分割线 */
+  position: relative;
+  z-index: 100;
+}
+
+.menu-container {
+  position: relative;
+}
+
+.menu-item {
+  font-size: 14px;
+  color: #000;
+  padding: 2px 6px;
+  border: 1px solid transparent; /* 预留边框位置 */
+}
+
+/* 菜单项按下状态：模拟凹陷 */
+.menu-item.active {
+  background: #c0c0c0;
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+}
+
+.disabled {
+  color: #808080;
+}
+
+/* 下拉菜单本体 */
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 140px;
+  background: #c0c0c0;
+  /* 3D 凸起边框 */
   border-top: 2px solid #fff;
   border-left: 2px solid #fff;
   border-right: 2px solid #000;
   border-bottom: 2px solid #000;
-  padding: 8px 20px;
+  padding: 2px;
+  box-shadow: 4px 4px 5px rgba(0,0,0,0.5);
+}
+
+.dropdown-item {
   font-size: 14px;
-  font-weight: bold;
+  color: #000;
+  padding: 5px 10px;
+  line-height: 1.4;
 }
 
-.btn-hover {
-  border-top: 2px solid #000;
-  border-left: 2px solid #000;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 9px 19px 7px 21px; /* 模拟按压位移 */
+/* 选中高亮：蓝底白字 */
+.item-hover, .dropdown-item.selected {
+  background-color: #000080;
+  color: #fff;
 }
 
-/* 输出区域：凹陷效果 */
-.output-area {
-  width: 100%;
-  min-height: 80px;
+/* 全屏遮罩 */
+.menu-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 99;
+}
+
+/* --- 主体内容区域 --- */
+.window-body {
+  padding: 15px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.label {
+  font-size: 14px;
+  color: #000;
+}
+
+/* 输入框 & 输出框：凹陷效果 */
+.input-area, .output-area {
   background: #fff;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  padding: 8px;
+  font-size: 14px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.input-area {
+  height: 80px;
+}
+
+.output-area {
+  min-height: 80px;
+  word-break: break-all;
+}
+
+/* 按钮区域 */
+.action-area {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0;
+}
+
+.retro-btn {
+  background: #c0c0c0;
+  padding: 8px 24px;
+  font-size: 14px;
+  /* 凸起边框 */
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #000;
+  border-bottom: 2px solid #000;
+}
+
+.retro-btn:active, .btn-hover {
+  /* 按下变凹陷 */
   border-top: 2px solid #000;
   border-left: 2px solid #000;
   border-right: 2px solid #fff;
   border-bottom: 2px solid #fff;
-  padding: 10px;
-  box-sizing: border-box;
-  font-size: 16px;
-  color: #000080; /* 深蓝色字，更有那味 */
+  padding: 9px 23px 7px 25px; /* 模拟文字位移 */
 }
 
+.disabled-btn {
+  color: #808080;
+  background: #dcdcdc;
+}
+
+/* 底部状态栏 */
 .status-bar {
-  margin-top: 5px;
+  margin: 2px;
   border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #fff;
   padding: 2px 5px;
   font-size: 12px;
-  color: #555;
+  color: #000;
 }

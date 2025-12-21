@@ -1,45 +1,85 @@
+<view 
+  wx:if="{{isMenuOpen}}" 
+  class="menu-mask" 
+  bindtap="closeMenu"
+></view>
+
 <view class="desktop">
   
   <view class="window-frame">
     <view class="title-bar">
-      <view class="title-text">火星文转换器.exe - 无标题</view>
+      <view class="title-text">转换器.exe - [{{currentModeLabel}}]</view>
       <view class="btn-close" bindtap="goBack">×</view>
     </view>
 
     <view class="menu-bar">
-      <text>文件(F)</text>
-      <text>编辑(E)</text>
-      <text>格式(O)</text>
-      <text>帮助(H)</text>
+      <view class="menu-container">
+        <text 
+          class="menu-item {{isMenuOpen ? 'active' : ''}}" 
+          catchtap="toggleMenu"
+        >模式(M)</text>
+
+        <view class="dropdown-menu" wx:if="{{isMenuOpen}}">
+          <block wx:for="{{modes}}" wx:key="key">
+            <view 
+              class="dropdown-item {{modeIndex === index ? 'selected' : ''}}" 
+              hover-class="item-hover"
+              data-index="{{index}}"
+              catchtap="onModeSelect"
+            >
+              {{item.label}}
+            </view>
+          </block>
+        </view>
+      </view>
+
+      <text class="menu-item disabled">帮助(H)</text>
     </view>
 
     <view class="window-body">
       
-      <view class="label">请输入正常人类语言：</view>
+      <view class="label">请输入内容：</view>
       <textarea 
         class="input-area" 
-        placeholder="在这里打字..." 
-        placeholder-style="color:#aaa;"
+        placeholder="在此输入需要转换的文字..." 
+        placeholder-style="color:#808080;"
         bindinput="onInput"
         value="{{inputText}}"
-        maxlength="100"
+        maxlength="200"
       ></textarea>
 
       <view class="action-area">
-        <view class="retro-btn" hover-class="btn-hover" bindtap="convertToMars">
-          ↓ 一键非主流 ↓
+        <view 
+          class="retro-btn {{isLoading ? 'disabled-btn' : ''}}" 
+          hover-class="btn-hover" 
+          bindtap="startConvert"
+        >
+          {{isLoading ? '⏳ 正在施法...' : '⚡ 开始转换 ⚡'}}
         </view>
       </view>
 
-      <view class="label">转换结果 (已复制到剪贴板)：</view>
       <view class="output-area">
-        <text selectable="true">{{outputText}}</text>
+        <text user-select="true">{{outputText}}</text>
+      </view>
+
+      <view 
+        style="display: flex; justify-content: flex-end; margin-top: 8px;" 
+        wx:if="{{outputText && outputText !== '等待输扖...'}}"
+      >
+        <view 
+          class="retro-btn" 
+          hover-class="btn-hover" 
+          bindtap="copyToClipboard" 
+          style="padding: 4px 12px; font-size: 12px;"
+        >
+          📄 复制结果
+        </view>
       </view>
 
     </view>
 
     <view class="status-bar">
-      <text>行 1, 列 1</text>
+      <text>{{statusText}}</text>
     </view>
   </view>
 
