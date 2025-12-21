@@ -3,32 +3,32 @@
   <view class="icon-column">
     <view class="desktop-icon" bindtap="openAbout" hover-class="icon-active">
       <text class="icon-emoji">💻</text>
-      <text class="icon-text">{{username}}的电脑</text> 
+      <text class="icon-text">{{username}}的脑子</text> 
     </view>
     <view class="desktop-icon" hover-class="icon-active">
       <text class="icon-emoji">📂</text>
-      <text class="icon-text">{{username}}的文档</text>
+      <text class="icon-text">{{username}}的记忆碎片</text>
     </view>
     <view class="desktop-icon" bindtap="openRecycle" hover-class="icon-active">
       <text class="icon-emoji">🗑️</text>
-      <text class="icon-text">回收站</text>
+      <text class="icon-text glitch-text" data-text="黑洞">黑洞</text>
     </view>
     <view style="height: 20rpx;"></view>
     <view class="desktop-icon" bindtap="openChat" hover-class="icon-active">
       <text class="icon-emoji">💬</text>
-      <text class="icon-text">我的网友</text>
+      <text class="icon-text">QCIO</text>
     </view>
     <view class="desktop-icon" bindtap="openMars" hover-class="icon-active">
       <text class="icon-emoji">🪐</text>
-      <text class="icon-text">火星文转换</text>
+      <text class="icon-text">巴别塔翻译</text>
     </view>
     <view class="desktop-icon" bindtap="openTranslator" hover-class="icon-active">
       <text class="icon-emoji">💔</text>
-      <text class="icon-text">空间签名</text>
+      <text class="icon-text">伤痕艺术</text>
     </view>
     <view class="desktop-icon" bindtap="openAvatar" hover-class="icon-active">
       <text class="icon-emoji">📸</text>
-      <text class="icon-text">大头贴</text>
+      <text class="icon-text">精神小伙照相馆</text>
     </view>
   </view>
 
@@ -46,7 +46,7 @@
 
 
   <view class="start-menu {{showStartMenu ? 'visible' : ''}}" catchtap="true">
-    <view class="sidebar"><text class="win98-text">Windows98</text></view>
+    <view class="sidebar"><text class="win98-text">Millennium 2000</text></view>
     <view class="menu-items">
       <view class="menu-item" bindtap="openAbout"><text class="menu-emoji">ℹ️</text><text>关于系统(A)...</text></view>
       <view class="menu-item"><text class="menu-emoji">⚙️</text><text>设置(S)</text></view>
@@ -60,7 +60,7 @@
 
   <view class="taskbar" catchtap="true">
     <view class="start-btn {{showStartMenu ? 'active' : ''}}" bindtap="toggleStartMenu">
-      <text class="start-icon-emoji">💾</text><text>Start</text>
+      <text class="start-icon-emoji">💾</text><text>End</text>
     </view>
     <view class="divider-v"></view>
     <view class="running-tasks"></view>

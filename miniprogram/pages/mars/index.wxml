@@ -41,7 +41,7 @@
       <view class="label">请输入内容：</view>
       <textarea 
         class="input-area" 
-        placeholder="在此输入需要转换的文字..." 
+        placeholder="请注入你的凡人语言..." 
         placeholder-style="color:#808080;"
         bindinput="onInput"
         value="{{inputText}}"
@@ -54,7 +54,7 @@
           hover-class="btn-hover" 
           bindtap="startConvert"
         >
-          {{isLoading ? '⏳ 正在施法...' : '⚡ 开始转换 ⚡'}}
+          {{isLoading ? '🔮 正在同化...' : '⚡ 封印解除 ⚡'}}
         </view>
       </view>
 

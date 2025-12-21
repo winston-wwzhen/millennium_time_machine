@@ -1,7 +1,7 @@
 <view class="desktop">
   <view class="window-frame">
     <view class="title-bar">
-      <view class="title-text">大头贴机_v1.0.exe</view>
+      <view class="title-text">虚幻成像_System.exe</view>
       <view class="btn-close" bindtap="goBack">×</view>
     </view>
 
@@ -15,7 +15,7 @@
       <view class="preview-area">
         <image class="user-photo" src="{{tempImagePath}}" mode="aspectFill" wx:if="{{tempImagePath}}"></image>
         <view class="placeholder" wx:else bindtap="onChooseImage">
-          <text>点击此处\n加载照片</text>
+          <text>[丢失的数据] \n 点击恢复</text>
         </view>
         
         <image class="border-overlay" src="{{currentBorder}}" mode="aspectFill" wx:if="{{currentBorder}}"></image>
@@ -24,7 +24,7 @@
       </view>
 
       <view class="control-panel">
-        <view class="label">选择边框:</view>
+        <view class="label">选择现实滤镜:</view>
         <scroll-view scroll-x="true" class="border-list">
           <view class="border-item {{item.id === selectedBorderId ? 'active' : ''}}" 
                 wx:for="{{borderList}}" 
@@ -37,7 +37,7 @@
           </view>
         </scroll-view>
 
-        <view class="label">特效滤镜:</view>
+        <view class="label">视觉干扰 (Glitch):</view>
         <view class="filter-options">
           <view class="retro-btn sm-btn {{currentFilter === '' ? 'active-btn' : ''}}" bindtap="setFilter" data-type="">无</view>
           <view class="retro-btn sm-btn {{currentFilter === 'matrix-green' ? 'active-btn' : ''}}" bindtap="setFilter" data-type="matrix-green">黑客</view>
@@ -51,7 +51,7 @@
           📂 打开照片
         </view>
         <view class="retro-btn primary-btn" hover-class="btn-hover" bindtap="onSaveImage">
-          💾 生成并保存
+          💾 永久封存
         </view>
       </view>
 

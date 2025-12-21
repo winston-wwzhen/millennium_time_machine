@@ -1,7 +1,7 @@
 <view class="container">
   <view class="window-frame">
     <view class="title-bar">
-      <view class="title"> 签名生成器</view>
+      <view class="title"> 悲伤合成器 v1.0</view>
       <view class="controls">
         <view class="btn" hover-class="btn-active" bindtap="onMinimize">_</view>
         <view class="btn" hover-class="btn-active" bindtap="onMaximize">□</view>
@@ -10,7 +10,7 @@
     </view>
     
     <view class="content-area">
-      <view class="label">输入你的大白话：</view>
+      <view class="label">输入你无法诉说的心事...</view>
       <textarea 
         class="input-box" 
         placeholder="例如：今天不想上班..." 
@@ -24,12 +24,12 @@
           bindtap="onTranslate"
           disabled="{{isLoading}}"
         >
-          {{isLoading ? '正在注入忧伤...' : '开始转译'}}
+          {{isLoading ? '正在注入忧伤...' : '注入忧伤 💔'}}
         </button>
       </view>
 
       <view class="result-box" wx:if="{{resultText}}">
-        <view class="label">QQ签名预览：</view>
+        <view class="label">QCIO签名预览：</view>
         <view class="output-text" bindtap="onCopy">
           {{resultText}}
         </view>
@@ -39,7 +39,7 @@
     </view>
     
     <view class="status-bar">
-      <text>状态: {{isLoading ? '处理中...' : '就绪'}}</text>
+      <text>状态: {{isLoading ? '处理中...' : '已心碎'}}</text>
       <text class="right">Memory: 256MB</text>
     </view>
   </view>

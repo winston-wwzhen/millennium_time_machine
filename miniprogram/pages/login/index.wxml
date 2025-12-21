@@ -1,7 +1,7 @@
 <view class="container">
   <view class="login-window">
     <view class="title-bar">
-      <view class="title-text">Welcome to Windows</view>
+      <view class="title-text">Initializing Reality...</view>
       <view class="close-btn">×</view>
     </view>
 
@@ -12,15 +12,15 @@
 
       <view class="form-area">
         <view class="instruction">
-          Type a user name to log on, or use Network ID.
+          Type a code name to log on, or use Network ID.
         </view>
 
         <view class="input-row">
-          <text class="label">User name:</text>
+          <text class="label">CodeName:</text>
           <input class="input" type="text" value="{{username}}" bindinput="onInputName" />
         </view>
         <view class="input-row">
-          <text class="label">Password:</text>
+          <text class="label">Key:</text>
           <input class="input" type="password" disabled value="******" />
         </view>
 
