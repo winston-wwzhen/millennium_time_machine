@@ -220,7 +220,6 @@ Page({
     this.closeStartMenu();
   },
 
-  // 🌌 星域探险
   openStarExplorer() {
     wx.navigateTo({ url: '/pages/star-explorer/index' });
     this.closeStartMenu();

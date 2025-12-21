@@ -1,0 +1,88 @@
+<view class="win98-desktop">
+  
+  <view class="window-container main-window">
+    <view class="title-bar">
+      <view class="title-text">我的空间 (My Space).exe</view>
+      <view class="title-controls">
+        <view class="control-box">_</view>
+        <view class="control-box">×</view>
+      </view>
+    </view>
+    
+    <view class="window-body">
+      <view class="menu-bar">
+        <view class="menu-item" bindtap="scanNetwork">
+          <text>网上邻居(N)</text> </view>
+        <view class="menu-item">
+          <text>查看(V)</text>
+        </view>
+      </view>
+
+      <view class="status-area bevel-inset">
+        
+        <block wx:if="{{!myStatus || myStatus.status === 'idle'}}">
+          <view class="prompt-text">请选择要编译的情绪代码：</view>
+          <view class="radio-group">
+            <view class="radio-item {{selectedMood === item.type ? 'active' : ''}}"
+                  wx:for="{{moodOptions}}" wx:key="type"
+                  bindtap="selectMood" data-type="{{item.type}}">
+              <text>{{item.icon}} {{item.name}}</text>
+              <text wx:if="{{selectedMood === item.type}}"> ←</text>
+            </view>
+          </view>
+          <button class="win98-btn" bindtap="startCompile">开始编译</button>
+        </block>
+
+        <block wx:else>
+          <view class="process-info">
+            <text>正在处理: {{myStatus.moodName}}</text>
+            <text wx:if="{{progress < 100}}">剩余时间: {{timeLeftStr}}</text>
+            <text wx:else style="color: green;">编译完成!</text>
+          </view>
+          
+          <view class="progress-bar-container bevel-inset">
+            <view class="progress-blocks">
+              <view class="p-block" 
+                    wx:for="{{[1,2,3,4,5,6,7,8,9,10]}}" 
+                    wx:key="*this"
+                    style="opacity: {{progress >= item*10 ? 1 : 0}}"></view>
+            </view>
+          </view>
+
+          <button class="win98-btn" wx:if="{{progress >= 100}}" bindtap="collect">
+            保存数据 (收)
+          </button>
+        </block>
+
+      </view>
+      
+      <view class="status-bar bevel-inset">
+        <text>状态: {{scanning ? '正在扫描端口...' : '就绪'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="window-container modal-window" wx:if="{{showTargetWindow}}">
+    <view class="title-bar active">
+      <view class="title-text">远程连接: {{targetUser.nickName}}</view>
+      <view class="title-controls">
+        <view class="control-box" bindtap="closeTargetWindow">×</view>
+      </view>
+    </view>
+    <view class="window-body">
+      <view class="target-info">
+        <image class="target-avatar bevel-inset" src="{{targetUser.avatarUrl || '../../images/icons/computer.png'}}"></image>
+        <view class="target-text">
+          <view>发现可访问数据：</view>
+          <view style="color: blue; font-weight: bold;">{{targetUser.moodName}}</view>
+          <view style="font-size: 24rpx; color: #666;">状态: 未加密 (可复制)</view>
+        </view>
+      </view>
+      <view class="dialog-footer">
+        <button class="win98-btn" bindtap="copyData">复制数据</button>
+        <button class="win98-btn" bindtap="closeTargetWindow">断开连接</button>
+      </view>
+    </view>
+  </view>
+
+</view>

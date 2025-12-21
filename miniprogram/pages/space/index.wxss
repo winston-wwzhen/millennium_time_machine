@@ -1,0 +1,106 @@
+page {
+  background-color: #008080;
+  font-family: "SimSun", serif;
+}
+
+.win98-desktop {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.window-container {
+  background: #C0C0C0;
+  border-top: 2rpx solid #FFF;
+  border-left: 2rpx solid #FFF;
+  border-right: 2rpx solid #000;
+  border-bottom: 2rpx solid #000;
+  box-shadow: 4rpx 4rpx 0 #000;
+  padding: 4rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-window {
+  width: 90vw;
+  height: 60vh;
+}
+
+.modal-window {
+  position: absolute;
+  width: 80vw;
+  z-index: 100;
+}
+
+/* 标题栏 */
+.title-bar {
+  background: #808080; /* 未激活是灰色 */
+  padding: 4rpx 8rpx;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4rpx;
+}
+.title-bar.active, .main-window .title-bar {
+  background: #000080; /* 激活是深蓝 */
+}
+.title-text { color: white; font-weight: bold; font-size: 28rpx; }
+.title-controls { display: flex; gap: 4rpx; }
+.control-box {
+  width: 32rpx; height: 32rpx; background: #C0C0C0;
+  border-top: 2rpx solid #FFF; border-left: 2rpx solid #FFF;
+  border-right: 2rpx solid #000; border-bottom: 2rpx solid #000;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* 菜单栏 */
+.menu-bar {
+  display: flex; gap: 20rpx; padding: 4rpx 10rpx;
+  border-bottom: 1rpx solid #808080; margin-bottom: 10rpx;
+}
+.menu-item text { text-decoration: underline; font-size: 28rpx; }
+
+/* 状态区 (白色背景凹陷) */
+.status-area {
+  flex: 1; background: #FFF; padding: 20rpx;
+  display: flex; flex-direction: column; gap: 20rpx;
+}
+
+/* 进度条 */
+.progress-bar-container {
+  height: 40rpx; background: #C0C0C0; padding: 4rpx;
+}
+.progress-blocks {
+  width: 100%; height: 100%; display: flex; gap: 4rpx;
+}
+.p-block {
+  flex: 1; background: #000080;
+}
+
+/* 按钮 */
+.win98-btn {
+  margin-top: 20rpx; background: #C0C0C0;
+  border-top: 2rpx solid #FFF; border-left: 2rpx solid #FFF;
+  border-right: 2rpx solid #000; border-bottom: 2rpx solid #000;
+  font-size: 28rpx; border-radius: 0;
+}
+.win98-btn:active {
+  border-top: 2rpx solid #000; border-left: 2rpx solid #000;
+  border-right: 2rpx solid #FFF; border-bottom: 2rpx solid #FFF;
+}
+
+/* 选项 */
+.radio-item { padding: 10rpx; border: 1rpx dashed transparent; }
+.radio-item.active { background: #000080; color: #FFF; border-color: #FFFF00; }
+
+/* 3D 边框 */
+.bevel-inset {
+  border-top: 2rpx solid #808080; border-left: 2rpx solid #808080;
+  border-right: 2rpx solid #FFF; border-bottom: 2rpx solid #FFF;
+}
+
+/* 弹窗内容 */
+.target-info { display: flex; gap: 20rpx; padding: 20rpx; }
+.target-avatar { width: 100rpx; height: 100rpx; background: #FFF; }
+.dialog-footer { display: flex; justify-content: flex-end; gap: 20rpx; margin-top: 20rpx;}
