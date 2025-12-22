@@ -22,6 +22,14 @@ Page({
     this.simulateLoading();
   },
 
+  onUnload: function () {
+    // 防止页面销毁后 interval 仍在跑导致 setData 报错/泄漏
+    if (this._loadingTimer) {
+      clearInterval(this._loadingTimer);
+      this._loadingTimer = null;
+    }
+  },
+
   // --- 浏览器核心逻辑 ---
 
   generateDailyContent: function() {
@@ -36,15 +44,27 @@ Page({
   },
 
   simulateLoading: function() {
+    // 确保同一时间只有一个 loading 定时器
+    if (this._loadingTimer) {
+      clearInterval(this._loadingTimer);
+      this._loadingTimer = null;
+    }
+
     this.setData({ isLoading: true, progress: 0, statusText: 'Resolving host...' });
     let p = 0;
-    const interval = setInterval(() => {
+
+    this._loadingTimer = setInterval(() => {
       p += Math.random() * 20;
-      if (p >= 100) {
-        clearInterval(interval);
+
+      // 进度做边界与整数化，避免 >100 / 小数 UI 乱跳
+      const next = Math.min(100, Math.floor(p));
+
+      if (next >= 100) {
+        clearInterval(this._loadingTimer);
+        this._loadingTimer = null;
         this.setData({ isLoading: false, statusText: 'Done', progress: 100 });
       } else {
-        this.setData({ progress: p });
+        this.setData({ progress: next });
       }
     }, 100);
   },
@@ -79,13 +99,21 @@ Page({
   },
 
   restoreHistory: function(index) {
-    const url = this.data.historyStack[index];
+    const { historyStack } = this.data;
+
+    // 防御性：避免越界导致 undefined url
+    if (index < 0 || index >= historyStack.length) return;
+
+    const url = historyStack[index];
     this.setData({
       currentIndex: index,
       currentUrl: url,
       statusText: 'Restoring session...'
     });
+
     this.updateHistoryButtons();
+    // 后退/前进也应触发加载，否则 URL 变了但 loading/UI 不变
+    this.simulateLoading();
   },
 
   updateHistoryButtons: function() {

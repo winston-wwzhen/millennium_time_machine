@@ -13,7 +13,7 @@
   <!-- 注意：这里去掉了内联样式，改用 CSS 控制位置 -->
   <view class="widget-container">
     <view class="sticky-note">
-      <text>TODO LIST:\n[x] Fix Y2K bugs\n[ ] Feed the Lion\n[ ] Buy Bitcoins</text>
+      <text>TODO LIST:\n[x] Fix Y2K bugs\n[ ] Feed the Lion\n</text>
     </view>
   </view>
 
