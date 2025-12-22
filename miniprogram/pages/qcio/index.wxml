@@ -1,0 +1,148 @@
+<view class="qcio-container">
+  <!-- 1. 登录覆盖层 (未登录状态) -->
+  <view class="login-screen" wx:if="{{!isLoggedIn}}">
+    <view class="win98-window login-dialog">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">QCIQ 2005 登录</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="goBack"></button>
+        </view>
+      </view>
+
+      <view class="win98-window-body">
+        <view class="login-header">
+          <view class="big-icon">📟</view>
+          <text class="login-brand">QCIQ Messenger</text>
+        </view>
+
+        <view class="login-fields" wx:if="{{!isLoggingIn}}">
+          <view class="field-row">
+            <label>QCIQ 账号:</label>
+            <input class="win98-input" value="{{userProfile.qcio_id}}" disabled />
+          </view>
+          <view class="field-row">
+            <label>登录密码:</label>
+            <input class="win98-input" password value="123456" disabled />
+          </view>
+          <view class="login-footer-actions">
+            <button class="win98-btn-std" bindtap="doLogin">登录(L)</button>
+            <button class="win98-btn-std" bindtap="goBack">取消</button>
+          </view>
+        </view>
+
+        <!-- 拨号进度 -->
+        <view class="dialing-box" wx:else>
+          <text class="dialing-status">正在验证身份并下载好友列表...</text>
+          <view class="win98-progress-container">
+            <view class="win98-progress-fill" style="width: {{loginProgress}}%"></view>
+          </view>
+          <text class="dialing-percent">{{loginProgress}}%</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 2. 主面板内容 (已登录状态) -->
+  <view class="main-panel" wx:if="{{isLoggedIn}}">
+    <view class="win98-window full-panel">
+      <!-- 标题栏：移除了注销按钮，仅保留关闭 -->
+      <view class="win98-title-bar">
+        <view class="win98-title-text">QCIQ - {{userProfile.qcio_id}}</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="goBack"></button>
+        </view>
+      </view>
+
+      <!-- 用户信息面板 -->
+      <view class="user-profile-bar">
+        <view class="avatar-inset">
+          <text class="avatar-emoji">👤</text>
+          <view class="online-status"></view>
+        </view>
+        <view class="profile-details">
+          <view class="name-row">
+            <text class="display-name" bindtap="openEditDialog" data-type="nickname">{{userProfile.nickname}}</text>
+            <view class="level-display">
+              <block wx:for="{{levelIcons}}" wx:key="index">
+                <text class="lvl-ico">{{item}}</text>
+              </block>
+            </view>
+          </view>
+          <view class="id-row">QCIQ: {{userProfile.qcio_id}}</view>
+          <view class="sig-row" bindtap="openEditDialog" data-type="signature">
+            {{userProfile.signature || '点击编辑个性签名...'}}
+          </view>
+        </view>
+      </view>
+
+      <!-- 标签页 -->
+      <view class="qcio-tabs">
+        <view class="qcio-tab {{activeTab === 'contacts' ? 'active' : ''}}" bindtap="switchTab" data-tab="contacts">联系人</view>
+        <view class="qcio-tab {{activeTab === 'chats' ? 'active' : ''}}" bindtap="switchTab" data-tab="chats">消息</view>
+        <view class="qcio-tab {{activeTab === 'zone' ? 'active' : ''}}" bindtap="switchTab" data-tab="zone">空间</view>
+      </view>
+
+      <!-- 内容区 -->
+      <scroll-view class="list-container" scroll-y>
+        <block wx:if="{{activeTab === 'contacts'}}">
+          <view class="contact-group" wx:for="{{contactGroups}}" wx:key="name">
+            <view class="group-title" bindtap="toggleGroup" data-index="{{index}}">
+              <text class="arrow">{{item.expanded ? '▼' : '▶'}}</text>
+              <text>{{item.name}} [{{item.onlineCount}}/{{item.contacts.length}}]</text>
+            </view>
+            <view class="contacts-sub-list" wx:if="{{item.expanded}}">
+              <view class="contact-card" wx:for="{{item.contacts}}" wx:for-item="contact" wx:key="id" bindtap="openChat" data-contact="{{contact}}">
+                <view class="c-avatar-box {{contact.online ? '' : 'offline'}}">{{contact.avatar}}</view>
+                <view class="c-info">
+                  <view class="c-name">{{contact.name}}</view>
+                  <view class="c-sig">{{contact.status}}</view>
+                </view>
+              </view>
+            </view>
+          </view>
+        </block>
+        
+        <view class="empty-view" wx:else>
+          <text>内容建设中...</text>
+        </view>
+      </scroll-view>
+
+      <!-- 状态栏：这里是注销按钮的新位置 -->
+      <view class="qcio-status-bar">
+        <view class="status-btn" bindtap="doLogout">注销(X)</view>
+        <view class="status-right">
+          <text>🔊</text>
+          <text>⚡</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 3. 自定义 Win98 风格对话框 -->
+  <view class="win98-overlay" wx:if="{{showDialog}}">
+    <view class="win98-window dialog-box">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">{{dialogTitle}}</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="closeDialog"></button>
+        </view>
+      </view>
+      <view class="win98-window-body">
+        <view class="dialog-content">
+          <text class="dialog-label">请输入新值:</text>
+          <textarea 
+            class="win98-input dialog-textarea" 
+            value="{{dialogValue}}" 
+            bindinput="onDialogInput"
+            maxlength="{{dialogType === 'nickname' ? 12 : 50}}"
+            auto-focus
+          ></textarea>
+        </view>
+        <view class="dialog-actions">
+          <button class="win98-btn-std" bindtap="confirmDialog">确定</button>
+          <button class="win98-btn-std" bindtap="closeDialog">取消</button>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

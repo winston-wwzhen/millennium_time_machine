@@ -1,0 +1,226 @@
+/**
+ * QCIQ (QCIO) 2005 完整样式表
+ * 严格遵循 Windows 98 像素视觉规范
+ */
+
+/* --- 核心 3D 视觉引擎 --- */
+
+/* 标准 Win98 凸起边框 (用于窗口、按钮、状态栏) */
+.win98-window, .win98-btn-std, .status-btn, .tab-btn {
+  background: #c0c0c0;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  box-shadow: inset 1px 1px #dfdfdf, inset -1px -1px #0a0a0a;
+  box-sizing: border-box;
+}
+
+/* 标准 Win98 凹陷边框 (用于输入框、列表容器、头像框) */
+.win98-input, .win98-progress-container, .avatar-inset, .list-container, .dialog-textarea {
+  background: #ffffff;
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
+  box-shadow: inset 1px 1px #0a0a0a, inset -1px -1px #dfdfdf;
+  box-sizing: border-box;
+}
+
+/* --- 基础页面布局 --- */
+
+.qcio-container {
+  height: 100vh;
+  background-color: #008080; /* 经典桌面蓝绿色 */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* --- 标题栏 (Title Bar) 优化 --- */
+
+.win98-title-bar {
+  background: linear-gradient(90deg, #000080, #1084d0); /* 经典 XP/98 渐变 */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 3px 2px 6px;
+  height: 20px; /* 强制固定高度确保像素对齐 */
+  box-sizing: border-box;
+}
+
+.win98-title-text {
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  font-family: 'SimSun', 'Courier New', monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 控制按钮容器 */
+.win98-title-controls {
+  display: flex;
+  gap: 2px;
+}
+
+/* 按钮样式重写：彻底消除小程序默认干扰 */
+.win98-title-controls button {
+  all: unset; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 16px;
+  height: 14px;
+  background: #c0c0c0;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  box-shadow: inset 1px 1px #dfdfdf, inset -1px -1px #0a0a0a;
+  padding: 0 !important;
+  margin: 0 !important;
+  min-height: unset !important;
+  min-width: 16px !important;
+  line-height: 1 !important;
+  box-sizing: border-box;
+  border-radius: 0;
+}
+
+/* 按钮点击下沉效果 */
+.win98-title-controls button:active {
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
+  box-shadow: inset 1px 1px #0a0a0a, inset -1px -1px #dfdfdf;
+  padding: 1px 0 0 1px !important;
+}
+
+/* 注销按钮字体 */
+.win98-btn-minimize {
+  font-size: 9px;
+  font-weight: normal;
+  color: #000;
+  padding-bottom: 1px;
+}
+
+/* 关闭按钮图标 */
+.win98-btn-close::after {
+  content: "×";
+  font-size: 16px;
+  font-weight: bold;
+  color: #000;
+  margin-top: -2px;
+}
+
+/* --- 登录界面 --- */
+
+.login-screen {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.4);
+  display: flex; justify-content: center; align-items: center;
+  z-index: 1000;
+}
+
+.login-dialog { width: 280px; }
+.login-header { display: flex; flex-direction: column; align-items: center; margin: 20px 0; }
+.big-icon { font-size: 50px; filter: drop-shadow(2px 2px #808080); }
+.login-brand { font-weight: bold; font-size: 16px; color: #000080; margin-top: 5px; }
+
+.field-row { display: flex; align-items: center; margin-bottom: 12px; padding: 0 20px; }
+.field-row label { width: 70px; font-size: 12px; color: #000; }
+.login-footer-actions { display: flex; justify-content: center; gap: 10px; margin: 15px 0; }
+
+.win98-progress-container {
+  height: 20px; background: white; margin: 10px 20px; padding: 2px;
+}
+.win98-progress-fill { height: 100%; background: #000080; }
+
+/* --- 主面板 (Main UI) --- */
+
+.main-panel { height: 100%; padding: 2px; display: flex; box-sizing: border-box; }
+.full-panel { flex: 1; display: flex; flex-direction: column; }
+
+.user-profile-bar {
+  display: flex; padding: 8px; background: #c0c0c0;
+  border-bottom: 1px solid #808080;
+}
+
+.avatar-inset {
+  width: 50px; height: 50px; flex-shrink: 0; margin-right: 10px;
+  display: flex; justify-content: center; align-items: center; position: relative;
+}
+.avatar-emoji { font-size: 32px; }
+.online-status {
+  position: absolute; bottom: 0; right: 0; width: 10px; height: 10px;
+  background: #00ff00; border: 1px solid #000; border-radius: 50%;
+}
+
+.profile-details { flex: 1; overflow: hidden; }
+.name-row { display: flex; align-items: center; gap: 5px; }
+.display-name { font-weight: bold; font-size: 14px; color: #000080; text-decoration: underline; }
+.lvl-ico { font-size: 10px; color: #ffd700; }
+.id-row { font-size: 10px; color: #444; margin: 2px 0; }
+.sig-row { font-size: 11px; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* --- Tabs --- */
+
+.qcio-tabs { display: flex; background: #c0c0c0; }
+.qcio-tab { 
+  flex: 1; text-align: center; font-size: 12px; padding: 6px;
+  border: 1px solid #808080; border-top: none; background: #d0d0d0;
+}
+.qcio-tab.active { background: #fff; font-weight: bold; border-bottom: none; }
+
+/* --- 好友列表 --- */
+
+.list-container { flex: 1; background: white; margin: 2px; overflow-y: auto; }
+.group-title { background: #e1e1e1; padding: 5px 10px; font-size: 12px; border-bottom: 1px solid #ccc; display: flex; align-items: center; }
+.arrow { font-size: 8px; margin-right: 6px; color: #000; }
+
+.contact-card { display: flex; padding: 8px 10px; border-bottom: 1px solid #f0f0f0; }
+.contact-card:active { background-color: #000080; }
+.contact-card:active .c-name, .contact-card:active .c-sig { color: #fff; }
+
+.c-avatar-box { 
+  width: 36px; height: 36px; background: #eee; border: 1px solid #ccc;
+  display: flex; justify-content: center; align-items: center; font-size: 20px; margin-right: 10px;
+}
+.c-avatar-box.offline { filter: grayscale(1); opacity: 0.5; }
+.c-info { display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
+.c-name { font-size: 13px; font-weight: bold; color: #000; }
+.c-sig { font-size: 10px; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* --- 自定义弹窗 (Dialogs) --- */
+
+.win98-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 2000;
+}
+
+.dialog-box { width: 260px; }
+.dialog-content { padding: 12px; }
+.dialog-label { display: block; font-size: 12px; margin-bottom: 8px; color: #000; }
+.dialog-textarea { 
+  height: 60px; width: 100%; font-size: 14px; padding: 5px; 
+  box-sizing: border-box; font-family: monospace;
+}
+.dialog-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
+
+/* 底部状态栏 */
+.qcio-status-bar { 
+  height: 30px; background: #c0c0c0; border-top: 1px solid #808080; 
+  display: flex; justify-content: space-between; align-items: center; padding: 0 5px;
+}
+.status-btn { font-size: 11px; padding: 2px 8px; height: 20px; line-height: 14px; margin: 0; }
+.status-right { font-size: 12px; color: #000; display: flex; gap: 8px; margin-right: 5px; }
+
+/* 通用按钮 */
+.win98-btn-std { 
+  font-size: 12px; color: #000; height: 24px; padding: 0 12px; 
+  display: flex; align-items: center; justify-content: center;
+}

@@ -1,7 +1,5 @@
 // miniprogram/pages/index/index.js
 const app = getApp();
-// 如果您创建了 SoundManager，可以取消下面的注释
-// import { soundManager } from '../../utils/SoundManager';
 
 Page({
   data: {
@@ -14,6 +12,12 @@ Page({
         path: '/pages/browser/index'
       },
       {
+        id: 'qcio',
+        name: 'QCIQ', // 合规化名称，避开官方商标
+        icon: '📟',   // 使用传呼机图标模拟复古通讯工具
+        path: '/pages/qcio/index'
+      },
+      {
         id: 'chat',
         name: 'Time Chat',
         icon: '💬',
@@ -21,7 +25,7 @@ Page({
       },
       {
         id: 'avatar',
-        name: 'My Identity', // 新增的 Avatar 入口
+        name: 'My Identity', 
         icon: '👤',
         path: '/pages/avatar/index'
       },
@@ -48,8 +52,6 @@ Page({
     setInterval(() => {
       this.updateTime();
     }, 60000);
-    
-    // if (typeof soundManager !== 'undefined') soundManager.play('startup');
   },
 
   updateTime: function() {
@@ -63,22 +65,23 @@ Page({
 
   onIconTap: function(e) {
     const path = e.currentTarget.dataset.path;
-    // if (typeof soundManager !== 'undefined') soundManager.playClick();
     
-    // 简单的点击反馈延迟
+    // 简单的点击反馈延迟，模拟老式系统的加载感
     setTimeout(() => {
       wx.navigateTo({
         url: path,
         fail: (err) => {
           console.error("Navigation failed:", err);
-          wx.showToast({ title: 'Error executing program', icon: 'none' });
+          wx.showToast({ 
+            title: 'Path not found: ' + path, 
+            icon: 'none' 
+          });
         }
       });
     }, 100);
   },
 
   toggleStartMenu: function() {
-    // if (typeof soundManager !== 'undefined') soundManager.playClick();
     this.setData({
       showStartMenu: !this.data.showStartMenu
     });

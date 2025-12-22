@@ -7,7 +7,9 @@
     "pages/translator/index",
     "pages/about/index",
     "pages/star-explorer/index",
-    "pages/browser/index"
+    "pages/browser/index",
+
+    "pages/qcio/index"
   ],
   "window": {
     "backgroundColor": "#F6F6F6",
