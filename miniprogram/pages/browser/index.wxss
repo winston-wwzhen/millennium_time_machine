@@ -1,174 +1,182 @@
-/* browser/index.wxss */
+/* 全局布局 */
 page {
-  background-color: #008080; /* 桌面背景色 */
   height: 100vh;
-  overflow: hidden;
-  font-family: 'SimSun', sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* 整个浏览器窗口，模拟非全屏窗口感，稍微留一点边距 */
-.browser-window {
-  margin-top: 170rpx;
-  width: 100%;
-  height: 100%;
   background-color: #c0c0c0;
+  font-family: 'Courier New', Courier, monospace;
+  overflow: hidden;
+  
+  /* 使用 Flex 布局管理垂直空间，比单纯的 height: 100% 更稳定 */
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  border-top: 2rpx solid #fff;
-  border-left: 2rpx solid #fff;
-  border-right: 2rpx solid #000;
-  border-bottom: 2rpx solid #000;
+
+  /* * 顶部避让逻辑：
+   * status-bar-height (状态栏) + 44px (标准胶囊按钮区域高度)
+   * 这样浏览器窗口正好从胶囊按钮下方开始
+   */
+  padding-top: calc(env(safe-area-inset-top) + 44px);
+  /* 底部避让逻辑：适配全面屏底部的 Home Indicator */
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* === 通用 3D 边框类 === */
-.bevel-inset {
-  border-top: 2rpx solid #808080;
-  border-left: 2rpx solid #808080;
-  border-right: 2rpx solid #fff;
-  border-bottom: 2rpx solid #fff;
-}
-.bevel-outset {
-  border-top: 2rpx solid #fff;
-  border-left: 2rpx solid #fff;
-  border-right: 2rpx solid #000;
-  border-bottom: 2rpx solid #000;
+.win98-window {
+  /* Flex: 1 让窗口自动占据页面剩余的所有空间 */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  /* 用户调整：增加额外的顶部间距，确保窗口完全避开胶囊按钮并产生悬浮感 */
+  margin-top: 80rpx;
+  padding: 2px;
+  box-sizing: border-box;
+  
+  /* 增加阴影，使其看起来更像浮在桌面上的窗口 */
+  box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+  border: 2px solid #fff;
+  border-right-color: #000;
+  border-bottom-color: #000;
+  background-color: #c0c0c0;
+  
+  /* 确保内部滚动，防止窗口溢出 */
+  overflow: hidden;
 }
 
 /* 1. 标题栏 */
 .title-bar {
-  background: #000080;
-  padding: 4rpx 8rpx;
   display: flex;
-  justify-content: space-between;
+  background: linear-gradient(90deg, #000080, #1084d0);
+  padding: 4px;
+  color: white;
+  align-items: center;
+  height: 28px;
+  flex-shrink: 0; /* 防止被压缩 */
+  justify-content: space-between; /* 确保标题和按钮两端对齐 */
+}
+
+.title-icon {
+  margin-right: 5px;
+  font-size: 14px;
+}
+
+.title-text { 
+  flex: 1; 
+  font-weight: bold; 
+  font-size: 14px; 
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis;
+  line-height: 20px; /* 垂直居中 */
+}
+
+.title-controls {
+  display: flex;
+  gap: 2px;
   align-items: center;
 }
-.title-left { display: flex; align-items: center; gap: 8rpx; }
-.win-icon { font-size: 24rpx; }
-.title-text { color: #fff; font-size: 24rpx; font-weight: bold; letter-spacing: 1rpx; }
-.title-controls { display: flex; gap: 4rpx; }
+
 .control-btn {
-  width: 32rpx; height: 32rpx;
-  background: #c0c0c0;
-  font-size: 20rpx;
-  display: flex; align-items: center; justify-content: center;
-  border-top: 2rpx solid #fff; border-left: 2rpx solid #fff;
-  border-right: 2rpx solid #000; border-bottom: 2rpx solid #000;
-}
-.control-btn:active {
-  border-top: 2rpx solid #000; border-left: 2rpx solid #000;
-  border-right: 2rpx solid #fff; border-bottom: 2rpx solid #fff;
-}
-
-/* 2. 菜单栏 */
-.menu-bar {
-  display: flex;
-  padding: 2rpx 10rpx;
-  border-bottom: 2rpx solid #808080;
-  font-size: 24rpx;
+  width: 18px; 
+  height: 18px;
+  background-color: #c0c0c0;
+  border: 1px outset #fff;
+  color: black;
+  display: flex; /* 使用 flex 居中文字 */
   align-items: center;
-}
-.menu-item { margin-right: 20rpx; padding: 2rpx 8rpx; }
-.menu-item:active { background: #000080; color: #fff; }
-.win-logo { margin-left: auto; font-size: 30rpx; opacity: 0.5; }
-
-/* 3. 工具栏 */
-.toolbar {
-  display: flex;
-  align-items: center;
-  padding: 6rpx 10rpx;
-  border-bottom: 2rpx solid #808080;
-  gap: 4rpx;
-}
-.tool-btn {
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  padding: 4rpx 12rpx;
-  border: 1px solid transparent;
-}
-.btn-active {
-  border-top: 1rpx solid #fff; border-left: 1rpx solid #fff;
-  border-right: 1rpx solid #000; border-bottom: 1rpx solid #000;
-}
-.tool-btn text { font-size: 32rpx; line-height: 1; }
-.tool-btn .btn-text { font-size: 20rpx; margin-top: 4rpx; }
-.divider-v { width: 2rpx; height: 50rpx; background: #808080; border-right: 1px solid #fff; margin: 0 10rpx; }
-
-/* 4. 地址栏 */
-.address-bar {
-  display: flex; align-items: center;
-  padding: 6rpx 10rpx;
-  font-size: 24rpx;
-  gap: 10rpx;
-}
-.input-wrapper {
-  flex: 1;
-  background: #fff;
-  display: flex; align-items: center;
-  height: 40rpx;
-  padding: 0 4rpx;
-}
-.url-input { flex: 1; height: 100%; font-size: 24rpx; }
-.dropdown-arrow { background: #c0c0c0; padding: 0 8rpx; height: 100%; display: flex; align-items: center; border-left: 1px solid #808080; font-size: 16rpx;}
-.go-btn {
-  padding: 4rpx 12rpx;
-  font-size: 24rpx;
-  background: #c0c0c0;
-  border-top: 2rpx solid #fff; border-left: 2rpx solid #fff;
-  border-right: 2rpx solid #000; border-bottom: 2rpx solid #000;
-}
-.go-btn:active {
-  border-top: 2rpx solid #000; border-left: 2rpx solid #000;
-  border-right: 2rpx solid #fff; border-bottom: 2rpx solid #fff;
-}
-
-/* 5. 视口与网页内容 */
-.viewport {
-  flex: 1;
-  margin: 4rpx;
-  position: relative;
-  overflow: hidden;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 1;
+  padding-bottom: 2px; /* 微调文字位置 */
   box-sizing: border-box;
 }
 
-/* 网页通用样式 */
-.web-page { padding: 30rpx; color: #000; }
-.loading-screen { padding: 50rpx; display: flex; flex-direction: column; align-items: center; gap: 20rpx; }
-.loading-text { font-size: 24rpx; }
-
-/* 首页样式 */
-.home-page { text-align: center; }
-.portal-header { margin-bottom: 40rpx; }
-.portal-title { display: block; font-size: 40rpx; font-weight: bold; color: #000080; }
-.portal-subtitle { font-size: 24rpx; color: #666; letter-spacing: 2rpx; }
-.marquee-box { background: #ffffcc; padding: 10rpx; margin-bottom: 40rpx; }
-.marquee-text { font-size: 24rpx; color: #d00; }
-.link-group { text-align: left; width: 80%; margin: 0 auto; }
-.group-title { font-weight: bold; margin-bottom: 10rpx; display: block; border-bottom: 1px solid #ccc; }
-.web-link { 
-  color: blue; text-decoration: underline; margin-bottom: 16rpx; font-size: 28rpx; cursor: pointer;
+.control-btn:active { 
+  border-style: inset; 
+  padding-top: 2px; /* 按下时文字下沉效果 */
+  padding-bottom: 0;
 }
-.ad-banner { margin-top: 60rpx; background: #c0c0c0; padding: 20rpx; font-weight: bold; animation: flash 1s infinite; }
 
-/* 404 样式 */
-.error-page .h1 { font-size: 32rpx; font-weight: normal; margin-bottom: 20rpx; display: block;}
-.error-page .p { font-size: 24rpx; margin-bottom: 10rpx; display: block;}
-.divider-h { height: 2rpx; background: #ccc; margin: 20rpx 0; }
-.ul { margin-left: 20rpx; }
-.li { display: block; font-size: 24rpx; margin-bottom: 6rpx; }
+.control-btn.close {
+  margin-left: 2px; /* 关闭按钮稍微分开一点 */
+}
 
-/* 6. 状态栏 */
-.status-bar {
-  height: 44rpx;
+/* 2. 工具栏 */
+.toolbar {
+  display: flex;
+  padding: 4px;
+  gap: 4px;
+  border-bottom: 1px solid #808080;
+  align-items: center;
+  flex-shrink: 0; /* 防止被压缩 */
+}
+
+.tool-btn {
+  border: 1px outset #fff;
+  padding: 2px 8px;
+  font-size: 16px;
   background: #c0c0c0;
   display: flex;
   align-items: center;
-  padding: 0 10rpx;
-  font-size: 22rpx;
-  gap: 10rpx;
-  margin: 2rpx;
+  justify-content: center;
+}
+.tool-btn:active { border-style: inset; }
+.tool-btn.disabled { color: #808080; border-style: solid; border-color: #c0c0c0; }
+
+.tool-separator { width: 1px; height: 20px; background: #808080; border-right: 1px solid #fff; }
+
+.address-input-wrapper {
+  flex: 1;
+  background: white;
+  border: 1px inset #fff;
+  height: 24px;
+  padding: 0 4px;
+  display: flex; align-items: center;
+}
+.address-input { font-size: 12px; width: 100%; }
+
+/* 3. 视口与通用 */
+.viewport {
+  flex: 1;
+  background: white;
+  border: 2px inset #fff;
+  margin: 2px;
+  position: relative;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  height: 0; /* 配合flex:1 确保滚动正常 */
 }
 
-@keyframes flash { 0% {color: red;} 50% {color: blue;} 100% {color: red;} }
+.web-content { flex: 1; overflow-y: auto; }
+
+.loading-bar-container { padding: 20px; text-align: center; }
+.loading-track { height: 15px; border: 1px inset #fff; background: #fff; margin-top: 5px; }
+.loading-progress { height: 100%; background: #000080; transition: width 0.2s; }
+
+/* 底部状态栏 */
+.status-bar {
+  height: 20px;
+  background: #c0c0c0;
+  border-top: 1px solid #fff;
+  display: flex; align-items: center; padding: 0 5px; font-size: 11px;
+  flex-shrink: 0; /* 防止被压缩 */
+}
+.status-text { flex: 1; }
+.status-progress-bar { height: 10px; background: #000080; width: 50px; border: 1px inset #fff; }
+
+/* ============ SCENE A: Portal Styles ============ */
+.page-home { padding: 15px; }
+.hero-section { text-align: center; margin-bottom: 20px; }
+.hero-logo { width: 80px; height: 80px; margin: 10px 0; }
+.blink-text { animation: blink 1s infinite; color: red; font-weight: bold; }
+@keyframes blink { 50% { opacity: 0; } }
+.daily-quote { display: block; font-style: italic; color: #666; font-size: 12px; }
+.retro-hr { border-bottom: 1px solid #808080; border-top: 1px solid #fff; margin: 15px 0; height: 0; }
+
+.link-item {
+  display: flex; align-items: center; margin-bottom: 15px; padding: 5px;
+  border: 1px dashed transparent; cursor: pointer;
+}
+.link-item:active { background: #ffffcc; border-color: #000; }
+.special-link { background: #e0e0ff; border: 1px solid #000080; }
+.link-icon { font-size: 24px; margin-right: 10px; }
+.link-title { display: block; color: #0000ff; text-decoration: underline; font-weight: bold; }
+.link-desc { font-size: 12px; color: #666; }

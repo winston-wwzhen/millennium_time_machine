@@ -1,5 +1,7 @@
 {
+  "navigationBarTitleText": "Millennium Explorer",
   "navigationStyle": "custom",
-  "navigationBarTitleText": "Internet Explorer",
-  "usingComponents": {}
+  "usingComponents": {
+    "farm-game": "../../components/farm-game/index"
+  }
 }

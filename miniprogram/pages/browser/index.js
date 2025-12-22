@@ -1,123 +1,129 @@
-// browser/index.js
+// miniprogram/pages/browser/index.js
+const app = getApp();
+
 Page({
   data: {
-    pageTitle: 'Home Page',
-    currentUrl: 'http://www.millennium.com', // 显示在地址栏的文本
-    route: 'home', // 实际渲染的内部页面: home, 404, etc.
-    isLoading: false,
-    loadingPercent: 0,
+    // --- 浏览器状态 ---
+    currentUrl: 'http://www.time-machine.com/portal',
+    isLoading: true,
+    progress: 0,
+    statusText: 'Connecting to server...',
+    historyStack: ['http://www.time-machine.com/portal'],
+    currentIndex: 0,
+    canGoBack: false,
+    canGoForward: false,
     
-    // 路由映射表
-    sitemap: {
-      'http://www.millennium.com': 'home',
-      'http://mars.lang': 'mars',
-      'http://love.tear': 'translator',
-      'http://chat.qcio': 'chat',
-      'http://my.space': 'space'
-    },
-    statusBarHeight: 20,
+    // 每日彩蛋
+    dailyQuote: '',
   },
 
-  onLoad() {
-    // 🆕 新增：获取系统信息，适配不同机型的刘海屏/状态栏
-    try {
-      const res = wx.getSystemInfoSync();
-      // 某些机型获取失败给个保底值 20
-      this.setData({ statusBarHeight: res.statusBarHeight || 20 });
-    } catch (e) {
-      console.error('获取系统信息失败', e);
-    }
-
-    this.startLoading();
+  onLoad: function () {
+    this.generateDailyContent();
+    this.simulateLoading();
   },
 
-  // 模拟拨号上网加载
-  startLoading() {
-    this.setData({ isLoading: true, loadingPercent: 0 });
-    
-    // 进度条动画
+  // --- 浏览器核心逻辑 ---
+
+  generateDailyContent: function() {
+    const quotes = [
+      "Y2K Bug fixed. Systems nominal.",
+      "Welcome to the new millennium.",
+      "Downloading more RAM...",
+      "Netscape Navigator recommended.",
+      "Signal strength: 98%"
+    ];
+    this.setData({ dailyQuote: quotes[Math.floor(Math.random() * quotes.length)] });
+  },
+
+  simulateLoading: function() {
+    this.setData({ isLoading: true, progress: 0, statusText: 'Resolving host...' });
     let p = 0;
-    const timer = setInterval(() => {
+    const interval = setInterval(() => {
       p += Math.random() * 20;
       if (p >= 100) {
-        p = 100;
-        clearInterval(timer);
-        this.setData({ isLoading: false, loadingPercent: 100 });
+        clearInterval(interval);
+        this.setData({ isLoading: false, statusText: 'Done', progress: 100 });
       } else {
-        this.setData({ loadingPercent: p });
+        this.setData({ progress: p });
       }
-    }, 200);
+    }, 100);
   },
 
-  // 用户输入地址
-  onUrlInput(e) {
-    this.setData({ currentUrl: e.detail.value });
-  },
-
-  // 回车或点击“转到”
-  onUrlEnter() {
-    const rawUrl = this.data.currentUrl.trim();
-    // 简单容错：如果不带http，给它加上
-    const url = rawUrl.startsWith('http') ? rawUrl : `http://${rawUrl}`;
-    
-    this.setData({ currentUrl: url });
-    this.startLoading();
-
-    // 路由匹配
-    const routeKey = this.data.sitemap[url];
-    
-    if (routeKey) {
-      // 如果是功能页面，延迟跳转（模拟浏览器打开app）
-      if (['mars', 'translator', 'chat', 'space'].includes(routeKey)) {
-        setTimeout(() => {
-          wx.redirectTo({ url: `/pages/${routeKey}/index` });
-        }, 1500);
-      } else {
-        // 内部渲染页面
-        this.setData({ route: routeKey, pageTitle: 'Portal' });
-      }
-    } else {
-      // 404
-      this.setData({ route: '404', pageTitle: '404 Not Found' });
+  navigateInternal: function(url) {
+    const { historyStack, currentIndex } = this.data;
+    if (historyStack[currentIndex] === url) {
+      this.onRefresh();
+      return;
     }
-  },
+    const newStack = historyStack.slice(0, currentIndex + 1);
+    newStack.push(url);
 
-  // 点击页面内的链接
-  navTo(e) {
-    const url = e.currentTarget.dataset.url;
-    this.setData({ currentUrl: url });
-    this.onUrlEnter();
-  },
-
-  // 刷新
-  refreshPage() {
-    this.startLoading();
-  },
-  
-  // 停止 (仅视觉效果)
-  stopLoading() {
-    this.setData({ isLoading: false });
-  },
-
-  // 主页
-  goHome() {
-    this.setData({ 
-      currentUrl: 'http://www.millennium.com',
+    this.setData({
+      historyStack: newStack,
+      currentIndex: newStack.length - 1,
+      currentUrl: url
     });
-    this.onUrlEnter();
+    
+    this.updateHistoryButtons();
+    this.simulateLoading();
   },
 
-  // 返回上一页 (退出浏览器)
-  goBack() {
-    wx.navigateBack();
+  onBrowserBack: function() {
+    if (!this.data.canGoBack) return;
+    this.restoreHistory(this.data.currentIndex - 1);
+  },
+
+  onBrowserForward: function() {
+    if (!this.data.canGoForward) return;
+    this.restoreHistory(this.data.currentIndex + 1);
+  },
+
+  restoreHistory: function(index) {
+    const url = this.data.historyStack[index];
+    this.setData({
+      currentIndex: index,
+      currentUrl: url,
+      statusText: 'Restoring session...'
+    });
+    this.updateHistoryButtons();
+  },
+
+  updateHistoryButtons: function() {
+    const { currentIndex, historyStack } = this.data;
+    this.setData({
+      canGoBack: currentIndex > 0,
+      canGoForward: currentIndex < historyStack.length - 1
+    });
+  },
+
+  onRefresh: function() {
+    this.simulateLoading();
+  },
+
+  goHome: function() {
+    this.navigateInternal('http://www.time-machine.com/portal');
   },
   
-  // 底部工具栏后退 (简易版，直接退出或回首页)
-  navBack() {
-    if (this.data.route !== 'home') {
-      this.goHome();
+  onLinkTap: function(e) {
+    const url = e.currentTarget.dataset.url;
+    if (url === 'http://galaxy.farm') {
+      this.navigateInternal(url);
     } else {
-      wx.navigateBack();
+      const path = e.currentTarget.dataset.path;
+      if (path) {
+        wx.navigateTo({ url: path });
+      }
     }
+  },
+
+  // 接收游戏组件传来的状态更新
+  onGameStatusChange: function(e) {
+    if (e.detail && e.detail.text) {
+      this.setData({ statusText: e.detail.text });
+    }
+  },
+
+  goBack: function() {
+    wx.navigateBack();
   }
 });

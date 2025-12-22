@@ -1,0 +1,63 @@
+<view class="page-game">
+  <!-- 游戏头部 -->
+  <view class="game-header">
+    <view class="game-stats">
+      <text class="stat-item level">LV.{{farmLevel}}</text>
+      <text class="stat-item coins">🪙 {{farmCoins}}</text>
+    </view>
+    <!-- 显示当前访问的页面标题 -->
+    <view class="game-title">{{isVisiting ? 'NET: ' + neighborFarm.name : 'LOCAL: MY GARDEN'}}</view>
+  </view>
+
+  <!-- 游戏通知 -->
+  <view class="game-msg">> {{farmMessage}}</view>
+
+  <!-- 农田网格 -->
+  <view class="farm-grid">
+      <block wx:for="{{isVisiting ? neighborFarm.plots : farmPlots}}" wx:key="id">
+      <view class="plot-cell status-{{item.status}}" bindtap="onPlotTap" data-index="{{index}}">
+        <view class="grid-lines"></view>
+        <view class="plant-container">
+          <view wx:if="{{item.status === 0}}" class="dirt-hint">EMPTY</view>
+          <view wx:if="{{item.status === 1}}" class="plant-growing">
+            <text class="emoji-seed">🌱</text>
+          </view>
+          <view wx:if="{{item.status === 2}}" class="plant-ripe shake-anim">
+            <text class="emoji-fruit">{{item.cropType === 'neon_shroom' ? '🍄' : (item.cropType === 'cyber_flower' ? '🌹' : (item.cropType === 'quantum_berry' ? '🍇' : '💎'))}}</text>
+          </view>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <!-- 游戏控制栏 -->
+  <view class="game-controls">
+    <block wx:if="{{!isVisiting}}">
+        <button class="game-btn visit-btn" bindtap="visitNeighbor">🌐 VISIT NEIGHBOR</button>
+    </block>
+    <block wx:else>
+        <button class="game-btn home-btn" bindtap="returnToFarm">🏠 RETURN HOME</button>
+    </block>
+  </view>
+</view>
+
+<!-- 商店弹窗 (游戏内) -->
+<view class="shop-modal" wx:if="{{showShopModal}}">
+  <view class="shop-window">
+    <view class="shop-title">SEEDS <text bindtap="closeShop">X</text></view>
+    <view class="seed-list">
+      <view class="seed-item" bindtap="plantSeed" data-type="neon_shroom">
+        <text>🍄 Shroom (10s)</text> <text class="cost">10c</text>
+      </view>
+      <view class="seed-item" bindtap="plantSeed" data-type="cyber_flower">
+        <text>🌹 Rose (30s)</text> <text class="cost">30c</text>
+      </view>
+      <view class="seed-item" bindtap="plantSeed" data-type="quantum_berry">
+        <text>🍇 Berry (60s)</text> <text class="cost">100c</text>
+      </view>
+      <view class="seed-item" bindtap="plantSeed" data-type="void_crystal">
+        <text>💎 Crystal (2m)</text> <text class="cost">500c</text>
+      </view>
+    </view>
+  </view>
+</view>

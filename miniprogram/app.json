@@ -1,6 +1,5 @@
 {
   "pages": [
-    "pages/login/index",
     "pages/index/index",
     "pages/mars/index",
     "pages/avatar/index",
@@ -8,7 +7,6 @@
     "pages/translator/index",
     "pages/about/index",
     "pages/star-explorer/index",
-    "pages/space/index",
     "pages/browser/index"
   ],
   "window": {

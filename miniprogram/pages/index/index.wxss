@@ -1,288 +1,132 @@
-/* === 全局容器 === */
-.desktop {
-  width: 100vw;
+/* miniprogram/pages/index/index.wxss */
+
+/* 经典 Windows 98 桌面背景色 */
+page {
   height: 100vh;
-  background-color: #008080; /* 经典的 Windows 青色背景 */
-  position: relative;
+  background-color: #008080; 
+  font-family: 'Courier New', Courier, monospace;
   overflow: hidden;
-  font-family: 'SimSun', sans-serif; /* 宋体，还原像素感 */
+  box-sizing: border-box;
 }
 
-/* === 1. 桌面图标区域 === */
-.icon-column {
-  padding: 160rpx 30rpx;
+.desktop {
+  width: 100%;
+  height: 100%;
+  position: relative;
   display: flex;
-  flex-direction: column; /* 纵向排列 */
-  flex-wrap: wrap; /* 满了自动换列 */
-  height: 85vh; /* 留出底部任务栏的高度 */
-  align-content: flex-start; 
-  gap: 30rpx; /* 图标间距 */
+  flex-direction: column;
+}
+
+/* 图标网格 */
+.icon-grid {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-content: flex-start; /* 图标从左上角纵向排列 */
+  padding: 40rpx; /* 增加基础内边距 */
+  /* 关键修改：顶部留出更多空间，避免离顶部太近 */
+  padding-top: 120rpx; 
+  gap: 40rpx;
 }
 
 .desktop-icon {
-  width: 140rpx;
+  width: 160rpx; /* 稍微加大图标点击区域 */
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 10rpx;
-  border: 1px solid transparent; /* 预留边框位置，防止抖动 */
+  margin-bottom: 30rpx;
 }
 
-/* 图标选中/点击态：经典的蓝色虚线背景 */
-.desktop-icon.icon-active {
+.desktop-icon:active .icon-img {
+  filter: brightness(0.8);
+  transform: translate(1px, 1px); /* 点击下沉效果 */
+}
+.desktop-icon:active .icon-label {
   background-color: #000080;
-  border: 1px dotted #ffff00;
-  opacity: 0.8;
+  color: #fff;
+  border: 1px dotted #fff;
 }
 
-/* 选中时文字背景变蓝 */
-.desktop-icon.icon-active .icon-text {
-  background-color: #000080;
-}
-
-
-.icon-text {
-  font-size: 24rpx;
-  color: #ffffff;
-  text-align: center;
-  /* 简单的文字阴影，增加在复杂背景下的可读性 */
-  text-shadow: 1px 1px 1px rgba(0,0,0,0.8);
-  /* 限制文字行数，防止太长 */
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  padding: 2rpx 6rpx;
-}
-
-/* === 2. 底部任务栏 === */
-.taskbar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 56rpx; /* 约 28px */
-  background: #c0c0c0;
-  /* 任务栏顶部的白线 */
-  border-top: 2px solid #ffffff;
-  display: flex;
-  align-items: center;
-  padding: 4rpx;
-  box-sizing: border-box;
-  z-index: 100;
-  box-shadow: 0 -2px 4px rgba(0,0,0,0.2);
-}
-
-/* --- [重点修改] 开始按钮 (纯 CSS 绘制) --- */
-.start-btn {
-  height: 44rpx;
+.icon-img {
+  font-size: 72rpx;
+  width: 90rpx;
+  height: 90rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 12rpx;
-  margin-right: 10rpx;
-  background: #c0c0c0;
-  /* 经典的 Windows 按钮 3D 凸起效果 */
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #000000;
-  border-bottom: 2px solid #000000;
-  transition: none; /* 去掉现代动画 */
-}
-
-/* 开始按钮按下状态：变为凹陷 */
-.start-btn.active {
-  border-top: 2px solid #000000;
-  border-left: 2px solid #000000;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-  background: #d4d4d4; /* 按下变暗一点 */
-  transform: translate(1px, 1px); /* 物理位移模拟按压感 */
-}
-
-/* 替代图片的 Emoji 图标样式 */
-.start-icon-emoji {
-  font-size: 30rpx; /* 大小调整 */
-  margin-right: 8rpx;
-  line-height: 1;
-}
-
-.start-btn text {
-  font-weight: bold;
-  font-size: 26rpx;
-  color: #000;
-  letter-spacing: 1px;
-}
-
-/* 垂直分割线 */
-.divider-v {
-  width: 2px;
-  height: 40rpx;
-  background: #808080;
-  border-right: 1px solid #ffffff;
-  margin: 0 10rpx;
-}
-
-/* 任务栏中间空白区 */
-.running-tasks {
-  flex: 1;
-}
-
-/* 右下角托盘区 (时钟) */
-.tray-area {
-  height: 44rpx;
-  padding: 0 16rpx;
-  background: #c0c0c0;
-  /* 凹陷效果 */
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-  display: flex;
-  align-items: center;
-  gap: 10rpx;
-}
-
-.time-text {
-  font-size: 22rpx;
-  color: #000;
-}
-
-/* === 3. 开始菜单 === */
-.start-menu {
-  position: fixed;
-  bottom: 58rpx; /* 任务栏高度上方 */
-  left: 4rpx;
-  width: 400rpx;
-  background: #c0c0c0;
-  /* 菜单的大边框：3D 凸起 */
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #000000;
-  border-bottom: 2px solid #000000;
-  display: flex;
-  visibility: hidden; /* 默认隐藏 */
-  z-index: 99;
-  box-shadow: 4px 4px 10px rgba(0,0,0,0.5);
-}
-
-.start-menu.visible {
-  visibility: visible;
-  /* 简单的出现动画（可选，不需要可以去掉） */
-  animation: slideUp 0.1s steps(2); 
-}
-
-/* 侧边栏：深蓝色带竖排文字 */
-.sidebar {
-  width: 50rpx;
-  background: #000080;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  padding-bottom: 10rpx;
-}
-
-.win98-text {
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
-  color: #ffffff;
-  font-weight: bold;
-  font-size: 32rpx;
-  letter-spacing: 4rpx;
-}
-
-/* 菜单项列表 */
-.menu-items {
-  flex: 1;
-  padding: 4rpx;
-}
-
-.menu-item {
-  display: flex;
-  align-items: center;
-  padding: 16rpx 20rpx;
-  font-size: 24rpx;
-  color: #000;
-}
-
-/* 菜单项悬停/点击效果：经典反色 */
-.menu-item:active {
-  background-color: #000080;
-  color: #ffffff;
-}
-
-/* 横向分割线 */
-.divider {
-  height: 2rpx;
-  background: #808080;
-  border-bottom: 1px solid #ffffff;
-  margin: 6rpx 2rpx;
-}
-
-@keyframes slideUp {
-  from { transform: translateY(10rpx); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-
-/* 1. 桌面大图标 Emoji */
-.icon-emoji {
-  font-size: 64rpx; /* 控制图标大小 */
-  line-height: 1;
   margin-bottom: 10rpx;
-  /* 稍微加一点阴影，更有立体感 */
-  text-shadow: 2px 2px 0px rgba(0,0,0,0.2); 
+  /* 增加图标阴影 */
+  filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.3));
 }
 
-/* 2. 开始菜单小图标 Emoji */
-.menu-emoji {
-  font-size: 32rpx;
-  margin-right: 16rpx;
-  width: 40rpx; /* 定宽，保证对齐 */
+.icon-label {
+  color: white;
+  font-size: 24rpx;
   text-align: center;
+  text-shadow: 1px 1px 0 #000;
+  line-height: 1.2;
+  padding: 4rpx 8rpx;
 }
 
-/* 3. 任务栏托盘图标 Emoji */
-.tray-emoji {
-  font-size: 28rpx;
-  margin-right: 8rpx;
+/* 桌面小部件 (便签) - 样式优化 */
+.widget-container {
+  position: absolute;
+  /* 修改位置，不让它太靠上 */
+  top: 160rpx; 
+  right: 40rpx;
+  pointer-events: none; /* 让点击穿透 */
+  z-index: 10;
 }
 
-/* === 🦁 电子宠物样式 === */
-.pet-lion {
-  width: 120rpx;
-  height: 120rpx;
+.sticky-note {
+  background-color: #ffffcc;
+  color: #000;
+  padding: 24rpx;
+  width: 240rpx;
+  font-size: 24rpx;
+  font-family: 'Comic Sans MS', 'Courier New', cursive; 
+  box-shadow: 4px 4px 5px rgba(0,0,0,0.3);
+  transform: rotate(2deg);
+  border: 1px solid #e0e0a0;
+  /* 增加一点纹理 */
+  background-image: linear-gradient(#f9f9f9 1px, transparent 1px);
+  background-size: 100% 1.2em;
+}
+
+/* 桌面助手 (小狮子) - 新增样式 */
+.desktop-agent {
+  position: absolute;
+  /* 放在任务栏上方 */
+  bottom: calc(100rpx + env(safe-area-inset-bottom)); 
+  right: 40rpx;
+  z-index: 20;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  z-index: 50; /* 保证在图标之上，但在开始菜单之下 */
-  overflow: visible; /* 允许气泡超出 */
+  /* 加个浮动动画 */
+  animation: float 3s ease-in-out infinite;
 }
 
-/* 狮子本体：加大并添加呼吸动画 */
-.lion-body {
+.agent-body {
   font-size: 80rpx;
-  animation: breathe 2s infinite ease-in-out;
-  /* 加上滤镜阴影，增加实体感 */
-  filter: drop-shadow(2px 2px 0px rgba(0,0,0,0.3));
+  filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.3));
 }
 
-/* 说话气泡：经典的像素风黄底黑字 */
-.pet-bubble {
-  position: absolute;
-  top: -60rpx; /* 在狮子头顶 */
-  background-color: #ffffe0;
+.agent-bubble {
+  background: #ffffe0;
   border: 1px solid #000;
-  padding: 8rpx 12rpx;
+  border-radius: 8rpx;
+  padding: 8rpx 16rpx;
   font-size: 20rpx;
-  color: #000;
-  border-radius: 4rpx;
+  margin-bottom: 6rpx;
+  position: relative;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
   white-space: nowrap;
-  box-shadow: 2px 2px 0px rgba(0,0,0,0.2);
-  /* 气泡小三角 */
 }
-.pet-bubble::after {
+
+/* 气泡的小箭头 */
+.agent-bubble::after {
   content: '';
   position: absolute;
   bottom: -8rpx;
@@ -292,11 +136,145 @@
   border-style: solid;
   border-color: #000 transparent transparent transparent;
 }
-/* 内部覆盖三角以实现空心效果(可选，太小了可以忽略，这里简写) */
 
-/* 呼吸动画：模拟忽大忽小 */
-@keyframes breathe {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10rpx); }
 }
 
+/* 任务栏 */
+.taskbar {
+  /* 适配底部安全区 */
+  height: calc(80rpx + env(safe-area-inset-bottom));
+  padding-bottom: env(safe-area-inset-bottom);
+  
+  background-color: #c0c0c0;
+  border-top: 2px solid #fff;
+  display: flex;
+  align-items: center;
+  padding-left: 6rpx;
+  padding-right: 6rpx;
+  box-sizing: border-box;
+  z-index: 1000;
+  position: relative;
+  box-shadow: 0 -2px 5px rgba(0,0,0,0.2);
+}
+
+.start-button {
+  display: flex;
+  align-items: center;
+  padding: 4rpx 12rpx;
+  background-color: #c0c0c0;
+  border: 2px outset #fff;
+  font-weight: bold;
+  font-size: 26rpx;
+  margin-right: 12rpx;
+  height: 52rpx;
+  box-shadow: 1px 1px 0 #000;
+}
+
+.start-button:active, .start-button.active {
+  border: 2px inset #fff;
+  background-color: #d0d0d0;
+  box-shadow: none;
+  transform: translate(1px, 1px);
+}
+
+.win-logo {
+  width: 36rpx;
+  height: 36rpx;
+  margin-right: 10rpx;
+}
+
+.taskbar-divider {
+  width: 2px;
+  height: 50rpx;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #fff;
+  margin: 0 10rpx;
+}
+
+.task-items {
+  flex: 1;
+}
+
+.system-tray {
+  border: 2px inset #fff;
+  padding: 0 14rpx;
+  height: 50rpx;
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  font-size: 22rpx;
+  background: #c0c0c0;
+  box-shadow: inset 1px 1px 0 #000;
+}
+
+/* 开始菜单 - 样式优化 */
+.start-menu {
+  position: absolute;
+  /* 确保菜单在任务栏上方 */
+  bottom: calc(82rpx + env(safe-area-inset-bottom)); 
+  left: 6rpx;
+  width: 380rpx;
+  background-color: #c0c0c0;
+  border: 2px outset #fff;
+  display: flex;
+  z-index: 999;
+  box-shadow: 6px 6px 0 rgba(0,0,0,0.5); /* 更明显的阴影 */
+}
+
+.sidebar {
+  width: 70rpx;
+  background: linear-gradient(180deg, #000080 0%, #1084d0 15%, #000080 100%);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 20rpx;
+}
+
+.os-version {
+  color: white;
+  transform: rotate(-90deg);
+  white-space: nowrap;
+  font-weight: bold;
+  font-size: 28rpx;
+  margin-bottom: 30rpx;
+  letter-spacing: 2rpx;
+  text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
+}
+
+.menu-items {
+  flex: 1;
+  padding: 4rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-item {
+  padding: 16rpx 20rpx;
+  font-size: 26rpx;
+  display: flex;
+  align-items: center;
+  color: #000;
+  margin-bottom: 2rpx;
+}
+
+.menu-item:active {
+  background-color: #000080;
+  color: white;
+}
+
+.menu-icon {
+  width: 44rpx;
+  text-align: center;
+  margin-right: 16rpx;
+  font-size: 32rpx;
+}
+
+.menu-line {
+  border-top: 1px solid #808080;
+  border-bottom: 1px solid #fff;
+  margin: 10rpx 4rpx;
+  height: 0;
+}

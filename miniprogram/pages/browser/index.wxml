@@ -1,10 +1,8 @@
-<view class="browser-window">
-
+<view class="win98-window">
+  <!-- 1. 标题栏 Title Bar -->
   <view class="title-bar">
-    <view class="title-left">
-      <text class="win-icon">🌐</text>
-      <text class="title-text">Internet Explorer - {{pageTitle}}</text>
-    </view>
+    <view class="title-icon">🌐</view>
+    <view class="title-text">Millennium Explorer</view>
     <view class="title-controls">
       <view class="control-btn minimize">_</view>
       <view class="control-btn maximize">□</view>
@@ -12,107 +10,86 @@
     </view>
   </view>
 
-  <view class="menu-bar">
-    <text class="menu-item">文件(F)</text>
-    <text class="menu-item">编辑(E)</text>
-    <text class="menu-item">查看(V)</text>
-    <text class="menu-item">收藏(A)</text>
-    <text class="menu-item">工具(T)</text>
-    <text class="menu-item">帮助(H)</text>
-    <view class="win-logo">💾</view>
-  </view>
-
+  <!-- 2. 工具栏 Toolbar -->
   <view class="toolbar">
-    <view class="tool-btn" bindtap="navBack" hover-class="btn-active">
-      <text>⬅️</text><text class="btn-text">后退</text>
-    </view>
-    <view class="tool-btn" hover-class="btn-active">
-      <text>➡️</text><text class="btn-text">前进</text>
-    </view>
-    <view class="tool-btn" bindtap="stopLoading" hover-class="btn-active">
-      <text>🛑</text><text class="btn-text">停止</text>
-    </view>
-    <view class="tool-btn" bindtap="refreshPage" hover-class="btn-active">
-      <text>🔄</text><text class="btn-text">刷新</text>
-    </view>
-    <view class="tool-btn" bindtap="goHome" hover-class="btn-active">
-      <text>🏠</text><text class="btn-text">主页</text>
-    </view>
-    
-    <view class="divider-v"></view>
-    
-    <view class="tool-btn" hover-class="btn-active">
-      <text>🔍</text><text class="btn-text">搜索</text>
+    <view class="tool-btn {{!canGoBack ? 'disabled' : ''}}" bindtap="onBrowserBack">⬅</view>
+    <view class="tool-btn {{!canGoForward ? 'disabled' : ''}}" bindtap="onBrowserForward">➡</view>
+    <view class="tool-btn" bindtap="onRefresh">🔄</view>
+    <view class="tool-btn" bindtap="goHome">🏠</view>
+    <view class="tool-separator"></view>
+    <view class="address-input-wrapper">
+      <input class="address-input" value="{{currentUrl}}" disabled="true" />
     </view>
   </view>
 
-  <view class="address-bar">
-    <text class="address-label">地址(D):</text>
-    <view class="input-wrapper bevel-inset">
-      <image class="page-icon" src="" /> <input 
-        class="url-input" 
-        value="{{currentUrl}}" 
-        bindconfirm="onUrlEnter" 
-        bindinput="onUrlInput"
-        disabled="{{isLoading}}"
-      />
-      <view class="dropdown-arrow">▼</view>
-    </view>
-    <view class="go-btn" bindtap="onUrlEnter">
-      <text>转到</text>
-    </view>
-  </view>
-
-  <scroll-view scroll-y class="viewport bevel-inset" style="background: #fff;">
+  <!-- 3. 视口 Viewport -->
+  <view class="viewport">
     
-    <view wx:if="{{isLoading}}" class="loading-screen">
-      <text class="loading-text">正在寻找站点 {{currentUrl}} ...</text>
-      <progress percent="{{loadingPercent}}" stroke-width="6" activeColor="#000080" backgroundColor="#c0c0c0" />
+    <!-- 加载条 -->
+    <view class="loading-bar-container" wx:if="{{isLoading}}">
+      <view class="loading-text">Downloading...</view>
+      <view class="loading-track">
+        <view class="loading-progress" style="width: {{progress}}%"></view>
+      </view>
     </view>
 
-    <block wx:else>
+    <!-- 内容区 -->
+    <scroll-view scroll-y="true" class="web-content" wx:if="{{!isLoading}}">
       
-      <view wx:if="{{route === 'home'}}" class="web-page home-page">
-        <view class="portal-header">
-          <text class="portal-title">欢迎来到千禧黄页</text>
-          <text class="portal-subtitle">Welcome to Millennium Portal</text>
-        </view>
-        <view class="marquee-box bevel-inset">
-          <text class="marquee-text">公告: 庆祝千禧时光机 v1.0 上线！冲浪愉快！</text>
-        </view>
+      <!-- ================= SCENE A: Portal Home (主页) ================= -->
+      <block wx:if="{{currentUrl === 'http://www.time-machine.com/portal'}}">
+        <view class="page-home">
+          <view class="hero-section">
+            <view class="blink-text">★ WELCOME TO 2000 ★</view>
+            <image class="hero-logo" mode="aspectFit" src="../../images/borders/border_cyber.png"></image>
+            <text class="daily-quote">"{{dailyQuote}}"</text>
+          </view>
 
-        <view class="link-group">
-          <text class="group-title">站点导航 (Site Navigation)</text>
-          <view class="web-link" bindtap="navTo" data-url="http://mars.lang">🌐 火星文转换器</view>
-          <view class="web-link" bindtap="navTo" data-url="http://love.tear">💔 伤痕艺术馆</view>
-          <view class="web-link" bindtap="navTo" data-url="http://chat.qcio">💬 QCIO 聊天室</view>
-          <view class="web-link" bindtap="navTo" data-url="http://my.space">👽 我的空间</view>
-        </view>
+          <view class="retro-hr"></view>
 
-        <view class="ad-banner bevel-outset">
-          <text>🔥 只要998，大哥大带回家！</text>
-        </view>
-      </view>
+          <view class="nav-links">
+            <view class="section-title">Directory</view>
+            
+            <!-- 游戏入口：内部跳转 -->
+            <view class="link-item special-link" bindtap="onLinkTap" data-url="http://galaxy.farm">
+              <text class="link-icon">🌱</text>
+              <view class="link-text">
+                <text class="link-title">My Homepage Garden</text>
+                <text class="link-desc">Grow plants & Visit friends!</text>
+              </view>
+            </view>
 
-      <view wx:elif="{{route === '404'}}" class="web-page error-page">
-        <text class="h1">HTTP 404 未找到</text>
-        <text class="p">该网页无法显示</text>
-        <view class="divider-h"></view>
-        <text class="p">最可能的原因是：</text>
-        <view class="ul">
-          <text class="li">• 地址可能输入错误。</text>
-          <text class="li">• 链接已过期。</text>
-        </view>
-      </view>
+            <!-- 其他功能：原生跳转 -->
+            <view class="link-item" bindtap="onLinkTap" data-path="/pages/chat/index">
+              <text class="link-icon">💬</text>
+              <view class="link-text">
+                <text class="link-title">AI Chat Room</text>
+                <text class="link-desc">Talk to the machine spirit.</text>
+              </view>
+            </view>
 
+             <view class="link-item" bindtap="onLinkTap" data-path="/pages/translator/index">
+              <text class="link-icon">🈂️</text>
+              <view class="link-text">
+                <text class="link-title">Universal Translator</text>
+                <text class="link-desc">Decode alien languages.</text>
+              </view>
+            </view>
+          </view>
+        </view>
       </block>
-  </scroll-view>
 
-  <view class="status-bar bevel-inset">
-    <text class="status-icon">📄</text>
-    <text class="status-text">{{isLoading ? '正在打开页面...' : '完成'}}</text>
-    <view style="flex:1"></view>
-    <progress wx:if="{{isLoading}}" percent="{{loadingPercent}}" style="width: 100rpx" stroke-width="4" activeColor="#000080" />
-    <text class="status-zone">Internet</text>
+      <!-- ================= SCENE B: Game Component ================= -->
+      <block wx:if="{{currentUrl === 'http://galaxy.farm'}}">
+        <farm-game bind:statuschange="onGameStatusChange"></farm-game>
+      </block>
+
+    </scroll-view>
+
+    <!-- 底部状态栏 -->
+    <view class="status-bar">
+      <view class="status-text">{{statusText}}</view>
+      <view class="status-progress-bar" style="width: {{progress}}%"></view>
+    </view>
   </view>
 </view>
