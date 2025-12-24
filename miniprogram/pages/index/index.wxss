@@ -278,3 +278,83 @@ page {
   margin: 10rpx 4rpx;
   height: 0;
 }
+
+/* 彩蛋对话框 */
+.easter-egg-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.easter-egg-dialog {
+  width: 500rpx;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+  from {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.dialog-header {
+  background: linear-gradient(90deg, #000080, #1084d0);
+  padding: 20rpx 24rpx;
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.dialog-icon {
+  font-size: 48rpx;
+}
+
+.dialog-title {
+  color: #fff;
+  font-size: 32rpx;
+  font-weight: bold;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
+}
+
+.dialog-body {
+  padding: 40rpx 24rpx;
+  background: #c0c0c0;
+}
+
+.egg-message {
+  font-size: 28rpx;
+  color: #000;
+  line-height: 1.6;
+  text-align: center;
+  display: block;
+}
+
+.dialog-footer {
+  padding: 16rpx 24rpx;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12rpx;
+  background: #c0c0c0;
+}

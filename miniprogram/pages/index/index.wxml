@@ -65,4 +65,20 @@
       </view>
     </view>
   </view>
+
+  <!-- 彩蛋对话框 -->
+  <view class="easter-egg-overlay" wx:if="{{showEasterEgg}}">
+    <view class="easter-egg-dialog">
+      <view class="dialog-header">
+        <text class="dialog-icon">🎉</text>
+        <text class="dialog-title">发现彩蛋!</text>
+      </view>
+      <view class="dialog-body">
+        <text class="egg-message">{{easterEggMessage}}</text>
+      </view>
+      <view class="dialog-footer">
+        <button class="win98-btn-std" bindtap="closeEasterEgg">确定</button>
+      </view>
+    </view>
+  </view>
 </view>

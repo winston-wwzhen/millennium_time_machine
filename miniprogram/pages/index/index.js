@@ -1,5 +1,6 @@
 // miniprogram/pages/index/index.js
 const app = getApp();
+const easterEggs = require('../../utils/easter-eggs.js');
 
 Page({
   data: {
@@ -24,6 +25,12 @@ Page({
         path: '/pages/tetris/index'
       },
       {
+        id: 'snake',
+        name: 'Snake\n贪吃蛇',
+        icon: '🐍',
+        path: '/pages/snake/index'
+      },
+      {
         id: 'star-explorer',
         name: 'Star\nExplorer',
         icon: '🌌',
@@ -42,18 +49,6 @@ Page({
         path: '/pages/mars/index'
       },
       {
-        id: 'avatar',
-        name: 'My Identity',
-        icon: '👤',
-        path: '/pages/avatar/index'
-      },
-      {
-        id: 'translator',
-        name: 'Babel Fish',
-        icon: '🈂️',
-        path: '/pages/translator/index'
-      },
-      {
         id: 'about',
         name: 'System Info',
         icon: 'ℹ️',
@@ -61,7 +56,11 @@ Page({
       }
     ],
     showStartMenu: false,
-    systemTime: ''
+    systemTime: '',
+    // 彩蛋相关
+    secretClickCount: 0,
+    showEasterEgg: false,
+    easterEggMessage: ''
   },
 
   onLoad: function() {
@@ -70,6 +69,9 @@ Page({
     setInterval(() => {
       this.updateTime();
     }, 60000);
+
+    // 检查日期彩蛋
+    this.checkDateEasterEgg();
   },
 
   updateTime: function() {
@@ -83,20 +85,58 @@ Page({
 
   onIconTap: function(e) {
     const path = e.currentTarget.dataset.path;
-    
+    const id = e.currentTarget.dataset.id;
+
+    // 检查彩蛋触发
+    const egg = easterEggs.handleClick();
+    if (egg) {
+      this.showEasterEggDialog(egg);
+      return;
+    }
+
     // 简单的点击反馈延迟，模拟老式系统的加载感
     setTimeout(() => {
       wx.navigateTo({
         url: path,
         fail: (err) => {
           console.error("Navigation failed:", err);
-          wx.showToast({ 
-            title: 'Path not found: ' + path, 
-            icon: 'none' 
+          wx.showToast({
+            title: 'Path not found: ' + path,
+            icon: 'none'
           });
         }
       });
     }, 100);
+  },
+
+  // 检查日期彩蛋
+  checkDateEasterEgg() {
+    const egg = easterEggs.checkDateEgg();
+    if (egg) {
+      // 延迟显示日期彩蛋
+      setTimeout(() => {
+        this.showEasterEggDialog(egg);
+      }, 2000);
+    }
+  },
+
+  // 显示彩蛋对话框
+  showEasterEggDialog(egg) {
+    this.setData({
+      showEasterEgg: true,
+      easterEggMessage: egg.message
+    });
+
+    wx.vibrateShort();
+
+    setTimeout(() => {
+      this.setData({ showEasterEgg: false });
+    }, 5000);
+  },
+
+  // 关闭彩蛋对话框
+  closeEasterEgg() {
+    this.setData({ showEasterEgg: false });
   },
 
   toggleStartMenu: function() {
