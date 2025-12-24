@@ -2,5 +2,9 @@
   "navigationBarTitleText": "QCIO",
   "navigationBarBackgroundColor": "#000080",
   "navigationBarTextStyle": "white",
-  "usingComponents": {}
+  "usingComponents": {
+    "mood-log": "./components/mood-log",
+    "step-counter": "./components/step-counter",
+    "guestbook": "./components/guestbook"
+  }
   }

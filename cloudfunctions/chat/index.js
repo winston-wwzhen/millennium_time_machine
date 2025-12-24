@@ -8,6 +8,9 @@ cloud.init({
   env: cloud.DYNAMIC_CURRENT_ENV,
 });
 
+// 不需要历史记录的模式列表（一次性转换类）
+const NO_HISTORY_MODES = ['mars', 'kaomoji', 'abstract', 'human', 'emo', 'mood_log'];
+
 exports.main = async (event, context) => {
   const { userMessage, history, mode = 'chat' } = event;
 
@@ -24,10 +27,14 @@ exports.main = async (event, context) => {
   }
 
   // --- 🤖 步骤二：构建消息并调用 AI ---
-  // 根据模式决定是否携带历史记录 (火星文翻译不需要历史)
+  // 根据模式决定是否携带历史记录
+  // 聊天类模式（chat、qingwu、longaotian、netadmin）需要历史记录
+  // 转换类模式（mars、emo 等）不需要历史记录
+  const shouldIncludeHistory = !NO_HISTORY_MODES.includes(mode);
+
   const messageList = [
     { role: "system", content: currentConfig.system },
-    ...(mode === 'chat' ? (history || []) : []),
+    ...(shouldIncludeHistory ? (history || []) : []),
     { role: "user", content: userMessage }
   ];
 

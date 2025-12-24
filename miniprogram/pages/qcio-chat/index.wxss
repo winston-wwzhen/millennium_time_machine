@@ -1,0 +1,154 @@
+/* QCIO 聊天页面样式 */
+page {
+  background: #008080;
+  height: 100%;
+}
+
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+/* 聊天窗口 */
+.chat-window {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  overflow: hidden;
+}
+
+/* 消息区域 */
+.chat-messages {
+  flex: 1;
+  padding: 10px;
+  background: #ffffff;
+  overflow-y: auto;
+}
+
+.message-row {
+  display: flex;
+  margin-bottom: 12px;
+  align-items: flex-start;
+}
+
+.user-row {
+  flex-direction: row-reverse;
+}
+
+.ai-row {
+  flex-direction: row;
+}
+
+/* 消息头像 */
+.message-avatar {
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  background: #e0e0e0;
+  border: 1px solid #808080;
+  flex-shrink: 0;
+}
+
+.ai-avatar {
+  margin-right: 8px;
+}
+
+.user-avatar {
+  margin-left: 8px;
+}
+
+/* 消息气泡 */
+.message-bubble {
+  max-width: 65%;
+  padding: 8px 12px;
+  border-radius: 0;
+  word-break: break-all;
+}
+
+.ai-bubble {
+  background: #cce5ff;
+  border: 1px solid #008080;
+}
+
+.user-bubble {
+  background: #ffffcc;
+  border: 1px solid #808000;
+}
+
+.message-text {
+  font-size: 13px;
+  font-family: 'SimSun', serif;
+  line-height: 1.5;
+  color: #000000;
+}
+
+/* 发送中气泡 */
+.sending-bubble {
+  background: #e0e0e0;
+  border: 1px dashed #808080;
+}
+
+.sending-text {
+  font-size: 12px;
+  color: #808080;
+  font-style: italic;
+}
+
+/* 输入区域 */
+.chat-input-area {
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: #c0c0c0;
+  border-top: 1px solid #808080;
+}
+
+.chat-input {
+  flex: 1;
+  padding: 6px 10px;
+  background: #ffffff;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  font-size: 13px;
+  font-family: 'SimSun', serif;
+}
+
+.send-btn {
+  padding: 6px 16px;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  font-size: 12px;
+  font-family: 'SimSun', serif;
+  min-width: 60px;
+}
+
+.send-btn[disabled] {
+  color: #808080;
+}
+
+/* 窗口控制按钮 */
+.window-controls {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.win98-btn-sm {
+  padding: 4px 12px;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  font-size: 11px;
+  font-family: 'SimSun', serif;
+}

@@ -1,0 +1,111 @@
+/* 踩一踩组件样式 */
+.step-counter-container {
+  padding: 10px;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  margin-bottom: 15px;
+}
+
+.section-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #000080;
+  padding: 8px 0;
+  border-bottom: 1px dotted #808080;
+  margin-bottom: 10px;
+}
+
+/* 访问统计 */
+.visit-stats {
+  background: #ffffff;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  padding: 15px;
+  margin-bottom: 10px;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.stat-number {
+  font-size: 24px;
+  font-weight: bold;
+  color: #000080;
+  font-family: 'Arial', sans-serif;
+}
+
+.stat-label {
+  font-size: 11px;
+  color: #808080;
+}
+
+.stat-divider {
+  width: 1px;
+  height: 40px;
+  background: #c0c0c0;
+}
+
+/* 邀请按钮 */
+.invite-btn {
+  width: 100%;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  padding: 10px;
+  font-size: 12px;
+  font-family: 'SimSun', serif;
+}
+
+/* 最近访客 */
+.recent-visitors {
+  margin-top: 15px;
+}
+
+.visitors-title {
+  font-size: 11px;
+  color: #808080;
+  margin-bottom: 8px;
+}
+
+.visitors-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.visitor-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #ffffff;
+  border: 1px solid #c0c0c0;
+  padding: 4px 8px;
+  font-size: 10px;
+}
+
+.visitor-avatar {
+  font-size: 12px;
+}
+
+.visitor-name {
+  color: #000080;
+  max-width: 60px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.visitor-time {
+  color: #808080;
+}
