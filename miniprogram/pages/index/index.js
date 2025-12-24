@@ -31,6 +31,12 @@ Page({
         path: '/pages/snake/index'
       },
       {
+        id: 'typing',
+        name: 'Typing\n打字练习',
+        icon: '⌨️',
+        path: '/pages/typing/index'
+      },
+      {
         id: 'star-explorer',
         name: 'Star\nExplorer',
         icon: '🌌',
