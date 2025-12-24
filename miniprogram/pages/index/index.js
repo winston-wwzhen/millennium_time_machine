@@ -13,9 +13,21 @@ Page({
       },
       {
         id: 'qcio',
-        name: 'QCIQ', // 合规化名称，避开官方商标
-        icon: '📟',   // 使用传呼机图标模拟复古通讯工具
+        name: 'QCIO',
+        icon: '📟',
         path: '/pages/qcio/index'
+      },
+      {
+        id: 'tetris',
+        name: 'Tetris\n方块',
+        icon: '🎮',
+        path: '/pages/tetris/index'
+      },
+      {
+        id: 'star-explorer',
+        name: 'Star\nExplorer',
+        icon: '🌌',
+        path: '/pages/star-explorer/index'
       },
       {
         id: 'chat',
@@ -28,12 +40,6 @@ Page({
         name: 'Mars\nTranslator',
         icon: '🪐',
         path: '/pages/mars/index'
-      },
-      {
-        id: 'star-explorer',
-        name: 'Star\nExplorer',
-        icon: '🌌',
-        path: '/pages/star-explorer/index'
       },
       {
         id: 'avatar',

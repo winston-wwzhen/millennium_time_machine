@@ -1,0 +1,172 @@
+/* 俄罗斯方块游戏样式 */
+page {
+  background: #008080;
+  height: 100%;
+}
+
+.tetris-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+/* 游戏窗口 */
+.game-window {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+}
+
+.game-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  overflow: hidden;
+}
+
+/* 游戏区域 */
+.game-area {
+  display: flex;
+  gap: 10px;
+  flex: 1;
+}
+
+/* 游戏板 */
+.game-board {
+  position: relative;
+  width: 200px;
+  height: 400px;
+  background: #000;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+}
+
+.board-row {
+  display: flex;
+  height: 20px;
+}
+
+.board-cell {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #1a1a1a;
+}
+
+.board-cell.filled {
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+/* 信息面板 */
+.info-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.info-card {
+  background: #ffffff;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  padding: 10px;
+  text-align: center;
+}
+
+.info-title {
+  font-size: 11px;
+  color: #808080;
+  margin-bottom: 5px;
+}
+
+.info-value {
+  font-size: 18px;
+  font-weight: bold;
+  color: #000080;
+  font-family: 'Courier New', monospace;
+}
+
+.highscore .info-value {
+  color: #ff6600;
+}
+
+/* 操作说明 */
+.controls-info {
+  background: #e0e0e0;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  padding: 10px;
+  margin-top: auto;
+}
+
+.control-item {
+  font-size: 10px;
+  color: #333;
+  padding: 2px 0;
+  font-family: 'SimSun', serif;
+}
+
+/* 游戏结束遮罩 */
+.game-over-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.game-over-dialog {
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  padding: 20px;
+  text-align: center;
+}
+
+.dialog-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #000080;
+  margin-bottom: 15px;
+}
+
+.final-score {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.restart-btn {
+  margin-bottom: 10px;
+}
+
+/* 控制按钮 */
+.game-controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.control-btn {
+  width: 50px;
+  height: 50px;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.down-btn {
+  background: #ffffcc;
+}

@@ -1,0 +1,43 @@
+<!-- 每日签到组件 -->
+<view class="checkin-container">
+  <view class="section-title">📅 每日签到</view>
+
+  <!-- 签到卡片 -->
+  <view class="checkin-card">
+    <view class="checkin-header">
+      <view class="consecutive-info">
+        <text class="consecutive-label">连续签到</text>
+        <text class="consecutive-days">{{checkInData.consecutiveDays || 0}}</text>
+        <text class="consecutive-unit">天</text>
+      </view>
+      <view class="total-info">
+        <text class="total-label">累计</text>
+        <text class="total-days">{{checkInData.totalDays || 0}}</text>
+        <text class="total-unit">天</text>
+      </view>
+    </view>
+
+    <view class="checkin-status">
+      <text class="status-text">{{todayChecked ? '✅ 今日已签到' : '点击下方按钮签到'}}</text>
+    </view>
+
+    <button
+      class="checkin-btn {{todayChecked ? 'checked' : ''}}"
+      bindtap="checkIn"
+      disabled="{{todayChecked}}"
+    >
+      {{todayChecked ? '已签到' : '立即签到'}}
+    </button>
+
+    <!-- 签到奖励说明 -->
+    <view class="reward-info">
+      <view class="reward-title">签到奖励：</view>
+      <view class="reward-items">
+        <view class="reward-item">• 每日 10 金币</view>
+        <view class="reward-item">• 连续 3 天 +5 金币</view>
+        <view class="reward-item">• 连续 7 天 +20 金币</view>
+        <view class="reward-item">• 满周额外 +50 金币</view>
+      </view>
+    </view>
+  </view>
+</view>

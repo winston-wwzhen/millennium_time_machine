@@ -1,0 +1,86 @@
+<view class="tetris-container">
+  <!-- 游戏主窗口 -->
+  <view class="game-window">
+    <view class="win98-title-bar">
+      <view class="win98-title-text">俄罗斯方块 - Y2K Edition</view>
+      <view class="win98-title-controls">
+        <button class="win98-btn-close" bindtap="goBack"></button>
+      </view>
+    </view>
+
+    <view class="win98-window-body game-body">
+      <view class="game-area">
+        <!-- 游戏板 -->
+        <view class="game-board">
+          <block wx:for="{{board}}" wx:key="index" wx:for-item="row">
+            <view class="board-row">
+              <block wx:for="{{row}}" wx:key="*this" wx:for-item="cell">
+                <view class="board-cell {{cell ? 'filled' : ''}}" style="background-color: {{cell || '#000'}};"></view>
+              </block>
+            </view>
+          </block>
+
+          <!-- 当前方块 -->
+          <block wx:if="{{currentPiece}}">
+            <block wx:for="{{currentPiece.shape}}" wx:key="index" wx:for-item="row" wx:for-index="rowIndex">
+              <block wx:for="{{row}}" wx:key="*this" wx:for-item="cell" wx:for-index="colIndex">
+                <view class="piece-cell" wx:if="{{cell}}"
+                  style="position: absolute; left: {{(currentPiece.x + colIndex) * 20}}px; top: {{(currentPiece.y + rowIndex) * 20}}px; width: 20px; height: 20px; background-color: {{currentPiece.color}}; border: 1px solid rgba(255,255,255,0.3);">
+                </view>
+              </block>
+            </block>
+          </block>
+        </view>
+
+        <!-- 信息面板 -->
+        <view class="info-panel">
+          <view class="info-card">
+            <view class="info-title">分数</view>
+            <view class="info-value">{{score}}</view>
+          </view>
+
+          <view class="info-card">
+            <view class="info-title">等级</view>
+            <view class="info-value">{{level}}</view>
+          </view>
+
+          <view class="info-card">
+            <view class="info-title">行数</view>
+            <view class="info-value">{{lines}}</view>
+          </view>
+
+          <view class="info-card highscore">
+            <view class="info-title">最高分</view>
+            <view class="info-value">{{highScore}}</view>
+          </view>
+
+          <!-- 操作说明 -->
+          <view class="controls-info">
+            <view class="info-title">操作</view>
+            <view class="control-item">← → 移动</view>
+            <view class="control-item">↑ 旋转</view>
+            <view class="control-item">↓ 加速</view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 游戏结束遮罩 -->
+      <view class="game-over-overlay" wx:if="{{isGameOver}}">
+        <view class="game-over-dialog">
+          <view class="dialog-title">游戏结束!</view>
+          <view class="final-score">最终得分: {{score}}</view>
+          <button class="win98-btn-primary restart-btn" bindtap="restartGame">重新开始</button>
+          <button class="win98-btn-std" bindtap="goBack">返回</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 控制按钮 -->
+  <view class="game-controls">
+    <button class="control-btn" bindtap="moveLeft">◀</button>
+    <button class="control-btn" bindtap="rotate">↻</button>
+    <button class="control-btn" bindtap="moveRight">▶</button>
+    <button class="control-btn down-btn" bindtap="moveDown">▼</button>
+  </view>
+</view>
