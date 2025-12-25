@@ -25,18 +25,6 @@ Page({
         path: '/pages/tetris/index'
       },
       {
-        id: 'snake',
-        name: 'Snake\n贪吃蛇',
-        icon: '🐍',
-        path: '/pages/snake/index'
-      },
-      {
-        id: 'typing',
-        name: 'Typing\n打字练习',
-        icon: '⌨️',
-        path: '/pages/typing/index'
-      },
-      {
         id: 'star-explorer',
         name: 'Star\nExplorer',
         icon: '🌌',
