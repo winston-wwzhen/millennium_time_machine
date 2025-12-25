@@ -10,8 +10,17 @@ const { formatRelativeTime } = require('./utils');
  */
 async function getGuestbook(openid, db) {
   try {
+    // 先获取当前用户的 qcio_id
+    const userRes = await db.collection('qcio_users').where({ _openid: openid }).get();
+    if (userRes.data.length === 0) {
+      return { success: true, data: [] };
+    }
+
+    const userQcioId = userRes.data[0].qcio_id;
+
+    // 通过 ownerQcioId 查询留言
     const res = await db.collection('qcio_guestbook')
-      .where({ _openid: openid })
+      .where({ ownerQcioId: userQcioId })
       .orderBy('createTime', 'desc')
       .limit(50)
       .get();
@@ -42,10 +51,18 @@ async function getGuestbook(openid, db) {
  */
 async function deleteGuestbookMessage(openid, messageId, db) {
   try {
-    // 验证留言是否属于该用户
+    // 先获取当前用户的 qcio_id
+    const userRes = await db.collection('qcio_users').where({ _openid: openid }).get();
+    if (userRes.data.length === 0) {
+      return { success: false, message: '用户不存在' };
+    }
+
+    const userQcioId = userRes.data[0].qcio_id;
+
+    // 验证留言是否属于该用户的留言板
     const res = await db.collection('qcio_guestbook')
       .where({
-        _openid: openid,
+        ownerQcioId: userQcioId,
         _id: messageId
       })
       .get();

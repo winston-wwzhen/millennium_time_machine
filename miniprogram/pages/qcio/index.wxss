@@ -112,13 +112,12 @@ page {
   padding-bottom: 1px;
 }
 
-/* 关闭按钮图标 */
-.win98-btn-close::after {
-  content: "×";
+/* 关闭按钮图标 - 直接使用文本 */
+.win98-btn-close {
   font-size: 16px;
   font-weight: bold;
   color: #000;
-  margin-top: -2px;
+  line-height: 14px;
 }
 
 /* --- 登录界面 --- */

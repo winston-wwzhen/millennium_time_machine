@@ -1,0 +1,278 @@
+/**
+ * QCIO 访问他人空间页面
+ * 允许访客查看被访问者的留言板和访问统计
+ * 支持踩一脚功能
+ */
+Page({
+  data: {
+    ownerQcioId: '',          // 被访问者的 qcio_id
+    ownerProfile: {           // 被访问者的资料
+      qcio_id: '',
+      nickname: '',
+      avatar: ''
+    },
+    myProfile: {              // 当前用户的资料
+      qcio_id: ''
+    },
+    isLoggedIn: false,        // 是否已登录
+    isOwnSpace: false,        // 是否访问自己的空间
+    visitStats: {             // 访问统计
+      totalVisits: 0,
+      todayVisits: 0
+    },
+    hasSteppedToday: false,   // 今天是否已经踩过
+    messages: [],             // 留言列表
+    recentVisitors: [],       // 最近访客
+    myAvatar: '👤'
+  },
+
+  onLoad: function(options) {
+    const ownerQcioId = options.owner;
+
+    if (!ownerQcioId) {
+      wx.showToast({ title: '参数错误', icon: 'none' });
+      setTimeout(() => {
+        wx.navigateBack();
+      }, 1500);
+      return;
+    }
+
+    this.setData({ ownerQcioId });
+    this.loadData();
+  },
+
+  // 加载数据
+  async loadData() {
+    wx.showLoading({ title: '加载中...', mask: true });
+
+    try {
+      // 先获取当前用户信息
+      const myRes = await wx.cloud.callFunction({
+        name: 'qcio',
+        data: { action: 'init' }
+      });
+
+      if (myRes.result && myRes.result.success) {
+        const myProfile = myRes.result.data;
+
+        // 判断是否已注册
+        const isRegistered = !!myProfile.qcio_id;
+        const isLoggedIn = isRegistered && !!myProfile.isOnline;
+
+        // 判断是否访问自己的空间
+        const isOwnSpace = isRegistered && myProfile.qcio_id === this.data.ownerQcioId;
+
+        this.setData({
+          myProfile: myProfile,
+          isLoggedIn: isLoggedIn,
+          isOwnSpace: isOwnSpace,
+          myAvatar: myProfile.avatar || '👤'
+        });
+
+        // 如果访问自己的空间，不需要加载其他数据
+        if (isOwnSpace) {
+          wx.hideLoading();
+          return;
+        }
+
+        // 加载被访问者信息和留言
+        await Promise.all([
+          this.loadOwnerProfile(),
+          this.loadVisitStats(),
+          this.loadMessages(),
+          this.loadRecentVisitors(),
+          this.checkIfSteppedToday()
+        ]);
+      }
+    } catch (err) {
+      console.error('Load data error:', err);
+      wx.showToast({ title: '加载失败', icon: 'none' });
+    } finally {
+      wx.hideLoading();
+    }
+  },
+
+  // 加载被访问者的资料
+  async loadOwnerProfile() {
+    try {
+      // 通过 qcio_id 查找用户
+      const res = await wx.cloud.callFunction({
+        name: 'qcio',
+        data: {
+          action: 'getUserByQcioId',
+          qcioId: this.data.ownerQcioId
+        }
+      });
+
+      if (res.result && res.result.success && res.result.data) {
+        this.setData({
+          ownerProfile: res.result.data
+        });
+      } else {
+        wx.showToast({ title: '用户不存在', icon: 'none' });
+      }
+    } catch (err) {
+      console.error('Load owner profile error:', err);
+    }
+  },
+
+  // 加载访问统计
+  async loadVisitStats() {
+    try {
+      const res = await wx.cloud.callFunction({
+        name: 'qcio',
+        data: {
+          action: 'getVisitStatsByQcioId',
+          qcioId: this.data.ownerQcioId
+        }
+      });
+
+      if (res.result && res.result.success) {
+        this.setData({
+          visitStats: res.result.data || { totalVisits: 0, todayVisits: 0 }
+        });
+      }
+    } catch (err) {
+      console.error('Load visit stats error:', err);
+    }
+  },
+
+  // 加载留言
+  async loadMessages() {
+    try {
+      const res = await wx.cloud.callFunction({
+        name: 'qcio',
+        data: {
+          action: 'getGuestbookByQcioId',
+          qcioId: this.data.ownerQcioId
+        }
+      });
+
+      if (res.result && res.result.success) {
+        this.setData({
+          messages: res.result.data || []
+        });
+      }
+    } catch (err) {
+      console.error('Load messages error:', err);
+    }
+  },
+
+  // 加载最近访客
+  async loadRecentVisitors() {
+    try {
+      const res = await wx.cloud.callFunction({
+        name: 'qcio',
+        data: {
+          action: 'getRecentVisitorsByQcioId',
+          qcioId: this.data.ownerQcioId
+        }
+      });
+
+      if (res.result && res.result.success) {
+        this.setData({
+          recentVisitors: res.result.data || []
+        });
+      }
+    } catch (err) {
+      console.error('Load recent visitors error:', err);
+    }
+  },
+
+  // 检查今天是否已经踩过
+  async checkIfSteppedToday() {
+    if (!this.data.isLoggedIn) {
+      return;
+    }
+
+    try {
+      const res = await wx.cloud.callFunction({
+        name: 'qcio',
+        data: {
+          action: 'checkIfSteppedToday',
+          ownerQcioId: this.data.ownerQcioId
+        }
+      });
+
+      if (res.result && res.result.success) {
+        this.setData({
+          hasSteppedToday: res.result.data.hasStepped || false
+        });
+      }
+    } catch (err) {
+      console.error('Check if stepped error:', err);
+    }
+  },
+
+  // 踩一脚
+  async doStep() {
+    if (!this.data.isLoggedIn) {
+      wx.showToast({ title: '请先登录', icon: 'none' });
+      return;
+    }
+
+    if (this.data.isOwnSpace) {
+      wx.showToast({ title: '不能踩自己的空间', icon: 'none' });
+      return;
+    }
+
+    if (this.data.hasSteppedToday) {
+      wx.showToast({ title: '今天已经踩过了', icon: 'none' });
+      return;
+    }
+
+    wx.showLoading({ title: '踩一脚中...', mask: true });
+
+    try {
+      const res = await wx.cloud.callFunction({
+        name: 'qcio',
+        data: {
+          action: 'recordVisit',
+          visitorId: this.data.myProfile.qcio_id,
+          visitorName: this.data.myProfile.nickname,
+          visitorAvatar: this.data.myProfile.avatar,
+          ownerQcioId: this.data.ownerQcioId
+        }
+      });
+
+      if (res.result && res.result.success) {
+        this.setData({ hasSteppedToday: true });
+
+        // 重新加载数据
+        await Promise.all([
+          this.loadVisitStats(),
+          this.loadMessages(),
+          this.loadRecentVisitors()
+        ]);
+
+        wx.showToast({ title: '踩了一脚！', icon: 'success' });
+      } else {
+        wx.showToast({ title: res.result?.message || '踩脚失败', icon: 'none' });
+      }
+    } catch (err) {
+      console.error('Do step error:', err);
+      wx.showToast({ title: '踩脚失败', icon: 'none' });
+    } finally {
+      wx.hideLoading();
+    }
+  },
+
+  // 去登录
+  goToLogin() {
+    wx.navigateBack();
+  },
+
+  // 去我的空间
+  goToMySpace() {
+    wx.redirectTo({
+      url: '/pages/qcio/index'
+    });
+  },
+
+  // 返回我的空间
+  goBack() {
+    wx.redirectTo({
+      url: '/pages/qcio/index'
+    });
+  }
+});

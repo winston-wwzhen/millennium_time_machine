@@ -1,0 +1,328 @@
+/* 访问页面样式 - Win98 风格 */
+.visit-container {
+  min-height: 100vh;
+  background: #008080;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+/* 顶部状态栏 */
+.visit-header {
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  padding: 10px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.visitor-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.visitor-avatar {
+  font-size: 24px;
+}
+
+.visitor-text {
+  font-size: 12px;
+  color: #000000;
+  font-family: 'SimSun', serif;
+}
+
+.owner-info {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.owner-avatar {
+  font-size: 24px;
+}
+
+.owner-nickname {
+  font-size: 13px;
+  color: #000080;
+  font-weight: bold;
+}
+
+.owner-qcio {
+  font-size: 11px;
+  color: #808080;
+}
+
+/* 提示区域 */
+.login-tip,
+.self-visit-tip {
+  background: #ffffcc;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  padding: 12px;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  box-sizing: border-box;
+}
+
+.tip-icon {
+  font-size: 24px;
+}
+
+.tip-text {
+  font-size: 13px;
+  color: #cc6600;
+  text-align: center;
+}
+
+.login-btn {
+  width: 120px;
+  padding: 6px;
+  font-size: 12px;
+}
+
+/* 标题 */
+.section-title {
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #000080;
+  font-family: 'SimSun', serif;
+  box-sizing: border-box;
+}
+
+/* 访问统计 */
+.visit-stats {
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  padding: 12px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.stat-number {
+  font-size: 28px;
+  font-weight: bold;
+  color: #000080;
+  font-family: 'Arial', sans-serif;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #808080;
+}
+
+.stat-divider {
+  width: 1px;
+  height: 40px;
+  background: #808080;
+}
+
+/* 踩一脚按钮 */
+.step-btn {
+  width: 100%;
+  margin-bottom: 15px;
+  padding: 12px;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  font-size: 16px;
+  font-weight: bold;
+  font-family: 'SimSun', serif;
+  box-sizing: border-box;
+}
+
+.step-btn[disabled] {
+  color: #808080;
+}
+
+.step-btn.stepped {
+  background: #ccffcc;
+  border-color: #00cc00;
+}
+
+/* 留言板 */
+.guestbook-container {
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  padding: 10px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+}
+
+.guestbook-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.guestbook-item {
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  margin-bottom: 8px;
+  background: #ffffff;
+  border: 1px solid #c0c0c0;
+  box-sizing: border-box;
+}
+
+.guestbook-avatar {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  background: #e0e0e0;
+  border: 1px solid #808080;
+  flex-shrink: 0;
+}
+
+.guestbook-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.guestbook-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.guestbook-name {
+  font-size: 12px;
+  color: #000080;
+  font-weight: bold;
+}
+
+.guestbook-time {
+  font-size: 10px;
+  color: #808080;
+}
+
+.guestbook-text {
+  font-size: 12px;
+  font-family: 'SimSun', serif;
+  color: #333333;
+  line-height: 1.5;
+  word-break: break-all;
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 10px;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 36px;
+  margin-bottom: 8px;
+  opacity: 0.5;
+}
+
+.empty-text {
+  font-size: 12px;
+  color: #808080;
+}
+
+/* 最近访客 */
+.recent-visitors {
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  padding: 10px;
+  margin-bottom: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  box-sizing: border-box;
+}
+
+.visitor-avatar-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 6px;
+  background: #ffffff;
+  border: 1px solid #808080;
+}
+
+.visitor-avatar-small {
+  font-size: 20px;
+}
+
+.visitor-name-small {
+  font-size: 10px;
+  color: #333333;
+  max-width: 50px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 底部操作 */
+.footer-actions {
+  margin-top: 20px;
+  padding: 10px 0;
+}
+
+.back-btn {
+  width: 100%;
+  padding: 10px;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  font-size: 14px;
+  font-family: 'SimSun', serif;
+  box-sizing: border-box;
+}
+
+/* Win98 按钮样式 */
+.win98-btn-primary {
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+}
+
+.win98-btn-primary:active {
+  border-color: #808080 #ffffff #ffffff #808080;
+}
+
+.win98-btn-secondary {
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+}
+
+.win98-btn-secondary:active {
+  border-color: #808080 #ffffff #ffffff #808080;
+}

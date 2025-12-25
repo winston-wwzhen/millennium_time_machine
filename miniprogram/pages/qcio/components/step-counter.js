@@ -26,6 +26,13 @@ Component({
     }
   },
 
+  pageLifetimes: {
+    show() {
+      // 每次页面显示时重新加载访问统计
+      this.loadVisitStats();
+    }
+  },
+
   methods: {
     // 加载访问统计
     async loadVisitStats() {
@@ -48,12 +55,6 @@ Component({
       } catch (err) {
         console.error('Load visit stats error:', err);
       }
-    },
-
-    // 邀请好友来踩
-    inviteFriends() {
-      // 触发父组件的分享
-      this.triggerEvent('share');
     }
   }
 });

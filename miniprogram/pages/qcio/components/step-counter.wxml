@@ -18,7 +18,7 @@
   </view>
 
   <!-- 邀请按钮 -->
-  <button class="win98-btn-primary invite-btn" bindtap="inviteFriends">
+  <button class="win98-btn-primary invite-btn" open-type="share">
     📨 邀请好友来踩
   </button>
 

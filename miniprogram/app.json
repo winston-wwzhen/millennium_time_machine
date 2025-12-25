@@ -13,6 +13,7 @@
     "pages/star-explorer/index",
     "pages/browser/index",
     "pages/qcio/index",
+    "pages/qcio/visit",
     "pages/qcio-chat/index",
     "pages/tetris/index",
     "pages/farm/index"

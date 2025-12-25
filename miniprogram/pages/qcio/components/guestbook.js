@@ -14,6 +14,13 @@ Component({
     }
   },
 
+  pageLifetimes: {
+    show() {
+      // 每次页面显示时重新加载留言
+      this.loadMessages();
+    }
+  },
+
   methods: {
     // 加载留言列表
     async loadMessages() {

@@ -5,7 +5,7 @@
       <view class="win98-title-bar">
         <view class="win98-title-text">QCIO 新用户注册</view>
         <view class="win98-title-controls">
-          <button class="win98-btn-close" bindtap="goBack"></button>
+          <button class="win98-btn-close" bindtap="goBack">×</button>
         </view>
       </view>
 
@@ -71,7 +71,7 @@
       <view class="win98-title-bar">
         <view class="win98-title-text">QCIO 2005 登录</view>
         <view class="win98-title-controls">
-          <button class="win98-btn-close" bindtap="goBack"></button>
+          <button class="win98-btn-close" bindtap="goBack">×</button>
         </view>
       </view>
 
@@ -119,7 +119,7 @@
       <view class="win98-title-bar">
         <view class="win98-title-text">QCIO - {{userProfile.qcio_id}}</view>
         <view class="win98-title-controls">
-          <button class="win98-btn-close" bindtap="goBack"></button>
+          <button class="win98-btn-close" bindtap="goBack">×</button>
         </view>
       </view>
 
@@ -208,7 +208,6 @@
             <step-counter
               qcioId="{{userProfile.qcio_id}}"
               nickname="{{userProfile.nickname}}"
-              bindshare="onShareFromZone"
             />
             <guestbook />
           </block>

@@ -1,0 +1,91 @@
+<!-- 访问他人空间页面 -->
+<view class="visit-container">
+  <!-- 顶部状态栏 -->
+  <view class="visit-header">
+    <view class="visitor-info">
+      <text class="visitor-avatar">{{myAvatar || '👤'}}</text>
+      <text class="visitor-text">访问</text>
+    </view>
+    <view class="owner-info">
+      <text class="owner-avatar">{{ownerProfile.avatar || '👤'}}</text>
+      <text class="owner-nickname">{{ownerProfile.nickname || '加载中...'}}</text>
+      <text class="owner-qcio">({{ownerProfile.qcio_id || ''}})</text>
+    </view>
+  </view>
+
+  <!-- 未登录提示 -->
+  <view class="login-tip" wx:if="{{!isLoggedIn}}">
+    <text class="tip-icon">💡</text>
+    <text class="tip-text">登录后才能踩一脚哦~</text>
+    <button class="win98-btn-primary login-btn" bindtap="goToLogin">去登录</button>
+  </view>
+
+  <!-- 访问自己的空间提示 -->
+  <view class="self-visit-tip" wx:if="{{isOwnSpace}}">
+    <text class="tip-icon">🏠</text>
+    <text class="tip-text">这是你的空间</text>
+    <button class="win98-btn-primary login-btn" bindtap="goToMySpace">进入我的空间</button>
+  </view>
+
+  <!-- 踩一踩统计 -->
+  <view class="section-title">👣 踩一踩统计</view>
+  <view class="visit-stats">
+    <view class="stat-row">
+      <view class="stat-item">
+        <text class="stat-number">{{visitStats.totalVisits || 0}}</text>
+        <text class="stat-label">历史访问</text>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-item">
+        <text class="stat-number">{{visitStats.todayVisits || 0}}</text>
+        <text class="stat-label">今日访问</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 踩一脚按钮 -->
+  <button
+    class="win98-btn-primary step-btn {{hasSteppedToday ? 'stepped' : ''}}"
+    bindtap="doStep"
+    disabled="{{hasSteppedToday || !isLoggedIn || isOwnSpace}}"
+  >
+    {{hasSteppedToday ? '✓ 今天已经踩过了' : '👣 踩一脚'}}
+  </button>
+
+  <!-- 留言板 -->
+  <view class="section-title">📝 留言板</view>
+  <view class="guestbook-container">
+    <view class="guestbook-list" wx:if="{{messages.length > 0}}">
+      <view class="guestbook-item" wx:for="{{messages}}" wx:key="id">
+        <view class="guestbook-avatar">{{item.avatar}}</view>
+        <view class="guestbook-content">
+          <view class="guestbook-header">
+            <text class="guestbook-name">{{item.nickname}}</text>
+            <text class="guestbook-time">{{item.time}}</text>
+          </view>
+          <view class="guestbook-text">{{item.content}}</view>
+        </view>
+      </view>
+    </view>
+    <view class="empty-state" wx:else>
+      <text class="empty-icon">📝</text>
+      <text class="empty-text">还没有留言，快来踩一脚吧~</text>
+    </view>
+  </view>
+
+  <!-- 最近访客 -->
+  <view class="section-title" wx:if="{{recentVisitors.length > 0}}">👥 最近来访</view>
+  <view class="recent-visitors" wx:if="{{recentVisitors.length > 0}}">
+    <view class="visitor-avatar-item" wx:for="{{recentVisitors}}" wx:key="_id">
+      <text class="visitor-avatar-small">{{item.avatar || '👤'}}</text>
+      <text class="visitor-name-small">{{item.nickname}}</text>
+    </view>
+  </view>
+
+  <!-- 返回按钮 -->
+  <view class="footer-actions">
+    <button class="win98-btn-secondary back-btn" bindtap="goBack">
+      ← 返回我的空间
+    </button>
+  </view>
+</view>

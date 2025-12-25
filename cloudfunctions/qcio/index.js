@@ -71,11 +71,31 @@ exports.main = async (event, context) => {
 
     case 'recordVisit':
       // 记录访问（踩一踩）
-      return await recordVisit(OPENID, event.visitorId, event.visitorName);
+      return await recordVisit(OPENID, event.visitorId, event.visitorName, event.visitorAvatar, event.ownerQcioId);
 
     case 'getVisitStats':
       // 获取访问统计
       return await getVisitStats(OPENID);
+
+    case 'getUserByQcioId':
+      // 通过 qcio_id 获取用户信息（访问页面用）
+      return await getUserByQcioId(event.qcioId, db);
+
+    case 'getVisitStatsByQcioId':
+      // 通过 qcio_id 获取访问统计（访问页面用）
+      return await getVisitStatsByQcioId(event.qcioId, db);
+
+    case 'getGuestbookByQcioId':
+      // 通过 qcio_id 获取留言（访问页面用）
+      return await getGuestbookByQcioId(event.qcioId, db);
+
+    case 'getRecentVisitorsByQcioId':
+      // 通过 qcio_id 获取最近访客（访问页面用）
+      return await getRecentVisitorsByQcioId(event.qcioId, db);
+
+    case 'checkIfSteppedToday':
+      // 检查今天是否已经踩过
+      return await checkIfSteppedToday(OPENID, event.ownerQcioId, db);
 
     case 'saveChatHistory':
       // 保存聊天历史
@@ -294,11 +314,26 @@ async function updateProfile(openid, data) {
 /**
  * 记录访问（踩一踩）
  * 同时自动在留言板添加一条留言
+ * @param {String} ownerOpenid - 被访问用户的openid（可选，如果提供ownerQcioId则不需要）
+ * @param {String} visitorId - 访客的qcio_id
+ * @param {String} visitorName - 访客昵称
+ * @param {String} visitorAvatar - 访客头像（可选）
+ * @param {String} ownerQcioId - 被访问用户的qcio_id（可选，用于通过qcioId查找openid）
  */
-async function recordVisit(ownerOpenid, visitorId, visitorName) {
+async function recordVisit(ownerOpenid, visitorId, visitorName, visitorAvatar, ownerQcioId) {
   try {
     const now = new Date();
     const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    // 如果提供了 qcioId，先通过 qcio_id 查找 openid
+    if (ownerQcioId && !ownerOpenid) {
+      const qcioIdRes = await db.collection('qcio_users').where({ qcio_id: ownerQcioId }).get();
+      if (qcioIdRes.data.length > 0) {
+        ownerOpenid = qcioIdRes.data[0]._openid;
+      } else {
+        return { success: false, message: '用户不存在' };
+      }
+    }
 
     // 获取被访问用户信息
     const userRes = await db.collection('qcio_users').where({ _openid: ownerOpenid }).get();
@@ -331,14 +366,19 @@ async function recordVisit(ownerOpenid, visitorId, visitorName) {
     const visitRecord = {
       visitorId: visitorId,
       visitorName: visitorName || '神秘访客',
-      avatar: getRandomAvatar(),
+      avatar: visitorAvatar || getRandomAvatar(),
       visitTime: db.serverDate(),
       timeStr: '刚刚'
     };
 
+    // 获取当前访客列表，添加新记录并保持最多10条
+    const visitorRes = await db.collection('qcio_users').where({ _openid: ownerOpenid }).get();
+    const currentVisitors = visitorRes.data[0].recentVisitors || [];
+    const updatedVisitors = [visitRecord, ...currentVisitors].slice(0, 10);
+
     await db.collection('qcio_users').where({ _openid: ownerOpenid }).update({
       data: {
-        recentVisitors: _.unshift(_.slice(_.concat(visitRecord), 0, 10))
+        recentVisitors: updatedVisitors
       }
     });
 
@@ -355,9 +395,11 @@ async function recordVisit(ownerOpenid, visitorId, visitorName) {
     ];
     const randomMessage = autoMessages[Math.floor(Math.random() * autoMessages.length)];
 
+    // 注意：云数据库会自动注入当前用户(访客)的openid到_openid
+    // 所以我们使用ownerQcioId来标记这条留言属于哪个用户的留言板
     await db.collection('qcio_guestbook').add({
       data: {
-        _openid: ownerOpenid,
+        ownerQcioId: ownerQcioId,  // 留言板主人的qcio_id
         visitorId: visitorId,
         visitorName: visitorName || '神秘访客',
         avatar: visitRecord.avatar,
@@ -365,6 +407,56 @@ async function recordVisit(ownerOpenid, visitorId, visitorName) {
         createTime: db.serverDate()
       }
     });
+
+    // 记录到访客的踩脚历史（用于检查今天是否已经踩过）
+    try {
+      // 通过 visitorId 查找访客的 openid
+      const visitorRes = await db.collection('qcio_users').where({ qcio_id: visitorId }).get();
+      if (visitorRes.data.length > 0) {
+        const visitorOpenid = visitorRes.data[0]._openid;
+        const todayStr = todayStart.toISOString().split('T')[0];
+
+        // 更新或创建访客的 daily_tasks 记录
+        const taskRes = await db.collection('qcio_daily_tasks')
+          .where({
+            _openid: visitorOpenid,
+            date: todayStr
+          })
+          .get();
+
+        const stepRecord = {
+          ownerQcioId: ownerQcioId,
+          stepTime: db.serverDate()
+        };
+
+        if (taskRes.data.length > 0) {
+          // 更新现有记录
+          const existingSteps = taskRes.data[0].stepRecords || [];
+          const updatedSteps = [stepRecord, ...existingSteps].slice(0, 50);
+          await db.collection('qcio_daily_tasks')
+            .doc(taskRes.data[0]._id)
+            .update({
+              data: {
+                stepRecords: updatedSteps
+              }
+            });
+        } else {
+          // 创建新记录
+          await db.collection('qcio_daily_tasks').add({
+            data: {
+              _openid: visitorOpenid,
+              date: todayStr,
+              stepRecords: [stepRecord],
+              createTime: db.serverDate(),
+              updateTime: db.serverDate()
+            }
+          });
+        }
+      }
+    } catch (stepErr) {
+      // 记录踩脚历史失败不影响主流程
+      console.error('Record step history error:', stepErr);
+    }
 
     return { success: true };
   } catch (err) {
@@ -399,6 +491,158 @@ async function getVisitStats(openid) {
     };
   } catch (err) {
     console.error('getVisitStats Error:', err);
+    return { success: false, error: err };
+  }
+}
+
+/**
+ * 通过 qcio_id 获取用户信息（访问页面用）
+ */
+async function getUserByQcioId(qcioId, db) {
+  try {
+    const res = await db.collection('qcio_users').where({ qcio_id: qcioId }).get();
+
+    if (res.data.length === 0) {
+      return { success: false, message: '用户不存在' };
+    }
+
+    const user = res.data[0];
+
+    return {
+      success: true,
+      data: {
+        qcio_id: user.qcio_id,
+        nickname: user.nickname,
+        avatar: user.avatar,
+        signature: user.signature,
+        level: user.level || 1
+      }
+    };
+  } catch (err) {
+    console.error('getUserByQcioId Error:', err);
+    return { success: false, error: err, message: '获取用户信息失败' };
+  }
+}
+
+/**
+ * 通过 qcio_id 获取访问统计（访问页面用）
+ */
+async function getVisitStatsByQcioId(qcioId, db) {
+  try {
+    const res = await db.collection('qcio_users').where({ qcio_id: qcioId }).get();
+
+    if (res.data.length === 0) {
+      return { success: true, data: { totalVisits: 0, todayVisits: 0, recentVisitors: [] } };
+    }
+
+    const user = res.data[0];
+
+    return {
+      success: true,
+      data: {
+        totalVisits: user.totalVisits || 0,
+        todayVisits: user.todayVisits || 0
+      }
+    };
+  } catch (err) {
+    console.error('getVisitStatsByQcioId Error:', err);
+    return { success: false, error: err };
+  }
+}
+
+/**
+ * 通过 qcio_id 获取留言（访问页面用）
+ */
+async function getGuestbookByQcioId(qcioId, db) {
+  try {
+    // 直接通过 ownerQcioId 获取留言
+    const res = await db.collection('qcio_guestbook')
+      .where({ ownerQcioId: qcioId })
+      .orderBy('createTime', 'desc')
+      .limit(50)
+      .get();
+
+    // 格式化时间
+    const messages = res.data.map(msg => ({
+      id: msg._id,
+      visitorId: msg.visitorId,
+      nickname: msg.visitorName,
+      avatar: msg.avatar,
+      content: msg.content,
+      time: formatRelativeTime(msg.createTime)
+    }));
+
+    return {
+      success: true,
+      data: messages
+    };
+  } catch (err) {
+    console.error('getGuestbookByQcioId Error:', err);
+    return { success: false, error: err };
+  }
+}
+
+/**
+ * 通过 qcio_id 获取最近访客（访问页面用）
+ */
+async function getRecentVisitorsByQcioId(qcioId, db) {
+  try {
+    const res = await db.collection('qcio_users').where({ qcio_id: qcioId }).get();
+
+    if (res.data.length === 0) {
+      return { success: true, data: [] };
+    }
+
+    const user = res.data[0];
+
+    const visitors = (user.recentVisitors || []).map(v => ({
+      _id: v.visitorId,
+      avatar: v.avatar,
+      nickname: v.visitorName
+    }));
+
+    return {
+      success: true,
+      data: visitors
+    };
+  } catch (err) {
+    console.error('getRecentVisitorsByQcioId Error:', err);
+    return { success: false, error: err };
+  }
+}
+
+/**
+ * 检查今天是否已经踩过
+ */
+async function checkIfSteppedToday(visitorOpenid, ownerQcioId, db) {
+  try {
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    // 检查访客的 daily_tasks 记录
+    const taskRes = await db.collection('qcio_daily_tasks')
+      .where({
+        _openid: visitorOpenid,
+        date: todayStart.toISOString().split('T')[0]
+      })
+      .get();
+
+    if (taskRes.data.length === 0) {
+      return { success: true, data: { hasStepped: false } };
+    }
+
+    const task = taskRes.data[0];
+
+    // 检查是否已经有踩记录（通过 stepRecords 字段）
+    const stepRecords = task.stepRecords || [];
+    const hasStepped = stepRecords.some(record => record.ownerQcioId === ownerQcioId);
+
+    return {
+      success: true,
+      data: { hasStepped: hasStepped }
+    };
+  } catch (err) {
+    console.error('checkIfSteppedToday Error:', err);
     return { success: false, error: err };
   }
 }

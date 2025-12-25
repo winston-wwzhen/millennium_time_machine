@@ -129,7 +129,8 @@ Page({
             data: {
               action: 'recordVisit',
               visitorId: myProfile.qcio_id,
-              visitorName: myProfile.nickname
+              visitorName: myProfile.nickname,
+              ownerQcioId: ownerQcioId
             }
           }).then(() => {
               wx.showToast({ title: '踩了一脚！', icon: 'success' });
@@ -514,7 +515,7 @@ Page({
   onShareAppMessage: function() {
     return {
       title: `${this.data.userProfile.nickname} 邀请你踩空间`,
-      path: `/pages/qcio/index?visit=${this.data.userProfile.qcio_id}`,
+      path: `/pages/qcio/visit?owner=${this.data.userProfile.qcio_id}`,
       imageUrl: ''
     };
   },
@@ -523,13 +524,23 @@ Page({
   onShareTimeline: function() {
     return {
       title: `${this.data.userProfile.nickname} 的 QCIO 空间`,
-      query: `visit=${this.data.userProfile.qcio_id}`,
+      query: `owner=${this.data.userProfile.qcio_id}`,
       imageUrl: ''
     };
   },
 
   goBack: function() {
-    wx.navigateBack();
+    // 获取当前页面栈
+    const pages = getCurrentPages();
+    if (pages.length > 1) {
+      // 有上一页，正常返回
+      wx.navigateBack();
+    } else {
+      // 没有上一页，返回首页
+      wx.reLaunch({
+        url: '/pages/index/index'
+      });
+    }
   },
 
   /**
