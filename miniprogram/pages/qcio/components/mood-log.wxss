@@ -1,53 +1,104 @@
-/* 心情日志组件样式 */
+/* 心情日志组件样式 - 优化布局 */
 .mood-log-container {
-  padding: 10px;
+  padding: 8px;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
   box-sizing: border-box;
   width: 100%;
 }
 
 .section-title {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: bold;
   color: #000080;
-  padding: 8px 0;
+  padding: 6px 0;
   border-bottom: 1px dotted #808080;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
-/* 生成器区域 */
+/* 生成器区域 - 精简 */
 .log-generator {
-  background: #c0c0c0;
+  background: #ffffff;
   border: 2px solid;
-  border-color: #ffffff #808080 #808080 #ffffff;
-  padding: 10px;
-  margin-bottom: 15px;
+  border-color: #808080 #ffffff #ffffff #808080;
+  padding: 8px;
+  margin-top: 3px;
+  margin-bottom: 10px;
   box-sizing: border-box;
 }
 
-/* 心情选择器 */
+/* 每日奖励提示 - 更紧凑 */
+.reward-hint {
+  display: flex;
+  align-items: center;
+  padding: 6px 8px;
+  margin-bottom: 8px;
+  background: #ffffcc;
+  border: 1px solid #999999;
+  font-size: 10px;
+  line-height: 1.4;
+  box-sizing: border-box;
+}
+
+.reward-hint.has-reward {
+  background: #ccffcc;
+  border-color: #00cc00;
+}
+
+.reward-hint.no-reward {
+  background: #f0f0f0;
+  border-color: #cccccc;
+  color: #888888;
+}
+
+.hint-icon {
+  font-size: 14px;
+  margin-right: 4px;
+  line-height: 1;
+}
+
+.hint-text {
+  flex: 1;
+  color: #333333;
+  line-height: 1.4;
+}
+
+.reward-hint.no-reward .hint-text {
+  color: #888888;
+}
+
+.hint-count {
+  font-weight: bold;
+  color: #000080;
+  line-height: 1.4;
+}
+
+/* 心情选择器 - 单行紧凑 */
 .mood-selector {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 10px;
+  flex-wrap: nowrap;
+  gap: 6px;
+  margin-bottom: 8px;
+  overflow-x: auto;
   box-sizing: border-box;
   width: 100%;
 }
 
 .mood-item {
-  flex: 0 0 calc(50% - 4px);
-  max-width: calc(50% - 4px);
+  flex: 1;
+  min-width: 55px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 5px;
-  padding: 8px;
+  gap: 2px;
+  padding: 6px 4px;
   background: #c0c0c0;
   border: 2px solid;
   border-color: #ffffff #808080 #808080 #ffffff;
   cursor: pointer;
   box-sizing: border-box;
-  overflow: hidden;
 }
 
 .mood-item.selected {
@@ -56,29 +107,29 @@
 }
 
 .mood-icon {
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .mood-name {
-  font-size: 12px;
+  font-size: 10px;
 }
 
-/* 关键词输入 */
+/* 关键词输入 - 更紧凑 */
 .keywords-input {
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .input-label {
   display: block;
-  font-size: 12px;
-  margin-bottom: 5px;
+  font-size: 11px;
+  margin-bottom: 4px;
   color: #000080;
 }
 
 .win98-input {
   width: 100%;
   max-width: 100%;
-  padding: 5px;
+  padding: 4px 6px;
   background: #ffffff;
   border: 2px solid;
   border-color: #808080 #ffffff #ffffff #808080;
@@ -87,13 +138,13 @@
   box-sizing: border-box;
 }
 
-/* 生成按钮 */
+/* 生成按钮 - 更小 */
 .generate-btn {
   width: 100%;
   background: #c0c0c0;
   border: 2px solid;
   border-color: #ffffff #808080 #808080 #ffffff;
-  padding: 8px;
+  padding: 6px;
   font-size: 12px;
   font-family: 'SimSun', serif;
   box-sizing: border-box;
@@ -103,12 +154,13 @@
   color: #808080;
 }
 
-/* 历史日志列表 */
+/* 历史日志列表 - 增加空间 */
 .log-history {
-  background: #c0c0c0;
+  background: #ffffff;
   border: 2px solid;
-  border-color: #ffffff #808080 #808080 #ffffff;
-  padding: 10px;
+  border-color: #808080 #ffffff #ffffff #808080;
+  padding: 8px;
+  margin-top: 3px;
   box-sizing: border-box;
   width: 100%;
 }
@@ -117,85 +169,134 @@
   background: #ffffff;
   border: 1px solid #808080;
   margin-bottom: 8px;
-  padding: 8px;
+  padding: 6px 8px;
   box-sizing: border-box;
   width: 100%;
 }
 
-/* 日志头部 */
+/* 日志头部 - 更紧凑 */
 .log-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 5px;
+  padding-bottom: 4px;
   border-bottom: 1px dotted #c0c0c0;
-  margin-bottom: 5px;
+  margin-bottom: 4px;
 }
 
 .log-mood {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
 }
 
 .mood-emoji {
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .mood-text {
-  font-size: 11px;
+  font-size: 10px;
   color: #000080;
 }
 
+/* 奖励徽章 - 更小 */
+.reward-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 4px;
+  margin-left: 4px;
+  background: linear-gradient(to bottom, #ffff00, #ffcc00);
+  border: 1px solid #cc9900;
+  border-radius: 2px;
+  font-size: 8px;
+  font-weight: bold;
+  color: #cc6600;
+}
+
 .log-time {
-  font-size: 10px;
+  font-size: 9px;
   color: #808080;
 }
 
-/* 日志内容 */
+/* 日志内容 - 默认显示更多，展开时可滚动 */
 .log-content {
-  max-height: 60px;
+  max-height: 80px;
   overflow: hidden;
   transition: max-height 0.3s;
 }
 
 .log-content.expanded {
-  max-height: none;
+  max-height: 400px;
+  overflow-y: auto;
 }
 
 .log-text {
   font-size: 12px;
   font-family: 'SimSun', serif;
-  line-height: 1.6;
+  line-height: 1.7;
   white-space: pre-wrap;
   word-break: break-all;
+  color: #333333;
 }
 
-/* 操作按钮 */
+/* 操作按钮 - 更紧凑 */
 .log-actions {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 8px;
-  padding-top: 5px;
+  gap: 6px;
+  margin-top: 6px;
+  padding-top: 4px;
   border-top: 1px dotted #c0c0c0;
 }
 
 .action-btn {
-  font-size: 11px;
+  font-size: 10px;
   color: #000080;
   cursor: pointer;
+  padding: 3px 6px;
+  background: #e0e0e0;
+  border: 1px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+}
+
+.action-btn:active {
+  border-color: #808080 #ffffff #ffffff #808080;
+}
+
+.delete-btn {
+  color: #cc0000;
 }
 
 .log-stats {
-  font-size: 10px;
+  margin-left: auto;
+  font-size: 9px;
   color: #808080;
+  white-space: nowrap;
 }
 
-/* 空状态 */
+/* 空状态 - 更小 */
 .empty-logs {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 10px;
   text-align: center;
-  padding: 30px 10px;
+}
+
+.empty-icon {
+  font-size: 36px;
+  margin-bottom: 8px;
+  opacity: 0.5;
+}
+
+.empty-text {
   color: #808080;
-  font-size: 12px;
+  font-size: 11px;
+  margin-bottom: 4px;
+}
+
+.empty-hint {
+  color: #cc6600;
+  font-size: 10px;
 }

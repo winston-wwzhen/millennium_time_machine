@@ -1,8 +1,19 @@
 <!-- 心情日志生成器组件 -->
 <view class="mood-log-container">
   <!-- 生成器区域 -->
+  <view class="section-title">✏️ 写心情日志</view>
   <view class="log-generator">
-    <view class="section-title">✏️ 写心情日志</view>
+
+    <!-- 每日奖励提示 -->
+    <view class="reward-hint {{logStatus.canEarnReward ? 'has-reward' : 'no-reward'}}">
+      <text class="hint-icon">{{logStatus.canEarnReward ? '💰' : '📌'}}</text>
+      <text class="hint-text">
+        {{logStatus.canEarnReward ? '今日发布日志可获得金币奖励' : '今日奖励已领完，明天再来~'}}
+      </text>
+      <text class="hint-count" wx:if="{{logStatus.canEarnReward}}">
+        ({{logStatus.remainingCount}}/3)
+      </text>
+    </view>
 
     <!-- 心情选择 -->
     <view class="mood-selector">
@@ -41,8 +52,8 @@
   </view>
 
   <!-- 历史日志列表 -->
+  <view class="section-title">📜 我的日志</view>
   <view class="log-history">
-    <view class="section-title">📜 我的日志</view>
 
     <view class="log-list" wx:if="{{logs.length > 0}}">
       <view
@@ -55,6 +66,7 @@
           <view class="log-mood">
             <text class="mood-emoji">{{item.mood_icon}}</text>
             <text class="mood-text">{{item.mood_name}}</text>
+            <text class="reward-badge" wx:if="{{item.earnedReward}}">💰+5</text>
           </view>
           <view class="log-time">{{item.createTimeStr}}</view>
         </view>
@@ -69,6 +81,9 @@
           <view class="action-btn" bindtap="copyLog" data-content="{{item.content}}">
             📋 复制
           </view>
+          <view class="action-btn delete-btn" bindtap="deleteLog" data-id="{{item._id}}">
+            🗑️ 删除
+          </view>
           <view class="log-stats">
             👁️ {{item.visits || 0}}  |  ❤️ {{item.likes || 0}}
           </view>
@@ -77,7 +92,9 @@
     </view>
 
     <view class="empty-logs" wx:else>
-      <text>还没有日志，快去写一篇吧~</text>
+      <text class="empty-icon">📝</text>
+      <text class="empty-text">还没有日志，快去写一篇吧~</text>
+      <text class="empty-hint">发布日志可获得金币奖励哦</text>
     </view>
   </view>
 </view>

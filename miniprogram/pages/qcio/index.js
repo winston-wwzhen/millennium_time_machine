@@ -31,6 +31,13 @@ Page({
     },
     levelIcons: [], // 等级图标数组
 
+    // 用户钱包数据
+    wallet: {
+      coins: 0,
+      qpoints: 0,
+      isVip: false
+    },
+
     activeTab: 'contacts', // 当前选中的 Tab：contacts, chats, zone
     zoneSubTab: 'home', // 空间Tab内的子Tab：home, log, msg
 
@@ -39,6 +46,9 @@ Page({
     dialogType: '', // 'nickname' 或 'signature'
     dialogTitle: '',
     dialogValue: '',
+
+    // 钱包信息弹窗
+    showWalletInfo: false,
 
     // 好友列表数据（从云端获取）
     contactGroups: []
@@ -307,6 +317,8 @@ Page({
               isLoggingIn: false,
               'userProfile.isOnline': true
             });
+            // 登录成功后获取钱包数据
+            this.loadWalletData();
           } else {
             throw new Error('云端同步失败');
           }
@@ -514,5 +526,75 @@ Page({
 
   goBack: function() {
     wx.navigateBack();
+  },
+
+  /**
+   * 从云端加载钱包数据
+   */
+  loadWalletData: function() {
+    wx.cloud.callFunction({
+      name: 'qcio',
+      data: { action: 'getWallet' }
+    }).then(res => {
+      if (res.result && res.result.success) {
+        this.setData({
+          wallet: res.result.data || { coins: 0, qpoints: 0, isVip: false }
+        });
+      }
+    }).catch(err => {
+      console.error('Load Wallet Error:', err);
+      // 保持默认钱包数据
+    });
+  },
+
+  /**
+   * 显示钱包信息弹窗
+   */
+  showWalletInfo: function() {
+    this.setData({ showWalletInfo: true });
+  },
+
+  /**
+   * 关闭钱包信息弹窗
+   */
+  closeWalletInfo: function() {
+    this.setData({ showWalletInfo: false });
+  },
+
+  /**
+   * 签到成功后刷新钱包
+   */
+  onCheckInSuccess: function(e) {
+    const { reward, newCoinsBalance, newQpointsBalance } = e.detail;
+    // 优先使用返回的新余额直接更新
+    if (newCoinsBalance !== null && newCoinsBalance !== undefined) {
+      this.setData({
+        'wallet.coins': newCoinsBalance
+      });
+    }
+    if (newQpointsBalance !== null && newQpointsBalance !== undefined) {
+      this.setData({
+        'wallet.qpoints': newQpointsBalance
+      });
+    }
+    // 如果没有新余额，则重新加载
+    if (newCoinsBalance === null && newQpointsBalance === null) {
+      this.loadWalletData();
+    }
+  },
+
+  /**
+   * 日志发布成功后刷新钱包
+   */
+  onLogPublished: function(e) {
+    const { reward, newBalance } = e.detail;
+    // 如果有新余额，直接更新；否则重新加载
+    if (newBalance !== null && newBalance !== undefined) {
+      this.setData({
+        'wallet.coins': newBalance
+      });
+    } else {
+      this.loadWalletData();
+    }
   }
 });

@@ -1,6 +1,6 @@
 /**
  * QCIO 每日签到组件
- * 实现签到功能、连续签到奖励
+ * 实现签到功能、连续签到奖励（云端存储）
  */
 Component({
   properties: {
@@ -12,13 +12,13 @@ Component({
 
   data: {
     checkInData: {
-      lastCheckInDate: null,
       consecutiveDays: 0,
-      totalDays: 0,
-      rewards: []
+      totalDays: 0
     },
     canCheckIn: true,
-    todayChecked: false
+    todayChecked: false,
+    isLoading: false,
+    isCheckingIn: false
   },
 
   lifetimes: {
@@ -28,107 +28,93 @@ Component({
   },
 
   methods: {
-    // 加载签到数据
+    // 加载签到数据（从云端）
     loadCheckInData() {
-      const today = this.getTodayDate();
-      const savedData = wx.getStorageSync('qcio_checkin_data');
+      this.setData({ isLoading: true });
 
-      if (savedData) {
-        const lastDate = savedData.lastCheckInDate;
-        const todayChecked = lastDate === today;
-
-        this.setData({
-          checkInData: savedData,
-          todayChecked,
-          canCheckIn: !todayChecked
-        });
-      }
+      wx.cloud.callFunction({
+        name: 'qcio',
+        data: { action: 'getDailyTasks' }
+      }).then(res => {
+        if (res.result && res.result.success) {
+          const tasks = res.result.data;
+          this.setData({
+            checkInData: {
+              consecutiveDays: tasks.checkinStreak || 0,
+              totalDays: tasks.totalCheckinDays || 0
+            },
+            todayChecked: tasks.hasCheckedIn || false,
+            canCheckIn: !tasks.hasCheckedIn
+          });
+        }
+      }).catch(err => {
+        console.error('Load Check-in Data Error:', err);
+        wx.showToast({ title: '加载签到数据失败', icon: 'none' });
+      }).finally(() => {
+        this.setData({ isLoading: false });
+      });
     },
 
-    // 获取今天的日期字符串
-    getTodayDate() {
-      const now = new Date();
-      return `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
-    },
-
-    // 执行签到
+    // 执行签到（云端）
     checkIn() {
-      if (!this.data.canCheckIn) return;
+      if (!this.data.canCheckIn || this.data.isCheckingIn) return;
 
-      const today = this.getTodayDate();
-      const { checkInData } = this.data;
+      this.setData({ isCheckingIn: true });
+      wx.showLoading({ title: '签到中...', mask: true });
 
-      // 计算连续天数
-      const lastDate = checkInData.lastCheckInDate;
-      let consecutiveDays = checkInData.consecutiveDays || 0;
+      wx.cloud.callFunction({
+        name: 'qcio',
+        data: { action: 'dailyCheckin' }
+      }).then(res => {
+        if (res.result && res.result.success) {
+          const data = res.result.data;
 
-      if (this.isYesterday(lastDate)) {
-        consecutiveDays += 1;
-      } else if (lastDate !== today) {
-        consecutiveDays = 1;
-      }
+          this.setData({
+            checkInData: {
+              consecutiveDays: data.streak || 0,
+              totalDays: data.totalDays || 0
+            },
+            todayChecked: true,
+            canCheckIn: false
+          });
 
-      // 计算奖励
-      const reward = this.calculateReward(consecutiveDays);
+          // 显示奖励
+          const reward = data.reward || { coins: 10, qpoints: 0 };
+          let rewardText = `获得 ${reward.coins} 金币`;
+          if (reward.qpoints > 0) {
+            rewardText += `、${reward.qpoints} Q点`;
+          }
 
-      const newData = {
-        lastCheckInDate: today,
-        consecutiveDays,
-        totalDays: (checkInData.totalDays || 0) + 1,
-        rewards: [...(checkInData.rewards || []), {
-          date: today,
-          reward: reward,
-          days: consecutiveDays
-        }]
-      };
+          // 先触发事件刷新钱包，传递新余额
+          this.triggerEvent('checkin', {
+            reward: reward,
+            days: data.streak,
+            newCoinsBalance: data.newCoinsBalance,
+            newQpointsBalance: data.newQpointsBalance
+          });
 
-      wx.setStorageSync('qcio_checkin_data', newData);
-
-      this.setData({
-        checkInData: newData,
-        todayChecked: true,
-        canCheckIn: false
+          // 延迟显示弹窗，确保事件先传播
+          setTimeout(() => {
+            wx.showModal({
+              title: '签到成功！',
+              content: `连续签到 ${data.streak} 天，${rewardText}！`,
+              showCancel: false,
+              confirmText: '太棒了'
+            });
+          }, 100);
+        } else {
+          throw new Error(res.result ? res.result.message : '签到失败');
+        }
+      }).catch(err => {
+        console.error('Check-in Error:', err);
+        wx.showToast({
+          title: err.message || '签到失败',
+          icon: 'none'
+        });
+      }).finally(() => {
+        this.setData({ isCheckingIn: false });
+        wx.hideLoading();
       });
-
-      // 显示奖励
-      wx.showModal({
-        title: '签到成功！',
-        content: `连续签到 ${consecutiveDays} 天，获得 ${reward} 金币！`,
-        showCancel: false,
-        confirmText: '太棒了'
-      });
-
-      // 触发签到事件
-      this.triggerEvent('checkin', { reward, days: consecutiveDays });
-    },
-
-    // 判断是否是昨天
-    isYesterday(dateStr) {
-      if (!dateStr) return false;
-
-      const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      const yesterdayStr = `${yesterday.getFullYear()}-${yesterday.getMonth() + 1}-${yesterday.getDate()}`;
-
-      return dateStr === yesterdayStr;
-    },
-
-    // 计算签到奖励
-    calculateReward(days) {
-      // 基础奖励：10 金币
-      let reward = 10;
-
-      // 连续签到额外奖励
-      if (days >= 7) reward += 20;
-      else if (days >= 5) reward += 15;
-      else if (days >= 3) reward += 10;
-      else if (days >= 2) reward += 5;
-
-      // 特殊日额外奖励
-      if (days % 7 === 0) reward += 50;  // 每周额外奖励
-      if (days % 30 === 0) reward += 200; // 每月额外奖励
-
-      return reward;
     },
 
     // 获取签到状态文本

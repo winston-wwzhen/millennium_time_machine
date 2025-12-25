@@ -1,6 +1,7 @@
 /**
  * QCIO 空间 - 心情日志生成器组件
  * 用户选择心情 + 关键词，AI 生成火星文日志
+ * 集成经济系统：发布日志奖励金币（每天前3篇）
  */
 Component({
   properties: {
@@ -22,11 +23,18 @@ Component({
     keywords: '',
     isGenerating: false,
     logs: [],
-    showFullLog: null // 当前展开查看的日志索引
+    showFullLog: null, // 当前展开查看的日志索引
+    logStatus: {
+      todayCount: 0,
+      maxCount: 3,
+      remainingCount: 3,
+      canEarnReward: true
+    }
   },
 
   lifetimes: {
     attached() {
+      this.loadLogStatus();
       this.loadLogs();
     }
   },
@@ -41,6 +49,22 @@ Component({
     // 输入关键词
     onKeywordsInput(e) {
       this.setData({ keywords: e.detail.value });
+    },
+
+    // 加载日志发布状态
+    async loadLogStatus() {
+      try {
+        const res = await wx.cloud.callFunction({
+          name: 'qcio',
+          data: { action: 'getMoodLogStatus' }
+        });
+
+        if (res.result && res.result.success) {
+          this.setData({ logStatus: res.result.data });
+        }
+      } catch (err) {
+        console.error('Load log status error:', err);
+      }
     },
 
     // 生成日志
@@ -63,6 +87,7 @@ Component({
       }
 
       this.setData({ isGenerating: true });
+      wx.showLoading({ title: '生成中...', mask: true });
 
       try {
         // 构建提示词
@@ -81,30 +106,47 @@ Component({
           const content = res.result.reply;
 
           // 保存到数据库
-          await this.saveLog(selectedMood, keywords, content);
+          const saveRes = await this.saveLog(selectedMood, keywords, content);
 
-          // 重新加载日志列表
-          await this.loadLogs();
+          if (saveRes && saveRes.success) {
+            // 重新加载日志列表和状态
+            await this.loadLogs();
+            await this.loadLogStatus();
 
-          // 清空输入
-          this.setData({ keywords: '', selectedMood: null });
+            // 清空输入
+            this.setData({ keywords: '', selectedMood: null });
 
-          wx.showToast({ title: '日志发布成功', icon: 'success' });
+            // 显示发布成功和奖励信息
+            const { reward, newBalance } = saveRes.data;
+            let msg = '日志发布成功';
+            if (reward && reward.coins > 0) {
+              msg += `，获得 ${reward.coins} 金币！`;
+              // 触发事件刷新钱包，传递新余额
+              this.triggerEvent('logpublished', { reward, newBalance });
+            } else {
+              msg += '（今日奖励次数已用完）';
+            }
+
+            wx.showToast({ title: msg, icon: 'success', duration: 2000 });
+          } else {
+            throw new Error(saveRes?.message || '保存日志失败');
+          }
         } else {
-          throw new Error('生成失败');
+          throw new Error(res.result?.message || 'AI生成失败');
         }
       } catch (err) {
         console.error('Generate log error:', err);
         wx.showToast({ title: '生成失败，请重试', icon: 'none' });
       } finally {
         this.setData({ isGenerating: false });
+        wx.hideLoading();
       }
     },
 
     // 保存日志到数据库
     async saveLog(mood, keywords, content) {
       try {
-        await wx.cloud.callFunction({
+        const res = await wx.cloud.callFunction({
           name: 'qcio',
           data: {
             action: 'saveMoodLog',
@@ -116,8 +158,11 @@ Component({
             }
           }
         });
+
+        return res.result;
       } catch (err) {
         console.error('Save log error:', err);
+        return { success: false };
       }
     },
 
@@ -136,6 +181,46 @@ Component({
         }
       } catch (err) {
         console.error('Load logs error:', err);
+      }
+    },
+
+    // 删除日志
+    async deleteLog(e) {
+      const { id, content } = e.currentTarget.dataset;
+
+      const confirmed = await new Promise((resolve) => {
+        wx.showModal({
+          title: '确认删除',
+          content: '确定要删除这篇日志吗？',
+          confirmText: '删除',
+          confirmColor: '#ff0000',
+          success: (res) => resolve(res.confirm)
+        });
+      });
+
+      if (!confirmed) return;
+
+      try {
+        wx.showLoading({ title: '删除中...', mask: true });
+
+        await wx.cloud.callFunction({
+          name: 'qcio',
+          data: {
+            action: 'deleteMoodLog',
+            logId: id
+          }
+        });
+
+        // 重新加载日志列表和状态
+        await this.loadLogs();
+        await this.loadLogStatus();
+
+        wx.showToast({ title: '删除成功', icon: 'success' });
+      } catch (err) {
+        console.error('Delete log error:', err);
+        wx.showToast({ title: '删除失败', icon: 'none' });
+      } finally {
+        wx.hideLoading();
       }
     },
 

@@ -143,6 +143,17 @@
             {{userProfile.signature || '点击编辑个性签名...'}}
           </view>
         </view>
+        <!-- 钱包显示区域 -->
+        <view class="wallet-display" bindtap="showWalletInfo">
+          <view class="wallet-item">
+            <text class="wallet-icon">💰</text>
+            <text class="wallet-amount">{{wallet.coins || 0}}</text>
+          </view>
+          <view class="wallet-item">
+            <text class="wallet-icon">💎</text>
+            <text class="wallet-amount">{{wallet.qpoints || 0}}</text>
+          </view>
+        </view>
       </view>
 
       <!-- 标签页 -->
@@ -183,13 +194,13 @@
         <block wx:if="{{activeTab === 'zone'}}">
           <!-- 主页内容 -->
           <block wx:if="{{zoneSubTab === 'home'}}">
-            <daily-checkin qcioId="{{userProfile.qcio_id}}" />
+            <daily-checkin qcioId="{{userProfile.qcio_id}}" bindcheckin="onCheckInSuccess" />
             <farm-badge qcioId="{{userProfile.qcio_id}}" />
           </block>
 
           <!-- 日志内容 -->
           <block wx:elif="{{zoneSubTab === 'log'}}">
-            <mood-log qcioId="{{userProfile.qcio_id}}" />
+            <mood-log qcioId="{{userProfile.qcio_id}}" bindlogpublished="onLogPublished" />
           </block>
 
           <!-- 留言内容 -->
@@ -232,9 +243,9 @@
       <view class="win98-window-body">
         <view class="dialog-content">
           <text class="dialog-label">请输入新值:</text>
-          <textarea 
-            class="win98-input dialog-textarea" 
-            value="{{dialogValue}}" 
+          <textarea
+            class="win98-input dialog-textarea"
+            value="{{dialogValue}}"
             bindinput="onDialogInput"
             maxlength="{{dialogType === 'nickname' ? 12 : 50}}"
             auto-focus
@@ -243,6 +254,57 @@
         <view class="dialog-actions">
           <button class="win98-btn-std" bindtap="confirmDialog">确定</button>
           <button class="win98-btn-std" bindtap="closeDialog">取消</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 4. 钱包信息弹窗 -->
+  <view class="win98-overlay" wx:if="{{showWalletInfo}}">
+    <view class="win98-window wallet-info-box">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">💰 QCIO 钱包说明</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="closeWalletInfo"></button>
+        </view>
+      </view>
+      <view class="win98-window-body">
+        <view class="wallet-info-content">
+
+          <!-- 金币说明 -->
+          <view class="currency-section">
+            <view class="currency-title">💰 金币</view>
+            <view class="currency-desc">基础货币，用于日常游戏</view>
+            <view class="info-section">
+              <text class="info-label">获取方式：</text>
+              <view class="info-list">
+                <text class="info-item">• 每日签到 +10金币</text>
+                <text class="info-item">• 发布心情日志 +5金币</text>
+                <text class="info-item">• 聊天互动 +1金币/条</text>
+                <text class="info-item">• 农场收获 +10~50金币</text>
+              </view>
+            </view>
+          </view>
+
+          <view class="divider-line"></view>
+
+          <!-- Q点说明 -->
+          <view class="currency-section">
+            <view class="currency-title">💎 Q点</view>
+            <view class="currency-desc">珍稀货币，解锁VIP特权</view>
+            <view class="info-section">
+              <text class="info-label">获取方式：</text>
+              <view class="info-list">
+                <text class="info-item">• VIP兑换码奖励</text>
+                <text class="info-item">• 等级提升 +5Q点</text>
+                <text class="info-item">• 成就解锁 +3~10Q点</text>
+              </view>
+            </view>
+          </view>
+
+        </view>
+        <view class="dialog-actions">
+          <button class="win98-btn-std" bindtap="closeWalletInfo">知道了</button>
         </view>
       </view>
     </view>

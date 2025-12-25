@@ -264,6 +264,38 @@ page {
 .id-row { font-size: 10px; color: #444; margin: 2px 0; }
 .sig-row { font-size: 11px; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
+/* 钱包显示区域 */
+.wallet-display {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: flex-end;
+}
+
+.wallet-item {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: linear-gradient(180deg, #fffbe6, #f0e68c);
+  border: 1px solid;
+  border-color: #daa520 #8b6914 #8b6914 #daa520;
+  padding: 2px 5px;
+  border-radius: 2px;
+}
+
+.wallet-icon {
+  font-size: 10px;
+}
+
+.wallet-amount {
+  font-size: 9px;
+  font-weight: bold;
+  color: #8b4513;
+  font-family: 'Arial', sans-serif;
+  min-width: 12px;
+  text-align: right;
+}
+
 /* --- Tabs --- */
 
 .qcio-tabs {
@@ -334,6 +366,65 @@ page {
 .win98-btn-std {
   font-size: 12px; color: #000; height: 24px; padding: 0 12px;
   display: flex; align-items: center; justify-content: center;
+}
+
+/* 钱包信息弹窗 */
+.wallet-info-box {
+  width: 320px;
+}
+
+.wallet-info-content {
+  padding: 15px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.currency-section {
+  margin-bottom: 15px;
+}
+
+.currency-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #000080;
+  margin-bottom: 5px;
+}
+
+.currency-desc {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.info-section {
+  margin-top: 8px;
+}
+
+.info-label {
+  font-size: 12px;
+  font-weight: bold;
+  color: #000;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-item {
+  font-size: 11px;
+  color: #333;
+  line-height: 1.6;
+}
+
+.divider-line {
+  height: 1px;
+  background: #c0c0c0;
+  border-top: 1px solid #ffffff;
+  margin: 15px 0;
 }
 
 /* 主按钮样式 */
