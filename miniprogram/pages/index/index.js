@@ -1,9 +1,10 @@
 // miniprogram/pages/index/index.js
-const app = getApp();
-const easterEggs = require('../../utils/easter-eggs.js');
-
 Page({
   data: {
+    // 小狮子位移 (用于 transform，初始为 0)
+    agentTranslateX: 0,
+    agentTranslateY: 0,
+    isDragging: false,
     // 桌面图标配置
     desktopIcons: [
       {
@@ -23,6 +24,12 @@ Page({
         name: 'Tetris\n方块',
         icon: '🎮',
         path: '/pages/tetris/index'
+      },
+      {
+        id: 'avatar',
+        name: 'Avatar\n头像',
+        icon: '🎭',
+        path: '/pages/avatar/index'
       },
       {
         id: 'star-explorer',
@@ -50,21 +57,19 @@ Page({
       }
     ],
     showStartMenu: false,
-    systemTime: '',
-    // 彩蛋相关
-    secretClickCount: 0,
-    showEasterEgg: false,
-    easterEggMessage: ''
+    systemTime: ''
   },
 
   onLoad: function() {
-    // 分割图标为左右两列（左列优先填充）
-    const icons = this.data.desktopIcons;
-    // 左列放 5 个，右列放 2 个（总共 7 个）
-    const midPoint = 5;
+    // 获取系统信息计算安全区域
+    const systemInfo = wx.getSystemInfoSync();
+    const safeAreaBottom = systemInfo.safeArea ? systemInfo.windowHeight - systemInfo.safeArea.bottom : 0;
+    const bottomInset = Math.max(safeAreaBottom, 0);
+
+    // 设置小狮子初始位置（考虑底部安全区）
+    // bottomInset 是 px，需要加上基础偏移量
     this.setData({
-      leftColumn: icons.slice(0, midPoint),
-      rightColumn: icons.slice(midPoint)
+      agentTranslateY: -bottomInset
     });
 
     this.updateTime();
@@ -72,9 +77,6 @@ Page({
     setInterval(() => {
       this.updateTime();
     }, 60000);
-
-    // 检查日期彩蛋
-    this.checkDateEasterEgg();
   },
 
   updateTime: function() {
@@ -88,14 +90,6 @@ Page({
 
   onIconTap: function(e) {
     const path = e.currentTarget.dataset.path;
-    const id = e.currentTarget.dataset.id;
-
-    // 检查彩蛋触发
-    const egg = easterEggs.handleClick();
-    if (egg) {
-      this.showEasterEggDialog(egg);
-      return;
-    }
 
     // 简单的点击反馈延迟，模拟老式系统的加载感
     setTimeout(() => {
@@ -112,40 +106,40 @@ Page({
     }, 100);
   },
 
-  // 检查日期彩蛋
-  checkDateEasterEgg() {
-    const egg = easterEggs.checkDateEgg();
-    if (egg) {
-      // 延迟显示日期彩蛋
-      setTimeout(() => {
-        this.showEasterEggDialog(egg);
-      }, 2000);
-    }
-  },
-
-  // 显示彩蛋对话框
-  showEasterEggDialog(egg) {
-    this.setData({
-      showEasterEgg: true,
-      easterEggMessage: egg.message
-    });
-
-    wx.vibrateShort();
-
-    setTimeout(() => {
-      this.setData({ showEasterEgg: false });
-    }, 5000);
-  },
-
-  // 关闭彩蛋对话框
-  closeEasterEgg() {
-    this.setData({ showEasterEgg: false });
-  },
-
   toggleStartMenu: function() {
     this.setData({
       showStartMenu: !this.data.showStartMenu
     });
+  },
+
+  // 小狮子拖动相关
+  onAgentDragStart: function(e) {
+    this.dragStartX = e.touches[0].clientX;
+    this.dragStartY = e.touches[0].clientY;
+    this.startTranslateX = this.data.agentTranslateX;
+    this.startTranslateY = this.data.agentTranslateY;
+
+    this.setData({ isDragging: true });
+  },
+
+  onAgentDragMove: function(e) {
+    if (!this.data.isDragging) return;
+
+    const deltaX = e.touches[0].clientX - this.dragStartX;
+    const deltaY = e.touches[0].clientY - this.dragStartY;
+
+    // 使用 transform，单位直接用 px，GPU 加速更平滑
+    const newTranslateX = this.startTranslateX + deltaX;
+    const newTranslateY = this.startTranslateY + deltaY;
+
+    this.setData({
+      agentTranslateX: newTranslateX,
+      agentTranslateY: newTranslateY
+    });
+  },
+
+  onAgentDragEnd: function() {
+    this.setData({ isDragging: false });
   },
 
   onShareAppMessage: function () {

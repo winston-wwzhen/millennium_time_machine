@@ -20,43 +20,25 @@ page {
   flex-direction: column;
 }
 
-/* 图标网格 - 两列纵向布局 */
+/* 图标网格 - 纵向填充，自动换列（Windows 桌面风格） */
 .icon-grid {
   flex: 1;
   display: flex;
-  flex-direction: row;
-  padding-left: 5rpx;
-  padding-right: 5rpx;
-  /* 为微信导航栏预留更多空间 */
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  padding: 20rpx;
   padding-top: 180rpx;
+  gap: 20rpx;
   overflow-y: auto;
 }
 
-.icon-column {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* 第一列靠左 */
-.icon-column:first-child {
-  align-items: flex-start;
-  padding-left: 5rpx;
-}
-
-/* 第二列靠右 */
-.icon-column:last-child {
-  align-items: flex-start;
-  padding-left: 25rpx;
-}
-
 .desktop-icon {
+  width: 110rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 8rpx;
-  justify-content: flex-start;
+  margin-bottom: 10rpx;
 }
 
 .desktop-icon:active .icon-img {
@@ -90,41 +72,22 @@ page {
   font-weight: 500;
 }
 
-/* 桌面小部件 (便签) - 样式优化 */
-.widget-container {
-  position: absolute;
-  /* 修改位置，不让它太靠上 */
-  top: 160rpx; 
-  right: 40rpx;
-  pointer-events: none; /* 让点击穿透 */
-  z-index: 10;
-}
-
-.sticky-note {
-  background-color: #ffffcc;
-  color: #000;
-  padding: 24rpx;
-  width: 240rpx;
-  font-size: 24rpx;
-  font-family: 'Comic Sans MS', 'Courier New', cursive; 
-  box-shadow: 4px 4px 5px rgba(0,0,0,0.3);
-  transform: rotate(2deg);
-  border: 1px solid #e0e0a0;
-  /* 增加一点纹理 */
-  background-image: linear-gradient(#f9f9f9 1px, transparent 1px);
-  background-size: 100% 1.2em;
-}
-
 /* 桌面助手 (小狮子) - 新增样式 */
 .desktop-agent {
   position: absolute;
-  bottom: calc(100rpx + env(safe-area-inset-bottom));
   right: 30rpx;
+  bottom: 100rpx;
   z-index: 50;
   display: flex;
   flex-direction: column;
   align-items: center;
-  animation: float 3s ease-in-out infinite;
+  /* transform 由 JS 动态控制 */
+  will-change: transform;
+  touch-action: none; /* 阻止默认触摸行为 */
+}
+
+.desktop-agent.dragging {
+  animation: none;
 }
 
 .agent-body {
@@ -310,84 +273,4 @@ page {
   border-bottom: 1px solid #fff;
   margin: 10rpx 4rpx;
   height: 0;
-}
-
-/* 彩蛋对话框 */
-.easter-egg-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2000;
-  animation: fadeIn 0.3s ease-out;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.easter-egg-dialog {
-  width: 500rpx;
-  background: #c0c0c0;
-  border: 2px solid;
-  border-color: #ffffff #808080 #808080 #ffffff;
-  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
-  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-@keyframes popIn {
-  from {
-    transform: scale(0.5);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-.dialog-header {
-  background: linear-gradient(90deg, #000080, #1084d0);
-  padding: 20rpx 24rpx;
-  display: flex;
-  align-items: center;
-  gap: 16rpx;
-}
-
-.dialog-icon {
-  font-size: 48rpx;
-}
-
-.dialog-title {
-  color: #fff;
-  font-size: 32rpx;
-  font-weight: bold;
-  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
-}
-
-.dialog-body {
-  padding: 40rpx 24rpx;
-  background: #c0c0c0;
-}
-
-.egg-message {
-  font-size: 28rpx;
-  color: #000;
-  line-height: 1.6;
-  text-align: center;
-  display: block;
-}
-
-.dialog-footer {
-  padding: 16rpx 24rpx;
-  display: flex;
-  justify-content: flex-end;
-  gap: 12rpx;
-  background: #c0c0c0;
 }

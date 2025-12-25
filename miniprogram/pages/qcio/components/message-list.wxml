@@ -1,21 +1,23 @@
-<!-- 消息列表组件 -->
-<view class="message-list-container">
-  <view class="section-title">📨 消息列表</view>
-
-  <!-- 消息会话列表 -->
-  <view class="message-sessions">
+<!-- 群聊列表组件 -->
+<view class="group-list-container">
+  <!-- 群聊会话列表 -->
+  <view class="group-sessions">
     <view
-      class="message-session"
-      wx:for="{{messageList}}"
+      class="group-session"
+      wx:for="{{groupList}}"
       wx:key="id"
       bindtap="openChat"
-      data-contact="{{item}}"
+      data-group="{{item}}"
     >
-      <!-- 头像区域 -->
-      <view class="session-avatar">
-        <text class="avatar-emoji">{{item.avatar}}</text>
-        <!-- 在线状态指示 -->
-        <view class="online-dot"></view>
+      <!-- 群头像区域 - 多头像拼接效果 -->
+      <view class="group-avatar-box">
+        <view class="group-avatars">
+          <block wx:for="{{item.members}}" wx:for-item="member" wx:for-index="idx" wx:key="idx">
+            <text class="member-avatar" style="display: {{idx < 4 ? 'block' : 'none'}}">{{member.avatar}}</text>
+          </block>
+        </view>
+        <!-- 群成员数量角标 -->
+        <view class="member-count-badge">{{item.memberCount}}</view>
       </view>
 
       <!-- 内容区域 -->
@@ -34,13 +36,5 @@
         <text class="unread-badge">{{item.unreadCount > 99 ? '99+' : item.unreadCount}}</text>
       </view>
     </view>
-  </view>
-
-  <!-- 快速回复入口 -->
-  <view class="quick-actions">
-    <button class="action-btn" bindtap="startNewChat">
-      <text class="action-icon">✉️</text>
-      <text class="action-text">发起新聊天</text>
-    </button>
   </view>
 </view>

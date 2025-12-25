@@ -1,5 +1,5 @@
 /**
- * QCIQ 2005 完整业务逻辑
+ * QCIO 2005 完整业务逻辑
  * 状态持久化：通过云端数据库 isOnline 字段驱动登录态，实现多端同步
  */
 Page({
@@ -20,6 +20,7 @@ Page({
     levelIcons: [], // 等级图标数组
 
     activeTab: 'contacts', // 当前选中的 Tab：contacts, chats, zone
+    zoneSubTab: 'home', // 空间Tab内的子Tab：home, log, msg
     
     // 自定义 Win98 弹窗控制
     showDialog: false,
@@ -121,7 +122,7 @@ Page({
         throw new Error(result ? result.message : '初始化失败');
       }
     }).catch(err => {
-      console.error('QCIQ Init Cloud Error:', err);
+      console.error('QCIO Init Cloud Error:', err);
       wx.showToast({ title: '由于网络故障拨号失败', icon: 'none' });
     }).finally(() => {
       wx.hideLoading();
@@ -197,7 +198,7 @@ Page({
    */
   doLogout: function() {
     wx.showActionSheet({
-      itemList: ['安全退出 QCIQ (断开连接)', '取消'],
+      itemList: ['安全退出 QCIO (断开连接)', '取消'],
       itemColor: '#FF0000',
       success: (res) => {
         if (res.tapIndex === 0) {
@@ -307,6 +308,11 @@ Page({
     this.setData({ activeTab: e.currentTarget.dataset.tab });
   },
 
+  // 切换空间内部的子Tab
+  switchZoneSubTab: function(e) {
+    this.setData({ zoneSubTab: e.currentTarget.dataset.subtab });
+  },
+
   toggleGroup: function(e) {
     const index = e.currentTarget.dataset.index;
     const key = `contactGroups[${index}].expanded`;
@@ -315,10 +321,23 @@ Page({
 
   openChat: function(e) {
     const contact = e.currentTarget.dataset.contact;
-    // 跳转到独立的 QCIO 聊天页面
+    // 跳转到 AI 聊天助手页面，传递联系人信息和用户头像
     wx.navigateTo({
-      url: `/pages/qcio-chat/index?name=${contact.name}&avatar=${contact.avatar}&id=${contact.id}`,
+      url: `/pages/chat/index?name=${encodeURIComponent(contact.name)}&avatar=${encodeURIComponent(contact.avatar)}&mode=${this.getChatMode(contact.name)}&myAvatar=${encodeURIComponent(this.data.userProfile.avatar || '👤')}`,
     });
+  },
+
+  // 根据联系人名字获取聊天模式
+  getChatMode: function(name) {
+    const modeMap = {
+      '轻舞飞扬': 'qingwu',
+      '龙傲天': 'longaotian',
+      '网管小哥': 'netadmin',
+      '忧郁王子': 'qingwu',
+      '往事随风': 'qingwu',
+      '水晶之恋': 'chat'
+    };
+    return modeMap[name] || 'chat';
   },
 
   // 空间分享（踩一踩）

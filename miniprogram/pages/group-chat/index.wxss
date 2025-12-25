@@ -8,20 +8,20 @@ page {
 .desktop {
   width: 100%;
   height: 100%;
-  background-color: #008080; /* 青色背景 */
+  background-color: #008080;
   display: flex;
   align-items: center;
   justify-content: center;
-  justify-content: flex-start; 
-  box-sizing: border-box;      
-  padding-top: 110rpx;        
-  padding-bottom: 40rpx;      
+  justify-content: flex-start;
+  box-sizing: border-box;
+  padding-top: 110rpx;
+  padding-bottom: 40rpx;
 }
 
 .window-frame {
-  width: 98%; 
-  max-width: 680rpx; 
-  box-sizing: border-box; 
+  width: 98%;
+  max-width: 680rpx;
+  box-sizing: border-box;
   height: 90%;
   background-color: #c0c0c0;
   border-top: 2px solid #fff;
@@ -33,8 +33,9 @@ page {
   flex-direction: column;
 }
 
+/* 标题栏 */
 .chat-title-bar {
-  background: linear-gradient(90deg, #87CEEB, #4682B4); /* OICQ 蓝 */
+  background: linear-gradient(90deg, #87CEEB, #4682B4);
   height: 28px;
   display: flex;
   align-items: center;
@@ -61,11 +62,14 @@ page {
   font-weight: bold;
 }
 
-.menu-bar {
-  display: flex;
-  gap: 15px;
-  padding: 2px 10px;
-  font-size: 14px;
+/* 提示信息 */
+.warning-tip {
+  background: #ffffe0;
+  color: #555;
+  font-size: 10px;
+  padding: 3px 5px;
+  border-bottom: 1px solid #808080;
+  text-align: center;
   margin-bottom: 2px;
 }
 
@@ -75,7 +79,7 @@ page {
   width: 99%;
   background: #fff;
   border: 2px solid;
-  border-color: #808080 #fff #fff #808080; 
+  border-color: #808080 #fff #fff #808080;
   padding: 10px;
   box-sizing: border-box;
   overflow-y: scroll;
@@ -118,9 +122,23 @@ page {
   margin-left: 8px;
 }
 
+/* 消息内容容器 - 群聊特有 */
+.message-content {
+  display: flex;
+  flex-direction: column;
+  max-width: 70%;
+}
+
+/* 发言者名字 - 群聊特有 */
+.speaker-name {
+  font-size: 11px;
+  color: #000080;
+  margin-bottom: 2px;
+  font-weight: bold;
+}
+
 /* 气泡 */
 .bubble {
-  max-width: 70%;
   padding: 8px 12px;
   font-size: 15px;
   line-height: 1.4;
@@ -138,15 +156,6 @@ page {
   background: #e0ffff;
   border: 1px solid #000080;
   box-shadow: 2px 2px 0 #000;
-}
-
-/* 工具栏 */
-.chat-toolbar {
-  padding: 5px 10px;
-  font-size: 12px;
-  display: flex;
-  gap: 10px;
-  color: #333;
 }
 
 /* 输入区 */

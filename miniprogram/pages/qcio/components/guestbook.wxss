@@ -4,6 +4,8 @@
   background: #c0c0c0;
   border: 2px solid;
   border-color: #ffffff #808080 #808080 #ffffff;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .section-title {
@@ -29,6 +31,8 @@
 .guestbook-list {
   max-height: 300px;
   overflow-y: auto;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .guestbook-item {
@@ -38,6 +42,8 @@
   margin-bottom: 8px;
   background: #ffffff;
   border: 1px solid #c0c0c0;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .guestbook-avatar {

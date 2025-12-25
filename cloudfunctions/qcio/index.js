@@ -9,7 +9,7 @@ const db = cloud.database();
 const _ = db.command;
 
 /**
- * QCIQ (QCIO) 核心业务云函数
+ * QCIO 核心业务云函数
  * 处理账号初始化、登录状态同步、个人资料修改、空间日志、访问记录
  */
 exports.main = async (event, context) => {
@@ -227,6 +227,7 @@ async function getMoodLogs(openid) {
 
 /**
  * 记录访问（踩一踩）
+ * 同时自动在留言板添加一条留言
  */
 async function recordVisit(ownerOpenid, visitorId, visitorName) {
   try {
@@ -272,6 +273,30 @@ async function recordVisit(ownerOpenid, visitorId, visitorName) {
     await db.collection('qcio_users').where({ _openid: ownerOpenid }).update({
       data: {
         recentVisitors: _.unshift(_.slice(_.concat(visitRecord), 0, 10))
+      }
+    });
+
+    // 自动生成一条踩踩留言
+    const autoMessages = [
+      '路过，踩踩~',
+      '来串个门，支持下！',
+      '悄悄路过，留个脚印~',
+      '路过来看看，不错哦~',
+      '踩踩踩，友谊长存！',
+      '飘过~',
+      '来啦来啦，踩一踩~',
+      '路过，回踩哦！'
+    ];
+    const randomMessage = autoMessages[Math.floor(Math.random() * autoMessages.length)];
+
+    await db.collection('qcio_guestbook').add({
+      data: {
+        _openid: ownerOpenid,
+        visitorId: visitorId,
+        visitorName: visitorName || '神秘访客',
+        avatar: visitRecord.avatar,
+        content: randomMessage,
+        createTime: db.serverDate()
       }
     });
 

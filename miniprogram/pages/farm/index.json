@@ -1,0 +1,7 @@
+{
+  "navigationStyle": "custom",
+  "navigationBarTitleText": "开心农场",
+  "usingComponents": {
+    "farm-game": "/components/farm-game/index"
+  }
+}

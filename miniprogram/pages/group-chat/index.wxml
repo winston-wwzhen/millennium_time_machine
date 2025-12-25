@@ -1,32 +1,29 @@
 <view class="desktop">
   <view class="window-frame chat-main">
+    <!-- 标题栏 -->
     <view class="title-bar chat-title-bar">
-      <view class="title-text">
-        <text>{{contactName}} (在线) - 对话中</text>
-      </view>
+      <view class="title-text">{{groupName}} ({{memberCount}}人)</view>
       <view class="btn-close" bindtap="goBack">×</view>
     </view>
 
-    <!-- <view class="menu-bar">
-      <text>文件(F)</text>
-      <text>编辑(E)</text>
-      <text>视频(V)</text>
-      <text>工具(T)</text>
-    </view> -->
+    <!-- 提示信息 -->
+    <view class="warning-tip">⚠️ 这是AI群聊，成员随机发言，仅供娱乐</view>
 
-    <view style="background:#ffffe0; color:#555; font-size:10px; padding:3px 5px; border-bottom:1px solid #808080; text-align:center; margin-bottom: 2px;">
-       ⚠️ 温馨提示：对方是AI虚拟网友，内容仅供娱乐，请勿当真。
-    </view>
-
+    <!-- 聊天记录区 -->
     <scroll-view class="chat-history" scroll-y="true" scroll-into-view="{{scrollToView}}">
       <block wx:for="{{chatList}}" wx:key="index">
+        <!-- AI消息（带发言者名字） -->
         <view class="chat-item left" wx:if="{{item.type === 'ai'}}">
-          <view class="avatar ai-avatar">{{contactAvatar}}</view>
-          <view class="bubble ai-bubble">
-            <text user-select="true">{{item.content}}</text>
+          <view class="avatar ai-avatar">{{groupAvatar}}</view>
+          <view class="message-content">
+            <view class="speaker-name">{{item.speakerName}}</view>
+            <view class="bubble ai-bubble">
+              <text user-select="true">{{item.content}}</text>
+            </view>
           </view>
         </view>
 
+        <!-- 用户消息 -->
         <view class="chat-item right" wx:else>
           <view class="bubble my-bubble">
             <text user-select="true">{{item.content}}</text>
@@ -37,14 +34,11 @@
       <view id="msg-bottom" style="height: 1px;"></view>
     </scroll-view>
 
-    <view class="chat-toolbar">
-      <text>字体(F)</text> <text>表情(I)</text> <text>震动(N)</text>
-    </view>
-
+    <!-- 输入区域 -->
     <view class="chat-input-area">
-      <textarea 
-        class="chat-input" 
-        value="{{chatInput}}" 
+      <textarea
+        class="chat-input"
+        value="{{chatInput}}"
         bindinput="onChatInput"
         bindconfirm="sendMessage"
         cursor-spacing="20"

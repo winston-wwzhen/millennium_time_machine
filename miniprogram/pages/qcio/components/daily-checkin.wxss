@@ -5,6 +5,8 @@
   border: 2px solid;
   border-color: #ffffff #808080 #808080 #ffffff;
   margin-bottom: 15px;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .section-title {
@@ -22,6 +24,8 @@
   border: 2px solid;
   border-color: #808080 #ffffff #ffffff #808080;
   padding: 12px;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 /* 签到头部 */
@@ -84,6 +88,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  box-sizing: border-box;
 }
 
 .checkin-btn.checked {

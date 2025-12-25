@@ -1,6 +1,8 @@
 /* 心情日志组件样式 */
 .mood-log-container {
   padding: 10px;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .section-title {
@@ -19,6 +21,7 @@
   border-color: #ffffff #808080 #808080 #ffffff;
   padding: 10px;
   margin-bottom: 15px;
+  box-sizing: border-box;
 }
 
 /* 心情选择器 */
@@ -27,10 +30,13 @@
   flex-wrap: wrap;
   gap: 8px;
   margin-bottom: 10px;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .mood-item {
   flex: 0 0 calc(50% - 4px);
+  max-width: calc(50% - 4px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -40,6 +46,8 @@
   border: 2px solid;
   border-color: #ffffff #808080 #808080 #ffffff;
   cursor: pointer;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .mood-item.selected {
@@ -69,6 +77,7 @@
 
 .win98-input {
   width: 100%;
+  max-width: 100%;
   padding: 5px;
   background: #ffffff;
   border: 2px solid;
@@ -87,6 +96,7 @@
   padding: 8px;
   font-size: 12px;
   font-family: 'SimSun', serif;
+  box-sizing: border-box;
 }
 
 .generate-btn[disabled] {
@@ -99,6 +109,8 @@
   border: 2px solid;
   border-color: #ffffff #808080 #808080 #ffffff;
   padding: 10px;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .log-item {
@@ -106,6 +118,8 @@
   border: 1px solid #808080;
   margin-bottom: 8px;
   padding: 8px;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 /* 日志头部 */

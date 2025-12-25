@@ -98,7 +98,7 @@ Component({
     // 跳转到农场
     goToFarm() {
       wx.navigateTo({
-        url: '/pages/browser/index?url=http://galaxy.farm'
+        url: '/pages/farm/index'
       });
     }
   }

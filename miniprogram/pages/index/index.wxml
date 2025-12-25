@@ -1,36 +1,17 @@
 <view class="desktop">
-  <!-- 桌面图标区域 - 两列纵向布局 -->
+  <!-- 桌面图标区域 - 自动换列布局 -->
   <view class="icon-grid">
-    <!-- 左列 -->
-    <view class="icon-column">
-      <block wx:for="{{leftColumn}}" wx:key="id">
-        <view class="desktop-icon" bindtap="onIconTap" data-path="{{item.path}}">
-          <view class="icon-img">{{item.icon}}</view>
-          <text class="icon-label">{{item.name}}</text>
-        </view>
-      </block>
-    </view>
-    <!-- 右列 -->
-    <view class="icon-column">
-      <block wx:for="{{rightColumn}}" wx:key="id">
-        <view class="desktop-icon" bindtap="onIconTap" data-path="{{item.path}}">
-          <view class="icon-img">{{item.icon}}</view>
-          <text class="icon-label">{{item.name}}</text>
-        </view>
-      </block>
-    </view>
-  </view>
-
-  <!-- "My Computer" 风格的装饰 - 便签 -->
-  <!-- 注意：这里去掉了内联样式，改用 CSS 控制位置 -->
-  <view class="widget-container">
-    <view class="sticky-note">
-      <text>TODO LIST:\n[x] Fix Y2K bugs\n[ ] Feed the Lion\n</text>
-    </view>
+    <block wx:for="{{desktopIcons}}" wx:key="id">
+      <view class="desktop-icon" bindtap="onIconTap" data-path="{{item.path}}">
+        <view class="icon-img">{{item.icon}}</view>
+        <text class="icon-label">{{item.name}}</text>
+      </view>
+    </block>
   </view>
 
   <!-- 桌面助手：小狮子 (Office Assistant 风格) -->
-  <view class="desktop-agent">
+  <view class="desktop-agent {{isDragging ? 'dragging' : ''}}" style="transform: translate({{agentTranslateX}}px, {{agentTranslateY}}px);"
+        catchtouchstart="onAgentDragStart" catchtouchmove="onAgentDragMove" catchtouchend="onAgentDragEnd">
     <view class="agent-bubble">
       <text>Welcome back!</text>
     </view>
@@ -74,22 +55,6 @@
       <view class="menu-line"></view>
       <view class="menu-item">
         <text class="menu-icon">🔌</text> Shut Down...
-      </view>
-    </view>
-  </view>
-
-  <!-- 彩蛋对话框 -->
-  <view class="easter-egg-overlay" wx:if="{{showEasterEgg}}">
-    <view class="easter-egg-dialog">
-      <view class="dialog-header">
-        <text class="dialog-icon">🎉</text>
-        <text class="dialog-title">发现彩蛋!</text>
-      </view>
-      <view class="dialog-body">
-        <text class="egg-message">{{easterEggMessage}}</text>
-      </view>
-      <view class="dialog-footer">
-        <button class="win98-btn-std" bindtap="closeEasterEgg">确定</button>
       </view>
     </view>
   </view>

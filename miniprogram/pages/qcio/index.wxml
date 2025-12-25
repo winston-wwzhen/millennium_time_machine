@@ -3,7 +3,7 @@
   <view class="login-screen" wx:if="{{!isLoggedIn}}">
     <view class="win98-window login-dialog">
       <view class="win98-title-bar">
-        <view class="win98-title-text">QCIQ 2005 登录</view>
+        <view class="win98-title-text">QCIO 2005 登录</view>
         <view class="win98-title-controls">
           <button class="win98-btn-close" bindtap="goBack"></button>
         </view>
@@ -12,12 +12,12 @@
       <view class="win98-window-body">
         <view class="login-header">
           <view class="big-icon">📟</view>
-          <text class="login-brand">QCIQ Messenger</text>
+          <text class="login-brand">QCIO Messenger</text>
         </view>
 
         <view class="login-fields" wx:if="{{!isLoggingIn}}">
           <view class="field-row">
-            <label>QCIQ 账号:</label>
+            <label>QCIO 账号:</label>
             <input class="win98-input" value="{{userProfile.qcio_id}}" disabled />
           </view>
           <view class="field-row">
@@ -47,7 +47,7 @@
     <view class="win98-window full-panel">
       <!-- 标题栏：移除了注销按钮，仅保留关闭 -->
       <view class="win98-title-bar">
-        <view class="win98-title-text">QCIQ - {{userProfile.qcio_id}}</view>
+        <view class="win98-title-text">QCIO - {{userProfile.qcio_id}}</view>
         <view class="win98-title-controls">
           <button class="win98-btn-close" bindtap="goBack"></button>
         </view>
@@ -68,7 +68,7 @@
               </block>
             </view>
           </view>
-          <view class="id-row">QCIQ: {{userProfile.qcio_id}}</view>
+          <view class="id-row">QCIO: {{userProfile.qcio_id}}</view>
           <view class="sig-row" bindtap="openEditDialog" data-type="signature">
             {{userProfile.signature || '点击编辑个性签名...'}}
           </view>
@@ -78,8 +78,15 @@
       <!-- 标签页 -->
       <view class="qcio-tabs">
         <view class="qcio-tab {{activeTab === 'contacts' ? 'active' : ''}}" bindtap="switchTab" data-tab="contacts">联系人</view>
-        <view class="qcio-tab {{activeTab === 'chats' ? 'active' : ''}}" bindtap="switchTab" data-tab="chats">消息</view>
+        <view class="qcio-tab {{activeTab === 'chats' ? 'active' : ''}}" bindtap="switchTab" data-tab="chats">群聊</view>
         <view class="qcio-tab {{activeTab === 'zone' ? 'active' : ''}}" bindtap="switchTab" data-tab="zone">空间</view>
+      </view>
+
+      <!-- 空间二级Tab导航 (固定) -->
+      <view class="zone-sub-tabs" wx:if="{{activeTab === 'zone'}}">
+        <view class="zone-sub-tab {{zoneSubTab === 'home' ? 'active' : ''}}" bindtap="switchZoneSubTab" data-subtab="home">主页</view>
+        <view class="zone-sub-tab {{zoneSubTab === 'log' ? 'active' : ''}}" bindtap="switchZoneSubTab" data-subtab="log">日志</view>
+        <view class="zone-sub-tab {{zoneSubTab === 'msg' ? 'active' : ''}}" bindtap="switchZoneSubTab" data-subtab="msg">留言</view>
       </view>
 
       <!-- 内容区 -->
@@ -101,25 +108,32 @@
             </view>
           </view>
         </block>
-        
-        <view class="empty-view" wx:else>
-          <text>内容建设中...</text>
-        </view>
 
         <!-- 空间 Tab 内容 -->
         <block wx:if="{{activeTab === 'zone'}}">
-          <daily-checkin qcioId="{{userProfile.qcio_id}}" />
-          <farm-badge qcioId="{{userProfile.qcio_id}}" />
-          <step-counter
-            qcioId="{{userProfile.qcio_id}}"
-            nickname="{{userProfile.nickname}}"
-            bindshare="onShareFromZone"
-          />
-          <mood-log qcioId="{{userProfile.qcio_id}}" />
-          <guestbook />
+          <!-- 主页内容 -->
+          <block wx:if="{{zoneSubTab === 'home'}}">
+            <daily-checkin qcioId="{{userProfile.qcio_id}}" />
+            <farm-badge qcioId="{{userProfile.qcio_id}}" />
+          </block>
+
+          <!-- 日志内容 -->
+          <block wx:elif="{{zoneSubTab === 'log'}}">
+            <mood-log qcioId="{{userProfile.qcio_id}}" />
+          </block>
+
+          <!-- 留言内容 -->
+          <block wx:elif="{{zoneSubTab === 'msg'}}">
+            <step-counter
+              qcioId="{{userProfile.qcio_id}}"
+              nickname="{{userProfile.nickname}}"
+              bindshare="onShareFromZone"
+            />
+            <guestbook />
+          </block>
         </block>
 
-        <!-- 消息 Tab 内容 - 消息列表 -->
+        <!-- 群聊 Tab 内容 -->
         <block wx:elif="{{activeTab === 'chats'}}">
           <message-list userProfile="{{userProfile}}" />
         </block>
