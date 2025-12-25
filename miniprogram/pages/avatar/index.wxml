@@ -1,66 +1,496 @@
+<!-- 相框 - Win98 风格 -->
 <view class="desktop">
   <view class="window-frame">
-    <view class="title-bar">
-      <view class="title-text">虚幻成像系统.exe</view>
-      <view class="btn-close" bindtap="goBack">×</view>
+    <!-- 标题栏 -->
+    <view class="win98-title-bar">
+      <view class="win98-title-text">📷 千禧时光机 - 相框</view>
+      <view class="win98-title-controls">
+        <button class="win98-btn-minimize">_</button>
+        <button class="win98-btn-maximize">□</button>
+        <button class="win98-btn-close" bindtap="goBack">×</button>
+      </view>
     </view>
 
+    <!-- 菜单栏 -->
     <view class="menu-bar">
-      <text>图像(I)</text>
-      <text>特效(E)</text>
-      <text>帮助(H)</text>
+      <view class="menu-item" bindtap="toggleMenu" data-menu="file">
+        <text class="menu-text">文件(F)</text>
+      </view>
+      <view class="menu-item" bindtap="openDialog" data-dialog="help">
+        <text class="menu-text">帮助(H)</text>
+      </view>
     </view>
 
+    <!-- 下拉菜单 -->
+    <view class="dropdown-menu {{openMenu === 'file' ? 'show' : ''}}" catchtap="stopPropagation">
+      <view class="dropdown-item" bindtap="onChooseImage">
+        <text class="dropdown-icon">📂</text>
+        <text>打开照片...</text>
+      </view>
+      <view class="dropdown-line"></view>
+      <view class="dropdown-item" bindtap="onSaveImage">
+        <text class="dropdown-icon">💾</text>
+        <text>保存相册</text>
+      </view>
+    </view>
+
+    <!-- 主内容区 -->
     <view class="window-body">
-      <view class="preview-area">
-        <image class="user-photo" src="{{tempImagePath}}" mode="aspectFill" wx:if="{{tempImagePath}}"></image>
-        <view class="placeholder" wx:else bindtap="onChooseImage">
-          <text>[丢失的数据] \n 点击恢复</text>
-        </view>
-        
-        <image class="border-overlay" src="{{currentBorder}}" mode="aspectFill" wx:if="{{currentBorder}}"></image>
-        
-        <view class="filter-layer {{currentFilter}}"></view>
-      </view>
+      <!-- 预览容器 -->
+      <view class="preview-container">
+        <!-- 预览区域 -->
+        <view class="preview-area">
+          <!-- 边框叠加层 -->
+          <image class="border-overlay" src="{{currentBorder}}" mode="aspectFill" wx:if="{{currentBorder}}"></image>
 
-      <view class="control-panel">
-        <view class="label">选择现实滤镜:</view>
-        <scroll-view scroll-x="true" class="border-list">
-          <view class="border-item {{item.id === selectedBorderId ? 'active' : ''}}" 
-                wx:for="{{borderList}}" 
-                wx:key="id" 
-                bindtap="onSelectBorder" 
-                data-id="{{item.id}}" 
-                data-src="{{item.src}}">
-            <view class="border-preview" style="border-color: {{item.color}}"></view>
-            <text>{{item.name}}</text>
+          <!-- 滤镜效果层 -->
+          <view class="filter-layer {{currentFilter}}"></view>
+
+          <!-- 日期水印 -->
+          <view class="date-watermark {{showDateStamp ? 'show' : ''}} position-{{dateStampPosition}}" wx:if="{{showDateStamp}}" style="color: {{dateStampColor}};">
+            <text>{{dateStampText}}</text>
           </view>
-        </scroll-view>
 
-        <view class="label">视觉干扰:</view>
-        <view class="filter-options">
-          <view class="retro-btn sm-btn {{currentFilter === '' ? 'active-btn' : ''}}" bindtap="setFilter" data-type="">无</view>
-          <view class="retro-btn sm-btn {{currentFilter === 'matrix-green' ? 'active-btn' : ''}}" bindtap="setFilter" data-type="matrix-green">黑客</view>
-          <view class="retro-btn sm-btn {{currentFilter === 'old-noise' ? 'active-btn' : ''}}" bindtap="setFilter" data-type="old-noise">做旧</view>
-          <view class="retro-btn sm-btn {{currentFilter === 'over-exposure' ? 'active-btn' : ''}}" bindtap="setFilter" data-type="over-exposure">过曝</view>
+          <!-- 自定义文字层 -->
+          <view class="text-overlay-layer">
+            <block wx:for="{{textOverlays}}" wx:key="id">
+              <view class="text-overlay-item {{draggingTextIndex === index ? 'dragging' : ''}}"
+                    style="left: {{item.x}}%; top: {{item.y}}%; color: {{item.color}}; font-size: {{item.size}}px; transform: rotate({{item.rotation}}deg); font-family: {{item.font}};"
+                    bindlongpress="removeTextOverlay"
+                    bindtouchstart="onTextTouchStart"
+                    bindtouchmove="onTextTouchMove"
+                    bindtouchend="onTextTouchEnd"
+                    data-index="{{index}}">
+                <text>{{item.text}}</text>
+              </view>
+            </block>
+          </view>
+
+          <!-- 闪字层 -->
+          <view class="glitter-text-layer" wx:if="{{glitterText.text}}">
+            <view class="glitter-text {{draggingGlitter ? 'dragging' : ''}}"
+                  style="left: {{glitterText.x}}%; top: {{glitterText.y}}%; font-size: {{glitterText.size}}px; color: {{glitterText.color}};"
+                  bindtouchstart="onGlitterTouchStart"
+                  bindtouchmove="onGlitterTouchMove"
+                  bindtouchend="onGlitterTouchEnd">
+              <text>{{glitterText.text}}</text>
+            </view>
+          </view>
+
+          <!-- 贴纸装饰层 -->
+          <view class="sticker-layer">
+            <block wx:for="{{stickers}}" wx:key="id">
+              <view class="sticker-item {{draggingStickerIndex === index ? 'dragging' : ''}}"
+                    style="left: {{item.x}}%; top: {{item.y}}%; transform: scale({{item.scale}}) rotate({{item.rotation}}deg);"
+                    bindlongpress="removeSticker"
+                    bindtouchstart="onStickerTouchStart"
+                    bindtouchmove="onStickerTouchMove"
+                    bindtouchend="onStickerTouchEnd"
+                    data-index="{{index}}">
+                <text class="sticker-emoji">{{item.emoji}}</text>
+              </view>
+            </block>
+          </view>
+
+          <!-- 用户照片 -->
+          <view class="user-photo-wrapper {{draggingPhoto ? 'dragging' : ''}}" wx:if="{{tempImagePath}}"
+                style="transform: translate({{photoOffsetX}}px, {{photoOffsetY}}px);"
+                bindtouchstart="onPhotoTouchStart"
+                catchtouchmove="onPhotoTouchMove"
+                bindtouchend="onPhotoTouchEnd">
+            <image class="user-photo"
+                   src="{{tempImagePath}}"
+                   mode="widthFix">
+            </image>
+          </view>
+
+          <!-- 默认占位 -->
+          <view class="placeholder" wx:else bindtap="onChooseImage">
+            <view class="placeholder-content">
+              <text class="placeholder-icon">🖼️</text>
+              <text class="placeholder-text">┌─────────────┐</text>
+              <text class="placeholder-text">│  点击打开照片  │</text>
+              <text class="placeholder-text">└─────────────┘</text>
+            </view>
+          </view>
         </view>
       </view>
 
-      <view class="action-area">
-        <view class="retro-btn" hover-class="btn-hover" bindtap="onChooseImage">
-          📂 打开照片
+      <!-- 快捷工具栏 -->
+      <view class="quick-toolbar">
+        <view class="quick-btn" bindtap="openDialog" data-dialog="border">
+          <text class="quick-btn-icon">🖼️</text>
+          <text class="quick-btn-text">边框</text>
         </view>
-        <view class="retro-btn primary-btn" hover-class="btn-hover" bindtap="onSaveImage">
-          💾 永久封存
+        <view class="quick-btn" bindtap="openDialog" data-dialog="filter">
+          <text class="quick-btn-icon">✨</text>
+          <text class="quick-btn-text">滤镜</text>
+        </view>
+        <view class="quick-btn" bindtap="openDialog" data-dialog="sticker">
+          <text class="quick-btn-icon">⭐</text>
+          <text class="quick-btn-text">贴纸</text>
+        </view>
+        <view class="quick-btn" bindtap="openDialog" data-dialog="text">
+          <text class="quick-btn-icon">✏️</text>
+          <text class="quick-btn-text">文字</text>
+        </view>
+        <view class="quick-btn" bindtap="openDialog" data-dialog="glitter">
+          <text class="quick-btn-icon">💎</text>
+          <text class="quick-btn-text">闪字</text>
+        </view>
+        <view class="quick-btn" bindtap="openDialog" data-dialog="date">
+          <text class="quick-btn-icon">📅</text>
+          <text class="quick-btn-text">日期</text>
         </view>
       </view>
 
-      <canvas type="2d" id="photoCanvas" class="offscreen-canvas"></canvas>
+      <!-- 操作按钮区 -->
+      <view class="action-bar">
+        <button class="win98-btn" bindtap="onChooseImage">
+          <text class="btn-icon">📂</text>
+          打开照片
+        </button>
+        <button class="win98-btn" bindtap="clearAllEffects">
+          <text class="btn-icon">🔄</text>
+          清除效果
+        </button>
+        <button class="win98-btn win98-btn-success" bindtap="onSaveImage">
+          <text class="btn-icon">💾</text>
+          保存相册
+        </button>
+      </view>
     </view>
 
+    <!-- 状态栏 -->
     <view class="status-bar">
-      <text>就绪</text>
-      <text>30万像素</text>
+      <text>状态: {{tempImagePath ? '图片已加载' : '等待打开照片'}}</text>
+      <text>|</text>
+      <text>分辨率: 640×480</text>
+      <text>|</text>
+      <text>© 2005</text>
     </view>
   </view>
+
+  <!-- ==================== Win98 风格弹窗 ==================== -->
+
+  <!-- 边框选择弹窗 -->
+  <view class="win98-overlay" wx:if="{{showDialog === 'border'}}" bindtap="closeDialog">
+    <view class="win98-dialog" catchtap="stopPropagation">
+      <view class="win98-dialog-title">选择边框</view>
+      <view class="win98-dialog-body">
+        <scroll-view scroll-y="true" class="dialog-scroll">
+          <view class="border-grid">
+            <view class="border-option {{selectedBorderId === item.id ? 'active' : ''}}"
+                  wx:for="{{borderList}}"
+                  wx:key="id"
+                  bindtap="onSelectBorder"
+                  data-id="{{item.id}}"
+                  data-src="{{item.src}}">
+              <view class="border-option-preview" style="border-color: {{item.color}}; border-style: {{item.id === 0 ? 'solid' : 'dashed'}};">
+                <text wx:if="{{item.id === 0}}">🚫</text>
+              </view>
+              <text class="border-option-label">{{item.name}}</text>
+            </view>
+          </view>
+        </scroll-view>
+      </view>
+      <view class="win98-dialog-footer">
+        <button class="win98-btn-std" bindtap="closeDialog">确定</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 滤镜选择弹窗 -->
+  <view class="win98-overlay" wx:if="{{showDialog === 'filter'}}" bindtap="closeDialog">
+    <view class="win98-dialog" catchtap="stopPropagation">
+      <view class="win98-dialog-title">选择滤镜</view>
+      <view class="win98-dialog-body">
+        <scroll-view scroll-y="true" class="dialog-scroll">
+          <view class="filter-grid">
+            <view class="filter-option {{currentFilter === '' ? 'active' : ''}}" bindtap="setFilter" data-type="">
+              <text class="filter-option-icon">📷</text>
+              <text class="filter-option-label">原图</text>
+            </view>
+            <view class="filter-option {{currentFilter === 'sepia' ? 'active' : ''}}" bindtap="setFilter" data-type="sepia">
+              <text class="filter-option-icon">🟤</text>
+              <text class="filter-option-label">怀旧</text>
+            </view>
+            <view class="filter-option {{currentFilter === 'matrix-green' ? 'active' : ''}}" bindtap="setFilter" data-type="matrix-green">
+              <text class="filter-option-icon">💻</text>
+              <text class="filter-option-label">黑客</text>
+            </view>
+            <view class="filter-option {{currentFilter === 'old-noise' ? 'active' : ''}}" bindtap="setFilter" data-type="old-noise">
+              <text class="filter-option-icon">📺</text>
+              <text class="filter-option-label">包浆</text>
+            </view>
+            <view class="filter-option {{currentFilter === 'over-exposure' ? 'active' : ''}}" bindtap="setFilter" data-type="over-exposure">
+              <text class="filter-option-icon">☀️</text>
+              <text class="filter-option-label">过曝</text>
+            </view>
+            <view class="filter-option {{currentFilter === 'cold' ? 'active' : ''}}" bindtap="setFilter" data-type="cold">
+              <text class="filter-option-icon">❄️</text>
+              <text class="filter-option-label">冷调</text>
+            </view>
+            <view class="filter-option {{currentFilter === 'warm' ? 'active' : ''}}" bindtap="setFilter" data-type="warm">
+              <text class="filter-option-icon">🔥</text>
+              <text class="filter-option-label">暖调</text>
+            </view>
+            <view class="filter-option {{currentFilter === 'blur' ? 'active' : ''}}" bindtap="setFilter" data-type="blur">
+              <text class="filter-option-icon">🌫️</text>
+              <text class="filter-option-label">柔焦</text>
+            </view>
+          </view>
+        </scroll-view>
+      </view>
+      <view class="win98-dialog-footer">
+        <button class="win98-btn-std" bindtap="closeDialog">确定</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 贴纸选择弹窗 -->
+  <view class="win98-overlay" wx:if="{{showDialog === 'sticker'}}" bindtap="closeDialog">
+    <view class="win98-dialog sticker-dialog" catchtap="stopPropagation">
+      <view class="win98-dialog-title">选择贴纸</view>
+      <view class="win98-dialog-body">
+        <scroll-view scroll-y="true" class="dialog-scroll">
+          <view class="sticker-category">
+            <text class="category-title">💖 爱心系列</text>
+            <view class="sticker-row">
+              <block wx:for="{{heartStickers}}" wx:key="*this" wx:for-item="emoji" wx:for-index="idx">
+                <view class="sticker-option-lg" bindtap="addStickerAndClose" data-emoji="{{emoji}}" data-category="heart">
+                  <text>{{emoji}}</text>
+                </view>
+              </block>
+            </view>
+          </view>
+          <view class="sticker-category">
+            <text class="category-title">⭐ 星星系列</text>
+            <view class="sticker-row">
+              <block wx:for="{{starStickers}}" wx:key="*this" wx:for-item="emoji" wx:for-index="idx">
+                <view class="sticker-option-lg" bindtap="addStickerAndClose" data-emoji="{{emoji}}" data-category="star">
+                  <text>{{emoji}}</text>
+                </view>
+              </block>
+            </view>
+          </view>
+          <view class="sticker-category">
+            <text class="category-title">👑 皇冠系列</text>
+            <view class="sticker-row">
+              <block wx:for="{{crownStickers}}" wx:key="*this" wx:for-item="emoji" wx:for-index="idx">
+                <view class="sticker-option-lg" bindtap="addStickerAndClose" data-emoji="{{emoji}}" data-category="crown">
+                  <text>{{emoji}}</text>
+                </view>
+              </block>
+            </view>
+          </view>
+          <view class="sticker-category">
+            <text class="category-title">🎀 蝴蝶结系列</text>
+            <view class="sticker-row">
+              <block wx:for="{{ribbonStickers}}" wx:key="*this" wx:for-item="emoji" wx:for-index="idx">
+                <view class="sticker-option-lg" bindtap="addStickerAndClose" data-emoji="{{emoji}}" data-category="ribbon">
+                  <text>{{emoji}}</text>
+                </view>
+              </block>
+            </view>
+          </view>
+        </scroll-view>
+      </view>
+      <view class="win98-dialog-footer">
+        <button class="win98-btn-std" bindtap="closeDialog">取消</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 文字输入弹窗 -->
+  <view class="win98-overlay" wx:if="{{showDialog === 'text'}}" bindtap="closeDialog">
+    <view class="win98-dialog" catchtap="stopPropagation">
+      <view class="win98-dialog-title">添加文字</view>
+      <view class="win98-dialog-body">
+        <view class="dialog-input-area">
+          <input class="dialog-input" placeholder="输入文字..." value="{{textInput}}" bindinput="onTextInput" maxlength="20"/>
+
+          <view class="dialog-option-row">
+            <text class="dialog-option-label">颜色:</text>
+            <view class="color-picker">
+              <view class="color-option {{textColor === '#ff0000' ? 'active' : ''}}" style="background: #ff0000;" bindtap="setTextColor" data-color="#ff0000"></view>
+              <view class="color-option {{textColor === '#ff69b4' ? 'active' : ''}}" style="background: #ff69b4;" bindtap="setTextColor" data-color="#ff69b4"></view>
+              <view class="color-option {{textColor === '#ffff00' ? 'active' : ''}}" style="background: #ffff00;" bindtap="setTextColor" data-color="#ffff00"></view>
+              <view class="color-option {{textColor === '#00ff00' ? 'active' : ''}}" style="background: #00ff00;" bindtap="setTextColor" data-color="#00ff00"></view>
+              <view class="color-option {{textColor === '#00ffff' ? 'active' : ''}}" style="background: #00ffff;" bindtap="setTextColor" data-color="#00ffff"></view>
+              <view class="color-option {{textColor === '#ffffff' ? 'active' : ''}}" style="background: #ffffff;" bindtap="setTextColor" data-color="#ffffff"></view>
+            </view>
+          </view>
+
+          <view class="dialog-option-row">
+            <text class="dialog-option-label">大小: {{textSize}}</text>
+            <slider class="dialog-slider" min="12" max="48" value="{{textSize}}" bindchange="onTextSizeChange" block-size="12"/>
+          </view>
+
+          <view class="dialog-option-row">
+            <text class="dialog-option-label">字体:</text>
+            <view class="font-picker">
+              <view class="font-option {{textFont === 'SimSun' ? 'active' : ''}}" bindtap="setTextFont" data-font="SimSun">
+                <text style="font-family: SimSun;">宋体</text>
+              </view>
+              <view class="font-option {{textFont === 'KaiTi' ? 'active' : ''}}" bindtap="setTextFont" data-font="KaiTi">
+                <text style="font-family: KaiTi;">楷体</text>
+              </view>
+              <view class="font-option {{textFont === 'Arial' ? 'active' : ''}}" bindtap="setTextFont" data-font="Arial">
+                <text style="font-family: Arial;">Arial</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="win98-dialog-footer">
+        <button class="win98-btn-std" bindtap="closeDialog">取消</button>
+        <button class="win98-btn-std" bindtap="addTextOverlayAndClose">添加</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 闪字弹窗 -->
+  <view class="win98-overlay" wx:if="{{showDialog === 'glitter'}}" bindtap="closeDialog">
+    <view class="win98-dialog" catchtap="stopPropagation">
+      <view class="win98-dialog-title">闪字效果</view>
+      <view class="win98-dialog-body">
+        <view class="dialog-input-area">
+          <view class="glitter-preview" style="background: linear-gradient(45deg, {{glitterText.color || '#ff69b4'}}, #fff, {{glitterText.color || '#ff69b4'}});">
+            <text class="glitter-preview-text" wx:if="{{glitterText.text}}">{{glitterText.text}}</text>
+            <text class="glitter-preview-placeholder" wx:else>预览</text>
+          </view>
+
+          <input class="dialog-input" placeholder="输入闪字..." value="{{glitterText.text}}" bindinput="onGlitterTextInput" maxlength="10"/>
+
+          <view class="dialog-option-row">
+            <text class="dialog-option-label">颜色:</text>
+            <view class="color-picker">
+              <view class="color-option {{glitterText.color === '#ff1493' ? 'active' : ''}}" style="background: #ff1493;" bindtap="setGlitterColor" data-color="#ff1493"></view>
+              <view class="color-option {{glitterText.color === '#ff69b4' ? 'active' : ''}}" style="background: #ff69b4;" bindtap="setGlitterColor" data-color="#ff69b4"></view>
+              <view class="color-option {{glitterText.color === '#ff00ff' ? 'active' : ''}}" style="background: #ff00ff;" bindtap="setGlitterColor" data-color="#ff00ff"></view>
+              <view class="color-option {{glitterText.color === '#00ffff' ? 'active' : ''}}" style="background: #00ffff;" bindtap="setGlitterColor" data-color="#00ffff"></view>
+              <view class="color-option {{glitterText.color === '#ffd700' ? 'active' : ''}}" style="background: #ffd700;" bindtap="setGlitterColor" data-color="#ffd700"></view>
+            </view>
+          </view>
+
+          <view class="dialog-option-row">
+            <text class="dialog-option-label">大小: {{glitterText.size}}</text>
+            <slider class="dialog-slider" min="20" max="60" value="{{glitterText.size}}" bindchange="onGlitterSizeChange" block-size="12"/>
+          </view>
+        </view>
+      </view>
+      <view class="win98-dialog-footer">
+        <button class="win98-btn-std" bindtap="closeDialog">取消</button>
+        <button class="win98-btn-std" bindtap="applyGlitterTextAndClose">应用</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 日期水印弹窗 -->
+  <view class="win98-overlay" wx:if="{{showDialog === 'date'}}" bindtap="closeDialog">
+    <view class="win98-dialog" catchtap="stopPropagation">
+      <view class="win98-dialog-title">日期水印</view>
+      <view class="win98-dialog-body">
+        <view class="dialog-input-area">
+          <view class="date-preview-lg {{showDateStamp ? 'active' : ''}}">
+            <text class="date-preview-text">{{dateStampText}}</text>
+          </view>
+
+          <view class="dialog-option-row">
+            <text class="dialog-option-label">格式:</text>
+            <view class="format-picker">
+              <view class="format-option {{dateFormat === 'YYYY/MM/DD' ? 'active' : ''}}" bindtap="setDateFormat" data-format="YYYY/MM/DD">
+                <text>2005/12/25</text>
+              </view>
+              <view class="format-option {{dateFormat === 'DD-MM-YYYY' ? 'active' : ''}}" bindtap="setDateFormat" data-format="DD-MM-YYYY">
+                <text>25-12-2005</text>
+              </view>
+            </view>
+          </view>
+
+          <view class="dialog-option-row">
+            <text class="dialog-option-label">颜色:</text>
+            <view class="color-picker">
+              <view class="color-option {{dateStampColor === '#ff0000' ? 'active' : ''}}" style="background: #ff0000;" bindtap="setDateStampColor" data-color="#ff0000"></view>
+              <view class="color-option {{dateStampColor === '#ffff00' ? 'active' : ''}}" style="background: #ffff00;" bindtap="setDateStampColor" data-color="#ffff00"></view>
+              <view class="color-option {{dateStampColor === '#ffffff' ? 'active' : ''}}" style="background: #ffffff; border: 1px solid #999;" bindtap="setDateStampColor" data-color="#ffffff"></view>
+              <view class="color-option {{dateStampColor === '#ff69b4' ? 'active' : ''}}" style="background: #ff69b4;" bindtap="setDateStampColor" data-color="#ff69b4"></view>
+            </view>
+          </view>
+
+          <view class="dialog-option-row">
+            <text class="dialog-option-label">位置:</text>
+            <view class="position-picker">
+              <view class="position-option {{dateStampPosition === 'top-right' ? 'active' : ''}}" bindtap="setDateStampPosition" data-position="top-right">
+                <text>右上</text>
+              </view>
+              <view class="position-option {{dateStampPosition === 'bottom-right' ? 'active' : ''}}" bindtap="setDateStampPosition" data-position="bottom-right">
+                <text>右下</text>
+              </view>
+              <view class="position-option {{dateStampPosition === 'bottom-left' ? 'active' : ''}}" bindtap="setDateStampPosition" data-position="bottom-left">
+                <text>左下</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="win98-dialog-footer">
+        <button class="win98-btn-std" bindtap="toggleDateStamp">{{showDateStamp ? '隐藏' : '显示'}}</button>
+        <button class="win98-btn-std" bindtap="closeDialog">关闭</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 帮助说明弹窗 -->
+  <view class="win98-overlay" wx:if="{{showDialog === 'help'}}" bindtap="closeDialog">
+    <view class="win98-dialog" catchtap="stopPropagation">
+      <view class="win98-dialog-title">使用说明 - 非主流相机</view>
+      <view class="win98-dialog-body">
+        <scroll-view scroll-y="true" class="dialog-scroll">
+          <view style="padding: 16px; line-height: 1.8; font-size: 12px; color: #333;">
+            <view style="margin-bottom: 12px;">
+              <text style="font-weight: bold; color: #000080;">📷 欢迎使用千禧时光机！</text>
+            </view>
+
+            <view style="margin-bottom: 10px;">
+              <text style="font-weight: bold;">【基本操作】</text>
+            </view>
+            <text style="display: block; margin-bottom: 6px;">• 点击"打开照片"选择相册图片</text>
+            <text style="display: block; margin-bottom: 6px;">• 拖拽照片调整位置</text>
+            <text style="display: block; margin-bottom: 10px;">• 点击"保存相册"导出作品</text>
+
+            <view style="margin-bottom: 10px;">
+              <text style="font-weight: bold;">【边框滤镜】</text>
+            </view>
+            <text style="display: block; margin-bottom: 6px;">• 边框：千禧甜心、暗黑赛博、Win98等</text>
+            <text style="display: block; margin-bottom: 10px;">• 滤镜：怀旧、黑客、包浆等8种效果</text>
+
+            <view style="margin-bottom: 10px;">
+              <text style="font-weight: bold;">【装饰功能】</text>
+            </view>
+            <text style="display: block; margin-bottom: 6px;">• 贴纸：爱心、星星、皇冠、蝴蝶结</text>
+            <text style="display: block; margin-bottom: 6px;">• 文字：添加自定义文字，可拖拽</text>
+            <text style="display: block; margin-bottom: 10px;">• 闪字：炫彩闪烁特效文字</text>
+
+            <view style="margin-bottom: 10px;">
+              <text style="font-weight: bold;">【小技巧】</text>
+            </view>
+            <text style="display: block; margin-bottom: 6px;">• 长按贴纸/文字可删除</text>
+            <text style="display: block; margin-bottom: 10px;">• 点击"清除效果"重置所有</text>
+
+            <view style="margin-bottom: 6px; padding-top: 8px; border-top: 1px dashed #808080;">
+              <text style="color: #666; font-style: italic;">© 2005 非主流时代 · 怀旧珍藏</text>
+            </view>
+          </view>
+        </scroll-view>
+      </view>
+      <view class="win98-dialog-footer">
+        <button class="win98-btn-std" bindtap="closeDialog">知道了</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 离屏Canvas用于图片合成 -->
+  <canvas type="2d" id="photoCanvas" class="offscreen-canvas"></canvas>
 </view>

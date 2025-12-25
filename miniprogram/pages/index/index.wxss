@@ -262,6 +262,65 @@ page {
   50% { opacity: 0.3; }
 }
 
+/* 网络图标容器 */
+.network-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* 网络信息气泡 */
+.network-bubble {
+  position: absolute;
+  bottom: 60rpx;
+  right: 0;
+  background: #ffffe0;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+  padding: 8rpx 12rpx;
+  min-width: 160rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+  opacity: 0;
+  transform: scale(0.8);
+  transform-origin: bottom right;
+  transition: all 0.2s ease;
+  pointer-events: none;
+}
+
+.network-bubble.show {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.network-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -10rpx;
+  right: 12rpx;
+  border-width: 10rpx 10rpx 0;
+  border-style: solid;
+  border-color: #808080 transparent transparent transparent;
+}
+
+.network-status-text {
+  font-size: 22rpx;
+  font-weight: bold;
+  color: #000080;
+  font-family: 'SimSun', serif;
+  border-bottom: 1px solid #808080;
+  padding-bottom: 4rpx;
+  margin-bottom: 4rpx;
+}
+
+.network-speed-text {
+  font-size: 20rpx;
+  color: #333;
+  font-family: 'SimSun', serif;
+}
+
 /* 开始菜单遮罩 - 点击外部关闭菜单 */
 .start-menu-mask {
   position: fixed;
@@ -405,11 +464,11 @@ page {
   transform: rotate(90deg);
 }
 
-.submenu-content {
+/* 程序子菜单 - 独立弹出层 */
+.submenu-popup {
   position: absolute;
-  left: 100%;
-  top: 0;
-  margin-left: -2rpx;
+  bottom: calc(82rpx + env(safe-area-inset-bottom) + 124rpx);
+  left: 330rpx;
   width: 200rpx;
   background-color: #c0c0c0;
   border-top: 2px solid #fff;
@@ -423,7 +482,7 @@ page {
   padding: 6rpx;
 }
 
-.submenu-content.show {
+.submenu-popup.show {
   display: block;
 }
 
@@ -521,4 +580,311 @@ page {
   text-align: center;
   margin-right: 12rpx;
   font-size: 32rpx;
+}
+
+/* Win98 错误弹窗 */
+.win98-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 20000;
+}
+
+.win98-window {
+  background: #c0c0c0;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  box-shadow: inset 1px 1px #dfdfdf, inset -1px -1px #0a0a0a;
+  display: flex;
+  flex-direction: column;
+}
+
+.win98-title-bar {
+  background: linear-gradient(90deg, #000080, #1084d0);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 3px 2px 6px;
+  height: 20px;
+}
+
+.win98-title-text {
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  font-family: 'SimSun', 'Courier New', monospace;
+}
+
+.win98-title-controls {
+  display: flex;
+  gap: 2px;
+}
+
+.win98-title-controls button {
+  all: unset;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 16px;
+  height: 14px;
+  background: #c0c0c0;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  font-size: 10px;
+  color: #000;
+  padding: 0;
+  margin: 0;
+}
+
+.win98-btn-close::after {
+  content: "×";
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.win98-window-body {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.error-dialog {
+  width: 320px;
+}
+
+.error-dialog-content {
+  padding: 20px 16px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.error-icon {
+  font-size: 40px;
+  flex-shrink: 0;
+}
+
+.error-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.error-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #000;
+  font-family: 'SimSun', serif;
+}
+
+.error-text {
+  font-size: 12px;
+  color: #333;
+  font-family: 'SimSun', serif;
+  line-height: 1.5;
+}
+
+.error-code {
+  font-size: 11px;
+  color: #cc0000;
+  font-family: 'Courier New', monospace;
+  margin-top: 4px;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: center;
+  padding: 8px 16px 12px;
+  background: #c0c0c0;
+}
+
+.win98-btn-std {
+  font-size: 12px;
+  color: #000;
+  height: 24px;
+  padding: 0 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #c0c0c0;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  font-family: 'SimSun', serif;
+}
+
+.win98-btn-std:active {
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
+}
+
+/* ==================== 系统时间 ==================== */
+.system-time {
+  font-family: 'SimSun', serif;
+  cursor: pointer;
+  padding: 4rpx 8rpx;
+}
+
+.system-time:active {
+  background: rgba(0, 0, 128, 0.3);
+}
+
+/* ==================== 日历弹窗 ==================== */
+.date-dialog {
+  position: absolute;
+  bottom: calc(84rpx + env(safe-area-inset-bottom));
+  right: 6rpx;
+  width: 260px;
+  background: #c0c0c0;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #808080;
+  border-bottom: 2px solid #808080;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+  z-index: 9999;
+  animation: calendarPop 0.15s ease-out;
+}
+
+@keyframes calendarPop {
+  from {
+    opacity: 0;
+    transform: translateY(8rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.date-dialog-content {
+  padding: 8px;
+}
+
+.calendar-display {
+  background: #fff;
+  border: 2px inset #fff;
+  padding: 8px;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.calendar-year,
+.calendar-month {
+  font-size: 18px;
+  font-weight: bold;
+  color: #000080;
+  font-family: 'SimSun', serif;
+}
+
+.calendar-title {
+  font-size: 14px;
+  color: #333;
+  font-family: 'SimSun', serif;
+}
+
+.calendar-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 0;
+}
+
+.day-number {
+  font-size: 48px;
+  font-weight: bold;
+  color: #000;
+  font-family: 'Arial', sans-serif;
+  line-height: 1;
+}
+
+.day-name {
+  font-size: 12px;
+  color: #666;
+  font-family: 'SimSun', serif;
+}
+
+/* 星期标题行 */
+.weekday-header {
+  display: flex;
+  justify-content: space-around;
+  padding: 4px 0;
+  border-bottom: 1px solid #808080;
+  margin-bottom: 4px;
+}
+
+.weekday-title {
+  font-size: 11px;
+  color: #000080;
+  font-family: 'SimSun', serif;
+  font-weight: bold;
+}
+
+/* 日历网格 */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  padding: 4px 0;
+}
+
+.calendar-day-cell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-family: 'SimSun', serif;
+  border-radius: 2px;
+}
+
+.calendar-day-cell.today {
+  background: #000080;
+  color: #fff;
+  font-weight: bold;
+  border-radius: 4px;
+}
+
+.date-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 4px;
+  border-top: 1px solid #808080;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  font-family: 'SimSun', serif;
+}
+
+.info-label {
+  width: 50px;
+  color: #666;
+}
+
+.info-value {
+  color: #000;
 }

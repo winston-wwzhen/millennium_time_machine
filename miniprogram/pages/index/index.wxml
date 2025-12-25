@@ -32,11 +32,19 @@
     </view>
 
     <view class="system-tray">
-      <view class="tray-icon network-icon {{networkConnected ? 'online' : 'offline'}}" bindtap="onNetworkIconTap">
-        {{networkConnected ? '🌐' : '❌'}}
+      <view class="network-wrapper">
+        <view class="tray-icon network-icon {{networkConnected ? 'online' : 'offline'}}" bindtap="onNetworkIconTap">
+          {{networkConnected ? '🌐' : '❌'}}
+        </view>
+        <!-- 网络信息气泡 -->
+        <view class="network-bubble {{showNetworkInfo ? 'show' : ''}}" wx:if="{{showNetworkInfo}}">
+          <text class="network-status-text">{{networkConnected ? '网络已连接' : '网络未连接'}}</text>
+          <text class="network-speed-text">下载: {{networkSpeed.down}} MB/s</text>
+          <text class="network-speed-text">上传: {{networkSpeed.up}} MB/s</text>
+        </view>
       </view>
       <view class="tray-icon">🔊</view>
-      <view class="system-time">{{systemTime}}</view>
+      <view class="system-time" bindtap="onTimeTap">{{systemTime}}</view>
     </view>
   </view>
 
@@ -59,21 +67,6 @@
         <text class="menu-icon">📂</text>
         <text class="menu-text">程序</text>
         <text class="submenu-arrow {{showSubmenu ? 'expanded' : ''}}">{{showSubmenu ? '▾' : '▸'}}</text>
-        <!-- 程序子菜单 - 右侧弹出 -->
-        <view class="submenu-content {{showSubmenu ? 'show' : ''}}" catchtap="stopPropagation">
-          <view class="submenu-item" catchtap="onIconTap" data-path="/pages/tetris/index">
-            <text class="submenu-icon">🎮</text>
-            <text class="submenu-text">俄罗斯方块</text>
-          </view>
-          <view class="submenu-item" catchtap="onIconTap" data-path="/pages/star-explorer/index">
-            <text class="submenu-icon">🌌</text>
-            <text class="submenu-text">星际探索</text>
-          </view>
-          <view class="submenu-item" catchtap="onIconTap" data-path="/pages/mars/index">
-            <text class="submenu-icon">🪐</text>
-            <text class="submenu-text">火星翻译</text>
-          </view>
-        </view>
       </view>
       <view class="menu-item" bindtap="onIconTap" data-path="/pages/my-documents/index">
         <text class="menu-icon">📄</text>
@@ -99,6 +92,22 @@
     </view>
   </view>
 
+  <!-- 程序子菜单 (独立弹出层) -->
+  <view class="submenu-popup {{showSubmenu ? 'show' : ''}}" catchtap="stopPropagation">
+    <view class="submenu-item" catchtap="onIconTap" data-path="/pages/tetris/index">
+      <text class="submenu-icon">🎮</text>
+      <text class="submenu-text">俄罗斯方块</text>
+    </view>
+    <view class="submenu-item" catchtap="onIconTap" data-path="/pages/star-explorer/index">
+      <text class="submenu-icon">🌌</text>
+      <text class="submenu-text">星际探索</text>
+    </view>
+    <view class="submenu-item" catchtap="onIconTap" data-path="/pages/mars/index">
+      <text class="submenu-icon">🪐</text>
+      <text class="submenu-text">火星翻译</text>
+    </view>
+  </view>
+
   <!-- 右键菜单 (弹出层) -->
   <view class="context-menu" wx:if="{{showContextMenu}}" style="left: {{contextMenuX}}px; top: {{contextMenuY}}px;" catchtap="hideContextMenu">
     <view class="context-menu-item" bindtap="refreshDesktop">
@@ -114,6 +123,81 @@
     <view class="menu-line"></view>
     <view class="context-menu-item" bindtap="showProperties">
       <text class="context-icon">ℹ️</text> 属性(R)
+    </view>
+  </view>
+
+  <!-- Win98 错误弹窗 -->
+  <view class="win98-overlay" wx:if="{{showErrorDialog}}" bindtap="hideErrorDialog">
+    <view class="win98-window error-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">⚠️ 错误</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="hideErrorDialog">×</button>
+        </view>
+      </view>
+      <view class="win98-window-body">
+        <view class="error-dialog-content">
+          <view class="error-icon">❌</view>
+          <view class="error-messages">
+            <text class="error-title">文件已损坏</text>
+            <text class="error-text">无法打开该程序。</text>
+            <text class="error-text">请尝试重新安装。</text>
+            <text class="error-code">错误代码: 0x80070002</text>
+          </view>
+        </view>
+        <view class="dialog-actions">
+          <button class="win98-btn-std" bindtap="hideErrorDialog">确定</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 日期弹窗遮罩 (点击外部关闭) -->
+  <view class="start-menu-mask" wx:if="{{showDateDialog}}" catchtap="hideDateDialog"></view>
+
+  <!-- 日期弹窗 - Windows风格右下角弹出 -->
+  <view class="date-dialog" wx:if="{{showDateDialog}}" catchtap="stopPropagation">
+    <view class="date-dialog-content">
+      <!-- 日历头部：年月 -->
+      <view class="calendar-header">
+        <text class="calendar-year">{{calendarYear}}</text>
+        <text class="calendar-title">年</text>
+        <text class="calendar-month">{{calendarMonth}}</text>
+        <text class="calendar-title">月</text>
+      </view>
+
+      <!-- 星期标题行 -->
+      <view class="weekday-header">
+        <text class="weekday-title">日</text>
+        <text class="weekday-title">一</text>
+        <text class="weekday-title">二</text>
+        <text class="weekday-title">三</text>
+        <text class="weekday-title">四</text>
+        <text class="weekday-title">五</text>
+        <text class="weekday-title">六</text>
+      </view>
+
+      <!-- 日历网格 -->
+      <view class="calendar-grid">
+        <block wx:for="{{calendarDays}}" wx:key="index">
+          <view class="calendar-day-cell {{item.isToday ? 'today' : ''}}" wx:if="{{item.day !== 0}}">
+            {{item.day}}
+          </view>
+          <view class="calendar-day-cell" wx:else></view>
+        </block>
+      </view>
+
+      <!-- 日期信息 -->
+      <view class="date-info">
+        <view class="info-row">
+          <text class="info-label">当前:</text>
+          <text class="info-value">{{fullDateTime}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">农历:</text>
+          <text class="info-value">{{lunarDate}}</text>
+        </view>
+      </view>
     </view>
   </view>
 </view>

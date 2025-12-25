@@ -54,12 +54,6 @@ Page({
         path: "/pages/avatar/index",
       },
       {
-        id: "storm-player",
-        name: "暴风影音",
-        icon: "🎬",
-        path: "/pages/storm-player/index",
-      },
-      {
         id: "ttplayer",
         name: "千千静听",
         icon: "🎵",
@@ -72,10 +66,23 @@ Page({
     // 网络连接状态
     networkConnected: true, // 默认连接
     networkStatus: "online", // online, offline, connecting
+    showNetworkInfo: false, // 显示网络信息气泡
+    networkSpeed: { down: "0.00", up: "0.00" }, // 网络速度
     // 右键菜单
     showContextMenu: false,
     contextMenuX: 0,
     contextMenuY: 0,
+    // 错误弹窗
+    showErrorDialog: false,
+    // 日期弹窗
+    showDateDialog: false,
+    calendarYear: '',
+    calendarMonth: '',
+    calendarDay: '',
+    calendarDayName: '',
+    fullDateTime: '',
+    lunarDate: '',
+    calendarDays: [], // 日历网格数据
   },
 
   onLoad: function () {
@@ -107,6 +114,13 @@ Page({
     this.loadNetworkStatus();
   },
 
+  // 页面卸载时清理定时器
+  onUnload: function () {
+    if (this.networkInfoTimer) {
+      clearTimeout(this.networkInfoTimer);
+    }
+  },
+
   // 加载网络状态
   loadNetworkStatus: function () {
     try {
@@ -134,6 +148,12 @@ Page({
   onIconTap: function (e) {
     const path = e.currentTarget.dataset.path;
 
+    // 千千静听 - 文件损坏提示
+    if (path && path.includes('ttplayer')) {
+      this.setData({ showErrorDialog: true });
+      return;
+    }
+
     // 简单的点击反馈延迟，模拟老式系统的加载感
     setTimeout(() => {
       wx.navigateTo({
@@ -150,8 +170,9 @@ Page({
   },
 
   toggleStartMenu: function () {
+    const newShowStartMenu = !this.data.showStartMenu;
     this.setData({
-      showStartMenu: !this.data.showStartMenu,
+      showStartMenu: newShowStartMenu,
       showContextMenu: false,
       showSubmenu: false, // 关闭开始菜单时也关闭子菜单
     });
@@ -323,12 +344,87 @@ Page({
         },
       });
     } else {
-      wx.showToast({
-        title: "网络已连接",
-        icon: "success",
-        duration: 1500,
+      // 生成随机网速（模拟千禧年拨号上网到宽带的速度）
+      const downSpeed = (Math.random() * 2 + 0.5).toFixed(2); // 0.5-2.5 MB/s
+      const upSpeed = (Math.random() * 0.5 + 0.1).toFixed(2); // 0.1-0.6 MB/s
+
+      this.setData({
+        showNetworkInfo: true,
+        networkSpeed: {
+          down: downSpeed,
+          up: upSpeed,
+        },
+      });
+
+      // 3秒后自动隐藏气泡
+      if (this.networkInfoTimer) {
+        clearTimeout(this.networkInfoTimer);
+      }
+      this.networkInfoTimer = setTimeout(() => {
+        this.setData({ showNetworkInfo: false });
+      }, 3000);
+    }
+  },
+
+  // 关闭错误弹窗
+  hideErrorDialog: function () {
+    this.setData({ showErrorDialog: false });
+  },
+
+  // 点击系统时间显示日期详情
+  onTimeTap: function () {
+    const now = new Date();
+    const year = 2005; // 固定为2005年，符合千禧时光机主题
+    const month = now.getMonth() + 1;
+    const day = now.getDate();
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const seconds = now.getSeconds().toString().padStart(2, '0');
+
+    const dayNames = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+    const dayName = dayNames[now.getDay()];
+
+    // 简单的农历模拟（非真实计算，仅供娱乐）
+    const lunarMonths = ['正月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '冬月', '腊月'];
+    const lunarDays = ['初一', '初二', '初三', '初四', '初五', '初六', '初七', '初八', '初九', '初十',
+                       '十一', '十二', '十三', '十四', '十五', '十六', '十七', '十八', '十九', '二十',
+                       '廿一', '廿二', '廿三', '廿四', '廿五', '廿六', '廿七', '廿八', '廿九', '三十'];
+    const lunarMonth = lunarMonths[(month - 1 + 3) % 12];
+    const lunarDay = lunarDays[(day - 1) % 30];
+
+    // 生成日历网格
+    const firstDayOfMonth = new Date(year, month - 1, 1).getDay(); // 当月第一天是星期几
+    const daysInMonth = new Date(year, month, 0).getDate(); // 当月有多少天
+    const calendarDays = [];
+
+    // 添加空白单元格（在第一天之前）
+    for (let i = 0; i < firstDayOfMonth; i++) {
+      calendarDays.push({ day: 0, isToday: false });
+    }
+
+    // 添加当月的天数
+    for (let d = 1; d <= daysInMonth; d++) {
+      calendarDays.push({
+        day: d,
+        isToday: d === day
       });
     }
+
+    this.setData({
+      showDateDialog: true,
+      calendarYear: year,
+      calendarMonth: month,
+      calendarDay: day,
+      calendarDayName: dayName,
+      fullDateTime: `${year}年${month}月${day}日 ${hours}:${minutes}:${seconds}`,
+      lunarDate: `${lunarMonth}${lunarDay}`,
+      calendarDays: calendarDays
+    });
+  },
+
+  // 关闭日期弹窗
+  hideDateDialog: function () {
+    this.setData({ showDateDialog: false });
   },
 
   onShareAppMessage: function () {
