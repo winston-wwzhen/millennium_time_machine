@@ -195,7 +195,8 @@
           <!-- 主页内容 -->
           <block wx:if="{{zoneSubTab === 'home'}}">
             <daily-checkin qcioId="{{userProfile.qcio_id}}" bindcheckin="onCheckInSuccess" />
-            <farm-badge qcioId="{{userProfile.qcio_id}}" />
+            <!-- 农场入口暂时注释 -->
+            <!-- <farm-badge qcioId="{{userProfile.qcio_id}}" /> -->
           </block>
 
           <!-- 日志内容 -->
@@ -304,6 +305,29 @@
         </view>
         <view class="dialog-actions">
           <button class="win98-btn-std" bindtap="closeWalletInfo">知道了</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 5. 注销确认弹窗 -->
+  <view class="win98-overlay" wx:if="{{showLogoutDialog}}">
+    <view class="win98-window logout-dialog-box">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">⚠️ 安全退出确认</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="cancelLogout">×</button>
+        </view>
+      </view>
+      <view class="win98-window-body">
+        <view class="logout-dialog-content">
+          <view class="logout-icon">📟</view>
+          <view class="logout-message">确定要安全退出 QCIO 吗？</view>
+          <view class="logout-submessage">退出后您的在线状态将显示为离线</view>
+        </view>
+        <view class="dialog-actions">
+          <button class="win98-btn-std" bindtap="confirmLogout">确定退出</button>
+          <button class="win98-btn-std" bindtap="cancelLogout">取消</button>
         </view>
       </view>
     </view>

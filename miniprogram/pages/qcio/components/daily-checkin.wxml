@@ -40,4 +40,29 @@
       </view>
     </view>
   </view>
+
+  <!-- Win98 风格签到成功弹窗 -->
+  <view class="win98-overlay" wx:if="{{showSuccessDialog}}">
+    <view class="win98-window dialog-box">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">签到成功</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="closeSuccessDialog">×</button>
+        </view>
+      </view>
+      <view class="win98-window-body">
+        <view class="dialog-content">
+          <view class="success-icon">✨</view>
+          <view class="success-message">{{successMessage}}</view>
+          <view class="success-reward" wx:if="{{rewardText}}">
+            <text class="reward-label">获得奖励：</text>
+            <text class="reward-value">{{rewardText}}</text>
+          </view>
+        </view>
+        <view class="dialog-actions">
+          <button class="win98-btn-std" bindtap="closeSuccessDialog">确定</button>
+        </view>
+      </view>
+    </view>
+  </view>
 </view>

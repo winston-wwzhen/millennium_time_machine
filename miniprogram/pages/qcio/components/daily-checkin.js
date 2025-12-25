@@ -22,7 +22,11 @@ Component({
     canCheckIn: true,
     todayChecked: false,
     isLoading: false,
-    isCheckingIn: false
+    isCheckingIn: false,
+    // 自定义弹窗状态
+    showSuccessDialog: false,
+    successMessage: '',
+    rewardText: ''
   },
 
   lifetimes: {
@@ -101,11 +105,10 @@ Component({
 
             // 延迟显示弹窗，确保事件先传播
             setTimeout(() => {
-              wx.showModal({
-                title: '签到成功！',
-                content: `连续签到 ${data.streak} 天，${rewardText}！`,
-                showCancel: false,
-                confirmText: '太棒了'
+              this.setData({
+                showSuccessDialog: true,
+                successMessage: `连续签到 ${data.streak} 天`,
+                rewardText: rewardText
               });
             }, 100);
           } else {
@@ -131,6 +134,15 @@ Component({
       if (consecutiveDays < 7) return `已连续签到 ${consecutiveDays} 天`;
       if (consecutiveDays < 30) return `坚持签到 ${consecutiveDays} 天`;
       return `忠实粉丝 ${consecutiveDays} 天`;
+    },
+
+    // 关闭签到成功弹窗
+    closeSuccessDialog() {
+      this.setData({
+        showSuccessDialog: false,
+        successMessage: '',
+        rewardText: ''
+      });
     }
   }
 });

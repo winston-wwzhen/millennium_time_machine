@@ -55,6 +55,9 @@ Page({
     // 钱包信息弹窗
     showWalletInfo: false,
 
+    // 注销确认弹窗
+    showLogoutDialog: false,
+
     // 好友列表数据（从云端获取）
     contactGroups: []
   },
@@ -69,8 +72,7 @@ Page({
     // 保存返回目标（用于登录/注册成功后跳转）
     if (options && options.visit) {
       this.setData({ returnToVisit: options.visit });
-      // 如果已登录，直接处理访问（自动踩一脚）
-      this.handleVisitFromShare(options.visit);
+      // 移除自动踩一脚，让用户手动参与
     }
   },
 
@@ -359,38 +361,46 @@ Page({
   },
 
   /**
-   * 注销账号：同步云端状态为“离线”
+   * 注销账号：同步云端状态为"离线"
    */
   doLogout: function() {
-    wx.showActionSheet({
-      itemList: ['安全退出 QCIO (断开连接)', '取消'],
-      itemColor: '#FF0000',
-      success: (res) => {
-        if (res.tapIndex === 0) {
-          wx.showLoading({ title: '正在断开连接...', mask: true });
-          
-          wx.cloud.callFunction({
-            name: 'qcio',
-            data: { action: 'logout' }
-          }).then(res => {
-            if (res.result && res.result.success) {
-              this.setData({
-                isLoggedIn: false,
-                loginProgress: 0,
-                'userProfile.isOnline': false,
-                activeTab: 'contacts'
-              });
-              wx.showToast({ title: '已安全下线', icon: 'success' });
-            }
-          }).catch(err => {
-            console.error('Logout Sync Error:', err);
-            wx.showToast({ title: '操作超时', icon: 'none' });
-          }).finally(() => {
-            wx.hideLoading();
-          });
-        }
+    // 显示自定义 Win98 风格确认弹窗
+    this.setData({ showLogoutDialog: true });
+  },
+
+  /**
+   * 确认注销
+   */
+  confirmLogout: function() {
+    this.setData({ showLogoutDialog: false });
+    wx.showLoading({ title: '正在断开连接...', mask: true });
+
+    wx.cloud.callFunction({
+      name: 'qcio',
+      data: { action: 'logout' }
+    }).then(res => {
+      if (res.result && res.result.success) {
+        this.setData({
+          isLoggedIn: false,
+          loginProgress: 0,
+          'userProfile.isOnline': false,
+          activeTab: 'contacts'
+        });
+        wx.showToast({ title: '已安全下线', icon: 'success' });
       }
+    }).catch(err => {
+      console.error('Logout Sync Error:', err);
+      wx.showToast({ title: '操作超时', icon: 'none' });
+    }).finally(() => {
+      wx.hideLoading();
     });
+  },
+
+  /**
+   * 取消注销
+   */
+  cancelLogout: function() {
+    this.setData({ showLogoutDialog: false });
   },
 
   /**

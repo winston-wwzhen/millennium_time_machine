@@ -121,3 +121,164 @@
   color: #666666;
   font-family: 'SimSun', serif;
 }
+
+/* Win98 风格签到成功弹窗 */
+.win98-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.win98-window {
+  background: #c0c0c0;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  box-shadow: inset 1px 1px #dfdfdf, inset -1px -1px #0a0a0a;
+  box-sizing: border-box;
+}
+
+.dialog-box {
+  width: 260px;
+}
+
+.win98-title-bar {
+  background: linear-gradient(90deg, #000080, #1084d0);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 3px 2px 6px;
+  height: 20px;
+  box-sizing: border-box;
+}
+
+.win98-title-text {
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  font-family: 'SimSun', 'Courier New', monospace;
+}
+
+.win98-title-controls {
+  display: flex;
+  gap: 2px;
+}
+
+.win98-title-controls button {
+  all: unset;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 16px;
+  height: 14px;
+  background: #c0c0c0;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  box-shadow: inset 1px 1px #dfdfdf, inset -1px -1px #0a0a0a;
+  padding: 0 !important;
+  margin: 0 !important;
+  min-height: unset !important;
+  min-width: 16px !important;
+  line-height: 1 !important;
+  box-sizing: border-box;
+  border-radius: 0;
+}
+
+.win98-title-controls button:active {
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
+  box-shadow: inset 1px 1px #0a0a0a, inset -1px -1px #dfdfdf;
+  padding: 1px 0 0 1px !important;
+}
+
+.win98-btn-close {
+  font-size: 16px;
+  font-weight: bold;
+  color: #000;
+  line-height: 14px;
+}
+
+.win98-window-body {
+  padding: 0;
+}
+
+.dialog-content {
+  padding: 15px;
+  text-align: center;
+}
+
+.success-icon {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.success-message {
+  font-size: 14px;
+  font-weight: bold;
+  color: #000080;
+  margin-bottom: 10px;
+  font-family: 'SimSun', serif;
+}
+
+.success-reward {
+  font-size: 12px;
+  color: #333;
+  padding: 10px;
+  background: #ffffcc;
+  border: 1px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  margin-top: 10px;
+}
+
+.reward-label {
+  font-weight: bold;
+  color: #ff6600;
+}
+
+.reward-value {
+  color: #cc0000;
+  font-weight: bold;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+  background: #c0c0c0;
+}
+
+.win98-btn-std {
+  font-size: 12px;
+  color: #000;
+  height: 24px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #c0c0c0;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  box-shadow: inset 1px 1px #dfdfdf, inset -1px -1px #0a0a0a;
+}
+
+.win98-btn-std:active {
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
+  box-shadow: inset 1px 1px #0a0a0a, inset -1px -1px #dfdfdf;
+}

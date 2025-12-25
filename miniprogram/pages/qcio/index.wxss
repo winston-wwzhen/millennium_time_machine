@@ -539,3 +539,32 @@ page {
 .list-container::-webkit-scrollbar-track {
   background: #ffffff;
 }
+
+/* 注销确认弹窗样式 */
+.logout-dialog-box {
+  width: 280px;
+}
+
+.logout-dialog-content {
+  padding: 20px 15px;
+  text-align: center;
+}
+
+.logout-icon {
+  font-size: 50px;
+  margin-bottom: 12px;
+}
+
+.logout-message {
+  font-size: 14px;
+  font-weight: bold;
+  color: #000080;
+  margin-bottom: 10px;
+  font-family: 'SimSun', serif;
+}
+
+.logout-submessage {
+  font-size: 11px;
+  color: #666;
+  font-family: 'SimSun', serif;
+}
