@@ -247,9 +247,10 @@ page {
   width: 260px;
 }
 
-/* 驱动器弹窗主体 - 去除多余内边距 */
+/* 驱动器弹窗主体 - 去除多余内边距和flex扩展 */
 .drive-dialog .win98-window-body {
   padding: 0;
+  flex: unset;
 }
 
 .drive-dialog-content {
