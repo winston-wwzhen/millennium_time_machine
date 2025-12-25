@@ -39,7 +39,13 @@
         </view>
 
         <view class="menu-separator"></view>
-        
+
+        <view class="menu-option" catchtap="openLeaderboard">
+          <text class="option-text">🏆 排行榜</text>
+        </view>
+
+        <view class="menu-separator"></view>
+
         <view class="menu-option" catchtap="exitGame">
           <text class="option-text">离 开(X)</text>
         </view>
@@ -96,7 +102,53 @@
     <view class="emo-footer">
       <text class="emo-text">{{randomQuote}}</text>
     </view>
-    
+
+  </view>
+</view>
+
+<!-- 排行榜对话框 -->
+<view class="leaderboard-overlay" wx:if="{{showLeaderboard}}" catchtap="closeLeaderboard">
+  <view class="leaderboard-dialog" catchtap="">
+    <view class="leaderboard-header">
+      <text class="leaderboard-title">🏆 排行榜 🏆</text>
+      <view class="leaderboard-close" bindtap="closeLeaderboard">×</view>
+    </view>
+
+    <!-- 难度切换 Tab -->
+    <view class="leaderboard-tabs">
+      <view class="lb-tab {{leaderboardTab === 'beginner' ? 'active' : ''}}"
+            bindtap="switchLeaderboardTab" data-tab="beginner">
+        ★微笑着流泪★
+      </view>
+      <view class="lb-tab {{leaderboardTab === 'intermediate' ? 'active' : ''}}"
+            bindtap="switchLeaderboardTab" data-tab="intermediate">
+        ◆寂寞在唱歌◆
+      </view>
+      <view class="lb-tab {{leaderboardTab === 'expert' ? 'active' : ''}}"
+            bindtap="switchLeaderboardTab" data-tab="expert">
+        ☣被伤过的心☣
+      </view>
+    </view>
+
+    <!-- 排行榜列表 -->
+    <view class="leaderboard-list">
+      <view class="lb-item {{item.isUser ? 'user-item' : ''}}"
+            wx:for="{{leaderboardData}}" wx:key="rank">
+        <view class="lb-rank">{{item.rank}}</view>
+        <view class="lb-avatar">{{item.avatar}}</view>
+        <view class="lb-name">{{item.name}}</view>
+        <view class="lb-time">{{item.time}}s</view>
+      </view>
+
+      <view class="lb-empty" wx:if="{{leaderboardData.length === 0}}">
+        <text>暂无记录，快去挑战吧！</text>
+      </view>
+    </view>
+
+    <!-- 底部提示 -->
+    <view class="leaderboard-footer">
+      <text class="footer-tip">提示：完成游戏后自动保存最佳成绩</text>
+    </view>
   </view>
 </view>
 </view>

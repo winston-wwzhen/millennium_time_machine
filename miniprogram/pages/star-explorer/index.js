@@ -38,18 +38,23 @@ Page({
     difficulty: DIFFICULTY_LEVELS,
     currentDifficulty: 'beginner',
     showGameMenu: false,
-    
+
     grid: [],
     cellSize: 32,
     gameState: 'ready', // ready, playing, won, lost
     beaconsLeft: 10,
     timeElapsed: 0,
-    
+
     // 动态标题
     headerTitle: '葬爱·扫雷.exe',
     randomQuote: EMO_QUOTES[0],
-    
-    bestRecords: {}
+
+    bestRecords: {},
+
+    // 排行榜相关
+    showLeaderboard: false,
+    leaderboardData: [],
+    leaderboardTab: 'beginner' // beginner, intermediate, expert
   },
 
   timer: null,
@@ -330,5 +335,92 @@ Page({
       this.setData({ bestRecords: records });
       wx.setStorageSync('starExplorerRecords', records);
     }
+  },
+
+  // --- 排行榜功能 ---
+
+  openLeaderboard() {
+    this.setData({ showGameMenu: false });
+    this.loadLeaderboardData();
+    this.setData({ showLeaderboard: true });
+  },
+
+  closeLeaderboard() {
+    this.setData({ showLeaderboard: false });
+  },
+
+  switchLeaderboardTab(e) {
+    const tab = e.currentTarget.dataset.tab;
+    this.setData({ leaderboardTab: tab });
+    this.loadLeaderboardData();
+  },
+
+  loadLeaderboardData() {
+    const tab = this.data.leaderboardTab;
+
+    // 生成模拟排行榜数据（包含用户自己的记录）
+    const leaderboard = this.generateLeaderboard(tab);
+    this.setData({ leaderboardData: leaderboard });
+  },
+
+  generateLeaderboard(level) {
+    // 用户自己的记录
+    const userRecord = this.data.bestRecords[level] || null;
+
+    // 模拟其他玩家的数据（非主流昵称）
+    const fakePlayers = [
+      { name: '葬爱少主', avatar: '🎸' },
+      { name: '泪之舞', avatar: '💃' },
+      { name: '寂寞哥', avatar: '🌙' },
+      { name: '℡星語☆', avatar: '⭐' },
+      { name: '殇之韵', avatar: '🎭' },
+      { name: '烟头烫手', avatar: '🚬' },
+      { name: '往事随风', avatar: '🍃' },
+      { name: '葬爱家族', avatar: '💔' }
+    ];
+
+    // 根据难度生成不同的时间范围
+    let baseTimes;
+    switch(level) {
+      case 'beginner':
+        baseTimes = [15, 18, 22, 25, 30, 35, 40, 50];
+        break;
+      case 'intermediate':
+        baseTimes = [60, 75, 90, 110, 130, 150, 180, 220];
+        break;
+      case 'expert':
+        baseTimes = [120, 150, 180, 220, 280, 350, 420, 500];
+        break;
+    }
+
+    // 生成排行榜
+    let leaderboard = fakePlayers.map((player, index) => ({
+      rank: index + 1,
+      name: player.name,
+      avatar: player.avatar,
+      time: baseTimes[index] + Math.floor(Math.random() * 5),
+      isUser: false
+    }));
+
+    // 如果用户有记录，插入到排行榜中
+    if (userRecord) {
+      leaderboard.push({
+        rank: 0,
+        name: '莪',
+        avatar: '👤',
+        time: userRecord,
+        isUser: true
+      });
+
+      // 按时间排序
+      leaderboard.sort((a, b) => a.time - b.time);
+
+      // 重新计算排名
+      leaderboard.forEach((item, index) => {
+        item.rank = index + 1;
+      });
+    }
+
+    return leaderboard.slice(0, 10); // 只显示前10名
   }
 });
