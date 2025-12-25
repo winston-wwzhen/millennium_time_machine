@@ -5,6 +5,9 @@
   "usingComponents": {
     "mood-log": "./components/mood-log",
     "step-counter": "./components/step-counter",
-    "guestbook": "./components/guestbook"
+    "guestbook": "./components/guestbook",
+    "message-list": "./components/message-list",
+    "farm-badge": "./components/farm-badge",
+    "daily-checkin": "./components/daily-checkin"
   }
   }

@@ -1,0 +1,46 @@
+<!-- 消息列表组件 -->
+<view class="message-list-container">
+  <view class="section-title">📨 消息列表</view>
+
+  <!-- 消息会话列表 -->
+  <view class="message-sessions">
+    <view
+      class="message-session"
+      wx:for="{{messageList}}"
+      wx:key="id"
+      bindtap="openChat"
+      data-contact="{{item}}"
+    >
+      <!-- 头像区域 -->
+      <view class="session-avatar">
+        <text class="avatar-emoji">{{item.avatar}}</text>
+        <!-- 在线状态指示 -->
+        <view class="online-dot"></view>
+      </view>
+
+      <!-- 内容区域 -->
+      <view class="session-content">
+        <view class="session-header">
+          <text class="session-name">{{item.name}}</text>
+          <text class="session-time">{{item.time}}</text>
+        </view>
+        <view class="session-preview">
+          <text class="preview-text">{{item.lastMsg}}</text>
+        </view>
+      </view>
+
+      <!-- 未读消息数 -->
+      <view class="session-unread" wx:if="{{item.unreadCount > 0}}">
+        <text class="unread-badge">{{item.unreadCount > 99 ? '99+' : item.unreadCount}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 快速回复入口 -->
+  <view class="quick-actions">
+    <button class="action-btn" bindtap="startNewChat">
+      <text class="action-icon">✉️</text>
+      <text class="action-text">发起新聊天</text>
+    </button>
+  </view>
+</view>

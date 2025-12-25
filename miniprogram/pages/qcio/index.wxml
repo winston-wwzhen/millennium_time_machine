@@ -108,6 +108,8 @@
 
         <!-- 空间 Tab 内容 -->
         <block wx:if="{{activeTab === 'zone'}}">
+          <daily-checkin qcioId="{{userProfile.qcio_id}}" />
+          <farm-badge qcioId="{{userProfile.qcio_id}}" />
           <step-counter
             qcioId="{{userProfile.qcio_id}}"
             nickname="{{userProfile.nickname}}"
@@ -117,10 +119,10 @@
           <guestbook />
         </block>
 
-        <!-- 消息 Tab 内容 - 占位提示 -->
-        <view class="empty-view" wx:elif="{{activeTab === 'chats'}}">
-          <text>点击联系人开始聊天~</text>
-        </view>
+        <!-- 消息 Tab 内容 - 消息列表 -->
+        <block wx:elif="{{activeTab === 'chats'}}">
+          <message-list userProfile="{{userProfile}}" />
+        </block>
       </scroll-view>
 
       <!-- 状态栏：这里是注销按钮的新位置 -->
