@@ -179,6 +179,8 @@ Page({
             isLoadingAccount: false
           });
           this.calculateLevelIcons(profile.level || 1);
+          // 加载钱包数据
+          this.loadWalletData();
         }
       } else {
         throw new Error(result ? result.message : '初始化失败');
@@ -255,6 +257,8 @@ Page({
             needsRegister: false,
             userProfile: res.result.data
           });
+          // 加载钱包数据
+          this.loadWalletData();
           wx.showToast({ title: '注册成功！请登录', icon: 'success' });
         });
       } else {
