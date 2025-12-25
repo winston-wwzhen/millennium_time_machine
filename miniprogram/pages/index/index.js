@@ -88,9 +88,11 @@ Page({
 
     // 加载网络状态
     this.loadNetworkStatus();
+  },
 
-    // 监听网络状态变化
-    this.setupNetworkListener();
+  // 页面显示时重新加载网络状态
+  onShow: function () {
+    this.loadNetworkStatus();
   },
 
   // 加载网络状态
@@ -106,20 +108,6 @@ Page({
     } catch (err) {
       console.error("Load network status error:", err);
     }
-  },
-
-  // 设置网络状态监听
-  setupNetworkListener: function () {
-    // 监听存储变化（用于跨页面通信）
-    wx.onStorageChange((res) => {
-      if (res.key === "network_status") {
-        const newStatus = JSON.parse(res.newValue);
-        this.setData({
-          networkConnected: newStatus.connected,
-          networkStatus: newStatus.status || "online",
-        });
-      }
-    });
   },
 
   updateTime: function () {
