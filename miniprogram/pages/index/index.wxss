@@ -20,28 +20,42 @@ page {
   flex-direction: column;
 }
 
-/* 图标网格 - 纵向填充布局 */
+/* 图标网格 - 两列纵向布局 */
 .icon-grid {
   flex: 1;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-auto-flow: column; /* 纵向填充，先填满第一列 */
-  grid-auto-rows: max-content;
-  padding-left: 10rpx;
-  padding-right: 10rpx;
+  display: flex;
+  flex-direction: row;
+  padding-left: 5rpx;
+  padding-right: 5rpx;
   /* 为微信导航栏预留更多空间 */
   padding-top: 180rpx;
-  column-gap: 20rpx;
-  row-gap: 5rpx;
   overflow-y: auto;
-  align-content: start;
+}
+
+.icon-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 第一列靠左 */
+.icon-column:first-child {
+  align-items: flex-start;
+  padding-left: 5rpx;
+}
+
+/* 第二列靠右 */
+.icon-column:last-child {
+  align-items: flex-start;
+  padding-left: 25rpx;
 }
 
 .desktop-icon {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 10rpx;
+  padding: 8rpx;
   justify-content: flex-start;
 }
 

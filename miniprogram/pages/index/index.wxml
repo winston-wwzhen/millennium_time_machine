@@ -1,12 +1,24 @@
 <view class="desktop">
-  <!-- 桌面图标区域 -->
+  <!-- 桌面图标区域 - 两列纵向布局 -->
   <view class="icon-grid">
-    <block wx:for="{{desktopIcons}}" wx:key="id">
-      <view class="desktop-icon" bindtap="onIconTap" data-path="{{item.path}}">
-        <view class="icon-img">{{item.icon}}</view>
-        <text class="icon-label">{{item.name}}</text>
-      </view>
-    </block>
+    <!-- 左列 -->
+    <view class="icon-column">
+      <block wx:for="{{leftColumn}}" wx:key="id">
+        <view class="desktop-icon" bindtap="onIconTap" data-path="{{item.path}}">
+          <view class="icon-img">{{item.icon}}</view>
+          <text class="icon-label">{{item.name}}</text>
+        </view>
+      </block>
+    </view>
+    <!-- 右列 -->
+    <view class="icon-column">
+      <block wx:for="{{rightColumn}}" wx:key="id">
+        <view class="desktop-icon" bindtap="onIconTap" data-path="{{item.path}}">
+          <view class="icon-img">{{item.icon}}</view>
+          <text class="icon-label">{{item.name}}</text>
+        </view>
+      </block>
+    </view>
   </view>
 
   <!-- "My Computer" 风格的装饰 - 便签 -->

@@ -58,6 +58,14 @@ Page({
   },
 
   onLoad: function() {
+    // 分割图标为左右两列（纵向填充）
+    const icons = this.data.desktopIcons;
+    const midPoint = Math.ceil(icons.length / 2);
+    this.setData({
+      leftColumn: icons.slice(0, midPoint),
+      rightColumn: icons.slice(midPoint)
+    });
+
     this.updateTime();
     // 每分钟更新一次系统时间
     setInterval(() => {
