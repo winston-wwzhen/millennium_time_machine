@@ -245,6 +245,7 @@ page {
 
 .drive-dialog {
   width: 260px;
+  height: auto;
 }
 
 /* 驱动器弹窗主体 - 去除多余内边距和flex扩展 */
