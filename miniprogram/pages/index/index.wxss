@@ -406,15 +406,36 @@ page {
 }
 
 .submenu-content {
+  position: absolute;
+  left: 100%;
+  top: 0;
+  margin-left: -2rpx;
+  width: 200rpx;
+  background-color: #c0c0c0;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #808080;
+  border-bottom: 2px solid #808080;
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.4);
   display: none;
-  padding-left: 30rpx;
-  background: #d4d4d4;
-  border-top: 1px solid #808080;
-  border-bottom: 1px solid #fff;
+  z-index: 10000;
+  animation: slideInRight 0.12s ease-out;
+  padding: 6rpx;
 }
 
 .submenu-content.show {
   display: block;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(-8rpx);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 .submenu-item {

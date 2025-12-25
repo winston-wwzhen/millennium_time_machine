@@ -59,20 +59,20 @@
         <text class="menu-icon">📂</text>
         <text class="menu-text">程序</text>
         <text class="submenu-arrow {{showSubmenu ? 'expanded' : ''}}">{{showSubmenu ? '▾' : '▸'}}</text>
-      </view>
-      <!-- 程序子菜单 -->
-      <view class="submenu-content {{showSubmenu ? 'show' : ''}}" catchtap="stopPropagation">
-        <view class="submenu-item" catchtap="onIconTap" data-path="/pages/tetris/index">
-          <text class="submenu-icon">🎮</text>
-          <text class="submenu-text">俄罗斯方块</text>
-        </view>
-        <view class="submenu-item" catchtap="onIconTap" data-path="/pages/star-explorer/index">
-          <text class="submenu-icon">🌌</text>
-          <text class="submenu-text">星际探索</text>
-        </view>
-        <view class="submenu-item" catchtap="onIconTap" data-path="/pages/mars/index">
-          <text class="submenu-icon">🪐</text>
-          <text class="submenu-text">火星翻译</text>
+        <!-- 程序子菜单 - 右侧弹出 -->
+        <view class="submenu-content {{showSubmenu ? 'show' : ''}}" catchtap="stopPropagation">
+          <view class="submenu-item" catchtap="onIconTap" data-path="/pages/tetris/index">
+            <text class="submenu-icon">🎮</text>
+            <text class="submenu-text">俄罗斯方块</text>
+          </view>
+          <view class="submenu-item" catchtap="onIconTap" data-path="/pages/star-explorer/index">
+            <text class="submenu-icon">🌌</text>
+            <text class="submenu-text">星际探索</text>
+          </view>
+          <view class="submenu-item" catchtap="onIconTap" data-path="/pages/mars/index">
+            <text class="submenu-icon">🪐</text>
+            <text class="submenu-text">火星翻译</text>
+          </view>
         </view>
       </view>
       <view class="menu-item" bindtap="onIconTap" data-path="/pages/my-documents/index">
