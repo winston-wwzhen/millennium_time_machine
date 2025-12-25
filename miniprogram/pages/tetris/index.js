@@ -52,7 +52,7 @@ Page({
   spawnPiece() {
     const pieces = ['I', 'O', 'T', 'S', 'Z', 'J', 'L'];
     const type = pieces[Math.floor(Math.random() * pieces.length)];
-    const piece = this.data.PIECES[type];
+    const piece = this.PIECES[type];
 
     const currentPiece = {
       type,
