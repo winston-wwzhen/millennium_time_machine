@@ -1,0 +1,68 @@
+<view class="chat-container">
+  <!-- 聊天窗口 -->
+  <view class="chat-window">
+    <scroll-view
+      class="chat-messages"
+      scroll-y
+      scroll-into-view="{{scrollToView}}"
+      scroll-with-animation
+    >
+      <block wx:for="{{messages}}" wx:key="timestamp">
+        <view
+          class="message-row {{item.role === 'user' ? 'user-row' : 'ai-row'}}"
+          id="msg-{{index}}"
+        >
+          <!-- AI 消息 -->
+          <block wx:if="{{item.role === 'assistant'}}">
+            <view class="message-avatar ai-avatar">{{contactAvatar}}</view>
+            <view class="message-bubble ai-bubble" bindtap="copyMessage" data-content="{{item.content}}">
+              <text class="message-text">{{item.content}}</text>
+            </view>
+          </block>
+
+          <!-- 用户消息 -->
+          <block wx:else>
+            <view class="message-bubble user-bubble" bindtap="copyMessage" data-content="{{item.content}}">
+              <text class="message-text">{{item.content}}</text>
+            </view>
+            <view class="message-avatar user-avatar">👤</view>
+          </block>
+        </view>
+      </block>
+
+      <!-- 发送中提示 -->
+      <view class="message-row ai-row" wx:if="{{isSending}}">
+        <view class="message-avatar ai-avatar">{{contactAvatar}}</view>
+        <view class="message-bubble ai-bubble sending-bubble">
+          <text class="sending-text">对方正在输入...</text>
+        </view>
+      </view>
+    </scroll-view>
+
+    <!-- 输入区域 -->
+    <view class="chat-input-area">
+      <input
+        class="chat-input"
+        placeholder="说点什么..."
+        value="{{inputText}}"
+        bindinput="onInput"
+        confirm-type="send"
+        bindconfirm="sendMessage"
+        disabled="{{isSending}}"
+      />
+      <button
+        class="send-btn {{isSending ? 'disabled' : ''}}"
+        bindtap="sendMessage"
+        disabled="{{isSending}}"
+      >
+        {{isSending ? '...' : '发送'}}
+      </button>
+    </view>
+  </view>
+
+  <!-- 窗口控制按钮 -->
+  <view class="window-controls">
+    <button class="win98-btn-sm" bindtap="vibrate">震动</button>
+    <button class="win98-btn-sm" bindtap="goBack">关闭</button>
+  </view>
+</view>

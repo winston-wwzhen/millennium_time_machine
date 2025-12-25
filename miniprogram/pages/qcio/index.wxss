@@ -220,7 +220,81 @@
 .status-right { font-size: 12px; color: #000; display: flex; gap: 8px; margin-right: 5px; }
 
 /* 通用按钮 */
-.win98-btn-std { 
-  font-size: 12px; color: #000; height: 24px; padding: 0 12px; 
+.win98-btn-std {
+  font-size: 12px; color: #000; height: 24px; padding: 0 12px;
   display: flex; align-items: center; justify-content: center;
+}
+
+/* 主按钮样式 */
+.win98-btn-primary {
+  font-size: 12px;
+  color: #000;
+  height: 26px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  font-weight: bold;
+}
+
+.win98-btn-primary[disabled] {
+  color: #808080;
+  background: #a0a0a0;
+}
+
+/* 小按钮 */
+.win98-btn-sm {
+  font-size: 11px;
+  color: #000;
+  height: 20px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+}
+
+/* 空状态提示 */
+.empty-view {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  color: #808080;
+  font-size: 12px;
+  font-family: 'SimSun', serif;
+}
+
+/* 空间内容容器 */
+.zone-content {
+  padding: 10px;
+  background: #ffffff;
+  min-height: 100%;
+}
+
+/* 滚动容器优化 */
+.list-container {
+  flex: 1;
+  background: white;
+  margin: 2px;
+  overflow-y: auto;
+}
+
+/* 消息提示优化 */
+.list-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.list-container::-webkit-scrollbar-thumb {
+  background: #c0c0c0;
+  border: 1px solid #808080;
+}
+
+.list-container::-webkit-scrollbar-track {
+  background: #ffffff;
 }

@@ -1,0 +1,26 @@
+<!-- 留言板组件 -->
+<view class="guestbook-container">
+  <view class="section-title">
+    📝 留言板
+    <text class="refresh-hint" bindtap="refreshMessages">[刷新]</text>
+  </view>
+
+  <!-- 留言列表 -->
+  <view class="guestbook-list">
+    <view class="guestbook-item" wx:for="{{messages}}" wx:key="index">
+      <view class="guestbook-avatar">{{item.avatar}}</view>
+      <view class="guestbook-content">
+        <view class="guestbook-header">
+          <text class="guestbook-name">{{item.nickname}}</text>
+          <text class="guestbook-time">{{item.time}}</text>
+        </view>
+        <view class="guestbook-text">{{item.content}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部提示 -->
+  <view class="guestbook-footer">
+    <text class="footer-text">✨ 留言由 AI 好友自动生成 ✨</text>
+  </view>
+</view>

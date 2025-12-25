@@ -1,0 +1,36 @@
+<!-- 踩一踩组件 -->
+<view class="step-counter-container">
+  <view class="section-title">👣 踩一踩</view>
+
+  <!-- 访问统计 -->
+  <view class="visit-stats">
+    <view class="stat-row">
+      <view class="stat-item">
+        <text class="stat-number">{{totalVisits}}</text>
+        <text class="stat-label">历史访问</text>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-item">
+        <text class="stat-number">{{todayVisits}}</text>
+        <text class="stat-label">今日访问</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 邀请按钮 -->
+  <button class="win98-btn-primary invite-btn" bindtap="inviteFriends">
+    📨 邀请好友来踩
+  </button>
+
+  <!-- 最近访客 -->
+  <view class="recent-visitors" wx:if="{{recentVisitors.length > 0}}">
+    <view class="visitors-title">最近来访:</view>
+    <view class="visitors-list">
+      <view class="visitor-item" wx:for="{{recentVisitors}}" wx:key="_id">
+        <text class="visitor-avatar">{{item.avatar || '👤'}}</text>
+        <text class="visitor-name">{{item.nickname}}</text>
+        <text class="visitor-time">{{item.timeStr}}</text>
+      </view>
+    </view>
+  </view>
+</view>

@@ -105,6 +105,22 @@
         <view class="empty-view" wx:else>
           <text>内容建设中...</text>
         </view>
+
+        <!-- 空间 Tab 内容 -->
+        <block wx:if="{{activeTab === 'zone'}}">
+          <step-counter
+            qcioId="{{userProfile.qcio_id}}"
+            nickname="{{userProfile.nickname}}"
+            bindshare="onShareFromZone"
+          />
+          <mood-log qcioId="{{userProfile.qcio_id}}" />
+          <guestbook />
+        </block>
+
+        <!-- 消息 Tab 内容 - 占位提示 -->
+        <view class="empty-view" wx:elif="{{activeTab === 'chats'}}">
+          <text>点击联系人开始聊天~</text>
+        </view>
       </scroll-view>
 
       <!-- 状态栏：这里是注销按钮的新位置 -->

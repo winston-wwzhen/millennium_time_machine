@@ -1,0 +1,187 @@
+/* 心情日志组件样式 */
+.mood-log-container {
+  padding: 10px;
+}
+
+.section-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #000080;
+  padding: 8px 0;
+  border-bottom: 1px dotted #808080;
+  margin-bottom: 10px;
+}
+
+/* 生成器区域 */
+.log-generator {
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  padding: 10px;
+  margin-bottom: 15px;
+}
+
+/* 心情选择器 */
+.mood-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.mood-item {
+  flex: 0 0 calc(50% - 4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 8px;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  cursor: pointer;
+}
+
+.mood-item.selected {
+  background: #000080;
+  color: #ffffff;
+}
+
+.mood-icon {
+  font-size: 18px;
+}
+
+.mood-name {
+  font-size: 12px;
+}
+
+/* 关键词输入 */
+.keywords-input {
+  margin-bottom: 10px;
+}
+
+.input-label {
+  display: block;
+  font-size: 12px;
+  margin-bottom: 5px;
+  color: #000080;
+}
+
+.win98-input {
+  width: 100%;
+  padding: 5px;
+  background: #ffffff;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  font-size: 12px;
+  font-family: 'SimSun', serif;
+  box-sizing: border-box;
+}
+
+/* 生成按钮 */
+.generate-btn {
+  width: 100%;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  padding: 8px;
+  font-size: 12px;
+  font-family: 'SimSun', serif;
+}
+
+.generate-btn[disabled] {
+  color: #808080;
+}
+
+/* 历史日志列表 */
+.log-history {
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  padding: 10px;
+}
+
+.log-item {
+  background: #ffffff;
+  border: 1px solid #808080;
+  margin-bottom: 8px;
+  padding: 8px;
+}
+
+/* 日志头部 */
+.log-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 5px;
+  border-bottom: 1px dotted #c0c0c0;
+  margin-bottom: 5px;
+}
+
+.log-mood {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.mood-emoji {
+  font-size: 14px;
+}
+
+.mood-text {
+  font-size: 11px;
+  color: #000080;
+}
+
+.log-time {
+  font-size: 10px;
+  color: #808080;
+}
+
+/* 日志内容 */
+.log-content {
+  max-height: 60px;
+  overflow: hidden;
+  transition: max-height 0.3s;
+}
+
+.log-content.expanded {
+  max-height: none;
+}
+
+.log-text {
+  font-size: 12px;
+  font-family: 'SimSun', serif;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* 操作按钮 */
+.log-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  padding-top: 5px;
+  border-top: 1px dotted #c0c0c0;
+}
+
+.action-btn {
+  font-size: 11px;
+  color: #000080;
+  cursor: pointer;
+}
+
+.log-stats {
+  font-size: 10px;
+  color: #808080;
+}
+
+/* 空状态 */
+.empty-logs {
+  text-align: center;
+  padding: 30px 10px;
+  color: #808080;
+  font-size: 12px;
+}

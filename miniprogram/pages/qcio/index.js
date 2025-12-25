@@ -53,8 +53,46 @@ Page({
   /**
    * 生命周期：加载页面时从云端同步状态
    */
-  onLoad: function() {
+  onLoad: function(options) {
     this.initAccountFromCloud();
+
+    // 检查是否是通过分享链接进入（踩一踩）
+    if (options && options.visit) {
+      this.handleVisitFromShare(options.visit);
+    }
+  },
+
+  /**
+   * 处理通过分享链接访问（踩一踩）
+   */
+  handleVisitFromShare: function(ownerQcioId) {
+    wx.cloud.callFunction({
+      name: 'qcio',
+      data: {
+        action: 'init'
+      }
+    }).then(res => {
+      if (res.result && res.result.success) {
+        const myProfile = res.result.data;
+
+        // 如果访问的是自己的空间，不需要记录
+        if (myProfile.qcio_id !== ownerQcioId) {
+          // 记录访问
+          wx.cloud.callFunction({
+            name: 'qcio',
+            data: {
+              action: 'recordVisit',
+              visitorId: myProfile.qcio_id,
+              visitorName: myProfile.nickname
+            }
+          }).then(() => {
+              wx.showToast({ title: '踩了一脚！', icon: 'success' });
+            }).catch(err => {
+              console.error('Record visit error:', err);
+            });
+        }
+      }
+    });
   },
 
   /**
@@ -277,9 +315,37 @@ Page({
 
   openChat: function(e) {
     const contact = e.currentTarget.dataset.contact;
+    // 跳转到独立的 QCIO 聊天页面
     wx.navigateTo({
-      url: `/pages/chat/index?role=${contact.name}&id=${contact.id}`,
+      url: `/pages/qcio-chat/index?name=${contact.name}&avatar=${contact.avatar}&id=${contact.id}`,
     });
+  },
+
+  // 空间分享（踩一踩）
+  onShareFromZone: function() {
+    // 触发小程序分享
+    wx.showShareMenu({
+      withShareTicket: true,
+      menus: ['shareAppMessage', 'shareTimeline']
+    });
+  },
+
+  // 小程序分享配置
+  onShareAppMessage: function() {
+    return {
+      title: `${this.data.userProfile.nickname} 邀请你踩空间`,
+      path: `/pages/qcio/index?visit=${this.data.userProfile.qcio_id}`,
+      imageUrl: ''
+    };
+  },
+
+  // 朋友圈分享
+  onShareTimeline: function() {
+    return {
+      title: `${this.data.userProfile.nickname} 的 QCIO 空间`,
+      query: `visit=${this.data.userProfile.qcio_id}`,
+      imageUrl: ''
+    };
   },
 
   goBack: function() {

@@ -1,0 +1,83 @@
+<!-- 心情日志生成器组件 -->
+<view class="mood-log-container">
+  <!-- 生成器区域 -->
+  <view class="log-generator">
+    <view class="section-title">✏️ 写心情日志</view>
+
+    <!-- 心情选择 -->
+    <view class="mood-selector">
+      <view
+        class="mood-item {{selectedMood && selectedMood.id === item.id ? 'selected' : ''}}"
+        wx:for="{{moods}}"
+        wx:key="id"
+        bindtap="selectMood"
+        data-mood="{{item}}"
+      >
+        <text class="mood-icon">{{item.icon}}</text>
+        <text class="mood-name">{{item.name}}</text>
+      </view>
+    </view>
+
+    <!-- 关键词输入 -->
+    <view class="keywords-input">
+      <text class="input-label">关键词（限10字）:</text>
+      <input
+        class="win98-input"
+        placeholder="比如：等待、梦想、相遇..."
+        value="{{keywords}}"
+        bindinput="onKeywordsInput"
+        maxlength="10"
+      />
+    </view>
+
+    <!-- 生成按钮 -->
+    <button
+      class="win98-btn-primary generate-btn"
+      bindtap="generateLog"
+      disabled="{{isGenerating}}"
+    >
+      {{isGenerating ? '生成中...' : '生成日志'}}
+    </button>
+  </view>
+
+  <!-- 历史日志列表 -->
+  <view class="log-history">
+    <view class="section-title">📜 我的日志</view>
+
+    <view class="log-list" wx:if="{{logs.length > 0}}">
+      <view
+        class="log-item"
+        wx:for="{{logs}}"
+        wx:key="_id"
+      >
+        <!-- 日志头部 -->
+        <view class="log-header" bindtap="toggleLog" data-index="{{index}}">
+          <view class="log-mood">
+            <text class="mood-emoji">{{item.mood_icon}}</text>
+            <text class="mood-text">{{item.mood_name}}</text>
+          </view>
+          <view class="log-time">{{item.createTimeStr}}</view>
+        </view>
+
+        <!-- 日志内容 -->
+        <view class="log-content {{showFullLog === index ? 'expanded' : ''}}">
+          <text class="log-text">{{item.content}}</text>
+        </view>
+
+        <!-- 操作按钮 -->
+        <view class="log-actions">
+          <view class="action-btn" bindtap="copyLog" data-content="{{item.content}}">
+            📋 复制
+          </view>
+          <view class="log-stats">
+            👁️ {{item.visits || 0}}  |  ❤️ {{item.likes || 0}}
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="empty-logs" wx:else>
+      <text>还没有日志，快去写一篇吧~</text>
+    </view>
+  </view>
+</view>

@@ -24,8 +24,20 @@ Page({
         path: '/pages/chat/index'
       },
       {
+        id: 'mars',
+        name: 'Mars\nTranslator',
+        icon: '🪐',
+        path: '/pages/mars/index'
+      },
+      {
+        id: 'star-explorer',
+        name: 'Star\nExplorer',
+        icon: '🌌',
+        path: '/pages/star-explorer/index'
+      },
+      {
         id: 'avatar',
-        name: 'My Identity', 
+        name: 'My Identity',
         icon: '👤',
         path: '/pages/avatar/index'
       },

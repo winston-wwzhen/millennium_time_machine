@@ -8,8 +8,8 @@
     "pages/about/index",
     "pages/star-explorer/index",
     "pages/browser/index",
-
-    "pages/qcio/index"
+    "pages/qcio/index",
+    "pages/qcio-chat/index"
   ],
   "window": {
     "backgroundColor": "#F6F6F6",
