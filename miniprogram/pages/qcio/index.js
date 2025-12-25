@@ -2,7 +2,11 @@
  * QCIO 2005 完整业务逻辑
  * 状态持久化：通过云端数据库 isOnline 字段驱动登录态，实现多端同步
  */
+const { preventDuplicateBehavior } = require('../../utils/prevent-duplicate');
+const { isNetworkError, setNetworkDisconnected, showDisconnectDialog } = require('../../utils/network');
+
 Page({
+  behaviors: [preventDuplicateBehavior],
   data: {
     isLoggedIn: false,    // 是否已登录显示主面板
     isRegistering: false, // 是否正在注册
@@ -227,51 +231,53 @@ Page({
    * 提交注册
    */
   submitRegister: function() {
-    const { qcio_id, nickname, avatar } = this.data.registerForm;
+    this._runWithLock('submitRegister', () => {
+      const { qcio_id, nickname, avatar } = this.data.registerForm;
 
-    this.setData({ isRegistering: true });
-    wx.showLoading({ title: '正在注册...', mask: true });
+      this.setData({ isRegistering: true });
+      wx.showLoading({ title: '正在注册...', mask: true });
 
-    wx.cloud.callFunction({
-      name: 'qcio',
-      data: {
-        action: 'register',
-        qcio_id: qcio_id,
-        nickname: nickname.trim(),
-        avatar: avatar
-      }
-    }).then(res => {
-      if (res.result && res.result.success) {
-        // 注册成功，设置默认签名
-        const defaultSignature = '承諾、絠什嚒用？還bùsんì洅見。';
+      return wx.cloud.callFunction({
+        name: 'qcio',
+        data: {
+          action: 'register',
+          qcio_id: qcio_id,
+          nickname: nickname.trim(),
+          avatar: avatar
+        }
+      }).then(res => {
+        if (res.result && res.result.success) {
+          // 注册成功，设置默认签名
+          const defaultSignature = '承諾、絠什嚒用？還bùsんì洅見。';
 
-        // 先设置签名，然后跳转到登录界面
-        return wx.cloud.callFunction({
-          name: 'qcio',
-          data: {
-            action: 'updateProfile',
-            data: { signature: defaultSignature }
-          }
-        }).then(() => {
-          // 清除注册状态，显示登录界面
-          this.setData({
-            needsRegister: false,
-            userProfile: res.result.data
+          // 先设置签名，然后跳转到登录界面
+          return wx.cloud.callFunction({
+            name: 'qcio',
+            data: {
+              action: 'updateProfile',
+              data: { signature: defaultSignature }
+            }
+          }).then(() => {
+            // 清除注册状态，显示登录界面
+            this.setData({
+              needsRegister: false,
+              userProfile: res.result.data
+            });
+            // 加载钱包数据
+            this.loadWalletData();
+            wx.showToast({ title: '注册成功！请登录', icon: 'success' });
           });
-          // 加载钱包数据
-          this.loadWalletData();
-          wx.showToast({ title: '注册成功！请登录', icon: 'success' });
-        });
-      } else {
-        throw new Error(res.result ? res.result.message : '注册失败');
-      }
-    }).catch(err => {
-      console.error('Register Error:', err);
-      wx.showToast({ title: err.message || '注册失败', icon: 'none' });
-    }).finally(() => {
-      this.setData({ isRegistering: false });
-      wx.hideLoading();
-    });
+        } else {
+          throw new Error(res.result ? res.result.message : '注册失败');
+        }
+      }).catch(err => {
+        console.error('Register Error:', err);
+        wx.showToast({ title: err.message || '注册失败', icon: 'none' });
+      }).finally(() => {
+        this.setData({ isRegistering: false });
+        wx.hideLoading();
+      });
+    }, 3000); // 3秒防重复点击（注册涉及数据库操作）
   },
 
   /**
@@ -298,46 +304,48 @@ Page({
    * 模拟经典的拨号登录流程
    */
   doLogin: function() {
-    if (this.data.isLoadingAccount || this.data.isLoggingIn) return;
+    this._runWithLock('doLogin', () => {
+      if (this.data.isLoadingAccount || this.data.isLoggingIn) return;
 
-    this.setData({ isLoggingIn: true, loginProgress: 0 });
+      this.setData({ isLoggingIn: true, loginProgress: 0 });
 
-    const timer = setInterval(() => {
-      let progress = this.data.loginProgress + Math.floor(Math.random() * 20) + 5;
-      
-      if (progress >= 100) {
-        progress = 100;
-        clearInterval(timer);
-        
-        wx.showLoading({ title: '正在获取好友列表...', mask: true });
-        
-        wx.cloud.callFunction({
-          name: 'qcio',
-          data: { action: 'login' }
-        }).then(res => {
-          if (res.result && res.result.success) {
-            wx.vibrateShort();
-            this.setData({
-              isLoggedIn: true,
-              isLoggingIn: false,
-              'userProfile.isOnline': true
-            });
-            // 登录成功后获取钱包数据
-            this.loadWalletData();
-          } else {
-            throw new Error('云端同步失败');
-          }
-        }).catch(err => {
-          console.error('Login Sync Error:', err);
-          wx.showToast({ title: '登录同步失败', icon: 'none' });
-          this.setData({ isLoggingIn: false });
-        }).finally(() => {
-          wx.hideLoading();
-        });
-      }
-      
-      this.setData({ loginProgress: progress });
-    }, 150);
+      const timer = setInterval(() => {
+        let progress = this.data.loginProgress + Math.floor(Math.random() * 20) + 5;
+
+        if (progress >= 100) {
+          progress = 100;
+          clearInterval(timer);
+
+          wx.showLoading({ title: '正在获取好友列表...', mask: true });
+
+          return wx.cloud.callFunction({
+            name: 'qcio',
+            data: { action: 'login' }
+          }).then(res => {
+            if (res.result && res.result.success) {
+              wx.vibrateShort();
+              this.setData({
+                isLoggedIn: true,
+                isLoggingIn: false,
+                'userProfile.isOnline': true
+              });
+              // 登录成功后获取钱包数据
+              this.loadWalletData();
+            } else {
+              throw new Error('云端同步失败');
+            }
+          }).catch(err => {
+            console.error('Login Sync Error:', err);
+            wx.showToast({ title: '登录同步失败', icon: 'none' });
+            this.setData({ isLoggingIn: false });
+          }).finally(() => {
+            wx.hideLoading();
+          });
+        }
+
+        this.setData({ loginProgress: progress });
+      }, 150);
+    }, 5000); // 5秒防重复点击（登录涉及进度条动画）
   },
 
   /**
@@ -413,42 +421,62 @@ Page({
   },
 
   translateAndSave: function(content) {
-    wx.showLoading({ title: '正在通过时空网关...', mask: true });
-    
-    wx.cloud.callFunction({
-      name: 'chat',
-      data: { mode: 'mars', content: content }
-    }).then(res => {
-      const marsText = res.result && res.result.content ? res.result.content : content;
-      return this.saveProfileChanges({ signature: marsText });
-    }).finally(() => wx.hideLoading());
+    this._runWithLock('translateAndSave', () => {
+      wx.showLoading({ title: '正在通过时空网关...', mask: true });
+
+      return wx.cloud.callFunction({
+        name: 'chat',
+        data: { mode: 'mars', content: content }
+      }).then(res => {
+        const marsText = res.result && res.result.content ? res.result.content : content;
+        return this.saveProfileChanges({ signature: marsText });
+      }).catch(err => {
+        // 检查是否是网络错误（429、超时等）
+        if (isNetworkError(err)) {
+          const reason = err?.message || '网络连接中断';
+          setNetworkDisconnected(reason);
+
+          wx.hideLoading();
+          wx.showToast({ title: '网络连接中断', icon: 'none', duration: 1500 });
+
+          // 延迟显示断网对话框
+          setTimeout(() => {
+            showDisconnectDialog(reason);
+          }, 500);
+        } else {
+          throw err;
+        }
+      }).finally(() => wx.hideLoading());
+    }, 3000); // 3秒防重复点击（涉及AI翻译）
   },
 
   saveProfileChanges: function(data) {
-    wx.showLoading({ title: '数据同步中...', mask: true });
-    
-    wx.cloud.callFunction({
-      name: 'qcio',
-      data: {
-        action: 'updateProfile',
-        data: data
-      }
-    }).then(res => {
-      if (res.result && res.result.success) {
-        this.setData({
-          userProfile: res.result.data
-        });
-        this.calculateLevelIcons(res.result.data.level);
-        wx.showToast({ title: '同步成功', icon: 'success' });
-      } else {
-        wx.showToast({ title: '保存失败', icon: 'none' });
-      }
-    }).catch(err => {
-      console.error('Update Profile Error:', err);
-      wx.showToast({ title: '服务器未响应', icon: 'none' });
-    }).finally(() => {
-      wx.hideLoading();
-    });
+    this._runWithLock('saveProfileChanges', () => {
+      wx.showLoading({ title: '数据同步中...', mask: true });
+
+      return wx.cloud.callFunction({
+        name: 'qcio',
+        data: {
+          action: 'updateProfile',
+          data: data
+        }
+      }).then(res => {
+        if (res.result && res.result.success) {
+          this.setData({
+            userProfile: res.result.data
+          });
+          this.calculateLevelIcons(res.result.data.level);
+          wx.showToast({ title: '同步成功', icon: 'success' });
+        } else {
+          wx.showToast({ title: '保存失败', icon: 'none' });
+        }
+      }).catch(err => {
+        console.error('Update Profile Error:', err);
+        wx.showToast({ title: '服务器未响应', icon: 'none' });
+      }).finally(() => {
+        wx.hideLoading();
+      });
+    }, 2000); // 2秒防重复点击（数据同步操作）
   },
 
   switchTab: function(e) {

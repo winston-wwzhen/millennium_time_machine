@@ -3,7 +3,12 @@
  * 用户选择心情 + 关键词，AI 生成火星文日志
  * 集成经济系统：发布日志奖励金币（每天前3篇）
  */
+const { preventDuplicateBehavior } = require('../../../utils/prevent-duplicate');
+const { isNetworkError, setNetworkDisconnected, showDisconnectDialog } = require('../../../utils/network');
+
 Component({
+  behaviors: [preventDuplicateBehavior],
+
   properties: {
     qcioId: {
       type: String,
@@ -68,79 +73,95 @@ Component({
     },
 
     // 生成日志
-    async generateLog() {
-      const { selectedMood, keywords } = this.data;
+    generateLog() {
+      // 使用防重复点击包装
+      this._runWithLock('generateLog', async () => {
+        const { selectedMood, keywords } = this.data;
 
-      if (!selectedMood) {
-        wx.showToast({ title: '请选择心情', icon: 'none' });
-        return;
-      }
-
-      if (!keywords.trim()) {
-        wx.showToast({ title: '请输入关键词', icon: 'none' });
-        return;
-      }
-
-      if (keywords.length > 10) {
-        wx.showToast({ title: '关键词限10字以内', icon: 'none' });
-        return;
-      }
-
-      this.setData({ isGenerating: true });
-      wx.showLoading({ title: '生成中...', mask: true });
-
-      try {
-        // 构建提示词
-        const prompt = `心情：${selectedMood.name}\n关键词：${keywords}`;
-
-        // 调用 chat 云函数
-        const res = await wx.cloud.callFunction({
-          name: 'chat',
-          data: {
-            userMessage: prompt,
-            mode: 'mood_log'
-          }
-        });
-
-        if (res.result && res.result.success) {
-          const content = res.result.reply;
-
-          // 保存到数据库
-          const saveRes = await this.saveLog(selectedMood, keywords, content);
-
-          if (saveRes && saveRes.success) {
-            // 重新加载日志列表和状态
-            await this.loadLogs();
-            await this.loadLogStatus();
-
-            // 清空输入
-            this.setData({ keywords: '', selectedMood: null });
-
-            // 显示发布成功和奖励信息
-            const { reward, newBalance } = saveRes.data;
-            let msg = '日志发布成功';
-            if (reward && reward.coins > 0) {
-              msg += `，获得 ${reward.coins} 金币！`;
-              // 触发事件刷新钱包，传递新余额
-              this.triggerEvent('logpublished', { reward, newBalance });
-            } else {
-              msg += '（今日奖励次数已用完）';
-            }
-
-            wx.showToast({ title: msg, icon: 'success', duration: 2000 });
-          } else {
-            throw new Error(saveRes?.message || '保存日志失败');
-          }
-        } else {
-          throw new Error(res.result?.message || 'AI生成失败');
+        if (!selectedMood) {
+          wx.showToast({ title: '请选择心情', icon: 'none' });
+          return;
         }
-      } catch (err) {
-        console.error('Generate log error:', err);
-        wx.showToast({ title: '生成失败，请重试', icon: 'none' });
-      } finally {
-        this.setData({ isGenerating: false });
-        wx.hideLoading();
-      }
+
+        if (!keywords.trim()) {
+          wx.showToast({ title: '请输入关键词', icon: 'none' });
+          return;
+        }
+
+        if (keywords.length > 10) {
+          wx.showToast({ title: '关键词限10字以内', icon: 'none' });
+          return;
+        }
+
+        this.setData({ isGenerating: true });
+        wx.showLoading({ title: '生成中...', mask: true });
+
+        try {
+          // 构建提示词
+          const prompt = `心情：${selectedMood.name}\n关键词：${keywords}`;
+
+          // 调用 chat 云函数
+          const res = await wx.cloud.callFunction({
+            name: 'chat',
+            data: {
+              userMessage: prompt,
+              mode: 'mood_log'
+            }
+          });
+
+          if (res.result && res.result.success) {
+            const content = res.result.reply;
+
+            // 保存到数据库
+            const saveRes = await this.saveLog(selectedMood, keywords, content);
+
+            if (saveRes && saveRes.success) {
+              // 重新加载日志列表和状态
+              await this.loadLogs();
+              await this.loadLogStatus();
+
+              // 清空输入
+              this.setData({ keywords: '', selectedMood: null });
+
+              // 显示发布成功和奖励信息
+              const { reward, newBalance } = saveRes.data;
+              let msg = '日志发布成功';
+              if (reward && reward.coins > 0) {
+                msg += `，获得 ${reward.coins} 金币！`;
+                // 触发事件刷新钱包，传递新余额
+                this.triggerEvent('logpublished', { reward, newBalance });
+              } else {
+                msg += '（今日奖励次数已用完）';
+              }
+
+              wx.showToast({ title: msg, icon: 'success', duration: 2000 });
+            } else {
+              throw new Error(saveRes?.message || '保存日志失败');
+            }
+          } else {
+            throw new Error(res.result?.message || 'AI生成失败');
+          }
+        } catch (err) {
+          console.error('Generate log error:', err);
+
+          // 检查是否是网络错误（429、超时等）
+          if (isNetworkError(err)) {
+            const reason = err?.message || '网络连接中断';
+            setNetworkDisconnected(reason);
+            wx.showToast({ title: '网络连接中断，请重新连接', icon: 'none', duration: 2000 });
+
+            // 延迟显示断网对话框
+            setTimeout(() => {
+              showDisconnectDialog(reason);
+            }, 500);
+          } else {
+            wx.showToast({ title: '生成失败，请重试', icon: 'none' });
+          }
+        } finally {
+          this.setData({ isGenerating: false });
+          wx.hideLoading();
+        }
+      }, 3000); // 3秒防重复点击（因为涉及AI生成）
     },
 
     // 保存日志到数据库
@@ -185,43 +206,46 @@ Component({
     },
 
     // 删除日志
-    async deleteLog(e) {
-      const { id, content } = e.currentTarget.dataset;
+    deleteLog(e) {
+      // 使用防重复点击包装
+      this._runWithLock('deleteLog', async () => {
+        const { id, content } = e.currentTarget.dataset;
 
-      const confirmed = await new Promise((resolve) => {
-        wx.showModal({
-          title: '确认删除',
-          content: '确定要删除这篇日志吗？',
-          confirmText: '删除',
-          confirmColor: '#ff0000',
-          success: (res) => resolve(res.confirm)
-        });
-      });
-
-      if (!confirmed) return;
-
-      try {
-        wx.showLoading({ title: '删除中...', mask: true });
-
-        await wx.cloud.callFunction({
-          name: 'qcio',
-          data: {
-            action: 'deleteMoodLog',
-            logId: id
-          }
+        const confirmed = await new Promise((resolve) => {
+          wx.showModal({
+            title: '确认删除',
+            content: '确定要删除这篇日志吗？',
+            confirmText: '删除',
+            confirmColor: '#ff0000',
+            success: (res) => resolve(res.confirm)
+          });
         });
 
-        // 重新加载日志列表和状态
-        await this.loadLogs();
-        await this.loadLogStatus();
+        if (!confirmed) return;
 
-        wx.showToast({ title: '删除成功', icon: 'success' });
-      } catch (err) {
-        console.error('Delete log error:', err);
-        wx.showToast({ title: '删除失败', icon: 'none' });
-      } finally {
-        wx.hideLoading();
-      }
+        try {
+          wx.showLoading({ title: '删除中...', mask: true });
+
+          await wx.cloud.callFunction({
+            name: 'qcio',
+            data: {
+              action: 'deleteMoodLog',
+              logId: id
+            }
+          });
+
+          // 重新加载日志列表和状态
+          await this.loadLogs();
+          await this.loadLogStatus();
+
+          wx.showToast({ title: '删除成功', icon: 'success' });
+        } catch (err) {
+          console.error('Delete log error:', err);
+          wx.showToast({ title: '删除失败', icon: 'none' });
+        } finally {
+          wx.hideLoading();
+        }
+      }, 1500); // 1.5秒防重复点击
     },
 
     // 展开/收起日志

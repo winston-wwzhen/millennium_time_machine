@@ -18,6 +18,12 @@ Page({
         path: "/pages/my-computer/index",
       },
       {
+        id: "network-neighborhood",
+        name: "网上邻居",
+        icon: "🌏",
+        path: "/pages/network-neighborhood/index",
+      },
+      {
         id: "my-documents",
         name: "我的文档",
         icon: "📁",
@@ -42,32 +48,18 @@ Page({
         path: "/pages/qcio/index",
       },
       {
-        id: "tetris",
-        name: "俄罗斯方块",
-        icon: "🎮",
-        path: "/pages/tetris/index",
-      },
-      {
         id: "avatar",
-        name: "主流相机",
+        name: "非主流相机",
         icon: "📸",
         path: "/pages/avatar/index",
       },
-      {
-        id: "star-explorer",
-        name: "星际探索",
-        icon: "🌌",
-        path: "/pages/star-explorer/index",
-      },
-      {
-        id: "mars",
-        name: "火星翻译",
-        icon: "🪐",
-        path: "/pages/mars/index",
-      },
     ],
     showStartMenu: false,
+    showSubmenu: false, // 子菜单显示状态
     systemTime: "",
+    // 网络连接状态
+    networkConnected: true, // 默认连接
+    networkStatus: "online", // online, offline, connecting
     // 右键菜单
     showContextMenu: false,
     contextMenuX: 0,
@@ -93,6 +85,41 @@ Page({
     setInterval(() => {
       this.updateTime();
     }, 60000);
+
+    // 加载网络状态
+    this.loadNetworkStatus();
+
+    // 监听网络状态变化
+    this.setupNetworkListener();
+  },
+
+  // 加载网络状态
+  loadNetworkStatus: function () {
+    try {
+      const status = wx.getStorageSync("network_status");
+      if (status) {
+        this.setData({
+          networkConnected: status.connected,
+          networkStatus: status.status || "online",
+        });
+      }
+    } catch (err) {
+      console.error("Load network status error:", err);
+    }
+  },
+
+  // 设置网络状态监听
+  setupNetworkListener: function () {
+    // 监听存储变化（用于跨页面通信）
+    wx.onStorageChange((res) => {
+      if (res.key === "network_status") {
+        const newStatus = JSON.parse(res.newValue);
+        this.setData({
+          networkConnected: newStatus.connected,
+          networkStatus: newStatus.status || "online",
+        });
+      }
+    });
   },
 
   updateTime: function () {
@@ -126,7 +153,20 @@ Page({
     this.setData({
       showStartMenu: !this.data.showStartMenu,
       showContextMenu: false,
+      showSubmenu: false, // 关闭开始菜单时也关闭子菜单
     });
+  },
+
+  // 切换子菜单显示
+  toggleSubmenu: function () {
+    this.setData({
+      showSubmenu: !this.data.showSubmenu,
+    });
+  },
+
+  // 阻止事件冒泡
+  stopPropagation: function () {
+    // 空函数，仅用于阻止事件冒泡
   },
 
   // 长按桌面显示右键菜单
@@ -264,6 +304,31 @@ Page({
   // 隐藏小狮子消息
   hideAgentMessage: function () {
     this.setData({ showMessage: false });
+  },
+
+  // 点击网络图标
+  onNetworkIconTap: function () {
+    if (!this.data.networkConnected) {
+      wx.showModal({
+        title: "网络未连接",
+        content: '检测到网络断开连接。请通过"网上邻居"重新连接网络。',
+        showCancel: false,
+        confirmText: "去连接",
+        success: (res) => {
+          if (res.confirm) {
+            wx.navigateTo({
+              url: "/pages/network-neighborhood/index",
+            });
+          }
+        },
+      });
+    } else {
+      wx.showToast({
+        title: "网络已连接",
+        icon: "success",
+        duration: 1500,
+      });
+    }
   },
 
   onShareAppMessage: function () {

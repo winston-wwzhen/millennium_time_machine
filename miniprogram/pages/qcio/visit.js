@@ -3,7 +3,11 @@
  * 允许访客查看被访问者的留言板和访问统计
  * 支持踩一脚功能
  */
+const { preventDuplicateBehavior } = require('../../utils/prevent-duplicate');
+
 Page({
+  behaviors: [preventDuplicateBehavior],
+
   data: {
     ownerQcioId: '',          // 被访问者的 qcio_id
     ownerProfile: {           // 被访问者的资料
@@ -205,56 +209,59 @@ Page({
   },
 
   // 踩一脚
-  async doStep() {
-    if (!this.data.isLoggedIn) {
-      wx.showToast({ title: '请先登录', icon: 'none' });
-      return;
-    }
-
-    if (this.data.isOwnSpace) {
-      wx.showToast({ title: '不能踩自己的空间', icon: 'none' });
-      return;
-    }
-
-    if (this.data.hasSteppedToday) {
-      wx.showToast({ title: '今天已经踩过了', icon: 'none' });
-      return;
-    }
-
-    wx.showLoading({ title: '踩一脚中...', mask: true });
-
-    try {
-      const res = await wx.cloud.callFunction({
-        name: 'qcio',
-        data: {
-          action: 'recordVisit',
-          visitorId: this.data.myProfile.qcio_id,
-          visitorName: this.data.myProfile.nickname,
-          visitorAvatar: this.data.myProfile.avatar,
-          ownerQcioId: this.data.ownerQcioId
-        }
-      });
-
-      if (res.result && res.result.success) {
-        this.setData({ hasSteppedToday: true });
-
-        // 重新加载数据
-        await Promise.all([
-          this.loadVisitStats(),
-          this.loadMessages(),
-          this.loadRecentVisitors()
-        ]);
-
-        wx.showToast({ title: '踩了一脚！', icon: 'success' });
-      } else {
-        wx.showToast({ title: res.result?.message || '踩脚失败', icon: 'none' });
+  doStep() {
+    // 使用防重复点击包装
+    this._runWithLock('doStep', async () => {
+      if (!this.data.isLoggedIn) {
+        wx.showToast({ title: '请先登录', icon: 'none' });
+        return;
       }
-    } catch (err) {
-      console.error('Do step error:', err);
-      wx.showToast({ title: '踩脚失败', icon: 'none' });
-    } finally {
-      wx.hideLoading();
-    }
+
+      if (this.data.isOwnSpace) {
+        wx.showToast({ title: '不能踩自己的空间', icon: 'none' });
+        return;
+      }
+
+      if (this.data.hasSteppedToday) {
+        wx.showToast({ title: '今天已经踩过了', icon: 'none' });
+        return;
+      }
+
+      wx.showLoading({ title: '踩一脚中...', mask: true });
+
+      try {
+        const res = await wx.cloud.callFunction({
+          name: 'qcio',
+          data: {
+            action: 'recordVisit',
+            visitorId: this.data.myProfile.qcio_id,
+            visitorName: this.data.myProfile.nickname,
+            visitorAvatar: this.data.myProfile.avatar,
+            ownerQcioId: this.data.ownerQcioId
+          }
+        });
+
+        if (res.result && res.result.success) {
+          this.setData({ hasSteppedToday: true });
+
+          // 重新加载数据
+          await Promise.all([
+            this.loadVisitStats(),
+            this.loadMessages(),
+            this.loadRecentVisitors()
+          ]);
+
+          wx.showToast({ title: '踩了一脚！', icon: 'success' });
+        } else {
+          wx.showToast({ title: res.result?.message || '踩脚失败', icon: 'none' });
+        }
+      } catch (err) {
+        console.error('Do step error:', err);
+        wx.showToast({ title: '踩脚失败', icon: 'none' });
+      } finally {
+        wx.hideLoading();
+      }
+    }, 2000); // 2秒防重复点击
   },
 
   // 去登录

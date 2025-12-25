@@ -32,10 +32,16 @@
     </view>
 
     <view class="system-tray">
+      <view class="tray-icon network-icon {{networkConnected ? 'online' : 'offline'}}" bindtap="onNetworkIconTap">
+        {{networkConnected ? '🌐' : '❌'}}
+      </view>
       <view class="tray-icon">🔊</view>
       <view class="system-time">{{systemTime}}</view>
     </view>
   </view>
+
+  <!-- 开始菜单遮罩 (点击关闭) -->
+  <view class="start-menu-mask" wx:if="{{showStartMenu}}" catchtap="toggleStartMenu"></view>
 
   <!-- 开始菜单 (弹出层) -->
   <view class="start-menu" wx:if="{{showStartMenu}}">
@@ -43,13 +49,25 @@
       <text class="os-version">Millennium\nOS 2000</text>
     </view>
     <view class="menu-items">
-      <view class="menu-item" bindtap="onIconTap" data-path="/pages/about/index">
+      <view class="menu-item submenu" bindtap="toggleSubmenu">
         <text class="menu-icon">📂</text> 程序
+        <text class="submenu-arrow {{showSubmenu ? 'expanded' : ''}}">{{showSubmenu ? '▼' : '▶'}}</text>
+        <view class="submenu-content {{showSubmenu ? 'show' : ''}}" catchtap="stopPropagation">
+          <view class="submenu-item" catchtap="onIconTap" data-path="/pages/tetris/index">
+            <text class="submenu-icon">🎮</text> 俄罗斯方块
+          </view>
+          <view class="submenu-item" catchtap="onIconTap" data-path="/pages/star-explorer/index">
+            <text class="submenu-icon">🌌</text> 星际探索
+          </view>
+          <view class="submenu-item" catchtap="onIconTap" data-path="/pages/mars/index">
+            <text class="submenu-icon">🪐</text> 火星翻译
+          </view>
+        </view>
       </view>
       <view class="menu-item">
         <text class="menu-icon">⚙️</text> 设置
       </view>
-      <view class="menu-item">
+      <view class="menu-item" bindtap="onIconTap" data-path="/pages/about/index">
         <text class="menu-icon">❓</text> 帮助
       </view>
       <view class="menu-line"></view>

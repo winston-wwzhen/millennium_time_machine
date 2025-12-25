@@ -16,7 +16,8 @@
     "pages/qcio/visit",
     "pages/qcio-chat/index",
     "pages/tetris/index",
-    "pages/farm/index"
+    "pages/farm/index",
+    "pages/network-neighborhood/index"
   ],
   "window": {
     "backgroundColor": "#F6F6F6",

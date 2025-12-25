@@ -237,6 +237,42 @@ page {
   box-shadow: inset 1px 1px 0 #000;
 }
 
+.tray-icon {
+  font-size: 28rpx;
+  cursor: pointer;
+}
+
+/* 网络状态图标 */
+.network-icon {
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.network-icon.online {
+  filter: drop-shadow(0 0 2rpx #00ff00);
+}
+
+.network-icon.offline {
+  filter: drop-shadow(0 0 2rpx #ff0000);
+  animation: blink 1s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* 开始菜单遮罩 - 点击外部关闭菜单 */
+.start-menu-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9998;
+  background: transparent;
+}
+
 /* 开始菜单 - 样式优化 */
 .start-menu {
   position: absolute;
@@ -260,6 +296,73 @@ page {
     transform: translateY(0);
     opacity: 1;
   }
+}
+
+/* 子菜单样式 */
+.submenu {
+  position: relative;
+}
+
+.submenu-arrow {
+  margin-left: auto;
+  font-size: 20rpx;
+  color: #666;
+  transition: transform 0.2s ease;
+}
+
+.submenu-arrow.expanded {
+  transform: rotate(90deg);
+}
+
+.submenu-content {
+  position: absolute;
+  left: 100%;
+  top: 0;
+  margin-left: 4rpx;
+  width: 280rpx;
+  background-color: #c0c0c0;
+  border: 2px outset #fff;
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.5);
+  display: none;
+  z-index: 10000;
+  animation: slideInRight 0.15s ease-out;
+}
+
+.submenu-content.show {
+  display: block;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(-10rpx);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.submenu-item {
+  padding: 16rpx 20rpx;
+  font-size: 26rpx;
+  display: flex;
+  align-items: center;
+  color: #000;
+  margin-bottom: 2rpx;
+  font-weight: 500;
+}
+
+.submenu-item:active {
+  background-color: #000080;
+  color: white;
+}
+
+.submenu-icon {
+  width: 44rpx;
+  text-align: center;
+  margin-right: 12rpx;
+  font-size: 32rpx;
 }
 
 .sidebar {

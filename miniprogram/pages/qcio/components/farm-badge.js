@@ -2,7 +2,10 @@
  * QCIO 农场成就徽章组件
  * 显示农场等级、金币，支持分享到空间
  */
+const { preventDuplicateBehavior } = require('../../../utils/prevent-duplicate');
+
 Component({
+  behaviors: [preventDuplicateBehavior],
   properties: {
     qcioId: {
       type: String,
@@ -70,29 +73,33 @@ Component({
 
     // 复制成就文本
     copyAchievement() {
-      const text = this.generateAchievementText();
-      wx.setClipboardData({
-        data: text,
-        success: () => {
-          wx.showToast({ title: '已复制，可粘贴到签名~', icon: 'none' });
-          this.closeDialog();
-        }
-      });
+      this._runWithLock('copyAchievement', () => {
+        const text = this.generateAchievementText();
+        wx.setClipboardData({
+          data: text,
+          success: () => {
+            wx.showToast({ title: '已复制，可粘贴到签名~', icon: 'none' });
+            this.closeDialog();
+          }
+        });
+      }, 1000); // 1秒防重复点击
     },
 
     // 分享到微信
     shareToWeChat() {
-      const { level, coins } = this.data.farmData;
-      wx.showShareMenu({
-        withShareTicket: true,
-        menus: ['shareAppMessage', 'shareTimeline']
-      });
-      this.closeDialog();
+      this._runWithLock('shareToWeChat', () => {
+        const { level, coins } = this.data.farmData;
+        wx.showShareMenu({
+          withShareTicket: true,
+          menus: ['shareAppMessage', 'shareTimeline']
+        });
+        this.closeDialog();
 
-      wx.showToast({
-        title: '点击右上角分享',
-        icon: 'none'
-      });
+        wx.showToast({
+          title: '点击右上角分享',
+          icon: 'none'
+        });
+      }, 1000); // 1秒防重复点击
     },
 
     // 跳转到农场

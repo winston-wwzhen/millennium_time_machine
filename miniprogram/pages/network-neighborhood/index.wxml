@@ -1,0 +1,92 @@
+<!-- 网上邻居 -->
+<view class="desktop">
+  <view class="win98-window">
+    <view class="win98-title-bar">
+      <view class="win98-title-text">网上邻居</view>
+      <view class="win98-title-controls">
+        <button class="win98-btn-minimize">_</button>
+        <button class="win98-btn-maximize">□</button>
+        <button class="win98-btn-close" bindtap="goBack">×</button>
+      </view>
+    </view>
+
+    <view class="win98-window-body">
+      <!-- 工具栏 -->
+      <view class="toolbar">
+        <view class="toolbar-item">文件(F)</view>
+        <view class="toolbar-item">编辑(E)</view>
+        <view class="toolbar-item">查看(V)</view>
+        <view class="toolbar-item">帮助(H)</view>
+      </view>
+
+      <view class="toolbar-divider"></view>
+
+      <!-- 地址栏 -->
+      <view class="address-bar">
+        <text class="address-label">地址</text>
+        <view class="address-input">网上邻居</view>
+      </view>
+
+      <!-- 网络连接状态 -->
+      <view class="network-status-panel" wx:if="{{isConnecting}}">
+        <view class="dialing-animation">
+          <text class="dialing-text">正在拨号连接...</text>
+          <view class="progress-bar-container">
+            <view class="progress-bar-fill" style="width: {{connectionProgress}}%"></view>
+          </view>
+          <text class="dialing-status">{{dialStatus}}</text>
+          <text class="dialing-percent">{{connectionProgress}}%</text>
+        </view>
+      </view>
+
+      <!-- 网络列表 -->
+      <view class="network-grid" wx:if="{{!isConnecting}}">
+        <!-- 整个网络图标 -->
+        <view class="network-item" bindtap="dialConnection" wx:if="{{!networkConnected}}">
+          <view class="network-icon offline">🌍</view>
+          <text class="network-label">整个网络</text>
+          <text class="network-desc">点击建立连接</text>
+        </view>
+
+        <view class="network-item" wx:if="{{networkConnected}}">
+          <view class="network-icon online">🌍</view>
+          <text class="network-label">整个网络</text>
+          <text class="network-desc">已连接</text>
+        </view>
+      </view>
+
+      <!-- 连接信息面板 -->
+      <view class="connection-info" wx:if="{{networkConnected && !isConnecting}}">
+        <text class="info-title">连接信息</text>
+        <view class="info-row">
+          <text class="info-label">网络名称:</text>
+          <text class="info-value">{{currentNetwork || '千禧拨号网络'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">调制解调器:</text>
+          <text class="info-value">33.6 Kbps Modem</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">连接速度:</text>
+          <text class="info-value">33.6 Kbps</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">连接状态:</text>
+          <text class="info-value connected">已连接</text>
+        </view>
+      </view>
+
+      <!-- 未连接提示 -->
+      <view class="offline-tip" wx:if="{{!networkConnected && !isConnecting}}">
+        <text class="tip-icon">💡</text>
+        <text class="tip-text">网络未连接，点击"整个网络"建立拨号连接</text>
+      </view>
+    </view>
+
+    <!-- 状态栏 -->
+    <view class="status-bar">
+      <text>{{networkConnected ? '已连接到 千禧拨号网络' : '未连接'}}</text>
+      <text class="status-icon">{{networkConnected ? '🌐' : '❌'}}</text>
+    </view>
+  </view>
+</view>

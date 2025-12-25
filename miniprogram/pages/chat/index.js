@@ -1,4 +1,8 @@
+const { preventDuplicateBehavior } = require('../../utils/prevent-duplicate');
+const { isNetworkError, setNetworkDisconnected, showDisconnectDialog } = require('../../utils/network');
+
 Page({
+  behaviors: [preventDuplicateBehavior],
   data: {
     // 联系人信息
     contactName: '水晶之恋',
@@ -179,80 +183,94 @@ Page({
 
   // 发送消息核心逻辑
   async sendMessage() {
-    const text = this.data.chatInput.trim();
-    if (!text || this.data.isSending) return;
+    this._runWithLock('sendMessage', async () => {
+      const text = this.data.chatInput.trim();
+      if (!text || this.data.isSending) return;
 
-    // 检查发送频率限制
-    const now = Date.now();
-    const timeSinceLastSend = now - this.lastSendTime;
-    if (timeSinceLastSend < this.MESSAGE_COOLDOWN) {
-      const remainingTime = Math.ceil((this.MESSAGE_COOLDOWN - timeSinceLastSend) / 1000);
-      wx.showToast({
-        title: `请稍等${remainingTime}秒后再发送`,
-        icon: 'none',
-        duration: 1500
-      });
-      return;
-    }
-
-    // 1. 先把我的消息显示在界面上
-    const newMsg = { type: 'me', content: text };
-    const newList = this.data.chatList.concat(newMsg);
-
-    // 更新发送时间
-    this.lastSendTime = Date.now();
-
-    this.setData({
-      chatList: newList,
-      chatInput: '',
-      inputLength: 0,
-      scrollToView: 'msg-bottom', // 滚动到底部
-      isSending: true
-    });
-
-    // 2. 整理历史记录 (OpenAI/GLM 格式)
-    // 取最近 20 条，避免上下文太长消耗 token
-    const history = this.data.chatList.slice(-20).map(item => ({
-      role: item.type === 'me' ? 'user' : 'assistant',
-      content: item.content
-    }));
-
-    try {
-      // 3. UI 状态：对方正在输入...
-      wx.setNavigationBarTitle({ title: `${this.data.contactName} (输入中...)` });
-      wx.showNavigationBarLoading();
-
-      // 4. 调用 chat 云函数，使用不同的 mode（人设）
-      const res = await wx.cloud.callFunction({
-        name: 'chat',
-        data: {
-          userMessage: text,
-          history: history,
-          mode: this.data.chatMode,  // 使用当前联系人的聊天模式
-          contactName: this.data.contactName  // 传递联系人名称以获取自定义 prompt
-        }
-      });
-
-      // 5. 处理结果
-      wx.hideNavigationBarLoading();
-      wx.setNavigationBarTitle({ title: `${this.data.contactName} (在线)` });
-
-      if (res.result && res.result.success) {
-        this.replyFromAI(res.result.reply);
-      } else {
-        // 错误处理
-        console.warn('AI Error:', res.result.errMsg);
-        this.replyFromAI("系统繁忙，请稍后再试 o(╥﹏╥)o");
+      // 检查发送频率限制
+      const now = Date.now();
+      const timeSinceLastSend = now - this.lastSendTime;
+      if (timeSinceLastSend < this.MESSAGE_COOLDOWN) {
+        const remainingTime = Math.ceil((this.MESSAGE_COOLDOWN - timeSinceLastSend) / 1000);
+        wx.showToast({
+          title: `请稍等${remainingTime}秒后再发送`,
+          icon: 'none',
+          duration: 1500
+        });
+        return;
       }
 
-    } catch (err) {
-      console.error('Cloud Function Error:', err);
-      wx.hideNavigationBarLoading();
-      wx.setNavigationBarTitle({ title: `${this.data.contactName} (离线)` });
-      this.replyFromAI("掉线了... 可能是网线被妈妈拔了...");
-    } finally {
-      this.setData({ isSending: false });
-    }
+      // 1. 先把我的消息显示在界面上
+      const newMsg = { type: 'me', content: text };
+      const newList = this.data.chatList.concat(newMsg);
+
+      // 更新发送时间
+      this.lastSendTime = Date.now();
+
+      this.setData({
+        chatList: newList,
+        chatInput: '',
+        inputLength: 0,
+        scrollToView: 'msg-bottom', // 滚动到底部
+        isSending: true
+      });
+
+      // 2. 整理历史记录 (OpenAI/GLM 格式)
+      // 取最近 20 条，避免上下文太长消耗 token
+      const history = this.data.chatList.slice(-20).map(item => ({
+        role: item.type === 'me' ? 'user' : 'assistant',
+        content: item.content
+      }));
+
+      try {
+        // 3. UI 状态：对方正在输入...
+        wx.setNavigationBarTitle({ title: `${this.data.contactName} (输入中...)` });
+        wx.showNavigationBarLoading();
+
+        // 4. 调用 chat 云函数，使用不同的 mode（人设）
+        const res = await wx.cloud.callFunction({
+          name: 'chat',
+          data: {
+            userMessage: text,
+            history: history,
+            mode: this.data.chatMode,  // 使用当前联系人的聊天模式
+            contactName: this.data.contactName  // 传递联系人名称以获取自定义 prompt
+          }
+        });
+
+        // 5. 处理结果
+        wx.hideNavigationBarLoading();
+        wx.setNavigationBarTitle({ title: `${this.data.contactName} (在线)` });
+
+        if (res.result && res.result.success) {
+          this.replyFromAI(res.result.reply);
+        } else {
+          // 错误处理
+          console.warn('AI Error:', res.result.errMsg);
+          this.replyFromAI("系统繁忙，请稍后再试 o(╥﹏╥)o");
+        }
+
+      } catch (err) {
+        console.error('Cloud Function Error:', err);
+        wx.hideNavigationBarLoading();
+        wx.setNavigationBarTitle({ title: `${this.data.contactName} (离线)` });
+
+        // 检查是否是网络错误（429、超时等）
+        if (isNetworkError(err)) {
+          // 设置网络为断开状态
+          const reason = err?.message || '网络连接中断';
+          setNetworkDisconnected(reason);
+
+          // 显示断网提示
+          this.replyFromAI("网络连接中断... 请通过网上邻居重新连接后再发送消息。");
+          showDisconnectDialog(reason);
+        } else {
+          this.replyFromAI("掉线了... 可能是网线被妈妈拔了...");
+        }
+      } finally {
+        this.setData({ isSending: false });
+      }
+    }, this.MESSAGE_COOLDOWN); // 使用现有的冷却时间作为防重复点击间隔
   },
 
   replyFromAI(replyText) {

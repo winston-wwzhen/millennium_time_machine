@@ -2,7 +2,11 @@
  * QCIO 群聊页面
  * 复古风格群聊界面，AI 成员随机发言
  */
+const { preventDuplicateBehavior } = require('../../utils/prevent-duplicate');
+const { isNetworkError, setNetworkDisconnected, showDisconnectDialog } = require('../../utils/network');
+
 Page({
+  behaviors: [preventDuplicateBehavior],
   data: {
     // 群聊信息
     groupName: '群聊',
@@ -140,127 +144,151 @@ Page({
 
   // 发送消息核心逻辑
   async sendMessage() {
-    const text = this.data.chatInput.trim();
-    if (!text || this.data.isSending) return;
+    this._runWithLock('sendMessage', async () => {
+      const text = this.data.chatInput.trim();
+      if (!text || this.data.isSending) return;
 
-    // 检查发送频率限制
-    const now = Date.now();
-    const timeSinceLastSend = now - this.lastSendTime;
-    if (timeSinceLastSend < this.MESSAGE_COOLDOWN) {
-      const remainingTime = Math.ceil((this.MESSAGE_COOLDOWN - timeSinceLastSend) / 1000);
-      wx.showToast({
-        title: `请稍等${remainingTime}秒后再发送`,
-        icon: 'none',
-        duration: 1500
-      });
-      return;
-    }
-
-    // 1. 先把我的消息显示在界面上
-    const newMsg = { type: 'me', content: text };
-    const newList = this.data.chatList.concat(newMsg);
-
-    // 更新发送时间
-    this.lastSendTime = Date.now();
-
-    this.setData({
-      chatList: newList,
-      chatInput: '',
-      inputLength: 0,
-      scrollToView: 'msg-bottom',
-      isSending: true
-    });
-
-    // 2. 整理历史记录 (取最近 20 条)
-    const history = this.data.chatList.slice(-20).map(item => ({
-      role: item.type === 'me' ? 'user' : 'assistant',
-      content: item.content
-    }));
-
-    try {
-      // 3. UI 状态：对方正在输入...
-      wx.setNavigationBarTitle({ title: `${this.data.groupName} (输入中...)` });
-      wx.showNavigationBarLoading();
-
-      // 4. 随机选择发言成员
-      const speakers = this.getRandomSpeakers();
-
-      // 5. 一次性调用后端，获取多个回复
-      const res = await wx.cloud.callFunction({
-        name: 'chat',
-        data: {
-          userMessage: text,
-          history: history,
-          mode: this.data.chatMode,
-          groupChat: {
-            enabled: true,
-            speakers: speakers.map(s => ({
-              name: s.name,
-              avatar: s.avatar,
-              mode: s.mode || this.data.chatMode
-            }))
-          }
-        }
-      });
-
-      // 6. 处理结果
-      wx.hideNavigationBarLoading();
-      wx.setNavigationBarTitle({ title: `${this.data.groupName} (${this.data.memberCount}人)` });
-
-      let replies = [];
-      if (res.result && res.result.success) {
-        replies = res.result.replies || [];
+      // 检查发送频率限制
+      const now = Date.now();
+      const timeSinceLastSend = now - this.lastSendTime;
+      if (timeSinceLastSend < this.MESSAGE_COOLDOWN) {
+        const remainingTime = Math.ceil((this.MESSAGE_COOLDOWN - timeSinceLastSend) / 1000);
+        wx.showToast({
+          title: `请稍等${remainingTime}秒后再发送`,
+          icon: 'none',
+          duration: 1500
+        });
+        return;
       }
 
-      // 7. 依次显示每个回复
-      for (let i = 0; i < replies.length; i++) {
-        const replyItem = replies[i];
-        const speaker = speakers[i];
+      // 1. 先把我的消息显示在界面上
+      const newMsg = { type: 'me', content: text };
+      const newList = this.data.chatList.concat(newMsg);
 
-        const aiMsg = {
-          type: 'ai',
-          content: replyItem.content || '（网线好像断了，对方没回应...）',
-          speakerName: speaker.name,
-          speakerAvatar: speaker.avatar
-        };
+      // 更新发送时间
+      this.lastSendTime = Date.now();
 
-        const currentList = [...this.data.chatList, aiMsg];
-        this.setData({
-          chatList: currentList,
-          scrollToView: 'msg-bottom'
+      this.setData({
+        chatList: newList,
+        chatInput: '',
+        inputLength: 0,
+        scrollToView: 'msg-bottom',
+        isSending: true
+      });
+
+      // 2. 整理历史记录 (取最近 20 条)
+      const history = this.data.chatList.slice(-20).map(item => ({
+        role: item.type === 'me' ? 'user' : 'assistant',
+        content: item.content
+      }));
+
+      try {
+        // 3. UI 状态：对方正在输入...
+        wx.setNavigationBarTitle({ title: `${this.data.groupName} (输入中...)` });
+        wx.showNavigationBarLoading();
+
+        // 4. 随机选择发言成员
+        const speakers = this.getRandomSpeakers();
+
+        // 5. 一次性调用后端，获取多个回复
+        const res = await wx.cloud.callFunction({
+          name: 'chat',
+          data: {
+            userMessage: text,
+            history: history,
+            mode: this.data.chatMode,
+            groupChat: {
+              enabled: true,
+              speakers: speakers.map(s => ({
+                name: s.name,
+                avatar: s.avatar,
+                mode: s.mode || this.data.chatMode
+              }))
+            }
+          }
         });
 
-        // 播放接收音效
-        wx.vibrateShort();
+        // 6. 处理结果
+        wx.hideNavigationBarLoading();
+        wx.setNavigationBarTitle({ title: `${this.data.groupName} (${this.data.memberCount}人)` });
 
-        // 如果不是最后一位，延迟一下再让下一位发言
-        if (i < replies.length - 1) {
-          await this.delay(800 + Math.random() * 1000); // 0.8-1.8秒随机延迟
+        let replies = [];
+        if (res.result && res.result.success) {
+          replies = res.result.replies || [];
+        }
+
+        // 7. 依次显示每个回复
+        for (let i = 0; i < replies.length; i++) {
+          const replyItem = replies[i];
+          const speaker = speakers[i];
+
+          const aiMsg = {
+            type: 'ai',
+            content: replyItem.content || '（网线好像断了，对方没回应...）',
+            speakerName: speaker.name,
+            speakerAvatar: speaker.avatar
+          };
+
+          const currentList = [...this.data.chatList, aiMsg];
+          this.setData({
+            chatList: currentList,
+            scrollToView: 'msg-bottom'
+          });
+
+          // 播放接收音效
+          wx.vibrateShort();
+
+          // 如果不是最后一位，延迟一下再让下一位发言
+          if (i < replies.length - 1) {
+            await this.delay(800 + Math.random() * 1000); // 0.8-1.8秒随机延迟
+          }
+        }
+
+        this.setData({ isSending: false });
+
+        // 保存聊天历史到数据库
+        this.saveChatHistory(this.data.chatList);
+
+      } catch (err) {
+        console.error('Cloud Function Error:', err);
+        wx.hideNavigationBarLoading();
+        wx.setNavigationBarTitle({ title: `${this.data.groupName} (离线)` });
+
+        // 检查是否是网络错误（429、超时等）
+        if (isNetworkError(err)) {
+          // 设置网络为断开状态
+          const reason = err?.message || '网络连接中断';
+          setNetworkDisconnected(reason);
+
+          // 添加断网错误消息
+          const errorMsg = {
+            type: 'ai',
+            content: "网络连接中断... 请通过网上邻居重新连接后再发送消息。",
+            speakerName: '系统消息',
+            speakerAvatar: '📢'
+          };
+          this.setData({
+            chatList: [...this.data.chatList, errorMsg],
+            isSending: false
+          });
+
+          // 显示断网提示
+          showDisconnectDialog(reason);
+        } else {
+          // 添加普通错误消息
+          const errorMsg = {
+            type: 'ai',
+            content: "掉线了... 可能是网线被妈妈拔了...",
+            speakerName: '系统消息',
+            speakerAvatar: '📢'
+          };
+          this.setData({
+            chatList: [...this.data.chatList, errorMsg],
+            isSending: false
+          });
         }
       }
-
-      this.setData({ isSending: false });
-
-      // 保存聊天历史到数据库
-      this.saveChatHistory(this.data.chatList);
-
-    } catch (err) {
-      console.error('Cloud Function Error:', err);
-      wx.hideNavigationBarLoading();
-      wx.setNavigationBarTitle({ title: `${this.data.groupName} (离线)` });
-
-      // 添加错误消息
-      const errorMsg = {
-        type: 'ai',
-        content: "掉线了... 可能是网线被妈妈拔了...",
-        speakerName: '系统消息',
-        speakerAvatar: '📢'
-      };
-      this.setData({
-        chatList: [...this.data.chatList, errorMsg],
-        isSending: false
-      });
-    }
+    }, this.MESSAGE_COOLDOWN); // 使用现有的冷却时间作为防重复点击间隔
   },
 
   // 随机选择 1-6 位发言成员

@@ -2,7 +2,11 @@
  * QCIO 空间 - 留言板组件
  * 从数据库加载留言，支持删除功能
  */
+const { preventDuplicateBehavior } = require('../../../utils/prevent-duplicate');
+
 Component({
+  behaviors: [preventDuplicateBehavior],
+
   data: {
     messages: [],
     loading: true
@@ -86,53 +90,59 @@ Component({
 
     // 刷新留言
     refreshMessages() {
-      this.loadMessages();
-      wx.showToast({ title: '刷新成功', icon: 'success' });
+      // 使用防重复点击包装
+      this._runWithLock('refreshMessages', () => {
+        this.loadMessages();
+        wx.showToast({ title: '刷新成功', icon: 'success' });
+      }, 1000);
     },
 
     // 删除留言
-    async deleteMessage(e) {
-      const { id, isSystem } = e.currentTarget.dataset;
+    deleteMessage(e) {
+      // 使用防重复点击包装
+      this._runWithLock('deleteMessage', async () => {
+        const { id, isSystem } = e.currentTarget.dataset;
 
-      // 系统消息不能删除
-      if (isSystem) {
-        wx.showToast({ title: '系统消息不能删除', icon: 'none' });
-        return;
-      }
+        // 系统消息不能删除
+        if (isSystem) {
+          wx.showToast({ title: '系统消息不能删除', icon: 'none' });
+          return;
+        }
 
-      const confirmed = await new Promise((resolve) => {
-        wx.showModal({
-          title: '确认删除',
-          content: '确定要删除这条留言吗？',
-          confirmText: '删除',
-          confirmColor: '#ff0000',
-          success: (res) => resolve(res.confirm)
-        });
-      });
-
-      if (!confirmed) return;
-
-      try {
-        wx.showLoading({ title: '删除中...', mask: true });
-
-        await wx.cloud.callFunction({
-          name: 'qcio',
-          data: {
-            action: 'deleteGuestbookMessage',
-            messageId: id
-          }
+        const confirmed = await new Promise((resolve) => {
+          wx.showModal({
+            title: '确认删除',
+            content: '确定要删除这条留言吗？',
+            confirmText: '删除',
+            confirmColor: '#ff0000',
+            success: (res) => resolve(res.confirm)
+          });
         });
 
-        // 重新加载留言列表
-        await this.loadMessages();
+        if (!confirmed) return;
 
-        wx.showToast({ title: '删除成功', icon: 'success' });
-      } catch (err) {
-        console.error('Delete message error:', err);
-        wx.showToast({ title: '删除失败', icon: 'none' });
-      } finally {
-        wx.hideLoading();
-      }
+        try {
+          wx.showLoading({ title: '删除中...', mask: true });
+
+          await wx.cloud.callFunction({
+            name: 'qcio',
+            data: {
+              action: 'deleteGuestbookMessage',
+              messageId: id
+            }
+          });
+
+          // 重新加载留言列表
+          await this.loadMessages();
+
+          wx.showToast({ title: '删除成功', icon: 'success' });
+        } catch (err) {
+          console.error('Delete message error:', err);
+          wx.showToast({ title: '删除失败', icon: 'none' });
+        } finally {
+          wx.hideLoading();
+        }
+      }, 1500); // 1.5秒防重复点击
     }
   }
 });

@@ -2,7 +2,11 @@
  * QCIO 每日签到组件
  * 实现签到功能、连续签到奖励（云端存储）
  */
+const { preventDuplicateBehavior } = require('../../../utils/prevent-duplicate');
+
 Component({
+  behaviors: [preventDuplicateBehavior],
+
   properties: {
     qcioId: {
       type: String,
@@ -57,64 +61,67 @@ Component({
 
     // 执行签到（云端）
     checkIn() {
-      if (!this.data.canCheckIn || this.data.isCheckingIn) return;
+      // 使用防重复点击包装
+      this._runWithLock('checkIn', () => {
+        if (!this.data.canCheckIn || this.data.isCheckingIn) return;
 
-      this.setData({ isCheckingIn: true });
-      wx.showLoading({ title: '签到中...', mask: true });
+        this.setData({ isCheckingIn: true });
+        wx.showLoading({ title: '签到中...', mask: true });
 
-      wx.cloud.callFunction({
-        name: 'qcio',
-        data: { action: 'dailyCheckin' }
-      }).then(res => {
-        if (res.result && res.result.success) {
-          const data = res.result.data;
+        return wx.cloud.callFunction({
+          name: 'qcio',
+          data: { action: 'dailyCheckin' }
+        }).then(res => {
+          if (res.result && res.result.success) {
+            const data = res.result.data;
 
-          this.setData({
-            checkInData: {
-              consecutiveDays: data.streak || 0,
-              totalDays: data.totalDays || 0
-            },
-            todayChecked: true,
-            canCheckIn: false
-          });
-
-          // 显示奖励
-          const reward = data.reward || { coins: 10, qpoints: 0 };
-          let rewardText = `获得 ${reward.coins} 金币`;
-          if (reward.qpoints > 0) {
-            rewardText += `、${reward.qpoints} Q点`;
-          }
-
-          // 先触发事件刷新钱包，传递新余额
-          this.triggerEvent('checkin', {
-            reward: reward,
-            days: data.streak,
-            newCoinsBalance: data.newCoinsBalance,
-            newQpointsBalance: data.newQpointsBalance
-          });
-
-          // 延迟显示弹窗，确保事件先传播
-          setTimeout(() => {
-            wx.showModal({
-              title: '签到成功！',
-              content: `连续签到 ${data.streak} 天，${rewardText}！`,
-              showCancel: false,
-              confirmText: '太棒了'
+            this.setData({
+              checkInData: {
+                consecutiveDays: data.streak || 0,
+                totalDays: data.totalDays || 0
+              },
+              todayChecked: true,
+              canCheckIn: false
             });
-          }, 100);
-        } else {
-          throw new Error(res.result ? res.result.message : '签到失败');
-        }
-      }).catch(err => {
-        console.error('Check-in Error:', err);
-        wx.showToast({
-          title: err.message || '签到失败',
-          icon: 'none'
+
+            // 显示奖励
+            const reward = data.reward || { coins: 10, qpoints: 0 };
+            let rewardText = `获得 ${reward.coins} 金币`;
+            if (reward.qpoints > 0) {
+              rewardText += `、${reward.qpoints} Q点`;
+            }
+
+            // 先触发事件刷新钱包，传递新余额
+            this.triggerEvent('checkin', {
+              reward: reward,
+              days: data.streak,
+              newCoinsBalance: data.newCoinsBalance,
+              newQpointsBalance: data.newQpointsBalance
+            });
+
+            // 延迟显示弹窗，确保事件先传播
+            setTimeout(() => {
+              wx.showModal({
+                title: '签到成功！',
+                content: `连续签到 ${data.streak} 天，${rewardText}！`,
+                showCancel: false,
+                confirmText: '太棒了'
+              });
+            }, 100);
+          } else {
+            throw new Error(res.result ? res.result.message : '签到失败');
+          }
+        }).catch(err => {
+          console.error('Check-in Error:', err);
+          wx.showToast({
+            title: err.message || '签到失败',
+            icon: 'none'
+          });
+        }).finally(() => {
+          this.setData({ isCheckingIn: false });
+          wx.hideLoading();
         });
-      }).finally(() => {
-        this.setData({ isCheckingIn: false });
-        wx.hideLoading();
-      });
+      }, 2000); // 2秒防重复点击
     },
 
     // 获取签到状态文本
