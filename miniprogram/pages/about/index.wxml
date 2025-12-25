@@ -1,20 +1,20 @@
 <view class="container bsod" bindtap="onAnyKey">
   <view class="content">
-    <view class="title">A fatal exception OE has occurred at 0028:C0011E36 in VXD VMM(01) + 00010E36. The current application will be terminated.</view>
-    
+    <view class="title">在 0028:C0011E36 的 VXD VMM(01) + 00010E36 处发生了致命异常 OE。当前应用程序将被终止。</view>
+
     <view class="instructions">
-      <view>* Press any key to return to Windows.</view>
-      <view>* Press CTRL+ALT+DEL again to restart your computer. You will lose any unsaved information in all applications.</view>
+      <view>* 按任意键返回 Windows。</view>
+      <view>* 再次按 CTRL+ALT+DEL 重启计算机。所有应用程序中未保存的信息将会丢失。</view>
     </view>
 
     <view class="details">
-      <view>Error: OLD_STORY_KERNEL_PANIC</view>
-      <view>Version: v1.0.0 (2005-2025)</view>
-      <view>Author: 千禧时光机</view>
+      <view>错误: OLD_STORY_KERNEL_PANIC</view>
+      <view>版本: v1.0.0 (2005-2025)</view>
+      <view>作者: 千禧时光机</view>
     </view>
 
     <view class="footer">
-      Press any key to continue <text class="cursor">_</text>
+      按任意键继续 <text class="cursor">_</text>
     </view>
   </view>
 </view>

@@ -1,0 +1,61 @@
+<!-- 回收站 -->
+<view class="desktop">
+  <view class="win98-window">
+    <view class="win98-title-bar">
+      <view class="win98-title-text">回收站</view>
+      <view class="win98-title-controls">
+        <button class="win98-btn-minimize">_</button>
+        <button class="win98-btn-maximize">□</button>
+        <button class="win98-btn-close" bindtap="goBack">×</button>
+      </view>
+    </view>
+
+    <view class="win98-window-body">
+      <!-- 工具栏 -->
+      <view class="toolbar">
+        <view class="toolbar-item">文件(F)</view>
+        <view class="toolbar-item">编辑(E)</view>
+        <view class="toolbar-item">查看(V)</view>
+        <view class="toolbar-item">帮助(H)</view>
+      </view>
+
+      <view class="toolbar-divider"></view>
+
+      <!-- 空状态 -->
+      <view class="empty-state" wx:if="{{!hasTrash}}">
+        <view class="empty-icon">🗑️</view>
+        <text class="empty-text">回收站是空的</text>
+        <text class="empty-hint">没有删除的文件</text>
+      </view>
+
+      <!-- 垃圾文件列表 -->
+      <view class="trash-grid" wx:if="{{hasTrash}}">
+        <view class="trash-item">
+          <view class="trash-icon">📄</view>
+          <text class="trash-label">旧日记.txt</text>
+          <text class="trash-date">2005-12-01</text>
+        </view>
+        <view class="trash-item">
+          <view class="trash-icon">🎵</view>
+          <text class="trash-label">过时的MP3.mp3</text>
+          <text class="trash-date">2005-11-28</text>
+        </view>
+        <view class="trash-item">
+          <view class="trash-icon">🖼️</view>
+          <text class="trash-label">模糊照片.jpg</text>
+          <text class="trash-date">2005-11-25</text>
+        </view>
+      </view>
+
+      <!-- 提示信息 -->
+      <view class="tip-box">
+        <text class="tip-text">💡 删除的文件会在这里暂存，可以恢复哦~</text>
+      </view>
+    </view>
+
+    <!-- 状态栏 -->
+    <view class="status-bar">
+      <text>{{hasTrash ? '3 个对象' : '0 个对象'}}</text>
+    </view>
+  </view>
+</view>

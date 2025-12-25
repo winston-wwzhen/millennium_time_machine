@@ -1,9 +1,9 @@
 // miniprogram/components/farm-game/index.js
 const CROPS = {
-  'neon_shroom': { name: 'Pixel Shroom', icon: '🍄', cost: 10, sell: 25, duration: 10000 },
-  'cyber_flower': { name: 'Bit Rose', icon: '🌹', cost: 30, sell: 80, duration: 30000 },
-  'quantum_berry': { name: 'Data Berry', icon: '🍇', cost: 100, sell: 300, duration: 60000 },
-  'void_crystal': { name: 'Logic Gem', icon: '💎', cost: 500, sell: 1500, duration: 120000 }
+  'neon_shroom': { name: '像素蘑菇', icon: '🍄', cost: 10, sell: 25, duration: 10000 },
+  'cyber_flower': { name: '比特玫瑰', icon: '🌹', cost: 30, sell: 80, duration: 30000 },
+  'quantum_berry': { name: '数据浆果', icon: '🍇', cost: 100, sell: 300, duration: 60000 },
+  'void_crystal': { name: '逻辑宝石', icon: '💎', cost: 500, sell: 1500, duration: 120000 }
 };
 
 Component({
@@ -22,7 +22,7 @@ Component({
     farmExp: 0,
     farmLevel: 1,
     farmPlots: [],
-    farmMessage: 'Welcome to your Homepage Garden!',
+    farmMessage: '欢迎来到你的主页花园！',
     
     showShopModal: false,
     selectedPlotIndex: -1,
@@ -148,7 +148,7 @@ Component({
       const crop = CROPS[type];
   
       if (this.data.farmCoins < crop.cost) {
-        this.showFarmMsg("Not enough Credits!");
+        this.showFarmMsg("积分不足！");
         return;
       }
   
@@ -162,7 +162,7 @@ Component({
         farmCoins: this.data.farmCoins - crop.cost,
         showShopModal: false
       });
-      this.showFarmMsg(`Planted ${crop.name}.`);
+      this.showFarmMsg(`种下了 ${crop.name}。`);
     },
   
     harvest: function(index) {
@@ -180,7 +180,7 @@ Component({
         farmExp: this.data.farmExp + expGain
       });
       this.checkLevelUp();
-      this.showFarmMsg(`Harvested! +${profit}c`);
+      this.showFarmMsg(`收获！+${profit}积分`);
     },
   
     checkLevelUp: function() {
@@ -191,7 +191,7 @@ Component({
           farmExp: this.data.farmExp - nextLevelExp,
           farmCoins: this.data.farmCoins + 100
         });
-        this.showFarmMsg(`LEVEL UP! Now Level ${this.data.farmLevel}`);
+        this.showFarmMsg(`升级！当前等级 ${this.data.farmLevel}`);
       }
     },
   
@@ -200,9 +200,9 @@ Component({
     },
   
     visitNeighbor: function() {
-      this.showFarmMsg("Dialing neighbor...");
+      this.showFarmMsg("正在拨号邻居...");
       // 通知父组件更新状态栏
-      this.triggerEvent('statuschange', { text: 'Connecting to remote host...' });
+      this.triggerEvent('statuschange', { text: '正在连接远程主机...' });
       
       setTimeout(() => {
         // 生成随机网友名字
@@ -224,22 +224,22 @@ Component({
         this.setData({
           isVisiting: true,
           neighborFarm: { name: randomName, plots: fakePlots },
-          farmMessage: `Welcome to ${randomName}'s Garden!`
+          farmMessage: `欢迎来到 ${randomName} 的花园！`
         });
         
-        this.triggerEvent('statuschange', { text: 'Connected [128kbps]' });
+        this.triggerEvent('statuschange', { text: '已连接 [128kbps]' });
       }, 800);
     },
   
     returnToFarm: function() {
-      this.setData({ isVisiting: false, farmMessage: "Home sweet home." });
+      this.setData({ isVisiting: false, farmMessage: "回到温馨的家。" });
     },
   
     stealCrop: function(index) {
       const plots = [...this.data.neighborFarm.plots];
       const plot = plots[index];
       if (plot.status !== 2) {
-        this.showFarmMsg("Not ripe yet!");
+        this.showFarmMsg("还没成熟呢！");
         return;
       }
       
@@ -252,7 +252,7 @@ Component({
         'neighborFarm.plots': plots,
         farmCoins: this.data.farmCoins + val
       });
-      this.showFarmMsg(`Took ${crop.name} from neighbor! +${val}c`);
+      this.showFarmMsg(`从邻居那拿了 ${crop.name}！+${val}积分`);
     },
   
     showFarmMsg: function(msg) {

@@ -40,7 +40,7 @@
     
     <view class="status-bar">
       <text>状态: {{isLoading ? '处理中...' : '已心碎'}}</text>
-      <text class="right">Memory: 256MB</text>
+      <text class="right">内存: 256MB</text>
     </view>
   </view>
 </view>

@@ -5,10 +5,22 @@
 Page({
   data: {
     isLoggedIn: false,    // 是否已登录显示主面板
+    isRegistering: false, // 是否正在注册
     isLoggingIn: false,   // 是否正在显示登录进度条
     isLoadingAccount: true, // 是否正在从云端拉取数据
     loginProgress: 0,     // 进度条百分比 (0-100)
-    
+    needsRegister: false, // 是否需要注册
+
+    // 注册表单数据
+    registerForm: {
+      qcio_id: '',        // 自动生成的 QCIO 号
+      nickname: '',
+      avatar: '👤'
+    },
+
+    // 头像选择列表
+    avatarList: ['👤', '😊', '🤖', '👻'],
+
     // 用户个人资料模型
     userProfile: {
       qcio_id: '',
@@ -21,34 +33,15 @@ Page({
 
     activeTab: 'contacts', // 当前选中的 Tab：contacts, chats, zone
     zoneSubTab: 'home', // 空间Tab内的子Tab：home, log, msg
-    
+
     // 自定义 Win98 弹窗控制
     showDialog: false,
     dialogType: '', // 'nickname' 或 'signature'
     dialogTitle: '',
     dialogValue: '',
 
-    // 预设的好友列表数据
-    contactGroups: [
-      {
-        name: '葬爱家族',
-        expanded: true,
-        onlineCount: 2,
-        contacts: [
-          { id: 1, name: '忧郁王子', avatar: '🤵', online: true, status: '莪，呮想靜靜。' },
-          { id: 2, name: '轻舞飞扬', avatar: '💃', online: true, status: '網絡湜虛幻、但情湜真。' },
-          { id: 3, name: '往事随风', avatar: '🚬', online: false, status: '儭，記得回踩哦！' }
-        ]
-      },
-      {
-        name: '陌生人',
-        expanded: false,
-        onlineCount: 1,
-        contacts: [
-          { id: 6, name: '水晶之恋', avatar: '💎', online: true, status: '遇見伱，湜莪這輩孒最渼、' }
-        ]
-      }
-    ]
+    // 好友列表数据（从云端获取）
+    contactGroups: []
   },
 
   /**
@@ -56,11 +49,53 @@ Page({
    */
   onLoad: function(options) {
     this.initAccountFromCloud();
+    this.loadAIContacts();
 
     // 检查是否是通过分享链接进入（踩一踩）
     if (options && options.visit) {
       this.handleVisitFromShare(options.visit);
     }
+  },
+
+  /**
+   * 从云端加载 AI 好友列表
+   */
+  loadAIContacts: function() {
+    wx.cloud.callFunction({
+      name: 'qcio',
+      data: { action: 'getAIContacts' }
+    }).then(res => {
+      if (res.result && res.result.success) {
+        this.setData({
+          contactGroups: res.result.data
+        });
+      }
+    }).catch(err => {
+      console.error('Load AI Contacts Error:', err);
+      // 如果云端加载失败，使用默认数据
+      this.setData({
+        contactGroups: [
+          {
+            name: '葬爱家族',
+            expanded: true,
+            onlineCount: 2,
+            contacts: [
+              { id: 1, name: '忧郁王子', avatar: '🤵', online: true, status: '莪，呮想靜靜。' },
+              { id: 2, name: '轻舞飞扬', avatar: '💃', online: true, status: '網絡湜虛幻、但情湜真。' },
+              { id: 3, name: '往事随风', avatar: '🚬', online: false, status: '儭，記得回踩哦！' }
+            ]
+          },
+          {
+            name: '陌生人',
+            expanded: false,
+            onlineCount: 1,
+            contacts: [
+              { id: 6, name: '水晶之恋', avatar: '💎', online: true, status: '遇見伱，湜莪這輩孒最渼、' }
+            ]
+          }
+        ]
+      });
+    });
   },
 
   /**
@@ -101,7 +136,7 @@ Page({
    */
   initAccountFromCloud: function() {
     wx.showLoading({ title: '搜索基站信号...', mask: true });
-    
+
     wx.cloud.callFunction({
       name: 'qcio',
       data: { action: 'init' }
@@ -109,15 +144,32 @@ Page({
       const result = res.result;
       if (result && result.success) {
         const profile = result.data;
-        
-        // 核心持久化逻辑：如果云端 isOnline 为 true，则直接进入主面板
-        this.setData({
-          userProfile: profile,
-          isLoggedIn: !!profile.isOnline, 
-          isLoadingAccount: false
-        });
-        
-        this.calculateLevelIcons(profile.level || 1);
+
+        // 判断是否需要注册（没有 qcio_id）
+        if (!profile.qcio_id || profile.qcio_id === '') {
+          // 生成新的 QCIO 号并显示注册界面
+          const newQcioId = this.generateQcioId();
+          const randomNickname = this.getRandomNickname();
+          const randomAvatar = this.data.avatarList[Math.floor(Math.random() * this.data.avatarList.length)];
+
+          this.setData({
+            needsRegister: true,
+            isLoadingAccount: false,
+            registerForm: {
+              qcio_id: newQcioId,
+              nickname: randomNickname,
+              avatar: randomAvatar
+            }
+          });
+        } else {
+          // 已注册，判断登录状态
+          this.setData({
+            userProfile: profile,
+            isLoggedIn: !!profile.isOnline,
+            isLoadingAccount: false
+          });
+          this.calculateLevelIcons(profile.level || 1);
+        }
       } else {
         throw new Error(result ? result.message : '初始化失败');
       }
@@ -125,6 +177,84 @@ Page({
       console.error('QCIO Init Cloud Error:', err);
       wx.showToast({ title: '由于网络故障拨号失败', icon: 'none' });
     }).finally(() => {
+      wx.hideLoading();
+    });
+  },
+
+  /**
+   * 生成 5 位随机 QCIO 号
+   */
+  generateQcioId: function() {
+    return Math.floor(10000 + Math.random() * 90000).toString();
+  },
+
+  /**
+   * 获取随机昵称
+   */
+  getRandomNickname: function() {
+    const nicknames = [
+      '寂寞在唱歌', '轻舞飞扬', '往事随风', '水晶之恋',
+      '忧郁王子', '葬爱族人', '非主流', '火星文',
+      '网络游侠', '90后', '千禧宝宝', 'Y2K一代'
+    ];
+    return nicknames[Math.floor(Math.random() * nicknames.length)];
+  },
+
+  /**
+   * 选择头像
+   */
+  selectAvatar: function(e) {
+    const avatar = e.currentTarget.dataset.avatar;
+    this.setData({
+      'registerForm.avatar': avatar
+    });
+  },
+
+  /**
+   * 提交注册
+   */
+  submitRegister: function() {
+    const { qcio_id, nickname, avatar } = this.data.registerForm;
+
+    this.setData({ isRegistering: true });
+    wx.showLoading({ title: '正在注册...', mask: true });
+
+    wx.cloud.callFunction({
+      name: 'qcio',
+      data: {
+        action: 'register',
+        qcio_id: qcio_id,
+        nickname: nickname.trim(),
+        avatar: avatar
+      }
+    }).then(res => {
+      if (res.result && res.result.success) {
+        // 注册成功，设置默认签名
+        const defaultSignature = '承諾、絠什嚒用？還bùsんì洅見。';
+
+        // 先设置签名，然后跳转到登录界面
+        return wx.cloud.callFunction({
+          name: 'qcio',
+          data: {
+            action: 'updateProfile',
+            data: { signature: defaultSignature }
+          }
+        }).then(() => {
+          // 清除注册状态，显示登录界面
+          this.setData({
+            needsRegister: false,
+            userProfile: res.result.data
+          });
+          wx.showToast({ title: '注册成功！请登录', icon: 'success' });
+        });
+      } else {
+        throw new Error(res.result ? res.result.message : '注册失败');
+      }
+    }).catch(err => {
+      console.error('Register Error:', err);
+      wx.showToast({ title: err.message || '注册失败', icon: 'none' });
+    }).finally(() => {
+      this.setData({ isRegistering: false });
       wx.hideLoading();
     });
   },
@@ -322,8 +452,23 @@ Page({
   openChat: function(e) {
     const contact = e.currentTarget.dataset.contact;
     // 跳转到 AI 聊天助手页面，传递联系人信息和用户头像
+    const params = {
+      name: contact.name,
+      avatar: contact.avatar,
+      mode: contact.chatMode || this.getChatMode(contact.name),
+      myAvatar: this.data.userProfile.avatar || '👤'
+    };
+    if (contact.welcomeMessage) {
+      params.welcomeMessage = contact.welcomeMessage;
+    }
+
+    // 手动构建 URL 参数
+    const queryString = Object.keys(params)
+      .map(key => `${key}=${encodeURIComponent(params[key])}`)
+      .join('&');
+
     wx.navigateTo({
-      url: `/pages/chat/index?name=${encodeURIComponent(contact.name)}&avatar=${encodeURIComponent(contact.avatar)}&mode=${this.getChatMode(contact.name)}&myAvatar=${encodeURIComponent(this.data.userProfile.avatar || '👤')}`,
+      url: `/pages/chat/index?${queryString}`,
     });
   },
 

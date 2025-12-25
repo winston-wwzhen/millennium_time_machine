@@ -1,9 +1,26 @@
 <view class="desktop">
   <view class="window-frame chat-main">
-    <!-- 标题栏 -->
+    <!-- 标题栏：显示群头像和群名称 -->
     <view class="title-bar chat-title-bar">
-      <view class="title-text">{{groupName}} ({{memberCount}}人)</view>
+      <view class="group-info">
+        <view class="group-title-avatar">{{groupAvatar}}</view>
+        <view class="title-text">{{groupName}} ({{memberCount}}人)</view>
+      </view>
       <view class="btn-close" bindtap="goBack">×</view>
+    </view>
+
+    <!-- 群成员列表（可折叠） -->
+    <view class="members-section">
+      <view class="members-header" bindtap="toggleMembers">
+        <text class="members-toggle">{{showMembers ? '▼' : '▶'}}</text>
+        <text class="members-title">群成员 ({{groupMembers.length}})</text>
+      </view>
+      <view class="members-list" wx:if="{{showMembers}}">
+        <view class="member-item" wx:for="{{groupMembers}}" wx:key="name">
+          <text class="member-avatar">{{item.avatar}}</text>
+          <text class="member-name">{{item.name}}</text>
+        </view>
+      </view>
     </view>
 
     <!-- 提示信息 -->
@@ -14,7 +31,7 @@
       <block wx:for="{{chatList}}" wx:key="index">
         <!-- AI消息（带发言者名字） -->
         <view class="chat-item left" wx:if="{{item.type === 'ai'}}">
-          <view class="avatar ai-avatar">{{groupAvatar}}</view>
+          <view class="avatar ai-avatar">{{item.speakerAvatar || groupAvatar}}</view>
           <view class="message-content">
             <view class="speaker-name">{{item.speakerName}}</view>
             <view class="bubble ai-bubble">

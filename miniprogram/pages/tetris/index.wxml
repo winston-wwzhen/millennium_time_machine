@@ -2,7 +2,7 @@
   <!-- 游戏主窗口 -->
   <view class="game-window">
     <view class="win98-title-bar">
-      <view class="win98-title-text">俄罗斯方块 - Y2K Edition</view>
+      <view class="win98-title-text">俄罗斯方块 - 千禧版</view>
       <view class="win98-title-controls">
         <button class="win98-btn-close" bindtap="goBack"></button>
       </view>

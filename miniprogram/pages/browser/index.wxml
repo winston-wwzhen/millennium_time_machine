@@ -2,7 +2,7 @@
   <!-- 1. 标题栏 Title Bar -->
   <view class="title-bar">
     <view class="title-icon">🌐</view>
-    <view class="title-text">Millennium Explorer</view>
+    <view class="title-text">千禧浏览器</view>
     <view class="title-controls">
       <view class="control-btn minimize">_</view>
       <view class="control-btn maximize">□</view>
@@ -24,10 +24,10 @@
 
   <!-- 3. 视口 Viewport -->
   <view class="viewport">
-    
+
     <!-- 加载条 -->
     <view class="loading-bar-container" wx:if="{{isLoading}}">
-      <view class="loading-text">Downloading...</view>
+      <view class="loading-text">正在加载...</view>
       <view class="loading-track">
         <view class="loading-progress" style="width: {{progress}}%"></view>
       </view>
@@ -35,12 +35,12 @@
 
     <!-- 内容区 -->
     <scroll-view scroll-y="true" class="web-content" wx:if="{{!isLoading}}">
-      
+
       <!-- ================= SCENE A: Portal Home (主页) ================= -->
       <block wx:if="{{currentUrl === 'http://www.time-machine.com/portal'}}">
         <view class="page-home">
           <view class="hero-section">
-            <view class="blink-text">★ WELCOME TO 2000 ★</view>
+            <view class="blink-text">★ 欢迎来到 2000 年 ★</view>
             <image class="hero-logo" mode="aspectFit" src="../../images/borders/border_cyber.png"></image>
             <text class="daily-quote">"{{dailyQuote}}"</text>
           </view>
@@ -48,14 +48,14 @@
           <view class="retro-hr"></view>
 
           <view class="nav-links">
-            <view class="section-title">Directory</view>
-            
+            <view class="section-title">导航目录</view>
+
             <!-- 游戏入口：内部跳转 -->
             <view class="link-item special-link" bindtap="onLinkTap" data-url="http://galaxy.farm">
               <text class="link-icon">🌱</text>
               <view class="link-text">
-                <text class="link-title">My Homepage Garden</text>
-                <text class="link-desc">Grow plants & Visit friends!</text>
+                <text class="link-title">我的主页花园</text>
+                <text class="link-desc">种植植物并访问好友！</text>
               </view>
             </view>
 
@@ -63,16 +63,16 @@
             <view class="link-item" bindtap="onLinkTap" data-path="/pages/chat/index">
               <text class="link-icon">💬</text>
               <view class="link-text">
-                <text class="link-title">AI Chat Room</text>
-                <text class="link-desc">Talk to the machine spirit.</text>
+                <text class="link-title">AI 聊天室</text>
+                <text class="link-desc">与机器精灵对话。</text>
               </view>
             </view>
 
              <view class="link-item" bindtap="onLinkTap" data-path="/pages/translator/index">
               <text class="link-icon">🈂️</text>
               <view class="link-text">
-                <text class="link-title">Universal Translator</text>
-                <text class="link-desc">Decode alien languages.</text>
+                <text class="link-title">万能翻译器</text>
+                <text class="link-desc">解码外星语言。</text>
               </view>
             </view>
           </view>

@@ -1,6 +1,72 @@
 <view class="qcio-container">
+  <!-- 0. 注册界面 (新用户) -->
+  <view class="register-screen" wx:if="{{needsRegister}}">
+    <view class="win98-window register-dialog">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">QCIO 新用户注册</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="goBack"></button>
+        </view>
+      </view>
+
+      <view class="win98-window-body">
+        <view class="register-header">
+          <view class="big-icon">📟</view>
+          <text class="register-brand">欢迎加入 QCIO 2005</text>
+          <text class="register-subtitle">千禧年代的虚拟社交体验</text>
+        </view>
+
+        <view class="register-fields" wx:if="{{!isRegistering}}">
+          <!-- QCIO 号码（不可更改） -->
+          <view class="field-row">
+            <label>QCIO 号:</label>
+            <view class="qcio-id-display">{{registerForm.qcio_id}}</view>
+          </view>
+
+          <!-- 昵称（显示） -->
+          <view class="field-row">
+            <label>昵称:</label>
+            <view class="qcio-id-display">{{registerForm.nickname}}</view>
+          </view>
+
+          <!-- 头像选择 -->
+          <view class="field-row">
+            <label>选择头像:</label>
+            <view class="avatar-inline">
+              <view
+                class="avatar-item {{registerForm.avatar === item ? 'selected' : ''}}"
+                wx:for="{{avatarList}}"
+                wx:key="index"
+                bindtap="selectAvatar"
+                data-avatar="{{item}}"
+              >
+                {{item}}
+              </view>
+            </view>
+          </view>
+
+          <view class="register-footer-actions">
+            <button class="win98-btn-primary" bindtap="submitRegister" disabled="{{isRegistering}}">
+              立即注册 (R)
+            </button>
+            <button class="win98-btn-std" bindtap="goBack">取消</button>
+          </view>
+        </view>
+
+        <!-- 注册进度 -->
+        <view class="dialing-box" wx:else>
+          <text class="dialing-status">正在创建账号...</text>
+          <view class="win98-progress-container">
+            <view class="win98-progress-fill" style="width: 100%"></view>
+          </view>
+          <text class="dialing-percent">请稍候...</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
   <!-- 1. 登录覆盖层 (未登录状态) -->
-  <view class="login-screen" wx:if="{{!isLoggedIn}}">
+  <view class="login-screen" wx:elif="{{!isLoggedIn}}">
     <view class="win98-window login-dialog">
       <view class="win98-title-bar">
         <view class="win98-title-text">QCIO 2005 登录</view>
@@ -17,12 +83,16 @@
 
         <view class="login-fields" wx:if="{{!isLoggingIn}}">
           <view class="field-row">
+            <label>昵称:</label>
+            <view class="qcio-id-display">{{userProfile.nickname}}</view>
+          </view>
+          <view class="field-row">
             <label>QCIO 账号:</label>
-            <input class="win98-input" value="{{userProfile.qcio_id}}" disabled />
+            <view class="qcio-id-display">{{userProfile.qcio_id}}</view>
           </view>
           <view class="field-row">
             <label>登录密码:</label>
-            <input class="win98-input" password value="123456" disabled />
+            <view class="qcio-id-display">******</view>
           </view>
           <view class="login-footer-actions">
             <button class="win98-btn-std" bindtap="doLogin">登录(L)</button>

@@ -1,4 +1,4 @@
-<view class="desktop">
+<view class="desktop" bindlongpress="onDesktopLongPress">
   <!-- 桌面图标区域 - 自动换列布局 -->
   <view class="icon-grid">
     <block wx:for="{{desktopIcons}}" wx:key="id">
@@ -12,10 +12,10 @@
   <!-- 桌面助手：小狮子 (Office Assistant 风格) -->
   <view class="desktop-agent {{isDragging ? 'dragging' : ''}}" style="transform: translate({{agentTranslateX}}px, {{agentTranslateY}}px);"
         catchtouchstart="onAgentDragStart" catchtouchmove="onAgentDragMove" catchtouchend="onAgentDragEnd">
-    <view class="agent-bubble">
-      <text>Welcome back!</text>
+    <view class="agent-bubble {{showMessage ? 'show' : ''}}" wx:if="{{showMessage}}">
+      <text>{{agentMessage}}</text>
     </view>
-    <view class="agent-body">🦁</view>
+    <view class="agent-body agent-{{agentMood}}">🦁</view>
   </view>
 
   <!-- 任务栏 -->
@@ -24,13 +24,13 @@
       <image class="win-logo" src="../../images/borders/border_win98.png" mode="aspectFit"></image>
       <text>Start</text>
     </view>
-    
+
     <view class="taskbar-divider"></view>
-    
+
     <view class="task-items">
       <!-- 运行中的任务 -->
     </view>
-    
+
     <view class="system-tray">
       <view class="tray-icon">🔊</view>
       <view class="system-time">{{systemTime}}</view>
@@ -44,18 +44,36 @@
     </view>
     <view class="menu-items">
       <view class="menu-item" bindtap="onIconTap" data-path="/pages/about/index">
-        <text class="menu-icon">📂</text> Programs
+        <text class="menu-icon">📂</text> 程序
       </view>
       <view class="menu-item">
-        <text class="menu-icon">⚙️</text> Settings
+        <text class="menu-icon">⚙️</text> 设置
       </view>
       <view class="menu-item">
-        <text class="menu-icon">❓</text> Help
+        <text class="menu-icon">❓</text> 帮助
       </view>
       <view class="menu-line"></view>
       <view class="menu-item">
-        <text class="menu-icon">🔌</text> Shut Down...
+        <text class="menu-icon">🔌</text> 关机...
       </view>
+    </view>
+  </view>
+
+  <!-- 右键菜单 (弹出层) -->
+  <view class="context-menu" wx:if="{{showContextMenu}}" style="left: {{contextMenuX}}px; top: {{contextMenuY}}px;" catchtap="hideContextMenu">
+    <view class="context-menu-item" bindtap="refreshDesktop">
+      <text class="context-icon">🔄</text> 刷新(E)
+    </view>
+    <view class="menu-line"></view>
+    <view class="context-menu-item" bindtap="arrangeIcons">
+      <text class="context-icon">📋</text> 排列图标(A)
+    </view>
+    <view class="context-menu-item" bindtap="newFolder">
+      <text class="context-icon">📁</text> 新建(W)
+    </view>
+    <view class="menu-line"></view>
+    <view class="context-menu-item" bindtap="showProperties">
+      <text class="context-icon">ℹ️</text> 属性(R)
     </view>
   </view>
 </view>

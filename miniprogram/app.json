@@ -1,6 +1,9 @@
 {
   "pages": [
     "pages/index/index",
+    "pages/my-computer/index",
+    "pages/my-documents/index",
+    "pages/recycle-bin/index",
     "pages/mars/index",
     "pages/avatar/index",
     "pages/chat/index",

@@ -123,7 +123,7 @@ page {
 
 /* --- 登录界面 --- */
 
-.login-screen {
+.login-screen, .register-screen {
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
   background: rgba(0,0,0,0.4);
@@ -132,13 +132,92 @@ page {
 }
 
 .login-dialog { width: 280px; }
-.login-header { display: flex; flex-direction: column; align-items: center; margin: 20px 0; }
+.register-dialog { width: 320px; }
+
+.login-header, .register-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px 0;
+}
+
 .big-icon { font-size: 50px; filter: drop-shadow(2px 2px #808080); }
-.login-brand { font-weight: bold; font-size: 16px; color: #000080; margin-top: 5px; }
+.login-brand, .register-brand {
+  font-weight: bold;
+  font-size: 16px;
+  color: #000080;
+  margin-top: 5px;
+}
+
+.register-subtitle {
+  font-size: 11px;
+  color: #666;
+  margin-top: 5px;
+}
 
 .field-row { display: flex; align-items: center; margin-bottom: 12px; padding: 0 20px; }
-.field-row label { width: 70px; font-size: 12px; color: #000; }
-.login-footer-actions { display: flex; justify-content: center; gap: 10px; margin: 15px 0; }
+.field-row label { width: 80px; font-size: 12px; color: #000; }
+
+/* QCIO 号码显示 */
+.qcio-id-display {
+  flex: 1;
+  height: 24px;
+  background: #e8e8e8;
+  border: 2px inset #808080;
+  padding: 0 8px;
+  font-size: 12px;
+  color: #000;
+  display: flex;
+  align-items: center;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+}
+
+/* 头像选择区域 */
+.avatar-inline {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.avatar-item {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  background: #fff;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.avatar-item.selected {
+  background: #000080;
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
+}
+
+.avatar-item:active {
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
+  padding: 1px 0 0 1px;
+}
+
+.login-footer-actions, .register-footer-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 15px 0;
+}
 
 .win98-progress-container {
   height: 20px; background: white; margin: 10px 20px; padding: 2px;

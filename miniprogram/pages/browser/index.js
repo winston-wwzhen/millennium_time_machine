@@ -7,7 +7,7 @@ Page({
     currentUrl: 'http://www.time-machine.com/portal',
     isLoading: true,
     progress: 0,
-    statusText: 'Connecting to server...',
+    statusText: '正在连接服务器...',
     historyStack: ['http://www.time-machine.com/portal'],
     currentIndex: 0,
     canGoBack: false,
@@ -34,11 +34,11 @@ Page({
 
   generateDailyContent: function() {
     const quotes = [
-      "Y2K Bug fixed. Systems nominal.",
-      "Welcome to the new millennium.",
-      "Downloading more RAM...",
-      "Netscape Navigator recommended.",
-      "Signal strength: 98%"
+      "Y2K Bug 已修复。系统正常。",
+      "欢迎来到新千禧年。",
+      "正在下载更多内存...",
+      "推荐使用 Netscape Navigator。",
+      "信号强度: 98%"
     ];
     this.setData({ dailyQuote: quotes[Math.floor(Math.random() * quotes.length)] });
   },
@@ -50,7 +50,7 @@ Page({
       this._loadingTimer = null;
     }
 
-    this.setData({ isLoading: true, progress: 0, statusText: 'Resolving host...' });
+    this.setData({ isLoading: true, progress: 0, statusText: '正在解析主机...' });
     let p = 0;
 
     this._loadingTimer = setInterval(() => {
@@ -62,7 +62,7 @@ Page({
       if (next >= 100) {
         clearInterval(this._loadingTimer);
         this._loadingTimer = null;
-        this.setData({ isLoading: false, statusText: 'Done', progress: 100 });
+        this.setData({ isLoading: false, statusText: '完成', progress: 100 });
       } else {
         this.setData({ progress: next });
       }
@@ -108,7 +108,7 @@ Page({
     this.setData({
       currentIndex: index,
       currentUrl: url,
-      statusText: 'Restoring session...'
+      statusText: '正在恢复会话...'
     });
 
     this.updateHistoryButtons();

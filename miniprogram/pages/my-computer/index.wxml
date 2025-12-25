@@ -1,0 +1,76 @@
+<!-- 我的电脑 -->
+<view class="desktop">
+  <view class="win98-window">
+    <view class="win98-title-bar">
+      <view class="win98-title-text">我的电脑</view>
+      <view class="win98-title-controls">
+        <button class="win98-btn-minimize">_</button>
+        <button class="win98-btn-maximize">□</button>
+        <button class="win98-btn-close" bindtap="goBack">×</button>
+      </view>
+    </view>
+
+    <view class="win98-window-body">
+      <!-- 工具栏 -->
+      <view class="toolbar">
+        <view class="toolbar-item">文件(F)</view>
+        <view class="toolbar-item">编辑(E)</view>
+        <view class="toolbar-item">查看(V)</view>
+        <view class="toolbar-item">帮助(H)</view>
+      </view>
+
+      <view class="toolbar-divider"></view>
+
+      <!-- 地址栏 -->
+      <view class="address-bar">
+        <text class="address-label">地址</text>
+        <view class="address-input">我的电脑</view>
+      </view>
+
+      <!-- 驱动器列表 -->
+      <view class="drives-grid">
+        <view class="drive-item">
+          <view class="drive-icon">💾</view>
+          <text class="drive-label">(C:)</text>
+          <text class="drive-size">本地磁盘</text>
+        </view>
+        <view class="drive-item">
+          <view class="drive-icon">💿</view>
+          <text class="drive-label">(D:)</text>
+          <text class="drive-size">光盘驱动器</text>
+        </view>
+        <view class="drive-item">
+          <view class="drive-icon">📱</view>
+          <text class="drive-label">可移动</text>
+          <text class="drive-size">USB设备</text>
+        </view>
+      </view>
+
+      <!-- 系统信息 -->
+      <view class="system-info">
+        <text class="info-title">系统信息</text>
+        <view class="info-row">
+          <text class="info-label">操作系统:</text>
+          <text class="info-value">Millennium OS 2000</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">处理器:</text>
+          <text class="info-value">英特尔 奔腾 III</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">内存:</text>
+          <text class="info-value">128 MB 内存</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">分辨率:</text>
+          <text class="info-value">800 x 600</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 状态栏 -->
+    <view class="status-bar">
+      <text>9 个对象</text>
+    </view>
+  </view>
+</view>

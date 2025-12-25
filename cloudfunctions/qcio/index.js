@@ -20,6 +20,10 @@ exports.main = async (event, context) => {
       // 初始化或获取账号信息（包含在线状态）
       return await initAccount(OPENID);
 
+    case 'register':
+      // 注册新用户
+      return await registerUser(OPENID, event.qcio_id, event.nickname, event.avatar);
+
     case 'login':
       // 设置云端状态为"在线"
       return await setOnlineStatus(OPENID, true);
@@ -56,19 +60,35 @@ exports.main = async (event, context) => {
       // 获取聊天历史
       return await getChatHistory(OPENID, event.contactName);
 
+    case 'getAIContacts':
+      // 获取 AI 好友列表（使用用户分配的网友）
+      return await getMyAIContacts(OPENID);
+
+    case 'getGroupList':
+      // 获取群聊列表
+      return await getGroupList();
+
+    case 'saveGroupChatHistory':
+      // 保存群聊历史
+      return await saveGroupChatHistory(OPENID, event.data);
+
+    case 'getGroupChatHistory':
+      // 获取群聊历史
+      return await getGroupChatHistory(OPENID, event.groupName);
+
     default:
       return { success: false, message: '未知的操作类型' };
   }
 };
 
 /**
- * 获取或创建 QCIO 账号
+ * 获取账号信息（不自动创建）
  */
 async function initAccount(openid) {
   try {
     const qcioCollection = db.collection('qcio_users');
 
-    // 1. 检查数据库记录
+    // 检查数据库记录
     const userRes = await qcioCollection.where({
       _openid: openid
     }).limit(1).get();
@@ -81,35 +101,83 @@ async function initAccount(openid) {
       };
     }
 
-    // 2. 首次进入，生成唯一的 5 位账号 (10000-99999)
-    let qcio_id = '';
-    let isUnique = false;
-    let attempts = 0;
+    // 未注册，返回空数据
+    return {
+      success: true,
+      data: {
+        qcio_id: '',
+        nickname: '',
+        avatar: '👤',
+        signature: '',
+        level: 1,
+        isOnline: false
+      },
+      needsRegister: true,
+      message: '需要注册'
+    };
 
-    while (!isUnique && attempts < 15) {
-      qcio_id = (Math.floor(Math.random() * 90000) + 10000).toString();
-      const checkRes = await qcioCollection.where({ qcio_id }).count();
-      if (checkRes.total === 0) {
-        isUnique = true;
-      }
-      attempts++;
+  } catch (err) {
+    console.error('initAccount Error:', err);
+    return { success: false, error: err, message: '系统初始化失败' };
+  }
+}
+
+/**
+ * 注册新用户
+ */
+async function registerUser(openid, qcio_id, nickname, avatar) {
+  try {
+    const qcioCollection = db.collection('qcio_users');
+
+    // 检查是否已注册
+    const existingRes = await qcioCollection.where({ _openid: openid }).limit(1).get();
+    if (existingRes.data.length > 0) {
+      return {
+        success: false,
+        message: '账号已注册'
+      };
     }
 
-    if (!isUnique) throw new Error('ID 生成失败');
+    // 验证 qcio_id 是否唯一
+    const idCheckRes = await qcioCollection.where({ qcio_id }).limit(1).get();
+    if (idCheckRes.data.length > 0) {
+      return {
+        success: false,
+        message: 'QCIO 号码已存在'
+      };
+    }
 
-    // 3. 构建新用户数据
+    // 随机分配 20 个 AI 网友
+    let myContacts = [];
+    try {
+      const contactsRes = await db.collection('qcio_ai_contacts')
+        .where({ isEnabled: true })
+        .field({ _id: true })
+        .get();
+
+      if (contactsRes.data.length > 0) {
+        // 随机选择20个网友
+        const shuffled = shuffleArray(contactsRes.data);
+        myContacts = shuffled.slice(0, Math.min(20, shuffled.length)).map(c => c._id);
+      }
+    } catch (err) {
+      console.error('Get AI contacts error:', err);
+      // 获取失败不影响注册，只是没有分配网友
+    }
+
+    // 创建新用户
     const newUser = {
       _openid: openid,
       qcio_id: qcio_id,
       password: '123456',
-      nickname: '千禧网友',
-      signature: '承諾、絠什嚒用？還bùsんì洅見。',
-      avatar: '👤',
+      nickname: nickname,
+      signature: '',
+      avatar: avatar,
       level: 1,
-      isOnline: false, // 初始默认不在线
+      isOnline: false,
+      myContacts: myContacts, // 用户的好友列表（AI网友ID数组）
       createTime: db.serverDate(),
       lastLoginTime: db.serverDate(),
-      // 空间统计
       totalVisits: 0,
       todayVisits: 0
     };
@@ -119,13 +187,25 @@ async function initAccount(openid) {
     return {
       success: true,
       data: newUser,
-      message: '账号初始化成功'
+      message: '注册成功'
     };
 
   } catch (err) {
-    console.error('initAccount Error:', err);
-    return { success: false, error: err, message: '系统初始化失败' };
+    console.error('registerUser Error:', err);
+    return { success: false, error: err, message: '注册失败' };
   }
+}
+
+/**
+ * 随机打乱数组（Fisher-Yates 洗牌算法）
+ */
+function shuffleArray(array) {
+  const result = [...array];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
 }
 
 /**
@@ -344,35 +424,40 @@ async function saveChatHistory(openid, data) {
   try {
     const { contactName, messages } = data;
 
-    await db.collection('qcio_chat_history').where({
-      _openid: openid,
-      contact_name: contactName
-    }).update({
-      data: {
-        messages: messages,
-        updateTime: db.serverDate()
-      }
-    });
+    // 先查询是否已有记录
+    const existingRes = await db.collection('qcio_chat_history')
+      .where({
+        _openid: openid,
+        contact_name: contactName
+      })
+      .get();
 
-    // 如果更新失败，说明记录不存在，需要创建
-    // 这里简化处理，直接返回成功
-    return { success: true };
-  } catch (err) {
-    // 记录不存在，创建新记录
-    try {
+    if (existingRes.data.length > 0) {
+      // 记录存在，更新
+      await db.collection('qcio_chat_history')
+        .doc(existingRes.data[0]._id)
+        .update({
+          data: {
+            messages: messages,
+            updateTime: db.serverDate()
+          }
+        });
+    } else {
+      // 记录不存在，创建新记录
       await db.collection('qcio_chat_history').add({
         data: {
           _openid: openid,
-          contact_name: data.contactName,
-          messages: data.messages,
+          contact_name: contactName,
+          messages: messages,
           updateTime: db.serverDate()
         }
       });
-      return { success: true };
-    } catch (addErr) {
-      console.error('saveChatHistory Error:', addErr);
-      return { success: false, error: addErr };
     }
+
+    return { success: true };
+  } catch (err) {
+    console.error('saveChatHistory Error:', err);
+    return { success: false, error: err };
   }
 }
 
@@ -399,6 +484,233 @@ async function getChatHistory(openid, contactName) {
   }
 }
 
+/**
+ * 获取用户的 AI 好友列表
+ * 先获取用户分配的网友ID，再返回这些网友的详细信息
+ * 如果用户没有 myContacts，自动随机分配20个网友
+ */
+async function getMyAIContacts(openid) {
+  try {
+    // 获取用户信息
+    const userRes = await db.collection('qcio_users')
+      .where({ _openid: openid })
+      .field({ myContacts: true })
+      .limit(1)
+      .get();
+
+    let myContacts = null;
+    let needUpdate = false;
+
+    if (userRes.data.length > 0) {
+      const user = userRes.data[0];
+      // 检查是否有 myContacts 字段且不为空
+      if (user.myContacts && user.myContacts.length > 0) {
+        myContacts = user.myContacts;
+      } else {
+        // 用户没有 myContacts 或为空，需要分配
+        needUpdate = true;
+      }
+    }
+
+    // 如果需要分配网友
+    if (needUpdate || !myContacts) {
+      console.log('User has no contacts, assigning random contacts...');
+      // 获取所有可用的网友
+      const contactsRes = await db.collection('qcio_ai_contacts')
+        .where({ isEnabled: true })
+        .field({ _id: true })
+        .get();
+
+      if (contactsRes.data.length > 0) {
+        // 随机选择20个
+        const shuffled = shuffleArray(contactsRes.data);
+        myContacts = shuffled.slice(0, Math.min(20, shuffled.length)).map(c => c._id);
+
+        // 更新用户记录
+        if (userRes.data.length > 0) {
+          await db.collection('qcio_users')
+            .doc(userRes.data[0]._id)
+            .update({
+              data: { myContacts: myContacts }
+            });
+        }
+      }
+    }
+
+    console.log('User contacts count:', myContacts ? myContacts.length : 0);
+
+    // 调用 getAIContacts，传入用户的好友ID列表
+    return await getAIContacts(myContacts);
+  } catch (err) {
+    console.error('getMyAIContacts Error:', err);
+    return { success: false, error: err, message: '获取好友列表失败' };
+  }
+}
+
+/**
+ * 获取 AI 好友列表
+ * @param {Array} myContacts - 用户的好友ID列表（可选），如果不传则返回所有好友
+ */
+async function getAIContacts(myContacts = null) {
+  try {
+    let query = db.collection('qcio_ai_contacts').where({ isEnabled: true });
+
+    // 如果提供了用户的好友ID列表，只获取这些好友
+    if (myContacts && myContacts.length > 0) {
+      query = query.where({
+        _id: db.command.in(myContacts)
+      });
+    }
+
+    const res = await query
+      .orderBy('groupOrder', 'asc')
+      .orderBy('contactOrder', 'asc')
+      .get();
+
+    // 按分组整理数据
+    const groupsMap = {};
+    res.data.forEach(contact => {
+      const groupName = contact.groupName || '陌生人';
+      if (!groupsMap[groupName]) {
+        groupsMap[groupName] = {
+          name: groupName,
+          expanded: groupName === '葬爱家族', // 默认展开葬爱家族
+          onlineCount: 0,
+          contacts: []
+        };
+      }
+
+      groupsMap[groupName].contacts.push({
+        id: contact._id,
+        name: contact.name,
+        avatar: contact.avatar || '👤',
+        online: contact.online !== false,
+        status: contact.status || '',
+        chatMode: contact.chatMode || contact.mode || 'chat',
+        welcomeMessage: contact.welcomeMessage || '',
+        systemPrompt: contact.systemPrompt || ''
+      });
+
+      if (contact.online !== false) {
+        groupsMap[groupName].onlineCount++;
+      }
+    });
+
+    // 转换为数组格式
+    const contactGroups = Object.values(groupsMap);
+    // 按分组排序
+    contactGroups.sort((a, b) => {
+      // 葬爱家族排第一
+      if (a.name === '葬爱家族') return -1;
+      if (b.name === '葬爱家族') return 1;
+      return 0;
+    });
+
+    return { success: true, data: contactGroups };
+  } catch (err) {
+    console.error('getAIContacts Error:', err);
+    return { success: false, error: err, message: '获取好友列表失败' };
+  }
+}
+
+/**
+ * 获取群聊列表
+ */
+async function getGroupList() {
+  try {
+    const res = await db.collection('qcio_groups')
+      .where({ isEnabled: true })
+      .orderBy('groupOrder', 'asc')
+      .get();
+
+    // 添加随机时间、最后消息和未读数
+    const list = res.data.map(group => ({
+      id: group._id,
+      name: group.name,
+      avatar: group.avatar || '👥',
+      members: group.members || [],
+      memberCount: group.memberCount || 0,
+      mode: group.mode || 'chat',
+      time: getRandomTime(),
+      lastMsg: getRandomLastMsg(group.members),
+      unread: Math.floor(Math.random() * 100), // 随机未读数
+      unreadCount: Math.floor(Math.random() * 100)
+    }));
+
+    return { success: true, data: list };
+  } catch (err) {
+    console.error('getGroupList Error:', err);
+    return { success: false, error: err, message: '获取群聊列表失败' };
+  }
+}
+
+/**
+ * 保存群聊历史
+ */
+async function saveGroupChatHistory(openid, data) {
+  try {
+    const { groupName, messages } = data;
+
+    // 先查询是否已有记录
+    const existingRes = await db.collection('qcio_group_chat_history')
+      .where({
+        _openid: openid,
+        group_name: groupName
+      })
+      .get();
+
+    if (existingRes.data.length > 0) {
+      // 记录存在，更新
+      await db.collection('qcio_group_chat_history')
+        .doc(existingRes.data[0]._id)
+        .update({
+          data: {
+            messages: messages,
+            updateTime: db.serverDate()
+          }
+        });
+    } else {
+      // 记录不存在，创建新记录
+      await db.collection('qcio_group_chat_history').add({
+        data: {
+          _openid: openid,
+          group_name: groupName,
+          messages: messages,
+          updateTime: db.serverDate()
+        }
+      });
+    }
+
+    return { success: true };
+  } catch (err) {
+    console.error('saveGroupChatHistory Error:', err);
+    return { success: false, error: err };
+  }
+}
+
+/**
+ * 获取群聊历史
+ */
+async function getGroupChatHistory(openid, groupName) {
+  try {
+    const res = await db.collection('qcio_group_chat_history')
+      .where({
+        _openid: openid,
+        group_name: groupName
+      })
+      .get();
+
+    if (res.data.length > 0) {
+      return { success: true, data: res.data[0].messages || [] };
+    }
+
+    return { success: true, data: [] };
+  } catch (err) {
+    console.error('getGroupChatHistory Error:', err);
+    return { success: false, error: err };
+  }
+}
+
 // 辅助函数：获取心情图标
 function getMoodIcon(moodType) {
   const icons = {
@@ -414,6 +726,30 @@ function getMoodIcon(moodType) {
 function getRandomAvatar() {
   const avatars = ['👤', '🎸', '💃', '🎮', '🦊', '🐱', '🐶', '🌟'];
   return avatars[Math.floor(Math.random() * avatars.length)];
+}
+
+// 辅助函数：生成随机时间（模拟最近消息时间）
+function getRandomTime() {
+  const times = ['刚刚', '5分钟前', '15:30', '12:20', '昨天', '周一'];
+  return times[Math.floor(Math.random() * times.length)];
+}
+
+// 辅助函数：生成随机最后消息
+function getRandomLastMsg(members) {
+  if (!members || members.length === 0) {
+    return '暂无消息';
+  }
+  const randomMember = members[Math.floor(Math.random() * members.length)];
+  const messages = [
+    '大家好~',
+    '在吗？',
+    '有人在吗？',
+    '来聊聊吧~',
+    '今天天气不错',
+    '踩踩空间~'
+  ];
+  const randomMsg = messages[Math.floor(Math.random() * messages.length)];
+  return `[${randomMember.name}]: ${randomMsg}`;
 }
 
 // 辅助函数：格式化时间

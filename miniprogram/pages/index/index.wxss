@@ -93,6 +93,41 @@ page {
 .agent-body {
   font-size: 80rpx;
   filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.3));
+  transition: transform 0.3s ease;
+}
+
+/* 小狮子的不同心情状态 */
+.agent-body.agent-happy {
+  animation: bounce 0.5s ease;
+}
+
+.agent-body.agent-sleepy {
+  animation: sleepy 2s ease-in-out infinite;
+  filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.3)) grayscale(0.3);
+}
+
+.agent-body.agent-surprised {
+  animation: surprise 0.3s ease;
+}
+
+.agent-body.agent-normal {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2) rotate(-10deg); }
+}
+
+@keyframes sleepy {
+  0%, 100% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
+}
+
+@keyframes surprise {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+  100% { transform: scale(1); }
 }
 
 .agent-bubble {
@@ -105,6 +140,14 @@ page {
   position: relative;
   box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
   white-space: nowrap;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.3s ease;
+}
+
+.agent-bubble.show {
+  opacity: 1;
+  transform: scale(1);
 }
 
 /* 气泡的小箭头 */
@@ -273,4 +316,49 @@ page {
   border-bottom: 1px solid #fff;
   margin: 10rpx 4rpx;
   height: 0;
+}
+
+/* 右键菜单 */
+.context-menu {
+  position: fixed;
+  background: #c0c0c0;
+  border: 2px outset #fff;
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.5);
+  z-index: 9998;
+  min-width: 200rpx;
+  padding: 2rpx;
+  animation: contextFadeIn 0.15s ease-out;
+}
+
+@keyframes contextFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.context-menu-item {
+  padding: 12rpx 20rpx;
+  font-size: 26rpx;
+  display: flex;
+  align-items: center;
+  color: #000;
+  margin-bottom: 2rpx;
+  font-weight: 500;
+}
+
+.context-menu-item:active {
+  background-color: #000080;
+  color: white;
+}
+
+.context-icon {
+  width: 40rpx;
+  text-align: center;
+  margin-right: 12rpx;
+  font-size: 32rpx;
 }

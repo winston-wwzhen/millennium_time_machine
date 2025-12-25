@@ -1,4 +1,25 @@
 <view class="desktop">
+  <!-- 自定义弹窗 -->
+  <view class="custom-modal-overlay" wx:if="{{showEmojiModal}}" catchtap="closeModal">
+    <view class="custom-modal" catchtap="stopPropagation">
+      <view class="custom-modal-header">
+        <text class="custom-modal-title">系统提示</text>
+        <view class="custom-modal-close" bindtap="closeModal">×</view>
+      </view>
+      <view class="custom-modal-body">
+        <view class="custom-modal-icon">ⓘ</view>
+        <view class="custom-modal-content">
+          拜托！现在才2005年诶~
+          <text></text>
+          智能手机要等到2007年iPhone才出来呢！表情包还没那么丰富，乖乖用文字聊天吧~
+        </view>
+      </view>
+      <view class="custom-modal-footer">
+        <view class="retro-btn" bindtap="closeModal">好的啦</view>
+      </view>
+    </view>
+  </view>
+
   <view class="window-frame chat-main">
     <view class="title-bar chat-title-bar">
       <view class="title-text">
@@ -38,7 +59,8 @@
     </scroll-view>
 
     <view class="chat-toolbar">
-      <text>字体(F)</text> <text>表情(I)</text> <text>震动(N)</text>
+      <text catchtap="onEmoji">表情(I)</text>
+      <text catchtap="onShake">震动(N)</text>
     </view>
 
     <view class="chat-input-area">

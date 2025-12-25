@@ -4,7 +4,7 @@ Page({
    * 页面的初始数据
    */
   data: {
-    statusText: 'Online [128kbps]'
+    statusText: '在线 [128kbps]'
   },
 
   /**
@@ -24,7 +24,7 @@ Page({
    * 接收农场组件的状态变化事件
    */
   onStatusChange(e) {
-    const text = e.detail.text || 'Online [128kbps]';
+    const text = e.detail.text || '在线 [128kbps]';
     this.setData({
       statusText: text
     });
