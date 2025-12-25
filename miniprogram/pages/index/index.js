@@ -53,6 +53,18 @@ Page({
         icon: "📸",
         path: "/pages/avatar/index",
       },
+      {
+        id: "storm-player",
+        name: "暴风影音",
+        icon: "🎬",
+        path: "/pages/storm-player/index",
+      },
+      {
+        id: "ttplayer",
+        name: "千千静听",
+        icon: "🎵",
+        path: "/pages/ttplayer/index",
+      },
     ],
     showStartMenu: false,
     showSubmenu: false, // 子菜单显示状态

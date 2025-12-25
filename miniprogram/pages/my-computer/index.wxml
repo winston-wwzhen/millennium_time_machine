@@ -11,35 +11,25 @@
     </view>
 
     <view class="win98-window-body">
-      <!-- 工具栏 -->
-      <view class="toolbar">
-        <view class="toolbar-item">文件(F)</view>
-        <view class="toolbar-item">编辑(E)</view>
-        <view class="toolbar-item">查看(V)</view>
-        <view class="toolbar-item">帮助(H)</view>
-      </view>
-
-      <view class="toolbar-divider"></view>
-
-      <!-- 地址栏 -->
-      <view class="address-bar">
-        <text class="address-label">地址</text>
-        <view class="address-input">我的电脑</view>
-      </view>
-
       <!-- 驱动器列表 -->
       <view class="drives-grid">
-        <view class="drive-item">
+        <view class="drive-item" bindtap="onDriveTap" data-drive="C">
           <view class="drive-icon">💾</view>
-          <text class="drive-label">(C:)</text>
-          <text class="drive-size">本地磁盘</text>
+          <view class="drive-info">
+            <text class="drive-label">(C:)</text>
+            <text class="drive-size">本地磁盘</text>
+            <view class="capacity-bar">
+              <view class="capacity-used" style="width: 99%"></view>
+            </view>
+            <text class="capacity-text">99% 已用 - 空间不足!</text>
+          </view>
         </view>
-        <view class="drive-item">
+        <view class="drive-item" bindtap="onDriveTap" data-drive="D">
           <view class="drive-icon">💿</view>
           <text class="drive-label">(D:)</text>
           <text class="drive-size">光盘驱动器</text>
         </view>
-        <view class="drive-item">
+        <view class="drive-item" bindtap="onDriveTap" data-drive="USB">
           <view class="drive-icon">📱</view>
           <text class="drive-label">可移动</text>
           <text class="drive-size">USB设备</text>
@@ -70,7 +60,28 @@
 
     <!-- 状态栏 -->
     <view class="status-bar">
-      <text>9 个对象</text>
+      <text>3 个对象</text>
+    </view>
+  </view>
+
+  <!-- 驱动器弹窗 -->
+  <view class="win98-overlay" wx:if="{{showDriveDialog}}" bindtap="closeDriveDialog">
+    <view class="win98-window drive-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">{{driveDialogData.title}}</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="closeDriveDialog">×</button>
+        </view>
+      </view>
+      <view class="win98-window-body">
+        <view class="drive-dialog-content">
+          <view class="drive-dialog-icon">{{driveDialogData.icon}}</view>
+          <text class="drive-dialog-message">{{driveDialogData.message}}</text>
+        </view>
+        <view class="dialog-actions">
+          <button class="win98-btn-std" bindtap="closeDriveDialog">确定</button>
+        </view>
+      </view>
     </view>
   </view>
 </view>
