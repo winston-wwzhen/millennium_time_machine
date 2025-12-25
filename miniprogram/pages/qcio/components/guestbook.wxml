@@ -7,20 +7,36 @@
 
   <!-- 留言列表 -->
   <view class="guestbook-list">
-    <view class="guestbook-item" wx:for="{{messages}}" wx:key="index">
+    <view class="guestbook-item {{item.isSystem ? 'system-message' : ''}}" wx:for="{{messages}}" wx:key="id">
       <view class="guestbook-avatar">{{item.avatar}}</view>
       <view class="guestbook-content">
         <view class="guestbook-header">
           <text class="guestbook-name">{{item.nickname}}</text>
-          <text class="guestbook-time">{{item.time}}</text>
+          <view class="guestbook-right">
+            <text class="guestbook-time">{{item.time}}</text>
+            <view
+              class="delete-btn {{item.isSystem ? 'disabled' : ''}}"
+              wx:if="{{!item.isSystem}}"
+              bindtap="deleteMessage"
+              data-id="{{item.id}}"
+              data-is-system="{{item.isSystem}}"
+            >
+              🗑️
+            </view>
+          </view>
         </view>
         <view class="guestbook-text">{{item.content}}</view>
       </view>
     </view>
   </view>
 
+  <!-- 加载状态 -->
+  <view class="loading-state" wx:if="{{loading}}">
+    <text class="loading-text">加载中...</text>
+  </view>
+
   <!-- 底部提示 -->
   <view class="guestbook-footer">
-    <text class="footer-text">✨ 留言由 AI 好友自动生成 ✨</text>
+    <text class="footer-text">✨ 踩一踩好友空间，他们会自动给你留言 ✨</text>
   </view>
 </view>

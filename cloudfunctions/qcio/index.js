@@ -15,6 +15,7 @@ const { dailyCheckin, getDailyTasks } = require('./modules/dailyTasks');
 const { redeemVipCode } = require('./modules/vip');
 const { getAchievements, checkAchievements } = require('./modules/achievements');
 const { saveMoodLog, getMoodLogs, deleteMoodLog, getMoodLogStatus } = require('./modules/moodLog');
+const { getGuestbook, deleteGuestbookMessage } = require('./modules/guestbook');
 
 /**
  * QCIO 核心业务云函数
@@ -59,6 +60,14 @@ exports.main = async (event, context) => {
     case 'getMoodLogStatus':
       // 获取日志发布状态
       return await getMoodLogStatus(OPENID, db);
+
+    case 'getGuestbook':
+      // 获取留言列表
+      return await getGuestbook(OPENID, db);
+
+    case 'deleteGuestbookMessage':
+      // 删除留言
+      return await deleteGuestbookMessage(OPENID, event.messageId, db);
 
     case 'recordVisit':
       // 记录访问（踩一踩）

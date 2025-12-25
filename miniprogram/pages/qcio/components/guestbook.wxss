@@ -70,6 +70,12 @@
   margin-bottom: 4px;
 }
 
+.guestbook-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .guestbook-name {
   font-size: 12px;
   color: #000080;
@@ -78,6 +84,45 @@
 
 .guestbook-time {
   font-size: 10px;
+  color: #808080;
+}
+
+/* 删除按钮 */
+.delete-btn {
+  font-size: 14px;
+  cursor: pointer;
+  padding: 2px 4px;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.delete-btn:active {
+  opacity: 1;
+}
+
+.delete-btn.disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* 系统消息样式 */
+.guestbook-item.system-message {
+  background: #ffffcc;
+  border-color: #cccc99;
+}
+
+.guestbook-item.system-message .guestbook-name {
+  color: #cc6600;
+}
+
+/* 加载状态 */
+.loading-state {
+  text-align: center;
+  padding: 20px;
+}
+
+.loading-text {
+  font-size: 12px;
   color: #808080;
 }
 
