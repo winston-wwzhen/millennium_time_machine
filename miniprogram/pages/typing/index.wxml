@@ -74,7 +74,7 @@
             <block wx:if="{{wpm >= 80}}">打字大神！⚡</block>
             <block wx:elif="{{wpm >= 50}}">速度不错！👍</block>
             <block wx:elif="{{wpm >= 30}}">继续加油！💪</block>
-            <block wx:else">再接再厉！🌱</block>
+            <block wx:else>再接再厉！🌱</block>
           </view>
         </view>
       </view>
