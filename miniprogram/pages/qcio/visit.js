@@ -266,7 +266,16 @@ Page({
 
   // 去登录
   goToLogin() {
-    wx.navigateBack();
+    // 使用 redirectTo 而不是 navigateBack，确保从分享链接进入时也能正常跳转
+    wx.redirectTo({
+      url: '/pages/qcio/index',
+      fail: () => {
+        // 如果 redirectTo 失败，尝试 reLaunch
+        wx.reLaunch({
+          url: '/pages/qcio/index'
+        });
+      }
+    });
   },
 
   // 去我的空间
