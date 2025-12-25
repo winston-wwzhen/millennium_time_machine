@@ -45,35 +45,66 @@
 
   <!-- 开始菜单 (弹出层) -->
   <view class="start-menu" wx:if="{{showStartMenu}}">
-    <view class="sidebar">
-      <text class="os-version">Millennium\nOS 2000</text>
-    </view>
-    <view class="menu-items">
-      <view class="menu-item submenu" bindtap="toggleSubmenu">
-        <text class="menu-icon">📂</text> 程序
-        <text class="submenu-arrow {{showSubmenu ? 'expanded' : ''}}">{{showSubmenu ? '▼' : '▶'}}</text>
-        <view class="submenu-content {{showSubmenu ? 'show' : ''}}" catchtap="stopPropagation">
-          <view class="submenu-item" catchtap="onIconTap" data-path="/pages/tetris/index">
-            <text class="submenu-icon">🎮</text> 俄罗斯方块
-          </view>
-          <view class="submenu-item" catchtap="onIconTap" data-path="/pages/star-explorer/index">
-            <text class="submenu-icon">🌌</text> 星际探索
-          </view>
-          <view class="submenu-item" catchtap="onIconTap" data-path="/pages/mars/index">
-            <text class="submenu-icon">🪐</text> 火星翻译
-          </view>
+    <!-- 左侧用户区域 -->
+    <view class="menu-left">
+      <view class="user-banner">
+        <view class="user-avatar">👤</view>
+        <view class="user-info">
+          <text class="user-name">管理员</text>
+          <text class="user-status">在线</text>
         </view>
       </view>
-      <view class="menu-item">
-        <text class="menu-icon">⚙️</text> 设置
+      <view class="menu-items">
+        <view class="menu-item submenu" bindtap="toggleSubmenu">
+          <text class="menu-icon">📂</text>
+          <text class="menu-text">程序</text>
+          <text class="submenu-arrow {{showSubmenu ? 'expanded' : ''}}">{{showSubmenu ? '▾' : '▸'}}</text>
+          <!-- 程序子菜单 -->
+          <view class="submenu-content {{showSubmenu ? 'show' : ''}}" catchtap="stopPropagation">
+            <view class="submenu-item" catchtap="onIconTap" data-path="/pages/tetris/index">
+              <text class="submenu-icon">🎮</text>
+              <text class="submenu-text">俄罗斯方块</text>
+            </view>
+            <view class="submenu-item" catchtap="onIconTap" data-path="/pages/star-explorer/index">
+              <text class="submenu-icon">🌌</text>
+              <text class="submenu-text">星际探索</text>
+            </view>
+            <view class="submenu-item" catchtap="onIconTap" data-path="/pages/mars/index">
+              <text class="submenu-icon">🪐</text>
+              <text class="submenu-text">火星翻译</text>
+            </view>
+          </view>
+        </view>
+        <view class="menu-item" bindtap="onIconTap" data-path="/pages/my-documents/index">
+          <text class="menu-icon">📄</text>
+          <text class="menu-text">我的文档</text>
+        </view>
+        <view class="menu-item" bindtap="onIconTap" data-path="/pages/my-computer/index">
+          <text class="menu-icon">💻</text>
+          <text class="menu-text">我的电脑</text>
+        </view>
+        <view class="menu-item">
+          <text class="menu-icon">⚙️</text>
+          <text class="menu-text">设置</text>
+        </view>
+        <view class="menu-item" bindtap="onIconTap" data-path="/pages/about/index">
+          <text class="menu-icon">❓</text>
+          <text class="menu-text">帮助</text>
+        </view>
+        <view class="menu-line"></view>
+        <view class="menu-item shutdown-item">
+          <text class="menu-icon">🔌</text>
+          <text class="menu-text">关机...</text>
+        </view>
       </view>
-      <view class="menu-item" bindtap="onIconTap" data-path="/pages/about/index">
-        <text class="menu-icon">❓</text> 帮助
+    </view>
+
+    <!-- 右侧Logo区域 -->
+    <view class="menu-right">
+      <view class="win-logo-container">
+        <image class="win-logo-large" src="../../images/borders/border_win98.png" mode="aspectFit"></image>
       </view>
-      <view class="menu-line"></view>
-      <view class="menu-item">
-        <text class="menu-icon">🔌</text> 关机...
-      </view>
+      <view class="os-text">Millennium OS 2000</view>
     </view>
   </view>
 
