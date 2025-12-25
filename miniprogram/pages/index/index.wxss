@@ -26,19 +26,19 @@ page {
   display: flex;
   flex-wrap: wrap;
   align-content: flex-start;
-  padding: 30rpx;
+  padding: 20rpx;
   /* 为微信导航栏预留更多空间 */
   padding-top: 180rpx;
-  gap: 20rpx 10rpx;
+  gap: 10rpx;
   overflow-y: auto;
 }
 
 .desktop-icon {
-  width: calc(50% - 20rpx);
+  width: calc(50% - 10rpx);
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 20rpx;
+  margin-bottom: 15rpx;
 }
 
 .desktop-icon:active .icon-img {
@@ -52,9 +52,9 @@ page {
 }
 
 .icon-img {
-  font-size: 80rpx;
-  width: 100rpx;
-  height: 100rpx;
+  font-size: 70rpx;
+  width: 90rpx;
+  height: 90rpx;
   display: flex;
   align-items: center;
   justify-content: center;
