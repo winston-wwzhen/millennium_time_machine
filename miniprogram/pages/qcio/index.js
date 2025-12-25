@@ -14,6 +14,7 @@ Page({
     isLoadingAccount: true, // 是否正在从云端拉取数据
     loginProgress: 0,     // 进度条百分比 (0-100)
     needsRegister: false, // 是否需要注册
+    returnToVisit: '',    // 登录后返回的踩一踩页面 owner_qcio_id
 
     // 注册表单数据
     registerForm: {
@@ -65,8 +66,10 @@ Page({
     this.initAccountFromCloud();
     this.loadAIContacts();
 
-    // 检查是否是通过分享链接进入（踩一踩）
+    // 保存返回目标（用于登录/注册成功后跳转）
     if (options && options.visit) {
+      this.setData({ returnToVisit: options.visit });
+      // 如果已登录，直接处理访问（自动踩一脚）
       this.handleVisitFromShare(options.visit);
     }
   },
@@ -331,6 +334,13 @@ Page({
               });
               // 登录成功后获取钱包数据
               this.loadWalletData();
+
+              // 检查是否需要返回踩一踩页面
+              if (this.data.returnToVisit) {
+                wx.redirectTo({
+                  url: `/pages/qcio/visit?owner=${this.data.returnToVisit}`
+                });
+              }
             } else {
               throw new Error('云端同步失败');
             }

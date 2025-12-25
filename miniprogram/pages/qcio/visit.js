@@ -267,12 +267,14 @@ Page({
   // 去登录
   goToLogin() {
     // 使用 redirectTo 而不是 navigateBack，确保从分享链接进入时也能正常跳转
+    // 传递 owner 参数，登录成功后返回踩一踩页面
+    const url = `/pages/qcio/index?visit=${this.data.ownerQcioId}`;
     wx.redirectTo({
-      url: '/pages/qcio/index',
+      url: url,
       fail: () => {
         // 如果 redirectTo 失败，尝试 reLaunch
         wx.reLaunch({
-          url: '/pages/qcio/index'
+          url: url
         });
       }
     });
