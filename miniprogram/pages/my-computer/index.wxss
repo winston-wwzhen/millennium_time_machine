@@ -244,11 +244,16 @@ page {
 }
 
 .drive-dialog {
-  width: 280px;
+  width: 260px;
+}
+
+/* 驱动器弹窗主体 - 去除多余内边距 */
+.drive-dialog .win98-window-body {
+  padding: 0;
 }
 
 .drive-dialog-content {
-  padding: 12px 15px;
+  padding: 10px 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -256,22 +261,24 @@ page {
 }
 
 .drive-dialog-icon {
-  font-size: 40px;
-  margin-bottom: 8px;
+  font-size: 32px;
+  margin-bottom: 6px;
+  line-height: 1;
 }
 
 .drive-dialog-message {
-  font-size: 12px;
+  font-size: 11px;
   color: #000;
   white-space: pre-line;
-  line-height: 1.6;
+  line-height: 1.5;
   font-family: 'SimSun', serif;
+  margin: 0;
 }
 
 .dialog-actions {
   display: flex;
   justify-content: center;
-  padding: 8px;
+  padding: 6px;
   background: #c0c0c0;
   border-top: 1px solid #808080;
 }
