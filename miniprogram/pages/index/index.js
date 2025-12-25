@@ -58,9 +58,10 @@ Page({
   },
 
   onLoad: function() {
-    // 分割图标为左右两列（纵向填充）
+    // 分割图标为左右两列（左列优先填充）
     const icons = this.data.desktopIcons;
-    const midPoint = Math.ceil(icons.length / 2);
+    // 左列放 5 个，右列放 2 个（总共 7 个）
+    const midPoint = 5;
     this.setData({
       leftColumn: icons.slice(0, midPoint),
       rightColumn: icons.slice(midPoint)
