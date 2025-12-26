@@ -1,13 +1,10 @@
 import { callCloudFunction } from './cloudbase'
 
+// 临时使用模拟数据（云函数部署后改为调用 API）
+const USE_MOCK_DATA = false
+
 export async function getStats() {
-  try {
-    const result = await callCloudFunction('admin-stats', {
-      type: 'all'
-    })
-    return result.data || {}
-  } catch (error) {
-    // 开发环境模拟数据
+  if (USE_MOCK_DATA) {
     return {
       totalUsers: 12345,
       todayActive: 1234,
@@ -19,30 +16,49 @@ export async function getStats() {
       shareGrowth: 20
     }
   }
+
+  try {
+    const result = await callCloudFunction('admin-stats', {
+      type: 'all'
+    })
+    return result.data || {}
+  } catch (error) {
+    console.error('获取统计数据失败:', error)
+    return {
+      totalUsers: 0,
+      todayActive: 0,
+      gameCompleted: 0,
+      todayShares: 0
+    }
+  }
 }
 
 export async function getRankings() {
+  if (USE_MOCK_DATA) {
+    return {
+      level: [
+        { nickname: '葬爱杀杀', level: 28, qpoints: 5230 },
+        { nickname: '忧伤王子', level: 25, qpoints: 4100 },
+        { nickname: '轻舞飞扬', level: 24, qpoints: 3800 }
+      ],
+      qpoints: [
+        { nickname: '葬爱杀杀', qpoints: 5230, level: 28 },
+        { nickname: '忧伤王子', qpoints: 4100, level: 25 }
+      ],
+      eggs: [
+        { nickname: '葬爱杀杀', eggCount: 75, level: 28 },
+        { nickname: '网管小哥', eggCount: 68, level: 22 }
+      ]
+    }
+  }
+
   try {
     const result = await callCloudFunction('admin-stats', {
       type: 'rankings'
     })
     return result.data || {}
   } catch (error) {
-    // 开发环境模拟数据
-    return {
-      level: [
-        { nickname: 'User12345678', level: 28, qpoints: 5230 },
-        { nickname: 'User87654321', level: 25, qpoints: 4100 },
-        { nickname: 'User11112222', level: 24, qpoints: 3800 }
-      ],
-      qpoints: [
-        { nickname: 'User12345678', qpoints: 5230, level: 28 },
-        { nickname: 'User87654321', qpoints: 4100, level: 25 }
-      ],
-      eggs: [
-        { nickname: 'User12345678', eggCount: 75, level: 28 },
-        { nickname: 'User33334444', eggCount: 68, level: 22 }
-      ]
-    }
+    console.error('获取排行榜失败:', error)
+    return { level: [], qpoints: [], eggs: [] }
   }
 }
