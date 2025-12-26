@@ -134,8 +134,21 @@ Page({
     // 加载网络状态
     this.loadNetworkStatus();
 
+    // 从云端加载彩蛋数据
+    this.loadEggData();
+
     // 检查时间彩蛋
     this.checkTimeEggs();
+  },
+
+  // 从云端加载彩蛋数据
+  loadEggData: async function() {
+    try {
+      await eggSystem.load();
+      console.log('彩蛋数据加载完成');
+    } catch (e) {
+      console.error('加载彩蛋数据失败:', e);
+    }
   },
 
   // 页面显示时重新加载网络状态
@@ -146,7 +159,7 @@ Page({
   },
 
   // 检查时间相关彩蛋
-  checkTimeEggs: function() {
+  checkTimeEggs: async function() {
     const now = new Date();
     const hour = now.getHours();
     const minute = now.getMinutes();
@@ -163,7 +176,8 @@ Page({
       // 5分钟内不重复触发
       if (nowTimestamp - lastTrigger > 5 * 60 * 1000) {
         wx.setStorageSync(lastTriggerKey, nowTimestamp);
-        const isNewDiscovery = eggSystem.discover(EGG_IDS.TIME_SPECIAL);
+        const result = await eggSystem.discover(EGG_IDS.TIME_SPECIAL);
+        const isNewDiscovery = result?.isNew || false;
 
         const messages = {
           '12:34': '1234，顺顺当当！',
@@ -189,7 +203,8 @@ Page({
 
     // 午夜彩蛋：0点-1点之间
     if (hour === 0) {
-      const isNewDiscovery = eggSystem.discover(EGG_IDS.TIME_MIDNIGHT);
+      const result = await eggSystem.discover(EGG_IDS.TIME_MIDNIGHT);
+      const isNewDiscovery = result?.isNew || false;
 
       this.setData({
         isMidnightEgg: true,
@@ -273,7 +288,7 @@ Page({
   },
 
   // 检测图标点击彩蛋
-  checkIconClickEggs: function(iconId) {
+  checkIconClickEggs: async function(iconId) {
     let eggId = null;
     let clickCount = 5;  // 默认5次触发
 
@@ -291,10 +306,11 @@ Page({
         return;  // 不是有彩蛋的图标
     }
 
-    const shouldTrigger = eggSystem.incrementCounter(eggId, clickCount);
+    const shouldTrigger = await eggSystem.incrementCounter(eggId, clickCount);
 
     if (shouldTrigger) {
-      const isNewDiscovery = eggSystem.discover(eggId);
+      const result = await eggSystem.discover(eggId);
+      const isNewDiscovery = result?.isNew || false;
       const config = eggSystem.getConfig(eggId);
 
       // 显示发现提示
@@ -471,9 +487,9 @@ Page({
   },
 
   // 小狮子点击互动
-  onAgentTap: function () {
+  onAgentTap: async function () {
     // 检查小狮子跳舞彩蛋（点击10次触发）
-    const shouldTriggerDance = eggSystem.incrementCounter(EGG_IDS.LION_DANCE, 10);
+    const shouldTriggerDance = await eggSystem.incrementCounter(EGG_IDS.LION_DANCE, 10);
 
     if (shouldTriggerDance) {
       // 触发跳舞彩蛋
@@ -513,8 +529,9 @@ Page({
   },
 
   // 触发小狮子跳舞彩蛋
-  triggerLionDance: function() {
-    const isNewDiscovery = eggSystem.discover(EGG_IDS.LION_DANCE);
+  triggerLionDance: async function() {
+    const result = await eggSystem.discover(EGG_IDS.LION_DANCE);
+    const isNewDiscovery = result?.isNew || false;
 
     this.setData({
       isDancing: true,
@@ -534,11 +551,12 @@ Page({
   },
 
   // 小狮子长按 - 触发说话彩蛋
-  onAgentLongPress: function() {
+  onAgentLongPress: async function() {
     if (this.data.isDragging) return;  // 拖动中不触发
 
     // 触发说话彩蛋
-    const isNewDiscovery = eggSystem.discover(EGG_IDS.LION_TALK);
+    const result = await eggSystem.discover(EGG_IDS.LION_TALK);
+    const isNewDiscovery = result?.isNew || false;
 
     // 怀旧语录库
     const nostalgicQuotes = [
@@ -580,7 +598,7 @@ Page({
   },
 
   // 桌面点击 - 检测双击（背景切换）和蓝屏彩蛋
-  onDesktopTap: function(e) {
+  onDesktopTap: async function(e) {
     // 如果已经显示蓝屏，不处理
     if (this.data.showBlueScreen) return;
 
@@ -598,7 +616,7 @@ Page({
     this.data.lastTapTime = now;
 
     // 检查蓝屏彩蛋（点击50次触发）
-    const shouldTriggerBSOD = eggSystem.incrementCounter(EGG_IDS.BLUE_SCREEN, 50);
+    const shouldTriggerBSOD = await eggSystem.incrementCounter(EGG_IDS.BLUE_SCREEN, 50);
 
     if (shouldTriggerBSOD) {
       this.triggerBlueScreen();
@@ -606,7 +624,7 @@ Page({
   },
 
   // 切换桌面背景
-  switchDesktopBackground: function() {
+  switchDesktopBackground: async function() {
     const newIndex = (this.data.desktopBgIndex + 1) % this.data.desktopBackgrounds.length;
 
     this.setData({
@@ -615,7 +633,7 @@ Page({
 
     // 首次切换发现彩蛋
     if (newIndex === 1) {
-      eggSystem.discover('bg_switch');
+      await eggSystem.discover(EGG_IDS.BG_SWITCH);
       wx.showToast({
         title: '🎨 发现彩蛋：换了个心情',
         icon: 'none',
@@ -631,8 +649,9 @@ Page({
   },
 
   // 触发蓝屏彩蛋
-  triggerBlueScreen: function() {
-    const isNewDiscovery = eggSystem.discover(EGG_IDS.BLUE_SCREEN);
+  triggerBlueScreen: async function() {
+    const result = await eggSystem.discover(EGG_IDS.BLUE_SCREEN);
+    const isNewDiscovery = result?.isNew || false;
 
     this.setData({
       showBlueScreen: true
@@ -656,12 +675,13 @@ Page({
   },
 
   // 点击任务栏 - 检测任务栏惊喜彩蛋
-  onTaskbarTap: function() {
+  onTaskbarTap: async function() {
     // 点击任务栏10次触发惊喜
-    const shouldTrigger = eggSystem.incrementCounter('taskbar_surprise', 10);
+    const shouldTrigger = await eggSystem.incrementCounter(EGG_IDS.TASKBAR_SURPRISE, 10);
 
     if (shouldTrigger) {
-      const isNewDiscovery = eggSystem.discover('taskbar_surprise');
+      const result = await eggSystem.discover(EGG_IDS.TASKBAR_SURPRISE);
+      const isNewDiscovery = result?.isNew || false;
 
       // 显示怀旧文字
       wx.showModal({
@@ -674,11 +694,11 @@ Page({
   },
 
   // 切换隐藏图标彩蛋
-  toggleHiddenIcon: function() {
+  toggleHiddenIcon: async function() {
     const newValue = !this.data.showHiddenIcon;
 
     if (newValue) {
-      eggSystem.discover('hidden_icon');
+      await eggSystem.discover(EGG_IDS.HIDDEN_ICON);
     }
 
     this.setData({
@@ -733,8 +753,9 @@ Page({
   },
 
   // 触发上帝模式
-  triggerGodMode: function() {
-    const isNewDiscovery = eggSystem.discover(EGG_IDS.KONAMI_CODE);
+  triggerGodMode: async function() {
+    const result = await eggSystem.discover(EGG_IDS.KONAMI_CODE);
+    const isNewDiscovery = result?.isNew || false;
 
     this.setData({
       showGodMode: true,

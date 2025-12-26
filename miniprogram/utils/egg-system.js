@@ -2,6 +2,7 @@
  * 彩蛋系统
  *
  * 管理小程序中所有彩蛋的触发、状态和奖励
+ * 使用云数据库存储，支持跨设备同步
  */
 
 // 彩蛋ID定义
@@ -68,19 +69,6 @@ const EGG_CONFIG = {
     reward: {
       qpoints: 50,
       badge: '夜猫子'
-    }
-  },
-  [EGG_IDS.KONAMI_CODE]: {
-    id: EGG_IDS.KONAMI_CODE,
-    name: '传说中的秘籍',
-    description: '↑↑↓↓←→←→BA',
-    hint: '那个年代的游戏秘籍...',
-    rarity: 'legendary',
-    type: 'sequence',
-    reward: {
-      qpoints: 100,
-      badge: '上帝之手',
-      unlock: 'god_mode'
     }
   },
   [EGG_IDS.TASKBAR_SURPRISE]: {
@@ -184,35 +172,50 @@ const EGG_CONFIG = {
 
 class EggSystem {
   constructor() {
-    this.counters = {};        // 彩蛋计数器
-    this.discovered = new Set(); // 已发现的彩蛋
-    this.sequences = {};       // 序列追踪
-    this.storageKey = 'egg_system_data';
-    this.load();
+    this.counters = {};        // 本地计数器缓存
+    this.discovered = new Set(); // 本地已发现彩蛋缓存
+    this.stats = {            // 统计数据
+      totalDiscovered: 0,
+      totalQpoints: 0
+    };
+    this.loaded = false;       // 是否已从云端加载
+    this.cloudSyncing = false; // 是否正在同步云端
   }
 
-  // 加载彩蛋数据
-  load() {
+  // 从云端加载彩蛋数据
+  async load() {
+    if (this.loaded) return;
+
     try {
-      const data = wx.getStorageSync(this.storageKey);
-      if (data) {
-        this.discovered = new Set(data.discovered || []);
-        this.counters = data.counters || {};
+      const res = await wx.cloud.callFunction({
+        name: 'user',
+        data: { type: 'getEggs' }
+      });
+
+      if (res.result.success) {
+        const data = res.result.data;
+
+        // 加载已发现的彩蛋
+        if (data.discoveredEggs) {
+          this.discovered = new Set(data.discoveredEggs.map(e => e.eggId));
+        }
+
+        // 加载计数器
+        if (data.counters) {
+          this.counters = { ...data.counters };
+        }
+
+        // 加载统计数据
+        if (data.stats) {
+          this.stats = { ...data.stats };
+        }
+
+        this.loaded = true;
       }
     } catch (e) {
       console.error('加载彩蛋数据失败:', e);
-    }
-  }
-
-  // 保存彩蛋数据
-  save() {
-    try {
-      wx.setStorageSync(this.storageKey, {
-        discovered: Array.from(this.discovered),
-        counters: this.counters
-      });
-    } catch (e) {
-      console.error('保存彩蛋数据失败:', e);
+      // 失败时标记为已加载，避免重复请求
+      this.loaded = true;
     }
   }
 
@@ -221,20 +224,48 @@ class EggSystem {
     return this.discovered.has(eggId);
   }
 
-  // 发现彩蛋
-  discover(eggId) {
-    if (!this.discovered.has(eggId)) {
-      this.discovered.add(eggId);
-      this.save();
-
-      const config = EGG_CONFIG[eggId];
-      if (config) {
-        this.showDiscoveryEffect(config);
-      }
-
-      return true;  // 新发现
+  // 发现彩蛋（异步，同步到云端）
+  async discover(eggId) {
+    // 先检查本地缓存
+    if (this.discovered.has(eggId)) {
+      return { isNew: false, reward: null };
     }
-    return false;  // 已发现过
+
+    try {
+      const config = EGG_CONFIG[eggId];
+      const res = await wx.cloud.callFunction({
+        name: 'user',
+        data: {
+          type: 'discoverEgg',
+          eggId: eggId,
+          eggData: config
+        }
+      });
+
+      if (res.result.success) {
+        const { isNew, reward } = res.result;
+
+        if (isNew) {
+          // 更新本地缓存
+          this.discovered.add(eggId);
+          this.stats.totalDiscovered++;
+          if (reward?.qpoints) {
+            this.stats.totalQpoints += reward.qpoints;
+          }
+
+          // 显示发现效果
+          if (config) {
+            this.showDiscoveryEffect(config);
+          }
+        }
+
+        return { isNew, reward };
+      }
+    } catch (e) {
+      console.error('发现彩蛋失败:', e);
+    }
+
+    return { isNew: false, reward: null };
   }
 
   // 显示发现效果
@@ -269,7 +300,7 @@ class EggSystem {
   // 发放奖励
   grantReward(reward) {
     if (reward.qpoints) {
-      // 调用云函数发放Q点（可选）
+      // 这里可以调用云函数发放Q点到钱包
       console.log('发放Q点奖励:', reward.qpoints);
     }
 
@@ -279,26 +310,58 @@ class EggSystem {
     }
   }
 
-  // 点击计数器
-  incrementCounter(eggId, max, callback) {
+  // 点击计数器（异步同步到云端）
+  async incrementCounter(eggId, max) {
     if (!this.counters[eggId]) {
       this.counters[eggId] = 0;
     }
 
     this.counters[eggId]++;
 
-    if (this.counters[eggId] >= max) {
-      this.counters[eggId] = 0;  // 重置计数器
-      this.save();
-      return true;  // 触发彩蛋
+    const shouldTrigger = this.counters[eggId] >= max;
+
+    if (shouldTrigger) {
+      this.counters[eggId] = 0;
+      // 异步同步到云端，不阻塞UI
+      this.syncCounter(eggId, 0);
+      return true;
     }
 
-    this.save();
-    return false;  // 未触发
+    // 节流同步：每5次同步一次
+    if (this.counters[eggId] % 5 === 0) {
+      this.syncCounter(eggId, this.counters[eggId]);
+    }
+
+    return false;
   }
 
-  // 检测序列输入
+  // 同步计数器到云端
+  async syncCounter(eggId, count) {
+    try {
+      await wx.cloud.callFunction({
+        name: 'user',
+        data: {
+          type: 'updateCounter',
+          eggData: { eggId, count }
+        }
+      });
+    } catch (e) {
+      console.error('同步计数器失败:', e);
+    }
+  }
+
+  // 重置计数器
+  async resetCounter(eggId) {
+    this.counters[eggId] = 0;
+    await this.syncCounter(eggId, 0);
+  }
+
+  // 检测序列输入（本地操作，不需要同步）
   checkSequence(eggId, input, correctSequence) {
+    if (!this.sequences) {
+      this.sequences = {};
+    }
+
     if (!this.sequences[eggId]) {
       this.sequences[eggId] = [];
     }
@@ -315,11 +378,6 @@ class EggSystem {
     const targetSequence = correctSequence.join('');
 
     return currentSequence === targetSequence;
-  }
-
-  // 重置序列
-  resetSequence(eggId) {
-    this.sequences[eggId] = [];
   }
 
   // 获取已发现彩蛋数量
@@ -351,6 +409,11 @@ class EggSystem {
   // 获取所有彩蛋配置
   getAllConfigs() {
     return EGG_CONFIG;
+  }
+
+  // 获取用户统计数据
+  getStats() {
+    return this.stats;
   }
 }
 
