@@ -263,9 +263,9 @@ page {
 .id-row { font-size: 10px; color: #444; margin: 2px 0; }
 .sig-row { font-size: 11px; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-/* 等级称号 */
-.level-title-row { margin: 2px 0; }
-.level-title-text { font-size: 10px; color: #666; font-style: italic; }
+/* 成长值称号 */
+.growth-title-row { margin: 2px 0; }
+.growth-title-text { font-size: 10px; color: #666; font-style: italic; }
 
 /* 钱包显示区域 */
 .wallet-display {

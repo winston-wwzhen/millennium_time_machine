@@ -35,7 +35,7 @@ Component({
       const nextLevelExp = this.getExpForLevel(level + 1);
 
       if (nextLevelExp <= levelExp) {
-        // 达到最高等级的情况
+        // 达到最高成长值等级的情况
         this.setData({
           progress: 100,
           needExp: 0,

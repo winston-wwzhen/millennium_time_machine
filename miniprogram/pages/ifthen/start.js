@@ -18,6 +18,22 @@ Page({
     this.setData({
       birthYear: 1990
     });
+
+    // 追踪分享链接访问
+    if (options.shareId || options.endingId) {
+      wx.cloud.callFunction({
+        name: 'ifthen',
+        data: {
+          action: 'recordShareVisit',
+          shareId: options.shareId || '',
+          endingId: options.endingId || ''
+        }
+      }).then(res => {
+        console.log('分享访问记录成功');
+      }).catch(err => {
+        console.error('记录分享访问失败:', err);
+      });
+    }
   },
 
   // 年份滑块变化

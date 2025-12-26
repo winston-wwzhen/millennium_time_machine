@@ -948,11 +948,31 @@ Page({
   // 分享结局
   shareEnding: function() {
     const ending = this.data.ending;
-    const shareTitle = `我在「如果当时」中达成了结局：${ending.title}`;
-    const shareDesc = ending.description || '来体验一下千禧年代的人生模拟游戏吧！';
+
+    // 记录分享行为
+    wx.cloud.callFunction({
+      name: 'ifthen',
+      data: {
+        action: 'recordShare',
+        endingId: ending.id,
+        shareType: 'ending'
+      }
+    }).then(res => {
+      if (res.result.success) {
+        if (res.result.isFirstShare) {
+          wx.showToast({
+            title: `+${res.result.reward}Q点`,
+            icon: 'success',
+            duration: 2000
+          });
+        }
+      }
+    }).catch(err => {
+      console.error('记录分享失败:', err);
+    });
 
     return {
-      title: shareTitle,
+      title: `我在「如果当时」中达成了：${ending.title}`,
       path: '/pages/ifthen/start',
       imageUrl: ''
     };

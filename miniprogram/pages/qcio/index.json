@@ -11,6 +11,6 @@
     "daily-checkin": "./components/daily-checkin",
     "level-badge": "/components/level-badge/index",
     "exp-progress": "/components/exp-progress/index",
-    "level-up-dialog": "/components/level-up-dialog/index"
+    "growth-up-dialog": "/components/growth-up-dialog/index"
   }
 }

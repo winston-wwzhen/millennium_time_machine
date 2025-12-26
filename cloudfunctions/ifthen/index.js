@@ -23,6 +23,12 @@ exports.main = async (event, context) => {
       return await getEndingStats(OPENID);
     case 'getAllEndings':
       return await getAllEndings();
+    case 'recordShare':
+      return await recordShare(OPENID, event);
+    case 'getShareReward':
+      return await getShareReward(OPENID);
+    case 'recordShareVisit':
+      return await recordShareVisit(event);
     default:
       return {
         success: false,
@@ -184,6 +190,175 @@ async function getAllEndings() {
       message: '请从前端数据文件获取结局列表'
     };
   } catch (err) {
+    return {
+      success: false,
+      error: err.message
+    };
+  }
+}
+
+/**
+ * 记录分享行为
+ */
+async function recordShare(openid, data) {
+  const { endingId, shareType = 'ending' } = data;
+
+  try {
+    // 检查用户是否已分享过该结局
+    const existingResult = await db.collection('ifthen_shares')
+      .where({
+        _openid: openid,
+        endingId: endingId
+      })
+      .get();
+
+    const isFirstShare = existingResult.data.length === 0;
+
+    // 记录分享行为
+    await db.collection('ifthen_shares').add({
+      data: {
+        endingId,
+        shareType,
+        shareTime: db.serverDate(),
+        visitCount: 0
+      }
+    });
+
+    // 如果是首次分享，奖励Q点
+    let reward = 0;
+    if (isFirstShare) {
+      reward = 5; // 首次分享奖励5Q点
+
+      // 更新QCIO钱包
+      await wx.cloud.callFunction({
+        name: 'qcio',
+        data: {
+          action: 'addQpoints',
+          amount: reward,
+          reason: '首次分享结局'
+        }
+      }).catch(err => {
+        console.error('奖励Q点失败:', err);
+      });
+    }
+
+    return {
+      success: true,
+      isFirstShare,
+      reward,
+      message: isFirstShare ? `首次分享成功！获得${reward}Q点奖励` : '分享成功！'
+    };
+  } catch (err) {
+    console.error('记录分享失败:', err);
+    return {
+      success: false,
+      error: err.message
+    };
+  }
+}
+
+/**
+ * 获取分享奖励
+ */
+async function getShareReward(openid) {
+  try {
+    // 获取用户所有分享记录
+    const sharesResult = await db.collection('ifthen_shares')
+      .where({ _openid: openid })
+      .get();
+
+    // 统计不同结局的分享次数（首次分享才计数）
+    const uniqueEndings = new Set();
+    let totalVisits = 0;
+
+    sharesResult.data.forEach(record => {
+      uniqueEndings.add(record.endingId);
+      totalVisits += record.visitCount || 0;
+    });
+
+    // 计算奖励
+    const baseReward = uniqueEndings.size * 5; // 每个结局首次分享5Q点
+    const visitReward = Math.floor(totalVisits / 5) * 2; // 每5个访问奖励2Q点
+    const totalReward = baseReward + visitReward;
+
+    return {
+      success: true,
+      stats: {
+        uniqueEndings: uniqueEndings.size,
+        totalShares: sharesResult.data.length,
+        totalVisits,
+        totalReward
+      }
+    };
+  } catch (err) {
+    console.error('获取分享奖励失败:', err);
+    return {
+      success: false,
+      error: err.message
+    };
+  }
+}
+
+/**
+ * 记录分享链接访问（回流追踪）
+ */
+async function recordShareVisit(data) {
+  const { shareId, endingId } = data;
+  const wxContext = cloud.getWXContext();
+  const visitorOpenid = wxContext.OPENID;
+
+  try {
+    // 更新分享记录的访问计数
+    if (shareId) {
+      await db.collection('ifthen_shares')
+        .doc(shareId)
+        .update({
+          data: {
+            visitCount: _.inc(1)
+          }
+        });
+    }
+
+    // 记录访问日志
+    await db.collection('ifthen_share_visits').add({
+      data: {
+        shareId,
+        endingId,
+        visitorOpenid,
+        visitTime: db.serverDate()
+      }
+    });
+
+    // 如果访问者不是分享者，奖励分享者
+    if (shareId) {
+      const shareRecord = await db.collection('ifthen_shares')
+        .doc(shareId)
+        .get();
+
+      if (shareRecord.data && shareRecord.data._openid !== visitorOpenid) {
+        // 每5个访问奖励2Q点
+        const visitCount = (shareRecord.data.visitCount || 0) + 1;
+        if (visitCount % 5 === 0) {
+          await wx.cloud.callFunction({
+            name: 'qcio',
+            data: {
+              action: 'addQpoints',
+              openid: shareRecord.data._openid,
+              amount: 2,
+              reason: '分享回流奖励'
+            }
+          }).catch(err => {
+            console.error('回流奖励失败:', err);
+          });
+        }
+      }
+    }
+
+    return {
+      success: true
+    };
+  } catch (err) {
+    console.error('记录访问失败:', err);
     return {
       success: false,
       error: err.message

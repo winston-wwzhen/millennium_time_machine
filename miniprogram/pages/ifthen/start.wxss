@@ -118,7 +118,33 @@ page {
   font-style: italic;
 }
 
-/* 游戏说明区域 */
+/* 工具介绍区域 */
+.info-intro {
+  padding: 10px 12px;
+  background: #e8f4ff;
+  border: 1px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.intro-text {
+  font-size: 11px;
+  color: #000080;
+  text-align: center;
+  font-weight: bold;
+}
+
+.intro-sub {
+  font-size: 10px;
+  color: #666;
+  text-align: center;
+  font-style: italic;
+}
+
+/* 工具说明区域 */
 .info-section {
   padding: 12px;
   background: #ffffff;

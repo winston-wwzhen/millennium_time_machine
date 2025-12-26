@@ -142,6 +142,10 @@ exports.main = async (event, context) => {
     case 'checkAchievements':
       return await checkAchievements(OPENID, db, _);
 
+    case 'addQpoints':
+      // 添加Q点（奖励）
+      return await addQpoints(OPENID, event.amount, event.reason, event.openid, db, _);
+
     default:
       return { success: false, message: '未知的操作类型' };
   }
@@ -937,6 +941,59 @@ async function getGroupChatHistory(openid, groupName) {
     return { success: true, data: [] };
   } catch (err) {
     console.error('getGroupChatHistory Error:', err);
+    return { success: false, error: err };
+  }
+}
+
+/**
+ * 添加Q点（奖励）
+ * @param {string} callerOpenid - 调用者openid（通常是当前用户）
+ * @param {number} amount - Q点数量
+ * @param {string} reason - 原因
+ * @param {string} targetOpenid - 目标用户openid（可选，用于奖励其他用户）
+ */
+async function addQpoints(callerOpenid, amount, reason, targetOpenid = null, db, _) {
+  try {
+    const openid = targetOpenid || callerOpenid;
+
+    // 获取当前钱包
+    const walletRes = await db.collection('qcio_wallet')
+      .where({ _openid: openid })
+      .get();
+
+    if (walletRes.data.length === 0) {
+      // 钱包不存在，创建新钱包
+      await db.collection('qcio_wallet').add({
+        data: {
+          _openid: openid,
+          coins: 0,
+          qpoints: amount,
+          updateTime: db.serverDate()
+        }
+      });
+    } else {
+      // 更新现有钱包
+      await db.collection('qcio_wallet')
+        .doc(walletRes.data[0]._id)
+        .update({
+          data: {
+            qpoints: _.inc(amount),
+            updateTime: db.serverDate()
+          }
+        });
+    }
+
+    // 记录交易
+    await addTransaction(openid, {
+      type: 'qpoints_in',
+      amount: amount,
+      balance: (walletRes.data[0]?.qpoints || 0) + amount,
+      description: reason || 'Q点奖励'
+    }, db, _);
+
+    return { success: true, amount };
+  } catch (err) {
+    console.error('addQpoints Error:', err);
     return { success: false, error: err };
   }
 }

@@ -34,9 +34,9 @@ Page({
       avatar: '👤',
       level: 1
     },
-    levelIcons: [], // 等级图标数组
-    levelTitle: '', // 等级称号
-    levelInfo: null, // 完整等级信息（从云函数获取）
+    growthIcons: [], // 成长值图标数组
+    growthTitle: '', // 成长值称号
+    growthInfo: null, // 完整成长值信息（从云函数获取）
 
     // 用户钱包数据
     wallet: {
@@ -45,9 +45,9 @@ Page({
       isVip: false
     },
 
-    // 升级弹窗控制
-    showLevelUpDialog: false,
-    levelUpData: null,
+    // 成长弹窗控制
+    showGrowthUpDialog: false,
+    growthUpData: null,
 
     activeTab: 'contacts', // 当前选中的 Tab：contacts, chats, zone
     zoneSubTab: 'home', // 空间Tab内的子Tab：home, log, msg
@@ -194,11 +194,11 @@ Page({
             isLoggedIn: !!profile.isOnline,
             isLoadingAccount: false
           });
-          this.calculateLevelIcons(profile.level || 1);
+          this.calculateGrowthIcons(profile.level || 1);
           // 加载钱包数据
           this.loadWalletData();
-          // 加载等级信息
-          this.loadLevelInfo();
+          // 加载成长值信息
+          this.loadGrowthInfo();
         }
       } else {
         throw new Error(result ? result.message : '初始化失败');
@@ -294,14 +294,14 @@ Page({
   },
 
   /**
-   * 计算QQ风格等级图标
+   * 计算QQ风格成长值图标
    * 1-4级: 星星 (★)
    * 5-8级: 月亮 (☾)
    * 9-12级: 太阳 (☼)
    * 13-16级: 皇冠 (♔)
    * 17+级: 皇冠+钻石 (♔♢)
    */
-  calculateLevelIcons: function(level) {
+  calculateGrowthIcons: function(level) {
     if (!level || level < 1) level = 1;
 
     let icon = '';
@@ -331,15 +331,15 @@ Page({
     }
 
     this.setData({
-      levelIcons: [icon],
-      levelTitle: title
+      growthIcons: [icon],
+      growthTitle: title
     });
   },
 
   /**
-   * 从云函数加载完整等级信息
+   * 从云函数加载完整成长值信息
    */
-  loadLevelInfo: function() {
+  loadGrowthInfo: function() {
     if (!this.data.userProfile.qcio_id) return;
 
     wx.cloud.callFunction({
@@ -351,11 +351,11 @@ Page({
     }).then(res => {
       if (res.result && res.result.level) {
         this.setData({
-          levelInfo: res.result
+          growthInfo: res.result
         });
       }
     }).catch(err => {
-      console.error('Load Level Info Error:', err);
+      console.error('Load Growth Info Error:', err);
     });
   },
 
@@ -390,8 +390,8 @@ Page({
               });
               // 登录成功后获取钱包数据
               this.loadWalletData();
-              // 加载等级信息
-              this.loadLevelInfo();
+              // 加载成长值信息
+              this.loadGrowthInfo();
 
               // 检查是否需要返回踩一踩页面
               if (this.data.returnToVisit) {
@@ -541,7 +541,7 @@ Page({
           this.setData({
             userProfile: res.result.data
           });
-          this.calculateLevelIcons(res.result.data.level);
+          this.calculateGrowthIcons(res.result.data.level);
           wx.showToast({ title: '同步成功', icon: 'success' });
         } else {
           wx.showToast({ title: '保存失败', icon: 'none' });

@@ -139,21 +139,21 @@ App({
   },
 
   /**
-   * 显示升级通知
+   * 显示成长通知
    */
-  showLevelUpNotification: function(result) {
+  showGrowthUpNotification: function(result) {
     const { new_level } = result;
 
-    // 判断升级类型并生成对应消息
-    let title = '🎉 恭喜升级！';
-    let message = `你升级到了 Lv${new_level}！`;
+    // 判断成长类型并生成对应消息
+    let title = '🎉 恭喜成长！';
+    let message = `你成长到了 Lv${new_level}！`;
 
     if ([20, 30, 50].includes(new_level)) {
       title = '🏆 里程碑成就！';
-      message = `恭喜达到里程碑等级 Lv${new_level}！`;
+      message = `恭喜达到里程碑成长值 Lv${new_level}！`;
     } else if (new_level >= 13) {
-      title = '👑 重大升级！';
-      message = `恭喜获得皇冠等级 Lv${new_level}！`;
+      title = '👑 重大成长！';
+      message = `恭喜获得皇冠成长值 Lv${new_level}！`;
     }
 
     // 使用本地通知或页面弹窗

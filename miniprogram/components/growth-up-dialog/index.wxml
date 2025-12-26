@@ -1,0 +1,27 @@
+<view class="growth-up-dialog {{visible ? 'visible' : ''}}" wx:if="{{visible}}">
+  <view class="dialog-overlay" bindtap="onClose"></view>
+  <view class="dialog-content type-{{type}}">
+    <view class="growth-icon-large">{{level > 12 ? '👑' : '⭐'}}</view>
+    <view class="growth-title">恭喜成长到 Lv{{level}}！</view>
+    <view class="growth-title-sub" wx:if="{{type !== 'normal'}}">
+      {{type === 'major' ? '达到皇冠等级！' : '里程碑成就！'}}
+    </view>
+
+    <view class="rewards-section" wx:if="{{rewards.length > 0}}">
+      <view class="reward-item" wx:for="{{rewards}}" wx:key="level">
+        <text>解锁 Lv{{item.level}} 成长值奖励</text>
+      </view>
+    </view>
+
+    <view class="rewards-section" wx:if="{{type === 'major' || type === 'milestone'}}">
+      <view class="special-reward">🎁 额外奖励礼包已到账</view>
+    </view>
+
+    <view class="dialog-buttons">
+      <button class="btn-close" bindtap="onClose">确定</button>
+      <button class="btn-share" wx:if="{{type !== 'normal'}}" bindtap="onShare">
+        分享喜悦
+      </button>
+    </view>
+  </view>
+</view>
