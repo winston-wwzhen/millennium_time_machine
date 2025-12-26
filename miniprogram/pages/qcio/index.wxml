@@ -138,6 +138,9 @@
               </block>
             </view>
           </view>
+          <view class="level-title-row" wx:if="{{levelTitle}}">
+            <text class="level-title-text">{{levelTitle}}</text>
+          </view>
           <view class="id-row">QCIO: {{userProfile.qcio_id}}</view>
           <view class="sig-row" bindtap="openEditDialog" data-type="signature">
             {{userProfile.signature || '点击编辑个性签名...'}}

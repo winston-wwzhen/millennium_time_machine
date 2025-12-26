@@ -1,0 +1,239 @@
+.container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #c0c0c0;
+}
+
+/* Windows 98 风格标题栏 */
+.title-bar {
+  background: linear-gradient(to right, #000080, #1084d0);
+  padding: 8rpx 16rpx;
+  display: flex;
+  align-items: center;
+}
+
+.title-bar-text {
+  color: white;
+  font-weight: bold;
+  font-size: 28rpx;
+}
+
+/* 主内容区域 */
+.content {
+  flex: 1;
+  padding: 40rpx;
+  overflow-y: auto;
+}
+
+/* 游戏标题 */
+.game-title {
+  text-align: center;
+  margin-bottom: 60rpx;
+  padding: 40rpx;
+  background: white;
+  border: 4rpx solid #808080;
+  box-shadow: 4rpx 4rpx 0 #000;
+}
+
+.title-main {
+  display: block;
+  font-size: 56rpx;
+  font-weight: bold;
+  color: #000080;
+  margin-bottom: 16rpx;
+}
+
+.title-sub {
+  display: block;
+  font-size: 32rpx;
+  color: #000080;
+  margin-bottom: 16rpx;
+  font-style: italic;
+}
+
+.title-desc {
+  display: block;
+  font-size: 26rpx;
+  color: #666;
+}
+
+/* 通用区块样式 */
+.section {
+  margin-bottom: 40rpx;
+  padding: 24rpx;
+  background: #c0c0c0;
+  border: 4rpx solid #808080;
+  box-shadow: 4rpx 4rpx 0 #000;
+}
+
+.section-title {
+  margin-bottom: 24rpx;
+}
+
+/* 年份选择器 */
+.year-selector {
+  padding: 20rpx;
+  background: white;
+  border: 4rpx solid #808080;
+  box-shadow: inset 2rpx 2rpx 0 #c0c0c0;
+}
+
+.year-display {
+  text-align: center;
+  margin-bottom: 24rpx;
+  padding: 20rpx;
+  background: #000080;
+}
+
+.year-value {
+  font-size: 72rpx;
+  font-weight: bold;
+  color: white;
+}
+
+.year-unit {
+  font-size: 36rpx;
+  color: white;
+  margin-left: 8rpx;
+}
+
+.year-slider {
+  margin: 24rpx 0;
+}
+
+.year-range {
+  display: flex;
+  justify-content: space-between;
+  font-size: 24rpx;
+  color: #666;
+  margin-top: 16rpx;
+}
+
+.age-preview {
+  margin-top: 24rpx;
+  padding: 16rpx;
+  background: #ffffc0;
+  border: 4rpx solid #808080;
+  text-align: center;
+  font-size: 26rpx;
+  color: #000080;
+}
+
+/* 性别选择器 */
+.gender-selector {
+  display: flex;
+  gap: 24rpx;
+  padding: 20rpx;
+  background: white;
+  border: 4rpx solid #808080;
+  box-shadow: inset 2rpx 2rpx 0 #c0c0c0;
+}
+
+.gender-option {
+  flex: 1;
+  padding: 32rpx;
+  text-align: center;
+  background: #e0e0e0;
+  border: 4rpx solid #c0c0c0;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.gender-option.selected {
+  background: #000080;
+  color: white;
+  border-color: #ffffff;
+  box-shadow: inset 2rpx 2rpx 0 #000;
+}
+
+.gender-icon {
+  display: block;
+  font-size: 80rpx;
+  margin-bottom: 16rpx;
+}
+
+.gender-text {
+  display: block;
+  font-size: 28rpx;
+}
+
+/* 游戏说明 */
+.instructions {
+  padding: 20rpx;
+  background: white;
+  border: 4rpx solid #808080;
+  box-shadow: inset 2rpx 2rpx 0 #c0c0c0;
+}
+
+.instructions-text text {
+  display: block;
+  padding: 8rpx 0;
+  font-size: 26rpx;
+  color: #333;
+}
+
+/* 按钮区域 */
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+  padding-top: 40rpx;
+}
+
+/* Windows 98 按钮样式 */
+.win98-btn {
+  padding: 16rpx 32rpx;
+  background: #c0c0c0;
+  border: 4rpx solid #fff;
+  box-shadow:
+    2rpx 2rpx 0 #fff,
+    inset -2rpx -2rpx 0 #808080,
+    inset 2rpx 2rpx 0 #dfdfdf;
+  font-size: 28rpx;
+  color: #000;
+  text-align: center;
+}
+
+.win98-btn:active {
+  box-shadow:
+    inset 2rpx 2rpx 0 #808080,
+    inset -2rpx -2rpx 0 #dfdfdf;
+}
+
+.win98-btn-primary {
+  background: #000080;
+  color: white;
+  border-color: #fff;
+  box-shadow:
+    2rpx 2rpx 0 #fff,
+    inset -2rpx -2rpx 0 #000080,
+    inset 2rpx 2rpx 0 #1084d0;
+}
+
+.win98-btn-primary:active {
+  background: #000080;
+  box-shadow:
+    inset 2rpx 2rpx 0 #000080,
+    inset -2rpx -2rpx 0 #1084d0;
+}
+
+.win98-btn-caption {
+  font-weight: bold;
+  margin-bottom: 8rpx;
+  display: block;
+}
+
+/* 底部状态栏 */
+.status-bar {
+  background: #c0c0c0;
+  border-top: 4rpx solid #808080;
+  padding: 8rpx 16rpx;
+  display: flex;
+  gap: 16rpx;
+}
+
+.status-item {
+  font-size: 22rpx;
+  color: #000;
+}

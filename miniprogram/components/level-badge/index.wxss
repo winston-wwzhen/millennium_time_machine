@@ -1,0 +1,27 @@
+.level-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4rpx;
+}
+
+.level-icon {
+  font-size: 28rpx;
+  font-weight: bold;
+}
+
+.size-small .level-icon {
+  font-size: 20rpx;
+}
+
+.size-medium .level-icon {
+  font-size: 28rpx;
+}
+
+.size-large .level-icon {
+  font-size: 40rpx;
+}
+
+.level-title {
+  font-size: 22rpx;
+  color: #999;
+}

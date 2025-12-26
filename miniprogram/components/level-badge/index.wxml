@@ -1,0 +1,4 @@
+<view class="level-badge size-{{size}}" bindtap="onBadgeTap">
+  <view class="level-icon">{{icon}}</view>
+  <view class="level-title" wx:if="{{showTitle}}">{{title}}</view>
+</view>

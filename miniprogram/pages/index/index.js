@@ -48,6 +48,12 @@ Page({
         path: "/pages/qcio/index",
       },
       {
+        id: "ifthen",
+        name: "如果当时.exe",
+        icon: "⏳",
+        path: "/pages/ifthen/start",
+      },
+      {
         id: "avatar",
         name: "非主流相机",
         icon: "📸",
