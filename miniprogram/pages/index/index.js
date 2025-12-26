@@ -151,6 +151,22 @@ Page({
     }
   },
 
+  // 本地计数器（用于触发点击类彩蛋，不保存到云端）
+  eggCounters: {},
+
+  // 本地计数器辅助函数
+  incrementEggCounter: function(eggId, max) {
+    if (!this.eggCounters[eggId]) {
+      this.eggCounters[eggId] = 0;
+    }
+    this.eggCounters[eggId]++;
+    if (this.eggCounters[eggId] >= max) {
+      this.eggCounters[eggId] = 0;
+      return true;
+    }
+    return false;
+  },
+
   // 页面显示时重新加载网络状态
   onShow: function () {
     this.loadNetworkStatus();
@@ -306,7 +322,7 @@ Page({
         return;  // 不是有彩蛋的图标
     }
 
-    const shouldTrigger = await eggSystem.incrementCounter(eggId, clickCount);
+    const shouldTrigger = this.incrementEggCounter(eggId, clickCount);
 
     if (shouldTrigger) {
       const result = await eggSystem.discover(eggId);
@@ -405,6 +421,7 @@ Page({
 
     const progress = eggSystem.getProgress();
     const allConfigs = eggSystem.getAllConfigs();
+    const badges = eggSystem.getBadges();
 
     // 按稀有度分组
     const rarityOrder = ['legendary', 'epic', 'rare', 'common'];
@@ -415,7 +432,8 @@ Page({
       legendary: '🟠 传说'
     };
 
-    let content = `🎯 彩蛋收集进度: ${progress.discovered}/${progress.total} (${progress.percentage}%)\n\n`;
+    let content = `🎯 彩蛋收集进度: ${progress.discovered}/${progress.total} (${progress.percentage}%)\n`;
+    content += `💰 累计获得: ${eggSystem.getStats().totalEarned}分钟网费\n\n`;
 
     // 按稀有度显示
     for (const rarity of rarityOrder) {
@@ -426,8 +444,9 @@ Page({
           const isDiscovered = eggSystem.isDiscovered(egg.id);
           const status = isDiscovered ? '✅' : '❓';
           const name = isDiscovered ? egg.name : '???';
+          const reward = isDiscovered ? `+${egg.reward.coins}分钟` : '';
           const hint = isDiscovered ? '' : `\n   💡 ${egg.hint}`;
-          content += `${status} ${name}${hint}\n`;
+          content += `${status} ${name} ${reward}${hint}\n`;
         }
         content += '\n';
       }
@@ -487,9 +506,9 @@ Page({
   },
 
   // 小狮子点击互动
-  onAgentTap: async function () {
+  onAgentTap: function () {
     // 检查小狮子跳舞彩蛋（点击10次触发）
-    const shouldTriggerDance = await eggSystem.incrementCounter(EGG_IDS.LION_DANCE, 10);
+    const shouldTriggerDance = this.incrementEggCounter(EGG_IDS.LION_DANCE, 10);
 
     if (shouldTriggerDance) {
       // 触发跳舞彩蛋
@@ -598,7 +617,7 @@ Page({
   },
 
   // 桌面点击 - 检测双击（背景切换）和蓝屏彩蛋
-  onDesktopTap: async function(e) {
+  onDesktopTap: function(e) {
     // 如果已经显示蓝屏，不处理
     if (this.data.showBlueScreen) return;
 
@@ -616,7 +635,7 @@ Page({
     this.data.lastTapTime = now;
 
     // 检查蓝屏彩蛋（点击50次触发）
-    const shouldTriggerBSOD = await eggSystem.incrementCounter(EGG_IDS.BLUE_SCREEN, 50);
+    const shouldTriggerBSOD = this.incrementEggCounter(EGG_IDS.BLUE_SCREEN, 50);
 
     if (shouldTriggerBSOD) {
       this.triggerBlueScreen();
@@ -677,7 +696,7 @@ Page({
   // 点击任务栏 - 检测任务栏惊喜彩蛋
   onTaskbarTap: async function() {
     // 点击任务栏10次触发惊喜
-    const shouldTrigger = await eggSystem.incrementCounter(EGG_IDS.TASKBAR_SURPRISE, 10);
+    const shouldTrigger = this.incrementEggCounter(EGG_IDS.TASKBAR_SURPRISE, 10);
 
     if (shouldTrigger) {
       const result = await eggSystem.discover(EGG_IDS.TASKBAR_SURPRISE);

@@ -3,6 +3,7 @@
  *
  * 管理小程序中所有彩蛋的触发、状态和奖励
  * 使用云数据库存储，支持跨设备同步
+ * 奖励：网费（用于拨号上网、AI聊天等）
  */
 
 // 彩蛋ID定义
@@ -21,7 +22,7 @@ const EGG_IDS = {
   TIME_SPECIAL: 'time_special',       // 特殊时刻
 };
 
-// 彩蛋配置
+// 彩蛋配置 - 网费奖励（单位：分 = 1分钟网费）
 const EGG_CONFIG = {
   [EGG_IDS.LION_DANCE]: {
     id: EGG_IDS.LION_DANCE,
@@ -31,7 +32,7 @@ const EGG_CONFIG = {
     rarity: 'common',        // common, rare, epic, legendary
     type: 'click',           // click, longpress, time, sequence
     reward: {
-      qpoints: 10,
+      coins: 10,             // 10分钟网费
       badge: '舞者'
     }
   },
@@ -43,7 +44,7 @@ const EGG_CONFIG = {
     rarity: 'common',
     type: 'longpress',
     reward: {
-      qpoints: 10,
+      coins: 10,
       badge: '倾听者'
     }
   },
@@ -55,7 +56,7 @@ const EGG_CONFIG = {
     rarity: 'rare',
     type: 'click',
     reward: {
-      qpoints: 20,
+      coins: 20,
       badge: '蓝屏幸存者'
     }
   },
@@ -67,7 +68,7 @@ const EGG_CONFIG = {
     rarity: 'epic',
     type: 'time',
     reward: {
-      qpoints: 50,
+      coins: 50,
       badge: '夜猫子'
     }
   },
@@ -79,7 +80,7 @@ const EGG_CONFIG = {
     rarity: 'common',
     type: 'click',
     reward: {
-      qpoints: 10,
+      coins: 10,
       badge: '探索者'
     }
   },
@@ -91,7 +92,7 @@ const EGG_CONFIG = {
     rarity: 'rare',
     type: 'click',
     reward: {
-      qpoints: 20,
+      coins: 20,
       badge: '寻宝者'
     }
   },
@@ -103,7 +104,7 @@ const EGG_CONFIG = {
     rarity: 'common',
     type: 'click',
     reward: {
-      qpoints: 10,
+      coins: 10,
       badge: '艺术家'
     }
   },
@@ -115,7 +116,7 @@ const EGG_CONFIG = {
     rarity: 'common',
     type: 'click',
     reward: {
-      qpoints: 5,
+      coins: 5,
       badge: '清洁工'
     }
   },
@@ -127,7 +128,7 @@ const EGG_CONFIG = {
     rarity: 'common',
     type: 'click',
     reward: {
-      qpoints: 5,
+      coins: 5,
       badge: '硬件控'
     }
   },
@@ -139,7 +140,7 @@ const EGG_CONFIG = {
     rarity: 'common',
     type: 'click',
     reward: {
-      qpoints: 5,
+      coins: 5,
       badge: '冲浪达人'
     }
   },
@@ -151,7 +152,7 @@ const EGG_CONFIG = {
     rarity: 'rare',
     type: 'time',
     reward: {
-      qpoints: 15,
+      coins: 15,
       badge: '时刻见证者'
     }
   },
@@ -163,7 +164,7 @@ const EGG_CONFIG = {
     rarity: 'legendary',
     type: 'sequence',
     reward: {
-      qpoints: 100,
+      coins: 100,
       badge: '上帝之手',
       unlock: 'god_mode'
     }
@@ -172,14 +173,13 @@ const EGG_CONFIG = {
 
 class EggSystem {
   constructor() {
-    this.counters = {};        // 本地计数器缓存
-    this.discovered = new Set(); // 本地已发现彩蛋缓存
-    this.stats = {            // 统计数据
+    this.discovered = new Set(); // 本地已发现彩蛋缓存（badge名称）
+    this.stats = {              // 统计数据
       totalDiscovered: 0,
-      totalQpoints: 0
+      totalEarned: 0
     };
-    this.loaded = false;       // 是否已从云端加载
-    this.cloudSyncing = false; // 是否正在同步云端
+    this.badges = [];           // 徽章列表
+    this.loaded = false;        // 是否已从云端加载
   }
 
   // 从云端加载彩蛋数据
@@ -195,14 +195,10 @@ class EggSystem {
       if (res.result.success) {
         const data = res.result.data;
 
-        // 加载已发现的彩蛋
-        if (data.discoveredEggs) {
-          this.discovered = new Set(data.discoveredEggs.map(e => e.eggId));
-        }
-
-        // 加载计数器
-        if (data.counters) {
-          this.counters = { ...data.counters };
+        // 加载徽章列表
+        if (data.badges) {
+          this.badges = data.badges;
+          this.discovered = new Set(data.badges.map(b => b.eggId));
         }
 
         // 加载统计数据
@@ -249,8 +245,15 @@ class EggSystem {
           // 更新本地缓存
           this.discovered.add(eggId);
           this.stats.totalDiscovered++;
-          if (reward?.qpoints) {
-            this.stats.totalQpoints += reward.qpoints;
+          if (reward?.coins) {
+            this.stats.totalEarned += reward.coins;
+          }
+          if (reward?.badge) {
+            this.badges.push({
+              name: reward.badge,
+              eggId: eggId,
+              discoveredAt: new Date()
+            });
           }
 
           // 显示发现效果
@@ -285,99 +288,16 @@ class EggSystem {
       legendary: '传说'
     };
 
+    const reward = config.reward;
+    const rewardText = reward.coins ? `+${reward.coins}分钟网费` : '';
+
     wx.showModal({
       title: '🎉 发现彩蛋！',
-      content: `${config.name}\n\n"${config.description}"\n\n稀有度: ${rarityNames[config.rarity]}\n奖励: ${config.reward.qpoints}Q点`,
+      content: `${config.name}\n\n"${config.description}"\n\n稀有度: ${rarityNames[config.rarity]}\n奖励: ${rewardText}`,
       showCancel: false,
       confirmText: '太棒了！',
       confirmColor: rarityColors[config.rarity]
     });
-
-    // 发放奖励
-    this.grantReward(config.reward);
-  }
-
-  // 发放奖励
-  grantReward(reward) {
-    if (reward.qpoints) {
-      // 这里可以调用云函数发放Q点到钱包
-      console.log('发放Q点奖励:', reward.qpoints);
-    }
-
-    if (reward.badge) {
-      // 保存徽章到用户数据（可选）
-      console.log('获得徽章:', reward.badge);
-    }
-  }
-
-  // 点击计数器（异步同步到云端）
-  async incrementCounter(eggId, max) {
-    if (!this.counters[eggId]) {
-      this.counters[eggId] = 0;
-    }
-
-    this.counters[eggId]++;
-
-    const shouldTrigger = this.counters[eggId] >= max;
-
-    if (shouldTrigger) {
-      this.counters[eggId] = 0;
-      // 异步同步到云端，不阻塞UI
-      this.syncCounter(eggId, 0);
-      return true;
-    }
-
-    // 节流同步：每5次同步一次
-    if (this.counters[eggId] % 5 === 0) {
-      this.syncCounter(eggId, this.counters[eggId]);
-    }
-
-    return false;
-  }
-
-  // 同步计数器到云端
-  async syncCounter(eggId, count) {
-    try {
-      await wx.cloud.callFunction({
-        name: 'user',
-        data: {
-          type: 'updateCounter',
-          eggData: { eggId, count }
-        }
-      });
-    } catch (e) {
-      console.error('同步计数器失败:', e);
-    }
-  }
-
-  // 重置计数器
-  async resetCounter(eggId) {
-    this.counters[eggId] = 0;
-    await this.syncCounter(eggId, 0);
-  }
-
-  // 检测序列输入（本地操作，不需要同步）
-  checkSequence(eggId, input, correctSequence) {
-    if (!this.sequences) {
-      this.sequences = {};
-    }
-
-    if (!this.sequences[eggId]) {
-      this.sequences[eggId] = [];
-    }
-
-    this.sequences[eggId].push(input);
-
-    // 保持序列长度与正确序列一致
-    if (this.sequences[eggId].length > correctSequence.length) {
-      this.sequences[eggId] = this.sequences[eggId].slice(-correctSequence.length);
-    }
-
-    // 检查是否匹配
-    const currentSequence = this.sequences[eggId].join('');
-    const targetSequence = correctSequence.join('');
-
-    return currentSequence === targetSequence;
   }
 
   // 获取已发现彩蛋数量
@@ -414,6 +334,11 @@ class EggSystem {
   // 获取用户统计数据
   getStats() {
     return this.stats;
+  }
+
+  // 获取徽章列表
+  getBadges() {
+    return this.badges;
   }
 }
 
