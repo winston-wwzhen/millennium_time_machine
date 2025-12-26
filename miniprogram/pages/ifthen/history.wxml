@@ -1,0 +1,131 @@
+<!-- 结局收集 - Win98风格 -->
+<view class="desktop">
+  <view class="win98-window">
+    <view class="win98-title-bar">
+      <view class="win98-title-text">结局收集.exe</view>
+      <view class="win98-title-controls">
+        <button class="win98-btn-minimize">_</button>
+        <button class="win98-btn-maximize">□</button>
+        <button class="win98-btn-close" bindtap="startNewGame">×</button>
+      </view>
+    </view>
+
+    <view class="win98-window-body">
+      <!-- 统计区域 -->
+      <view class="stats-section">
+        <view class="stats-title">📊 收集统计</view>
+
+        <view class="stats-row">
+          <view class="stat-box">
+            <view class="stat-label">已解锁结局</view>
+            <view class="stat-value">{{stats.totalEndings}}</view>
+            <view class="stat-total">/ 88</view>
+          </view>
+          <view class="stat-box">
+            <view class="stat-label">完成度</view>
+            <view class="stat-value">{{stats.unlockRate}}</view>
+            <view class="stat-percent">%</view>
+          </view>
+          <view class="stat-box">
+            <view class="stat-label">总游玩次数</view>
+            <view class="stat-value">{{stats.totalPlays}}</view>
+            <view class="stat-unit">局</view>
+          </view>
+        </view>
+
+        <!-- 类型统计 -->
+        <view class="type-stats-grid">
+          <view class="type-stat-box type-special">
+            <text class="type-stat-icon">🌟</text>
+            <view class="type-stat-info">
+              <text class="type-stat-label">特殊/传奇</text>
+              <text class="type-stat-count">{{stats.typeStats.special}}</text>
+            </view>
+          </view>
+          <view class="type-stat-box type-good">
+            <text class="type-stat-icon">😊</text>
+            <view class="type-stat-info">
+              <text class="type-stat-label">好结局</text>
+              <text class="type-stat-count">{{stats.typeStats.good}}</text>
+            </view>
+          </view>
+          <view class="type-stat-box type-normal">
+            <text class="type-stat-icon">😐</text>
+            <view class="type-stat-info">
+              <text class="type-stat-label">普通结局</text>
+              <text class="type-stat-count">{{stats.typeStats.normal}}</text>
+            </view>
+          </view>
+          <view class="type-stat-box type-bad">
+            <text class="type-stat-icon">😢</text>
+            <view class="type-stat-info">
+              <text class="type-stat-label">坏结局</text>
+              <text class="type-stat-count">{{stats.typeStats.bad}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 历史记录区域 -->
+      <view class="history-section">
+        <view class="section-header">
+          <text class="section-title">📋 历史记录</text>
+          <text class="section-count">({{historyList.length}}条)</text>
+        </view>
+
+        <scroll-view class="history-scroll" scroll-y scroll-with-animation>
+          <view class="history-list">
+            <view class="history-item" wx:for="{{historyList}}" wx:key="_id" bindtap="viewEndingDetail" data-ending-id="{{item.endingId}}">
+              <view class="history-item-left">
+                <text class="history-icon">{{item.endingInfo.icon || '📖'}}</text>
+              </view>
+              <view class="history-item-right">
+                <view class="history-title-row">
+                  <text class="history-title">{{item.endingInfo.title || '未知结局'}}</text>
+                  <view class="history-tag type-{{item.endingInfo.type}}">{{item.endingInfo.typeText || '普通'}}</view>
+                </view>
+                <view class="history-meta">
+                  <text class="meta-text">🎂 {{item.birthYear}}年</text>
+                  <text class="meta-text">{{item.gender === 'male' ? '👦 男' : '👧 女'}}</text>
+                  <text class="meta-text" wx:if="{{item.finalAttributes}}">😊 {{item.finalAttributes.happiness}}</text>
+                </view>
+                <view class="history-time">
+                  <text class="time-text">{{item.createTime}}</text>
+                </view>
+              </view>
+            </view>
+
+            <!-- 加载更多 -->
+            <view class="load-more" wx:if="{{hasMore}}">
+              <text class="load-text">{{loading ? '加载中...' : '下拉加载更多'}}</text>
+            </view>
+
+            <!-- 没有更多 -->
+            <view class="no-more" wx:if="{{!hasMore && historyList.length > 0}}">
+              <text class="no-more-text">━━━ 已经到底啦 ━━━</text>
+            </view>
+
+            <!-- 空状态 -->
+            <view class="empty-state" wx:if="{{historyList.length === 0}}">
+              <text class="empty-icon">📭</text>
+              <text class="empty-text">还没有游玩记录</text>
+              <text class="empty-hint">快去体验不同的人生吧！</text>
+            </view>
+          </view>
+        </scroll-view>
+      </view>
+    </view>
+
+    <!-- 按钮区域 -->
+    <view class="action-bar">
+      <button class="win98-btn-std win98-btn-primary" bindtap="startNewGame">
+        开始新游戏
+      </button>
+    </view>
+
+    <!-- 状态栏 -->
+    <view class="status-bar">
+      <text>Ready - {{stats.totalEndings}}/88 Endings Unlocked</text>
+    </view>
+  </view>
+</view>

@@ -3,6 +3,7 @@ Page({
     birthYear: 1990,
     gender: 'male',
     isLoading: false,
+    showInstructions: false, // 玩法说明弹窗显示状态
 
     // 可选的出生年份范围
     minYear: 1940,
@@ -23,6 +24,24 @@ Page({
   onYearChange: function(e) {
     this.setData({
       birthYear: parseInt(e.detail.value)
+    });
+  },
+
+  // 增加年份
+  increaseYear: function() {
+    if (this.data.birthYear >= this.data.maxYear) return;
+
+    this.setData({
+      birthYear: this.data.birthYear + 1
+    });
+  },
+
+  // 减少年份
+  decreaseYear: function() {
+    if (this.data.birthYear <= this.data.minYear) return;
+
+    this.setData({
+      birthYear: this.data.birthYear - 1
     });
   },
 
@@ -55,13 +74,22 @@ Page({
     });
   },
 
-  // 查看说明
-  showInstructions: function() {
-    wx.showModal({
-      title: '游戏说明',
-      content: '穿越回2005年，经历20年间的重大历史事件，通过选择走向不同的人生结局。每次选择都会影响你的人物属性，最终决定你的人生走向。',
-      showCancel: false,
-      confirmText: '知道了'
+  // 切换玩法说明弹窗
+  toggleInstructions: function() {
+    this.setData({
+      showInstructions: !this.data.showInstructions
+    });
+  },
+
+  // 阻止事件冒泡
+  stopPropagation: function() {
+    // 空函数，用于防止点击内容区域时关闭弹窗
+  },
+
+  // 查看历史结局
+  viewHistory: function() {
+    wx.navigateTo({
+      url: '/pages/ifthen/history'
     });
   },
 

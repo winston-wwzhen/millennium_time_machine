@@ -1,15 +1,27 @@
 <!-- 游戏主界面 - 时间线页面 -->
-<view class="game-container">
+<view class="desktop">
+  <view class="win98-window">
+    <view class="win98-title-bar">
+      <view class="win98-title-text">如果当时.exe - 游戏中</view>
+      <view class="win98-title-controls">
+        <button class="win98-btn-minimize">_</button>
+        <button class="win98-btn-maximize">□</button>
+        <button class="win98-btn-close" bindtap="goHome">×</button>
+      </view>
+    </view>
 
-  <!-- 顶部信息栏 -->
+    <view class="win98-window-body">
+      <!-- 顶部信息栏 -->
   <view class="top-bar">
-    <view class="year-display">
+    <view class="info-display">
       <text class="year">{{currentYear}}</text>
       <text class="year-label">年</text>
-    </view>
-    <view class="age-display">
       <text class="age">{{age}}</text>
       <text class="age-label">岁</text>
+    </view>
+    <view class="top-bar-actions">
+      <text class="ending-link" bindtap="reopenEnding" wx:if="{{ending}}">查看结局</text>
+      <text class="restart-link" bindtap="restartGame">重新开始</text>
     </view>
   </view>
 
@@ -73,15 +85,51 @@
     </view>
   </view>
 
-  <!-- 事件卡片区域 -->
-  <view class="event-area">
-    <!-- 事件卡片 -->
-    <view class="event-card {{eventCardVisible ? 'visible' : ''}}" wx:if="{{showEventCard && currentEvent}}">
-      <view class="event-header">
-        <text class="event-year">{{currentYear}}</text>
-        <text class="event-age">{{age}}岁</text>
+  <!-- 时间轴区域 -->
+  <view class="timeline-section" bindtap="onTimelineTap">
+    <view class="timeline-header">时光轴</view>
+    <scroll-view class="timeline-scroll" scroll-y scroll-top="0" scroll-with-animation catchtap="onTimelineTap">
+      <view class="timeline-list">
+        <view class="timeline-item {{index === currentTimelineIndex ? 'active' : ''}}"
+              wx:for="{{timelineData}}"
+              wx:for-item="item"
+              wx:for-index="index"
+              wx:key="index"
+              id="timeline-item-{{index}}">
+          <view class="timeline-dot"></view>
+          <view class="timeline-content">
+            <text class="timeline-year">{{item.year}}</text>
+            <text class="timeline-age">{{item.age}}岁</text>
+            <text class="timeline-event" wx:if="{{item.displayTitle && item.displayTitle.length > 0}}">{{item.displayTitle}}</text>
+            <text class="timeline-choice" wx:if="{{item.displayChoice && item.displayChoice.length > 0}}">{{item.displayChoice}}</text>
+          </view>
+        </view>
+        <view class="timeline-empty" wx:if="{{timelineData.length === 0}}">
+          <text>暂无记录,开始你的时光之旅吧~</text>
+        </view>
       </view>
+    </scroll-view>
+  </view>
+    </view>
 
+    <!-- 状态栏 -->
+    <view class="status-bar">
+      <text>Playing - Year {{currentYear}}</text>
+    </view>
+  </view>
+</view>
+
+<!-- 事件弹窗 -->
+<view class="event-overlay {{showEventCard ? 'visible' : ''}}" wx:if="{{showEventCard && currentEvent}}">
+  <view class="event-window">
+    <view class="event-title-bar">
+      <view class="event-title-text">事件 - {{currentYear}}年</view>
+      <view class="event-title-controls">
+        <button class="event-btn-close" bindtap="closeEvent">×</button>
+      </view>
+    </view>
+
+    <view class="event-window-body">
       <view class="event-content">
         <text class="event-title">{{currentEvent.title}}</text>
         <text class="event-desc">{{currentEvent.description}}</text>
@@ -103,23 +151,10 @@
           bindtap="makeChoice"
         >
           <text class="choice-text">{{item.text}}</text>
-          <text class="choice-hint" wx:if="{{item.hint}}">{{item.hint}}</text>
         </button>
       </view>
     </view>
-
-    <!-- 选择结果 -->
-    <view class="choice-result {{choiceResultVisible ? 'visible' : ''}}" wx:if="{{choiceResultVisible}}">
-      <text class="result-text">{{currentResult}}</text>
-    </view>
   </view>
-
-  <!-- 底部操作栏 -->
-  <view class="bottom-bar">
-    <button class="btn-home" bindtap="goHome">返回首页</button>
-    <button class="btn-restart" bindtap="restartGame">重新开始</button>
-  </view>
-
 </view>
 
 <!-- 结局弹窗 -->
@@ -179,6 +214,8 @@
     </view>
 
     <view class="ending-actions">
+      <button class="btn-close-ending" bindtap="closeEnding">关闭</button>
+      <button class="btn-share-ending" bindtap="shareEnding" open-type="share">分享</button>
       <button class="btn-restart-ending" bindtap="restartGame">再来一局</button>
       <button class="btn-home-ending" bindtap="goHome">返回首页</button>
     </view>
