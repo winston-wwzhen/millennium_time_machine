@@ -114,6 +114,26 @@ page {
   animation: float 3s ease-in-out infinite;
 }
 
+/* 小狮子跳舞状态 - 彩蛋 */
+.agent-body.agent-dancing {
+  animation: dance 0.8s ease-in-out infinite;
+}
+
+/* 小狮子午夜发光状态 - 彩蛋 */
+.desktop-agent.midnight-glow .agent-body {
+  filter: drop-shadow(0 0 20rpx rgba(255, 215, 0, 0.8)) drop-shadow(0 0 40rpx rgba(255, 215, 0, 0.6));
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 20rpx rgba(255, 215, 0, 0.8)) drop-shadow(0 0 40rpx rgba(255, 215, 0, 0.6));
+  }
+  50% {
+    filter: drop-shadow(0 0 30rpx rgba(255, 215, 0, 1)) drop-shadow(0 0 60rpx rgba(255, 215, 0, 0.8));
+  }
+}
+
 @keyframes bounce {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.2) rotate(-10deg); }
@@ -128,6 +148,15 @@ page {
   0% { transform: scale(1); }
   50% { transform: scale(1.3); }
   100% { transform: scale(1); }
+}
+
+/* 跳舞动画 - 彩蛋专用 */
+@keyframes dance {
+  0% { transform: translateX(0) rotate(0deg); }
+  25% { transform: translateX(-10rpx) rotate(-15deg) scale(1.1); }
+  50% { transform: translateX(10rpx) rotate(15deg) scale(1.1); }
+  75% { transform: translateX(-10rpx) rotate(-15deg) scale(1.1); }
+  100% { transform: translateX(0) rotate(0deg); }
 }
 
 .agent-bubble {
@@ -887,4 +916,87 @@ page {
 
 .info-value {
   color: #000;
+}
+
+/* ==================== 蓝屏彩蛋样式 ==================== */
+
+/* 桌面蓝屏状态 */
+.desktop.blue-screen {
+  background-color: #0000FF !important;
+}
+
+/* 蓝屏覆盖层 */
+.blue-screen-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #0000AA;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.bsod-content {
+  display: flex;
+  flex-direction: column;
+  gap: 30rpx;
+  padding: 60rpx;
+}
+
+.bsod-title {
+  font-size: 48rpx;
+  font-weight: bold;
+  color: #FFFFFF;
+  font-family: 'Courier New', monospace;
+  background-color: #0000AA;
+}
+
+.bsod-text {
+  font-size: 28rpx;
+  color: #FFFFFF;
+  font-family: 'Courier New', monospace;
+}
+
+.bsod-code {
+  font-size: 24rpx;
+  color: #FFFFFF;
+  font-family: 'Courier New', monospace;
+}
+
+.bsod-hint {
+  font-size: 24rpx;
+  color: #FFFF00;
+  font-family: 'SimSun', serif;
+  margin-top: 20rpx;
+}
+
+/* ==================== 隐藏彩蛋样式 ==================== */
+
+/* 桌面右下角隐藏触发区域 */
+.hidden-trigger {
+  position: absolute;
+  bottom: 10rpx;
+  right: 10rpx;
+  width: 60rpx;
+  height: 60rpx;
+  z-index: 1;
+  opacity: 0;
+}
+
+/* 隐藏图标 */
+.hidden-icon .icon-img {
+  filter: drop-shadow(0 0 10rpx rgba(147, 51, 234, 0.8));
+  animation: hidden-glow 2s ease-in-out infinite;
+}
+
+@keyframes hidden-glow {
+  0%, 100% {
+    filter: drop-shadow(0 0 10rpx rgba(147, 51, 234, 0.8));
+  }
+  50% {
+    filter: drop-shadow(0 0 20rpx rgba(147, 51, 234, 1)) drop-shadow(0 0 30rpx rgba(233, 30, 99, 0.8));
+  }
 }

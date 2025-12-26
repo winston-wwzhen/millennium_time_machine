@@ -1,17 +1,37 @@
-<view class="desktop" bindlongpress="onDesktopLongPress">
+<view class="desktop {{showBlueScreen ? 'blue-screen' : ''}}" style="background-color: {{desktopBackgrounds[desktopBgIndex]}};" bindlongpress="onDesktopLongPress" bindtap="onDesktopTap" catchtap="onDesktopTap">
+  <!-- 蓝屏彩蛋覆盖层 -->
+  <view class="blue-screen-overlay" wx:if="{{showBlueScreen}}">
+    <view class="bsod-content">
+      <text class="bsod-title">Windows</text>
+      <text class="bsod-text">出现了一个致命错误</text>
+      <text class="bsod-text">按 Ctrl+Alt+Del 重启</text>
+      <text class="bsod-code">0x000000ED: UNMOUNTABLE_BOOT_VOLUME</text>
+      <text class="bsod-hint">那个年代的噩梦...彩蛋发现！</text>
+    </view>
+  </view>
+
   <!-- 桌面图标区域 - 自动换列布局 -->
-  <view class="icon-grid">
+  <view class="icon-grid" catchtap="onIconGridTap">
     <block wx:for="{{desktopIcons}}" wx:key="id">
-      <view class="desktop-icon" bindtap="onIconTap" data-path="{{item.path}}">
+      <view class="desktop-icon" id="{{item.id}}" bindtap="onIconTap" data-path="{{item.path}}">
         <view class="icon-img">{{item.icon}}</view>
         <text class="icon-label">{{item.name}}</text>
       </view>
     </block>
+    <!-- 隐藏图标彩蛋 -->
+    <view class="desktop-icon hidden-icon" wx:if="{{showHiddenIcon}}" bindtap="onHiddenIconTap">
+      <view class="icon-img">🎮</view>
+      <text class="icon-label">???</text>
+    </view>
   </view>
 
+  <!-- 桌面右下角隐藏区域 - 点击触发隐藏图标 -->
+  <view class="hidden-trigger" bindtap="toggleHiddenIcon"></view>
+
   <!-- 桌面助手：小狮子 (Office Assistant 风格) -->
-  <view class="desktop-agent {{isDragging ? 'dragging' : ''}}" style="transform: translate({{agentTranslateX}}px, {{agentTranslateY}}px);"
-        catchtouchstart="onAgentDragStart" catchtouchmove="onAgentDragMove" catchtouchend="onAgentDragEnd">
+  <view class="desktop-agent {{isDragging ? 'dragging' : ''}} {{isMidnightEgg ? 'midnight-glow' : ''}}" style="transform: translate({{agentTranslateX}}px, {{agentTranslateY}}px);"
+        catchtouchstart="onAgentDragStart" catchtouchmove="onAgentDragMove" catchtouchend="onAgentDragEnd"
+        bindtap="onAgentTap" bindlongpress="onAgentLongPress">
     <view class="agent-bubble {{showMessage ? 'show' : ''}}" wx:if="{{showMessage}}">
       <text>{{agentMessage}}</text>
     </view>
@@ -19,8 +39,8 @@
   </view>
 
   <!-- 任务栏 -->
-  <view class="taskbar">
-    <view class="start-button {{showStartMenu ? 'active' : ''}}" bindtap="toggleStartMenu">
+  <view class="taskbar" bindtap="onTaskbarTap">
+    <view class="start-button {{showStartMenu ? 'active' : ''}}" bindtap="toggleStartMenu" catchtap="toggleStartMenu">
       <image class="win-logo" src="../../images/borders/border_win98.png" mode="aspectFit"></image>
       <text>Start</text>
     </view>
@@ -121,6 +141,9 @@
       <text class="context-icon">📁</text> 新建(W)
     </view>
     <view class="menu-line"></view>
+    <view class="context-menu-item" bindtap="showEasterEggs">
+      <text class="context-icon">🥚</text> 彩蛋收集(G)
+    </view>
     <view class="context-menu-item" bindtap="showProperties">
       <text class="context-icon">ℹ️</text> 属性(R)
     </view>
