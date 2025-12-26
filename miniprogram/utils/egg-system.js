@@ -4,6 +4,7 @@
  * 管理小程序中所有彩蛋的触发、状态和奖励
  * 使用云数据库存储，支持跨设备同步
  * 奖励：网费（用于拨号上网、AI聊天等）
+ * 网费很充足，主要是游戏化奖励机制
  */
 
 // 彩蛋ID定义
@@ -23,6 +24,7 @@ const EGG_IDS = {
 };
 
 // 彩蛋配置 - 网费奖励（单位：分 = 1分钟网费）
+// 奖励很慷慨，确保用户基本用不完
 const EGG_CONFIG = {
   [EGG_IDS.LION_DANCE]: {
     id: EGG_IDS.LION_DANCE,
@@ -32,7 +34,7 @@ const EGG_CONFIG = {
     rarity: 'common',        // common, rare, epic, legendary
     type: 'click',           // click, longpress, time, sequence
     reward: {
-      coins: 10,             // 10分钟网费
+      coins: 50,             // 50分钟网费
       badge: '舞者'
     }
   },
@@ -44,7 +46,7 @@ const EGG_CONFIG = {
     rarity: 'common',
     type: 'longpress',
     reward: {
-      coins: 10,
+      coins: 50,
       badge: '倾听者'
     }
   },
@@ -56,7 +58,7 @@ const EGG_CONFIG = {
     rarity: 'rare',
     type: 'click',
     reward: {
-      coins: 20,
+      coins: 100,
       badge: '蓝屏幸存者'
     }
   },
@@ -68,7 +70,7 @@ const EGG_CONFIG = {
     rarity: 'epic',
     type: 'time',
     reward: {
-      coins: 50,
+      coins: 200,
       badge: '夜猫子'
     }
   },
@@ -80,7 +82,7 @@ const EGG_CONFIG = {
     rarity: 'common',
     type: 'click',
     reward: {
-      coins: 10,
+      coins: 50,
       badge: '探索者'
     }
   },
@@ -92,7 +94,7 @@ const EGG_CONFIG = {
     rarity: 'rare',
     type: 'click',
     reward: {
-      coins: 20,
+      coins: 100,
       badge: '寻宝者'
     }
   },
@@ -104,7 +106,7 @@ const EGG_CONFIG = {
     rarity: 'common',
     type: 'click',
     reward: {
-      coins: 10,
+      coins: 30,
       badge: '艺术家'
     }
   },
@@ -116,7 +118,7 @@ const EGG_CONFIG = {
     rarity: 'common',
     type: 'click',
     reward: {
-      coins: 5,
+      coins: 20,
       badge: '清洁工'
     }
   },
@@ -128,7 +130,7 @@ const EGG_CONFIG = {
     rarity: 'common',
     type: 'click',
     reward: {
-      coins: 5,
+      coins: 20,
       badge: '硬件控'
     }
   },
@@ -140,7 +142,7 @@ const EGG_CONFIG = {
     rarity: 'common',
     type: 'click',
     reward: {
-      coins: 5,
+      coins: 20,
       badge: '冲浪达人'
     }
   },
@@ -152,7 +154,7 @@ const EGG_CONFIG = {
     rarity: 'rare',
     type: 'time',
     reward: {
-      coins: 15,
+      coins: 80,
       badge: '时刻见证者'
     }
   },
@@ -164,7 +166,7 @@ const EGG_CONFIG = {
     rarity: 'legendary',
     type: 'sequence',
     reward: {
-      coins: 100,
+      coins: 500,
       badge: '上帝之手',
       unlock: 'god_mode'
     }

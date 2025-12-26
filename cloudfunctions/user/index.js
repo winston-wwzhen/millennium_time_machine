@@ -38,7 +38,7 @@ exports.main = async (event, context) => {
             lastLoginTime: db.serverDate(),
             settings: { theme: 'win98' },
             // 网费系统
-            coins: 30,  // 赠送30分网费（30分钟）
+            coins: 500,  // 赠送500分网费（超过8小时，基本用不完）
             badges: [], // 彩蛋徽章收集
             eggStats: {
               totalDiscovered: 0,
@@ -46,7 +46,7 @@ exports.main = async (event, context) => {
             }
           }
         });
-        return { success: true, isNew: true, openid, coins: 30 };
+        return { success: true, isNew: true, openid, coins: 500 };
       }
     } catch (e) {
       console.error(e);
