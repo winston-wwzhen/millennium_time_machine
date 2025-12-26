@@ -1,0 +1,102 @@
+<view class="container">
+  <!-- 顶部标题栏 - Windows 98 风格 -->
+  <view class="title-bar">
+    <view class="title-bar-text">如果当时.exe - 人生模拟器</view>
+  </view>
+
+  <!-- 主内容区域 -->
+  <view class="content">
+    <!-- 游戏标题 -->
+    <view class="game-title">
+      <text class="title-main">如果当时.exe</text>
+      <text class="title-sub">Life Simulator</text>
+      <text class="title-desc">穿越回2005年，经历20年人生</text>
+    </view>
+
+    <!-- 年份选择 -->
+    <view class="section">
+      <view class="section-title">
+        <text class="win98-btn win98-btn-caption">选择出生年份</text>
+      </view>
+      <view class="year-selector">
+        <view class="year-display">
+          <text class="year-value">{{birthYear}}</text>
+          <text class="year-unit">年</text>
+        </view>
+        <slider
+          class="year-slider"
+          min="{{minYear}}"
+          max="{{maxYear}}"
+          value="{{birthYear}}"
+          step="{{yearStep}}"
+          bindchange="onYearChange"
+          activeColor="#000080"
+          backgroundColor="#c0c0c0"
+          block-size="20"
+          show-value="{{false}}"
+        />
+        <view class="year-range">
+          <text>{{minYear}}</text>
+          <text>{{maxYear}}</text>
+        </view>
+      </view>
+      <view class="age-preview">
+        <text>2005年时你的年龄：{{2005 - birthYear}}岁</text>
+      </view>
+    </view>
+
+    <!-- 性别选择 -->
+    <view class="section">
+      <view class="section-title">
+        <text class="win98-btn win98-btn-caption">选择性别</text>
+      </view>
+      <view class="gender-selector">
+        <view
+          class="gender-option {{gender === 'male' ? 'selected' : ''}}"
+          data-gender="male"
+          bindtap="selectGender"
+        >
+          <text class="gender-icon">♂</text>
+          <text class="gender-text">男性</text>
+        </view>
+        <view
+          class="gender-option {{gender === 'female' ? 'selected' : ''}}"
+          data-gender="female"
+          bindtap="selectGender"
+        >
+          <text class="gender-icon">♀</text>
+          <text class="gender-text">女性</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 游戏说明 -->
+    <view class="section instructions">
+      <view class="win98-btn win98-btn-caption">游戏说明</view>
+      <view class="instructions-text">
+        <text>• 2005-2025年的真实历史事件</text>
+        <text>• 每个选择影响人物属性</text>
+        <text>• 30+种不同的人生结局</text>
+        <text>• 一局约10-15分钟</text>
+      </view>
+    </view>
+
+    <!-- 开始按钮 -->
+    <view class="actions">
+      <button class="win98-btn win98-btn-primary" bindtap="startGame" loading="{{isLoading}}">
+        开始穿越
+      </button>
+      <button class="win98-btn win98-btn-secondary" bindtap="showInstructions">
+        玩法说明
+      </button>
+      <button class="win98-btn win98-btn-secondary" bindtap="goHome">
+        返回
+      </button>
+    </view>
+  </view>
+
+  <!-- 底部状态栏 - Windows 98 风格 -->
+  <view class="status-bar">
+    <view class="status-item">Ready</view>
+  </view>
+</view>

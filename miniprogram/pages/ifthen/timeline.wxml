@@ -1,0 +1,186 @@
+<!-- 游戏主界面 - 时间线页面 -->
+<view class="game-container">
+
+  <!-- 顶部信息栏 -->
+  <view class="top-bar">
+    <view class="year-display">
+      <text class="year">{{currentYear}}</text>
+      <text class="year-label">年</text>
+    </view>
+    <view class="age-display">
+      <text class="age">{{age}}</text>
+      <text class="age-label">岁</text>
+    </view>
+  </view>
+
+  <!-- 属性面板 -->
+  <view class="attributes-panel">
+    <view class="attr-item">
+      <text class="attr-label">技术</text>
+      <view class="attr-bar">
+        <view class="attr-fill tech" style="width: {{attributes.tech_skill}}%"></view>
+      </view>
+      <text class="attr-value">{{attributes.tech_skill}}</text>
+    </view>
+    <view class="attr-item">
+      <text class="attr-label">社交</text>
+      <view class="attr-bar">
+        <view class="attr-fill social" style="width: {{attributes.social}}%"></view>
+      </view>
+      <text class="attr-value">{{attributes.social}}</text>
+    </view>
+    <view class="attr-item">
+      <text class="attr-label">财富</text>
+      <view class="attr-bar">
+        <view class="attr-fill wealth" style="width: {{attributes.wealth}}%"></view>
+      </view>
+      <text class="attr-value">{{attributes.wealth}}</text>
+    </view>
+    <view class="attr-item">
+      <text class="attr-label">健康</text>
+      <view class="attr-bar">
+        <view class="attr-fill health" style="width: {{attributes.health}}%"></view>
+      </view>
+      <text class="attr-value">{{attributes.health}}</text>
+    </view>
+    <view class="attr-item">
+      <text class="attr-label">快乐</text>
+      <view class="attr-bar">
+        <view class="attr-fill happiness" style="width: {{attributes.happiness}}%"></view>
+      </view>
+      <text class="attr-value">{{attributes.happiness}}</text>
+    </view>
+    <view class="attr-item">
+      <text class="attr-label">魅力</text>
+      <view class="attr-bar">
+        <view class="attr-fill charm" style="width: {{attributes.charm}}%"></view>
+      </view>
+      <text class="attr-value">{{attributes.charm}}</text>
+    </view>
+    <view class="attr-item">
+      <text class="attr-label">运气</text>
+      <view class="attr-bar">
+        <view class="attr-fill luck" style="width: {{attributes.luck}}%"></view>
+      </view>
+      <text class="attr-value">{{attributes.luck}}</text>
+    </view>
+    <view class="attr-item">
+      <text class="attr-label">学识</text>
+      <view class="attr-bar">
+        <view class="attr-fill education" style="width: {{attributes.education}}%"></view>
+      </view>
+      <text class="attr-value">{{attributes.education}}</text>
+    </view>
+  </view>
+
+  <!-- 事件卡片区域 -->
+  <view class="event-area">
+    <!-- 事件卡片 -->
+    <view class="event-card {{eventCardVisible ? 'visible' : ''}}" wx:if="{{showEventCard && currentEvent}}">
+      <view class="event-header">
+        <text class="event-year">{{currentYear}}</text>
+        <text class="event-age">{{age}}岁</text>
+      </view>
+
+      <view class="event-content">
+        <text class="event-title">{{currentEvent.title}}</text>
+        <text class="event-desc">{{currentEvent.description}}</text>
+
+        <!-- 历史背景 -->
+        <view class="event-context" wx:if="{{currentEvent.context}}">
+          <text class="context-label">历史背景</text>
+          <text class="context-text">{{currentEvent.context}}</text>
+        </view>
+      </view>
+
+      <!-- 选项按钮 -->
+      <view class="choices-container">
+        <button
+          class="choice-btn"
+          wx:for="{{currentEvent.choices}}"
+          wx:key="text"
+          data-index="{{index}}"
+          bindtap="makeChoice"
+        >
+          <text class="choice-text">{{item.text}}</text>
+          <text class="choice-hint" wx:if="{{item.hint}}">{{item.hint}}</text>
+        </button>
+      </view>
+    </view>
+
+    <!-- 选择结果 -->
+    <view class="choice-result {{choiceResultVisible ? 'visible' : ''}}" wx:if="{{choiceResultVisible}}">
+      <text class="result-text">{{currentResult}}</text>
+    </view>
+  </view>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-bar">
+    <button class="btn-home" bindtap="goHome">返回首页</button>
+    <button class="btn-restart" bindtap="restartGame">重新开始</button>
+  </view>
+
+</view>
+
+<!-- 结局弹窗 -->
+<view class="ending-overlay {{showEnding ? 'visible' : ''}}" wx:if="{{showEnding && ending}}">
+  <view class="ending-card">
+    <view class="ending-header">
+      <text class="ending-icon">{{ending.icon || '📖'}}</text>
+      <text class="ending-title">{{ending.title}}</text>
+    </view>
+
+    <view class="ending-content">
+      <text class="ending-desc">{{ending.description}}</text>
+
+      <!-- 结局属性展示 -->
+      <view class="ending-stats">
+        <text class="stats-title">最终属性</text>
+        <view class="stats-grid">
+          <view class="stat-item">
+            <text class="stat-label">技术</text>
+            <text class="stat-value">{{attributes.tech_skill}}</text>
+          </view>
+          <view class="stat-item">
+            <text class="stat-label">社交</text>
+            <text class="stat-value">{{attributes.social}}</text>
+          </view>
+          <view class="stat-item">
+            <text class="stat-label">财富</text>
+            <text class="stat-value">{{attributes.wealth}}</text>
+          </view>
+          <view class="stat-item">
+            <text class="stat-label">健康</text>
+            <text class="stat-value">{{attributes.health}}</text>
+          </view>
+          <view class="stat-item">
+            <text class="stat-label">快乐</text>
+            <text class="stat-value">{{attributes.happiness}}</text>
+          </view>
+          <view class="stat-item">
+            <text class="stat-label">魅力</text>
+            <text class="stat-value">{{attributes.charm}}</text>
+          </view>
+          <view class="stat-item">
+            <text class="stat-label">运气</text>
+            <text class="stat-value">{{attributes.luck}}</text>
+          </view>
+          <view class="stat-item">
+            <text class="stat-label">学识</text>
+            <text class="stat-value">{{attributes.education}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 结局类型标签 -->
+      <view class="ending-tag type-{{ending.type}}">
+        <text>{{ending.typeText}}</text>
+      </view>
+    </view>
+
+    <view class="ending-actions">
+      <button class="btn-restart-ending" bindtap="restartGame">再来一局</button>
+      <button class="btn-home-ending" bindtap="goHome">返回首页</button>
+    </view>
+  </view>
+</view>

@@ -35,6 +35,8 @@ Page({
       level: 1
     },
     levelIcons: [], // 等级图标数组
+    levelTitle: '', // 等级称号
+    levelInfo: null, // 完整等级信息（从云函数获取）
 
     // 用户钱包数据
     wallet: {
@@ -42,6 +44,10 @@ Page({
       qpoints: 0,
       isVip: false
     },
+
+    // 升级弹窗控制
+    showLevelUpDialog: false,
+    levelUpData: null,
 
     activeTab: 'contacts', // 当前选中的 Tab：contacts, chats, zone
     zoneSubTab: 'home', // 空间Tab内的子Tab：home, log, msg
@@ -191,6 +197,8 @@ Page({
           this.calculateLevelIcons(profile.level || 1);
           // 加载钱包数据
           this.loadWalletData();
+          // 加载等级信息
+          this.loadLevelInfo();
         }
       } else {
         throw new Error(result ? result.message : '初始化失败');
@@ -286,23 +294,69 @@ Page({
   },
 
   /**
-   * 计算星星月亮太阳图标：16级太阳，4级月亮，1级星星
+   * 计算QQ风格等级图标
+   * 1-4级: 星星 (★)
+   * 5-8级: 月亮 (☾)
+   * 9-12级: 太阳 (☼)
+   * 13-16级: 皇冠 (♔)
+   * 17+级: 皇冠+钻石 (♔♢)
    */
   calculateLevelIcons: function(level) {
-    let icons = [];
-    let lvl = level || 1;
-    
-    const suns = Math.floor(lvl / 16);
-    lvl %= 16;
-    const moons = Math.floor(lvl / 4);
-    lvl %= 4;
-    const stars = lvl;
+    if (!level || level < 1) level = 1;
 
-    for (let i = 0; i < suns; i++) icons.push('☀️');
-    for (let i = 0; i < moons; i++) icons.push('🌙');
-    for (let i = 0; i < stars; i++) icons.push('⭐');
+    let icon = '';
+    let title = '';
 
-    this.setData({ levelIcons: icons });
+    if (level <= 4) {
+      icon = `${level}★`;
+      title = '初入江湖';
+    } else if (level <= 8) {
+      icon = `${level - 4}☾`;
+      title = '渐入佳境';
+    } else if (level <= 12) {
+      icon = `${level - 8}☼`;
+      title = '声名鹊起';
+    } else if (level <= 16) {
+      icon = `${level - 12}♔`;
+      title = '风云人物';
+    } else {
+      const crowns = Math.floor((level - 13) / 4) + 1;
+      const diamonds = (level - 13) % 4;
+      icon = diamonds > 0 ? `${crowns}♔${diamonds}♢` : `${crowns}♔`;
+
+      if (level <= 20) title = '一代宗师';
+      else if (level <= 30) title = '登峰造极';
+      else if (level <= 50) title = '传说级别';
+      else title = '殿堂神话';
+    }
+
+    this.setData({
+      levelIcons: [icon],
+      levelTitle: title
+    });
+  },
+
+  /**
+   * 从云函数加载完整等级信息
+   */
+  loadLevelInfo: function() {
+    if (!this.data.userProfile.qcio_id) return;
+
+    wx.cloud.callFunction({
+      name: 'level',
+      data: {
+        action: 'getLevelInfo',
+        qcio_id: this.data.userProfile.qcio_id
+      }
+    }).then(res => {
+      if (res.result && res.result.level) {
+        this.setData({
+          levelInfo: res.result
+        });
+      }
+    }).catch(err => {
+      console.error('Load Level Info Error:', err);
+    });
   },
 
   /**
@@ -336,6 +390,8 @@ Page({
               });
               // 登录成功后获取钱包数据
               this.loadWalletData();
+              // 加载等级信息
+              this.loadLevelInfo();
 
               // 检查是否需要返回踩一踩页面
               if (this.data.returnToVisit) {

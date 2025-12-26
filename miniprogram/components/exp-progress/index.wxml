@@ -1,0 +1,8 @@
+<view class="exp-progress">
+  <view class="progress-bar">
+    <view class="progress-fill" style="width: {{progress}}%"></view>
+  </view>
+  <view class="progress-text" wx:if="{{showText}}">
+    {{levelExp}} / {{needExp + levelExp}} ({{progress}}%)
+  </view>
+</view>

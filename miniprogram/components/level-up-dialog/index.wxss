@@ -1,0 +1,125 @@
+.level-up-dialog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.level-up-dialog.visible {
+  pointer-events: auto;
+  opacity: 1;
+}
+
+.dialog-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.dialog-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20rpx;
+  padding: 60rpx 40rpx;
+  min-width: 500rpx;
+  max-width: 80%;
+  text-align: center;
+  color: white;
+  box-shadow: 0 10rpx 40rpx rgba(0, 0, 0, 0.3);
+}
+
+.type-major .dialog-content {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  animation: pulse 1s ease-in-out infinite;
+}
+
+.type-milestone .dialog-content {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  animation: celebration 0.5s ease-in-out;
+}
+
+.level-icon-large {
+  font-size: 120rpx;
+  margin-bottom: 20rpx;
+}
+
+.level-title {
+  font-size: 48rpx;
+  font-weight: bold;
+  margin-bottom: 10rpx;
+}
+
+.level-title-sub {
+  font-size: 32rpx;
+  margin-bottom: 30rpx;
+  opacity: 0.9;
+}
+
+.rewards-section {
+  margin: 30rpx 0;
+}
+
+.reward-item {
+  font-size: 28rpx;
+  margin: 10rpx 0;
+  padding: 10rpx 20rpx;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10rpx;
+}
+
+.special-reward {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #fee140;
+  padding: 15rpx;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10rpx;
+}
+
+.dialog-buttons {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 40rpx;
+}
+
+.btn-close,
+.btn-share {
+  flex: 1;
+  padding: 20rpx;
+  border-radius: 10rpx;
+  border: none;
+  font-size: 28rpx;
+}
+
+.btn-close {
+  background: rgba(255, 255, 255, 0.3);
+  color: white;
+}
+
+.btn-share {
+  background: white;
+  color: #764ba2;
+  font-weight: bold;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.05); }
+}
+
+@keyframes celebration {
+  0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+  50% { transform: translate(-50%, -50%) scale(1.1); }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
