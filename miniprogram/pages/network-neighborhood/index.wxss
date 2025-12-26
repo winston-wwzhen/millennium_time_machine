@@ -1,4 +1,4 @@
-/* 网上邻居 - Win98 风格 */
+/* 网管系统 - Win98 风格 */
 page {
   height: 100vh;
   background: #008080;
@@ -306,4 +306,237 @@ page {
 
 .status-icon {
   font-size: 12px;
+}
+
+/* 双代币余额面板 */
+.balance-panel {
+  margin: 10px;
+  padding: 16px;
+  background: #ffffe0;
+  border: 2px inset #808080;
+}
+
+.balance-title {
+  font-size: 12px;
+  font-weight: bold;
+  color: #000080;
+  margin-bottom: 12px;
+}
+
+.balance-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.balance-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  background: #fff;
+  border: 2px inset #c0c0c0;
+}
+
+.balance-icon {
+  font-size: 24px;
+}
+
+.balance-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.balance-label {
+  font-size: 10px;
+  color: #666;
+}
+
+.balance-value {
+  font-size: 14px;
+  font-weight: bold;
+  color: #000080;
+}
+
+.balance-hint {
+  padding: 8px;
+  background: #fffacd;
+  border: 1px dashed #808080;
+  font-size: 10px;
+  color: #666;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.exchange-btn {
+  width: 100%;
+  padding: 8px;
+  background: #c0c0c0;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  font-size: 12px;
+  color: #000;
+  font-weight: bold;
+}
+
+.exchange-btn:active {
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
+  background: #a0a0a0;
+}
+
+/* 兑换对话框 */
+.exchange-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.exchange-dialog {
+  width: 85%;
+  max-width: 350px;
+  background: #c0c0c0;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #808080;
+  border-bottom: 2px solid #808080;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.exchange-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 8px;
+  background: linear-gradient(90deg, #000080, #1084d0);
+}
+
+.exchange-title {
+  color: white;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.exchange-close {
+  all: unset;
+  width: 18px;
+  height: 16px;
+  background: #c0c0c0;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  font-size: 14px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.exchange-balance-info {
+  padding: 12px;
+  background: #ffffe0;
+  border-bottom: 1px solid #808080;
+  text-align: center;
+}
+
+.exchange-balance-text {
+  font-size: 12px;
+  color: #000080;
+  font-weight: bold;
+}
+
+.exchange-options {
+  padding: 10px;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.exchange-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 8px;
+  background: #fff;
+  border: 2px outset #ffffff;
+  cursor: pointer;
+}
+
+.exchange-option.selected {
+  background: #000080;
+  border: 2px inset #808080;
+}
+
+.exchange-option.selected .option-label,
+.exchange-option.selected .option-cost,
+.exchange-option.selected .option-check {
+  color: white;
+}
+
+.option-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.option-label {
+  font-size: 13px;
+  font-weight: bold;
+  color: #000;
+}
+
+.option-cost {
+  font-size: 11px;
+  color: #666;
+}
+
+.option-check {
+  font-size: 16px;
+  color: #00aa00;
+  font-weight: bold;
+}
+
+.exchange-actions {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  border-top: 1px solid #808080;
+}
+
+.exchange-btn-cancel,
+.exchange-btn-confirm {
+  flex: 1;
+  padding: 8px;
+  font-size: 12px;
+  background: #c0c0c0;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+}
+
+.exchange-btn-confirm {
+  background: #000080;
+  color: white;
+}
+
+.exchange-btn-cancel:active,
+.exchange-btn-confirm:active {
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
 }

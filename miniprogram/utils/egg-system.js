@@ -3,8 +3,16 @@
  *
  * 管理小程序中所有彩蛋的触发、状态和奖励
  * 使用云数据库存储，支持跨设备同步
- * 奖励：网费（用于拨号上网、AI聊天等）
- * 网费很充足，主要是游戏化奖励机制
+ *
+ * 双代币系统：
+ * - 时光币: 通过发现彩蛋获得，可用于在网管系统兑换网费和其他CDK
+ * - 网费: 初始30天（43200分钟），每日自动扣除1天（1440分钟），用于AI功能
+ *
+ * 游戏循环：
+ * 1. 新用户获得30天免费网费
+ * 2. 每日登录自动扣除1天网费
+ * 3. 通过发现彩蛋获得时光币
+ * 4. 在网管系统用时光币兑换网费，继续使用AI功能
  */
 
 // 彩蛋ID定义
@@ -23,8 +31,8 @@ const EGG_IDS = {
   TIME_SPECIAL: 'time_special',       // 特殊时刻
 };
 
-// 彩蛋配置 - 网费奖励（单位：分 = 1分钟网费）
-// 奖励很慷慨，确保用户基本用不完
+// 彩蛋配置 - 时光币奖励（单位：分钟）
+// 奖励非常慷慨，时光币是成就收集系统
 const EGG_CONFIG = {
   [EGG_IDS.LION_DANCE]: {
     id: EGG_IDS.LION_DANCE,
@@ -34,7 +42,7 @@ const EGG_CONFIG = {
     rarity: 'common',        // common, rare, epic, legendary
     type: 'click',           // click, longpress, time, sequence
     reward: {
-      coins: 50,             // 50分钟网费
+      coins: 1000,           // 1000分钟时光币
       badge: '舞者'
     }
   },
@@ -46,7 +54,7 @@ const EGG_CONFIG = {
     rarity: 'common',
     type: 'longpress',
     reward: {
-      coins: 50,
+      coins: 1000,
       badge: '倾听者'
     }
   },
@@ -58,7 +66,7 @@ const EGG_CONFIG = {
     rarity: 'rare',
     type: 'click',
     reward: {
-      coins: 100,
+      coins: 2000,
       badge: '蓝屏幸存者'
     }
   },
@@ -70,7 +78,7 @@ const EGG_CONFIG = {
     rarity: 'epic',
     type: 'time',
     reward: {
-      coins: 200,
+      coins: 5000,
       badge: '夜猫子'
     }
   },
@@ -82,7 +90,7 @@ const EGG_CONFIG = {
     rarity: 'common',
     type: 'click',
     reward: {
-      coins: 50,
+      coins: 1000,
       badge: '探索者'
     }
   },
@@ -94,7 +102,7 @@ const EGG_CONFIG = {
     rarity: 'rare',
     type: 'click',
     reward: {
-      coins: 100,
+      coins: 2000,
       badge: '寻宝者'
     }
   },
@@ -106,7 +114,7 @@ const EGG_CONFIG = {
     rarity: 'common',
     type: 'click',
     reward: {
-      coins: 30,
+      coins: 500,
       badge: '艺术家'
     }
   },
@@ -118,7 +126,7 @@ const EGG_CONFIG = {
     rarity: 'common',
     type: 'click',
     reward: {
-      coins: 20,
+      coins: 400,
       badge: '清洁工'
     }
   },
@@ -130,7 +138,7 @@ const EGG_CONFIG = {
     rarity: 'common',
     type: 'click',
     reward: {
-      coins: 20,
+      coins: 400,
       badge: '硬件控'
     }
   },
@@ -142,7 +150,7 @@ const EGG_CONFIG = {
     rarity: 'common',
     type: 'click',
     reward: {
-      coins: 20,
+      coins: 400,
       badge: '冲浪达人'
     }
   },
@@ -154,7 +162,7 @@ const EGG_CONFIG = {
     rarity: 'rare',
     type: 'time',
     reward: {
-      coins: 80,
+      coins: 1500,
       badge: '时刻见证者'
     }
   },
@@ -166,7 +174,7 @@ const EGG_CONFIG = {
     rarity: 'legendary',
     type: 'sequence',
     reward: {
-      coins: 500,
+      coins: 10000,
       badge: '上帝之手',
       unlock: 'god_mode'
     }
@@ -178,7 +186,8 @@ class EggSystem {
     this.discovered = new Set(); // 本地已发现彩蛋缓存（badge名称）
     this.stats = {              // 统计数据
       totalDiscovered: 0,
-      totalEarned: 0
+      totalEarned: 0,
+      daysUsed: 0
     };
     this.badges = [];           // 徽章列表
     this.loaded = false;        // 是否已从云端加载
@@ -291,7 +300,7 @@ class EggSystem {
     };
 
     const reward = config.reward;
-    const rewardText = reward.coins ? `+${reward.coins}分钟网费` : '';
+    const rewardText = reward.coins ? `+${reward.coins}时光币` : '';
 
     wx.showModal({
       title: '🎉 发现彩蛋！',

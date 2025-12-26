@@ -39,8 +39,8 @@ Page({
       },
       {
         id: "network-neighborhood",
-        name: "网上邻居",
-        icon: "🌏",
+        name: "网管系统",
+        icon: "⚙️",
         path: "/pages/network-neighborhood/index",
       },
       {
@@ -416,12 +416,29 @@ Page({
   },
 
   // 显示彩蛋收集界面
-  showEasterEggs: function () {
+  showEasterEggs: async function () {
     this.hideContextMenu();
 
     const progress = eggSystem.getProgress();
     const allConfigs = eggSystem.getAllConfigs();
     const badges = eggSystem.getBadges();
+    const stats = eggSystem.getStats();
+
+    // 从云端获取双代币余额
+    let coins = 0;
+    let netFee = 0;
+    try {
+      const res = await wx.cloud.callFunction({
+        name: 'user',
+        data: { type: 'getBalance' }
+      });
+      if (res.result.success) {
+        coins = res.result.coins || 0;
+        netFee = res.result.netFee || 0;
+      }
+    } catch (e) {
+      console.error('获取余额失败:', e);
+    }
 
     // 按稀有度分组
     const rarityOrder = ['legendary', 'epic', 'rare', 'common'];
@@ -432,8 +449,11 @@ Page({
       legendary: '🟠 传说'
     };
 
-    let content = `🎯 彩蛋收集进度: ${progress.discovered}/${progress.total} (${progress.percentage}%)\n`;
-    content += `💰 累计获得: ${eggSystem.getStats().totalEarned}分钟网费\n\n`;
+    let content = `🎯 彩蛋收集进度: ${progress.discovered}/${progress.total} (${progress.percentage}%)\n\n`;
+    content += `💎 时光币余额: ${coins}\n`;
+    content += `🌐 网费余额: ${Math.floor(netFee / 1440)}天${netFee % 1440}分钟\n`;
+    content += `📅 已使用: ${stats.daysUsed || 0}天\n`;
+    content += `🏆 累计获得时光币: ${stats.totalEarned}\n\n`;
 
     // 按稀有度显示
     for (const rarity of rarityOrder) {
@@ -444,7 +464,7 @@ Page({
           const isDiscovered = eggSystem.isDiscovered(egg.id);
           const status = isDiscovered ? '✅' : '❓';
           const name = isDiscovered ? egg.name : '???';
-          const reward = isDiscovered ? `+${egg.reward.coins}分钟` : '';
+          const reward = isDiscovered ? `+${egg.reward.coins}时光币` : '';
           const hint = isDiscovered ? '' : `\n   💡 ${egg.hint}`;
           content += `${status} ${name} ${reward}${hint}\n`;
         }
@@ -830,7 +850,7 @@ Page({
     if (!this.data.networkConnected) {
       wx.showModal({
         title: "网络未连接",
-        content: '检测到网络断开连接。请通过"网上邻居"重新连接网络。',
+        content: '检测到网络断开连接。请通过"网管系统"重新连接网络。',
         showCancel: false,
         confirmText: "去连接",
         success: (res) => {

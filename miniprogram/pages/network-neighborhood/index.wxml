@@ -1,8 +1,8 @@
-<!-- 网上邻居 -->
+<!-- 网管系统 -->
 <view class="desktop">
   <view class="win98-window">
     <view class="win98-title-bar">
-      <view class="win98-title-text">网上邻居</view>
+      <view class="win98-title-text">网管系统</view>
       <view class="win98-title-controls">
         <button class="win98-btn-minimize">_</button>
         <button class="win98-btn-maximize">□</button>
@@ -24,7 +24,32 @@
       <!-- 地址栏 -->
       <view class="address-bar">
         <text class="address-label">地址</text>
-        <view class="address-input">网上邻居</view>
+        <view class="address-input">网管系统</view>
+      </view>
+
+      <!-- 双代币余额显示 -->
+      <view class="balance-panel" wx:if="{{!isConnecting}}">
+        <view class="balance-title">💰 我的账户</view>
+        <view class="balance-row">
+          <view class="balance-item coins-item">
+            <text class="balance-icon">💎</text>
+            <view class="balance-info">
+              <text class="balance-label">时光币</text>
+              <text class="balance-value">{{coins}}</text>
+            </view>
+          </view>
+          <view class="balance-item netfee-item">
+            <text class="balance-icon">🌐</text>
+            <view class="balance-info">
+              <text class="balance-label">网费余额</text>
+              <text class="balance-value">{{netFeeDays}}天{{netFeeMinutes}}分</text>
+            </view>
+          </view>
+        </view>
+        <view class="balance-hint">
+          <text>💡 时光币可通过发现彩蛋获得，用于兑换网费</text>
+        </view>
+        <button class="exchange-btn" bindtap="showExchange">兑换网费</button>
       </view>
 
       <!-- 网络连接状态 -->
@@ -87,6 +112,38 @@
     <view class="status-bar">
       <text>{{networkConnected ? '已连接到 千禧拨号网络' : '未连接'}}</text>
       <text class="status-icon">{{networkConnected ? '🌐' : '❌'}}</text>
+    </view>
+  </view>
+
+  <!-- 兑换对话框遮罩 -->
+  <view class="exchange-overlay" wx:if="{{showExchangeDialog}}" bindtap="hideExchange">
+    <view class="exchange-dialog" catchtap="stopPropagation">
+      <view class="exchange-header">
+        <text class="exchange-title">💎 兑换网费</text>
+        <button class="exchange-close" bindtap="hideExchange">×</button>
+      </view>
+
+      <view class="exchange-balance-info">
+        <text class="exchange-balance-text">当前时光币: {{coins}}</text>
+      </view>
+
+      <view class="exchange-options">
+        <block wx:for="{{exchangeOptions}}" wx:key="minutes">
+          <view class="exchange-option {{selectedExchangeIndex === index ? 'selected' : ''}}"
+                bindtap="selectExchangeOption" data-index="{{index}}">
+            <view class="option-info">
+              <text class="option-label">{{item.label}}</text>
+              <text class="option-cost">{{item.coins}} 时光币</text>
+            </view>
+            <view class="option-check">{{selectedExchangeIndex === index ? '✓' : ''}}</view>
+          </view>
+        </block>
+      </view>
+
+      <view class="exchange-actions">
+        <button class="exchange-btn-cancel" bindtap="hideExchange">取消</button>
+        <button class="exchange-btn-confirm" bindtap="confirmExchange">确认兑换</button>
+      </view>
     </view>
   </view>
 </view>

@@ -32,6 +32,7 @@ bash uploadCloudFunction.sh [envId]
 ### Database Initialization
 
 1. Create collections in WeChat Cloud Console:
+   - `users` - Desktop-level user data (dual currency, easter eggs)
    - `qcio_users`, `qcio_wallet`, `qcio_daily_tasks`, `qcio_achievements`, `qcio_mood_logs`
    - `qcio_ai_contacts`, `qcio_groups`
    - `qcio_chat_history`, `qcio_group_chat_history`, `qcio_guestbook`
@@ -56,7 +57,7 @@ miniprogram/          # Frontend (import this in WeChat Developer Tools)
 │   │   └── components/
 │   ├── qcio-chat/    # QCIO chat interface
 │   ├── farm/         # Mood farm game
-│   ├── network-neighborhood/  # Dial-up networking
+│   ├── network-neighborhood/  # Network Management System (dual currency, exchange)
 │   ├── tetris/       # Tetris game
 │   ├── star-explorer/  # Star explorer game
 │   ├── mars/         # Mars translator
@@ -88,17 +89,55 @@ db-init/              # Database initialization data
 |----------|---------|
 | `chat` | AI chat with 36 modes, single/group chat, GLM API integration |
 | `qcio` | All QCIO social features (visit, wallet, tasks, guestbook) |
-| `user` | User login, 5-digit QCIO account (10000-99999), random friend assignment |
+| `user` | User login, 5-digit QCIO account (10000-99999), random friend assignment, dual currency system, easter eggs |
 | `mood_logic` | Mood farm game logic |
+
+### Dual Currency System
+
+The app features a dual currency system that creates a gameplay loop:
+
+**Currencies**:
+- **💎 时光币**: Earned through discovering easter eggs, used to purchase 网费 and CDKs
+- **🌐 网费**: Initial 30 days (43,200 min), deducted daily (1,440 min), consumed by AI features
+
+**Game Loop**:
+1. New users get 30 days free 网费
+2. Daily login deducts 1 day of 网费 automatically
+3. Explore desktop to discover easter eggs → earn 时光币
+4. Use 网管系统 to exchange 时光币 for 网费
+5. Continue using AI features with purchased 网费
+
+**Cloud Function Operations** (`user`):
+- `login` - Daily login with net fee deduction
+- `getBalance` - Fetch both currency balances
+- `exchangeNetFee` - Exchange 时光币 → 网费 (1:1 ratio)
+- `deductNetFee` - Consume 网费 for AI features
+- `discoverEgg` - Record easter egg discovery, award 时光币
+
+### Easter Egg System
+
+**12 Hidden Eggs** distributed across the desktop:
+- **Common** (400-1000 coins): Lion dance, Lion talk, Taskbar surprise, Background switch, Recycle bin, My computer, Browser click
+- **Rare** (1500-2000 coins): Blue screen, Hidden icon, Special time
+- **Epic** (5000 coins): Midnight secret
+- **Legendary** (10000 coins): Konami code sequence
+
+**Features**:
+- Cloud-based storage (syncs across devices)
+- Achievement badges collection
+- Progress tracking with percentage display
+- Discovery effects with rarity-colored modals
+
+**Egg System File**: `miniprogram/utils/egg-system.js`
 
 ### Network Simulation
 
 The app simulates **33.6 Kbps dial-up networking**:
 
-- Users must connect via "网上邻居" (Network Neighborhood) before AI features work
+- Users must connect via "网管系统" (Network Management System) before AI features work
 - Connection status shown in system tray (bottom-right)
 - AI errors (429 rate limit, timeout) are wrapped as "network disconnected" prompts
-- Guides users to reconnect through Network Neighborhood
+- Guides users to reconnect through Network Management System
 
 **Network state management**: `miniprogram/utils/network.js`
 
@@ -188,7 +227,7 @@ Uses WeChat `msgSecCheck` API for content moderation:
 
 **Desktop Icons**:
 - 我的电脑 💻
-- 网上邻居 🌏
+- 网管系统 ⚙️ (Network Management System - dual currency management, exchange)
 - 我的文档 📁
 - 回收站 🗑️
 - 浏览器 🌐
@@ -205,7 +244,7 @@ Uses WeChat `msgSecCheck` API for content moderation:
 - Running tasks display
 - System tray (network status, volume, time)
 
-**Helper**: Draggable lion assistant with random interaction messages
+**Helper**: Draggable lion assistant with random interaction messages, easter egg triggers
 
 ### Data Isolation Pattern
 
@@ -222,12 +261,12 @@ const OPENID = wxContext.OPENID;
 |------|---------|
 | `miniprogram/app.js` | Global app configuration, network state |
 | `miniprogram/utils/network.js` | Network connection state management |
+| `miniprogram/utils/egg-system.js` | Easter egg system with cloud storage |
 | `cloudfunctions/chat/index.js` | AI chat core with 36 modes |
 | `cloudfunctions/qcio/index.js` | QCIO social features router |
-| `cloudfunctions/user/index.js` | User login and QCIO account creation |
+| `cloudfunctions/user/index.js` | User login, dual currency, easter eggs |
 
 ## Documentation
 
 - `README.md` - Project overview, features, changelog
-- `docs/FUNCTIONS.md` - Detailed feature descriptions
-- `docs/GAMEPLAY.md` - Gameplay instructions
+- `CLAUDE.md` - This file, guidance for Claude Code
