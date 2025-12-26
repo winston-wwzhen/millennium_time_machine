@@ -169,22 +169,22 @@ exports.main = async (event, context) => {
 
       const currentCoins = res.data[0].coins || 0;
 
+      // 兑换比例：1000 时光币 = 1 天网费（1440分钟）
+      // 即 1 时光币 = 1.44 分钟网费
+      // amount 是要兑换的分钟数
+      const coinsNeeded = Math.ceil(amount * 1000 / 1440);
+      const netFeeToAdd = amount;
+
       // 检查时光币是否足够
-      if (currentCoins < amount) {
+      if (currentCoins < coinsNeeded) {
         return {
           success: false,
           errMsg: '时光币不足',
           insufficient: true,
           currentCoins,
-          required: amount
+          required: coinsNeeded
         };
       }
-
-      // 兑换：时光币 → 网费（1:1兑换）
-      // amount 是要兑换的分钟数
-      const exchangeRate = 1; // 1时光币 = 1分钟网费
-      const coinsNeeded = amount * exchangeRate;
-      const netFeeToAdd = amount;
 
       await db.collection('users').where({
         _openid: openid

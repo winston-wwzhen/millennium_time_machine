@@ -26,11 +26,11 @@ Page({
     showExchangeDialog: false,
     exchangeAmount: 0,
     exchangeOptions: [
-      { label: '1小时', minutes: 60, coins: 60 },
-      { label: '1天', minutes: 1440, coins: 1440 },
-      { label: '3天', minutes: 4320, coins: 4320 },
-      { label: '7天', minutes: 10080, coins: 10080 },
-      { label: '30天', minutes: 43200, coins: 43200 }
+      { label: '1天', minutes: 1440, coins: 1000 },
+      { label: '3天', minutes: 4320, coins: 3000 },
+      { label: '7天', minutes: 10080, coins: 7000 },
+      { label: '15天', minutes: 21600, coins: 15000 },
+      { label: '30天', minutes: 43200, coins: 30000 }
     ],
     selectedExchangeIndex: -1
   },

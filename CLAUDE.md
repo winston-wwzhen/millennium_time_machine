@@ -100,6 +100,8 @@ The app features a dual currency system that creates a gameplay loop:
 - **💎 时光币**: Earned through discovering easter eggs, used to purchase 网费 and CDKs
 - **🌐 网费**: Initial 30 days (43,200 min), deducted daily (1,440 min), consumed by AI features
 
+**Exchange Rate**: 1000 时光币 = 1 day (1440 min) of 网费, i.e., 1 时光币 ≈ 1.44 minutes
+
 **Game Loop**:
 1. New users get 30 days free 网费
 2. Daily login deducts 1 day of 网费 automatically
