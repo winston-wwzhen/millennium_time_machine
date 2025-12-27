@@ -1,0 +1,101 @@
+<view class="manbo-container">
+  <!-- 2005风格软件界面 -->
+  <view class="window-frame">
+    <!-- 标题栏 -->
+    <view class="title-bar">
+      <view class="title-left">
+        <image class="app-icon" src="../../images/borders/border_win98.png" mode="aspectFit"></image>
+        <text class="app-name">慢播 QvodPlayer 3.0</text>
+      </view>
+      <view class="title-controls">
+        <button class="win98-btn-minimize">_</button>
+        <button class="win98-btn-maximize">□</button>
+        <button class="win98-btn-close" bindtap="onClose">×</button>
+      </view>
+    </view>
+
+    <!-- 菜单栏 -->
+    <view class="menu-bar">
+      <text class="menu-item">文件(F)</text>
+      <text class="menu-item">播放(P)</text>
+      <text class="menu-item">控制(C)</text>
+      <text class="menu-item">音频(V)</text>
+      <text class="menu-item">查看(V)</text>
+      <text class="menu-item">帮助(H)</text>
+    </view>
+
+    <!-- 主内容区 -->
+    <view class="main-content">
+      <!-- 播放区域 -->
+      <view class="play-area">
+        <view class="play-screen">
+          <text class="screen-text">🎬 慢播</text>
+          <text class="screen-subtitle">QvodPlayer</text>
+          <text class="screen-status">就绪</text>
+        </view>
+
+        <!-- 播放控制 -->
+        <view class="play-controls">
+          <button class="ctrl-btn" disabled>⏮</button>
+          <button class="ctrl-btn play-btn" disabled>▶</button>
+          <button class="ctrl-btn" disabled>⏹</button>
+          <button class="ctrl-btn" disabled>⏭</button>
+        </view>
+
+        <!-- 进度条 -->
+        <view class="progress-bar-area">
+          <text class="time-text">00:00:00</text>
+          <view class="progress-track">
+            <view class="progress-fill"></view>
+          </view>
+          <text class="time-text">00:00:00</text>
+        </view>
+      </view>
+
+      <!-- 播放列表 -->
+      <view class="playlist-area">
+        <view class="playlist-header">
+          <text class="playlist-title">播放列表</text>
+          <text class="playlist-count">0 个文件</text>
+        </view>
+        <view class="playlist-content">
+          <view class="empty-hint">
+            <text class="hint-icon">📁</text>
+            <text class="hint-text">暂无播放文件</text>
+            <text class="hint-subtext">点击"打开文件"添加视频</text>
+          </view>
+        </view>
+        <view class="playlist-actions">
+          <button class="action-btn" bindtap="onOpenFile">打开文件</button>
+          <button class="action-btn" bindtap="onOpenUrl">打开网络地址</button>
+        </view>
+      </view>
+    </view>
+
+    <!-- 状态栏 -->
+    <view class="status-bar">
+      <text class="status-text">状态: 就绪 | 播放器已就绪</text>
+      <text class="status-time">2005-01-01 12:00:00</text>
+    </view>
+  </view>
+
+  <!-- 警告弹窗 -->
+  <view class="warning-overlay {{showWarning ? 'show' : ''}}" bindtap="onHideWarning">
+    <view class="warning-dialog" catchtap="stopPropagation">
+      <view class="warning-header">
+        <text class="warning-icon">⚠️</text>
+        <text class="warning-title">温馨提示</text>
+      </view>
+      <view class="warning-content">
+        <text class="warning-text">尊敬的用户：</text>
+        <text class="warning-text">本软件仅用于怀旧展示，不支持实际播放功能。</text>
+        <text class="warning-text">如需观看视频，请使用正规视频平台。</text>
+        <text class="warning-motto">"每个人心中都有一台慢播"</text>
+      </view>
+      <view class="warning-actions">
+        <button class="warning-btn secondary" bindtap="onHideWarning">知道了</button>
+        <button class="warning-btn primary" bindtap="onClose">关闭</button>
+      </view>
+    </view>
+  </view>
+</view>

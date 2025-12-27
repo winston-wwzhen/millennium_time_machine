@@ -1,0 +1,423 @@
+/* 慢播 - 2005年风格视频播放器界面 */
+
+page {
+  height: 100vh;
+  background: #008080;
+  font-family: 'SimSun', 'Microsoft YaHei', sans-serif;
+  overflow: hidden;
+}
+
+.manbo-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 700rpx;
+  height: 800rpx;
+  background: linear-gradient(180deg, #e8e8e8 0%, #d0d0d0 100%);
+  border-radius: 10rpx;
+  box-shadow: 0 20rpx 60rpx rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* 标题栏 */
+.title-bar {
+  height: 70rpx;
+  background: linear-gradient(180deg, #0a246a 0%, #0a3d8a 50%, #0a246a 100%);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20rpx;
+}
+
+.title-left {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.app-icon {
+  width: 36rpx;
+  height: 36rpx;
+}
+
+.app-name {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.title-controls {
+  display: flex;
+  gap: 8rpx;
+}
+
+.title-controls button {
+  width: 50rpx;
+  height: 50rpx;
+  background: linear-gradient(180deg, #e8e8e8 0%, #d0d0d0 100%);
+  border: 1px solid #808080;
+  border-radius: 4rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  color: #000;
+  padding: 0;
+  margin: 0;
+  line-height: 50rpx;
+}
+
+.title-controls button:active {
+  background: linear-gradient(180deg, #d0d0d0 0%, #b8b8b8 100%);
+}
+
+/* 菜单栏 */
+.menu-bar {
+  height: 55rpx;
+  background: #e8e8e8;
+  display: flex;
+  align-items: center;
+  padding: 0 15rpx;
+  gap: 25rpx;
+  border-bottom: 1px solid #a0a0a0;
+}
+
+.menu-item {
+  font-size: 24rpx;
+  color: #000;
+  padding: 10rpx 15rpx;
+}
+
+.menu-item:active {
+  background: #0a246a;
+  color: #fff;
+}
+
+/* 主内容区 */
+.main-content {
+  flex: 1;
+  display: flex;
+  padding: 15rpx;
+  gap: 15rpx;
+}
+
+/* 播放区域 */
+.play-area {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.play-screen {
+  flex: 1;
+  background: #000;
+  border-radius: 8rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20rpx;
+  min-height: 350rpx;
+  box-shadow: inset 0 0 20rpx rgba(0, 0, 0, 0.8);
+}
+
+.screen-text {
+  font-size: 80rpx;
+  filter: drop-shadow(0 0 20rpx rgba(255, 255, 255, 0.5));
+}
+
+.screen-subtitle {
+  font-size: 32rpx;
+  color: #00d4ff;
+  font-weight: bold;
+  letter-spacing: 8rpx;
+}
+
+.screen-status {
+  font-size: 24rpx;
+  color: #808080;
+}
+
+/* 播放控制 */
+.play-controls {
+  display: flex;
+  justify-content: center;
+  gap: 30rpx;
+  padding: 15rpx 0;
+}
+
+.ctrl-btn {
+  width: 90rpx;
+  height: 90rpx;
+  background: linear-gradient(180deg, #f0f0f0 0%, #d8d8d8 100%);
+  border: 2px solid #a0a0a0;
+  border-radius: 8rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  color: #333;
+  padding: 0;
+  margin: 0;
+}
+
+.ctrl-btn[disabled] {
+  opacity: 0.5;
+}
+
+.ctrl-btn.play-btn {
+  width: 110rpx;
+  height: 110rpx;
+  background: linear-gradient(180deg, #4a9eff 0%, #2a7edf 100%);
+  border-color: #1a6ebf;
+  color: #fff;
+}
+
+/* 进度条区域 */
+.progress-bar-area {
+  display: flex;
+  align-items: center;
+  gap: 15rpx;
+  padding: 0 20rpx;
+}
+
+.time-text {
+  font-size: 22rpx;
+  color: #333;
+  min-width: 120rpx;
+  text-align: center;
+  font-family: 'Consolas', monospace;
+}
+
+.progress-track {
+  flex: 1;
+  height: 16rpx;
+  background: #a0a0a0;
+  border-radius: 8rpx;
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-fill {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #4a9eff 0%, #2a7edf 100%);
+}
+
+/* 播放列表区域 */
+.playlist-area {
+  flex: 1;
+  background: #fff;
+  border: 2px solid #a0a0a0;
+  border-radius: 8rpx;
+  display: flex;
+  flex-direction: column;
+  min-width: 300rpx;
+}
+
+.playlist-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15rpx 20rpx;
+  background: linear-gradient(180deg, #e8e8e8 0%, #d8d8d8 100%);
+  border-bottom: 1px solid #a0a0a0;
+}
+
+.playlist-title {
+  font-size: 26rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.playlist-count {
+  font-size: 22rpx;
+  color: #666;
+}
+
+.playlist-content {
+  flex: 1;
+  padding: 30rpx 20rpx;
+}
+
+.empty-hint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15rpx;
+  text-align: center;
+}
+
+.hint-icon {
+  font-size: 80rpx;
+  opacity: 0.3;
+}
+
+.hint-text {
+  font-size: 28rpx;
+  color: #999;
+}
+
+.hint-subtext {
+  font-size: 24rpx;
+  color: #bbb;
+}
+
+.playlist-actions {
+  display: flex;
+  gap: 10rpx;
+  padding: 15rpx 20rpx;
+  background: #f5f5f5;
+  border-top: 1px solid #a0a0a0;
+}
+
+.action-btn {
+  flex: 1;
+  height: 60rpx;
+  background: linear-gradient(180deg, #f0f0f0 0%, #d8d8d8 100%);
+  border: 1px solid #a0a0a0;
+  border-radius: 6rpx;
+  font-size: 24rpx;
+  color: #333;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-btn:active {
+  background: linear-gradient(180deg, #d8d8d8 0%, #c0c0c0 100%);
+}
+
+/* 状态栏 */
+.status-bar {
+  height: 50rpx;
+  background: #e8e8e8;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20rpx;
+  border-top: 1px solid #a0a0a0;
+  font-size: 22rpx;
+  color: #666;
+}
+
+/* 警告弹窗 */
+.warning-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.warning-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.warning-dialog {
+  width: 550rpx;
+  background: linear-gradient(180deg, #f8f8f8 0%, #e8e8e8 100%);
+  border: 2px solid #a0a0a0;
+  border-radius: 12rpx;
+  box-shadow: 0 10rpx 40rpx rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  animation: dialogSlideIn 0.3s ease;
+}
+
+@keyframes dialogSlideIn {
+  from {
+    transform: translateY(-50rpx);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.warning-header {
+  display: flex;
+  align-items: center;
+  gap: 15rpx;
+  padding: 25rpx 30rpx;
+  background: linear-gradient(180deg, #fff8e8 0%, #ffe8b8 100%);
+  border-bottom: 2px solid #ffd080;
+}
+
+.warning-icon {
+  font-size: 48rpx;
+}
+
+.warning-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #cc6600;
+}
+
+.warning-content {
+  padding: 30rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 15rpx;
+}
+
+.warning-text {
+  font-size: 26rpx;
+  color: #333;
+  line-height: 1.8;
+}
+
+.warning-motto {
+  font-size: 24rpx;
+  color: #999;
+  font-style: italic;
+  text-align: center;
+  margin-top: 10rpx;
+  padding-top: 20rpx;
+  border-top: 1px solid #e0e0e0;
+}
+
+.warning-actions {
+  display: flex;
+  gap: 15rpx;
+  padding: 0 30rpx 30rpx;
+}
+
+.warning-btn {
+  flex: 1;
+  height: 70rpx;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  border: none;
+}
+
+.warning-btn.secondary {
+  background: linear-gradient(180deg, #e8e8e8 0%, #d0d0d0 100%);
+  border: 1px solid #a0a0a0;
+  color: #333;
+}
+
+.warning-btn.primary {
+  background: linear-gradient(180deg, #4a9eff 0%, #2a7edf 100%);
+  color: #fff;
+}
+
+.warning-btn:active {
+  opacity: 0.8;
+}
