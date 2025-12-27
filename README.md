@@ -311,9 +311,8 @@ old_story/
 │   ├── README.md        # 项目说明
 │   ├── FUNCTIONS.md     # 功能说明
 │   └── GAMEPLAY.md      # 玩法说明
-└── db-init/             # 数据库初始化
-    ├── qcio_ai_contacts/  # AI 好友数据
-    └── qcio_groups/       # 群聊数据
+└── cloudfunctions/      # 云函数
+    └── init-db/         # 数据库初始化（含AI数据和群组数据）
 ```
 
 ---
@@ -465,6 +464,19 @@ cloudfunctions/ifthen/
 
 ### 数据库初始化
 
+有两种方式初始化数据库：
+
+#### 方式一：使用 init-db 云函数（推荐）
+
+1. 部署 `cloudfunctions/init-db/` 云函数
+2. 在云开发控制台调用云函数：
+   ```javascript
+   { action: 'init' }  // 创建所有集合并导入数据
+   ```
+3. 等待初始化完成，会自动创建19个集合并导入AI联系人和群组数据
+
+#### 方式二：手动创建集合
+
 需要创建以下数据库集合：
 
 ```javascript
@@ -474,6 +486,10 @@ qcio_wallet
 qcio_daily_tasks
 qcio_achievements
 qcio_mood_logs
+qcio_experience_logs
+qcio_user_level_rewards
+qcio_visit_stats
+qcio_space_logs
 
 // 社交相关
 qcio_ai_contacts
@@ -490,7 +506,7 @@ ifthen_endings
 ifthen_play_history
 ```
 
-然后使用 `db-init/` 目录下的 JSON 文件导入 AI 好友和群聊数据。
+数据已集成在 `init-db` 云函数中，推荐使用云函数自动导入。
 
 ---
 
