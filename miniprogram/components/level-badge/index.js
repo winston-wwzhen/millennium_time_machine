@@ -1,3 +1,7 @@
+/**
+ * 等级徽章组件
+ * 显示用户等级图标（星星/月亮/太阳/皇冠/钻石）
+ */
 Component({
   properties: {
     level: {
@@ -11,17 +15,23 @@ Component({
     showTitle: {
       type: Boolean,
       value: false
+    },
+    showLevelNumber: {
+      type: Boolean,
+      value: false
     }
   },
 
   data: {
     icon: '',
-    title: ''
+    title: '',
+    iconClass: ''
   },
 
   observers: {
-    'level': function(level) {
+    'level, size': function(level, size) {
       this.updateLevelDisplay(level);
+      this.updateIconClass(size);
     }
   },
 
@@ -33,22 +43,25 @@ Component({
       this.setData({ icon, title });
     },
 
+    updateIconClass(size) {
+      this.setData({ iconClass: `size-${size}` });
+    },
+
     getLevelIcon(level) {
-      if (!level || level < 1) level = 1;
+      // 经典QQ等级: 4星星=1月亮, 4月亮=1太阳
+      const suns = Math.floor(level / 16);
+      const moons = Math.floor((level % 16) / 4);
+      const stars = level % 4;
 
-      if (level <= 4) return `${level}★`;
-      if (level <= 8) return `${level - 4}☾`;
-      if (level <= 12) return `${level - 8}☼`;
-      if (level <= 16) return `${level - 12}♔`;
+      let icon = '';
+      if (suns > 0) icon += '☼'.repeat(suns);
+      if (moons > 0) icon += '☾'.repeat(moons);
+      if (stars > 0) icon += '★'.repeat(stars);
 
-      const crowns = Math.floor((level - 13) / 4) + 1;
-      const diamonds = (level - 13) % 4;
-      return diamonds > 0 ? `${crowns}♔${diamonds}♢` : `${crowns}♔`;
+      return icon;
     },
 
     getLevelTitle(level) {
-      if (!level || level < 1) level = 1;
-
       if (level <= 4) return '初入江湖';
       if (level <= 8) return '渐入佳境';
       if (level <= 12) return '声名鹊起';

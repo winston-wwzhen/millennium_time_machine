@@ -5,6 +5,7 @@ const CROPS = {
   'quantum_berry': { name: '数据浆果', icon: '🍇', cost: 100, sell: 300, duration: 60000 },
   'void_crystal': { name: '逻辑宝石', icon: '💎', cost: 500, sell: 1500, duration: 120000 }
 };
+const { addFarmHarvestExperience } = require('../../utils/experience');
 
 Component({
   /**
@@ -170,10 +171,10 @@ Component({
       const crop = CROPS[plot.cropType];
       const profit = crop.sell;
       const expGain = Math.floor(crop.cost / 2);
-  
+
       const newPlots = [...this.data.farmPlots];
       newPlots[index] = { id: index, status: 0, cropType: null, plantTime: 0 };
-  
+
       this.setData({
         farmPlots: newPlots,
         farmCoins: this.data.farmCoins + profit,
@@ -181,6 +182,9 @@ Component({
       });
       this.checkLevelUp();
       this.showFarmMsg(`收获！+${profit}积分`);
+
+      // 获取QCIO农场收获经验
+      addFarmHarvestExperience();
     },
   
     checkLevelUp: function() {

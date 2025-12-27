@@ -84,15 +84,17 @@ function getLevelTitle(level) {
 
 // 初始化用户等级数据
 async function initUserLevel(qcio_id) {
-  const userRes = await db.collection('qcio_users').doc(qcio_id.toString()).get();
+  const userRes = await db.collection('qcio_users').where({ qcio_id }).get();
 
-  if (!userRes.data) {
+  if (!userRes.data || userRes.data.length === 0) {
     throw new Error('用户不存在');
   }
 
+  const user = userRes.data[0];
+
   // 检查是否已初始化
-  if (userRes.data.level !== undefined) {
-    return userRes.data;
+  if (user.level !== undefined) {
+    return user;
   }
 
   // 初始化等级数据
@@ -105,11 +107,11 @@ async function initUserLevel(qcio_id) {
     vip_exp_bonus: 1.0,
   };
 
-  await db.collection('qcio_users').doc(qcio_id.toString()).update({
+  await db.collection('qcio_users').where({ qcio_id }).update({
     data: initdata
   });
 
-  return { ...userRes.data, ...initdata };
+  return { ...user, ...initdata };
 }
 
 // 云函数入口
@@ -147,14 +149,16 @@ exports.main = async (event, context) => {
 
 // 获取等级信息
 async function getLevelInfo(qcio_id) {
-  const user = await db.collection('qcio_users').doc(qcio_id.toString()).get();
+  const userRes = await db.collection('qcio_users').where({ qcio_id }).get();
 
-  if (!user.data) {
+  if (!userRes.data || userRes.data.length === 0) {
     throw new Error('用户不存在');
   }
 
+  const user = userRes.data[0];
+
   // 如果未初始化等级，先初始化
-  let userData = user.data;
+  let userData = user;
   if (userData.level === undefined) {
     userData = await initUserLevel(qcio_id);
   }
@@ -181,13 +185,13 @@ async function getLevelInfo(qcio_id) {
 // 增加经验
 async function addExperience(qcio_id, source, baseAmount) {
   // 获取用户信息
-  const userRes = await db.collection('qcio_users').doc(qcio_id.toString()).get();
+  const userRes = await db.collection('qcio_users').where({ qcio_id }).get();
 
-  if (!userRes.data) {
+  if (!userRes.data || userRes.data.length === 0) {
     throw new Error('用户不存在');
   }
 
-  let user = userRes.data;
+  let user = userRes.data[0];
 
   // 如果未初始化等级，先初始化
   if (user.level === undefined) {
@@ -249,7 +253,7 @@ async function addExperience(qcio_id, source, baseAmount) {
     level_title: getLevelTitle(newLevel),
   };
 
-  await db.collection('qcio_users').doc(qcio_id.toString()).update({
+  await db.collection('qcio_users').where({ qcio_id }).update({
     data: updateData
   });
 
@@ -278,13 +282,13 @@ async function addExperience(qcio_id, source, baseAmount) {
 
 // 同步在线时长
 async function syncOnlineTime(qcio_id, minutes) {
-  const userRes = await db.collection('qcio_users').doc(qcio_id.toString()).get();
+  const userRes = await db.collection('qcio_users').where({ qcio_id }).get();
 
-  if (!userRes.data) {
+  if (!userRes.data || userRes.data.length === 0) {
     throw new Error('用户不存在');
   }
 
-  let user = userRes.data;
+  let user = userRes.data[0];
 
   // 如果未初始化等级，先初始化
   if (user.level === undefined) {
@@ -327,13 +331,13 @@ async function syncOnlineTime(qcio_id, minutes) {
 
 // 领取每日奖励
 async function claimDailyReward(qcio_id) {
-  const userRes = await db.collection('qcio_users').doc(qcio_id.toString()).get();
+  const userRes = await db.collection('qcio_users').where({ qcio_id }).get();
 
-  if (!userRes.data) {
+  if (!userRes.data || userRes.data.length === 0) {
     throw new Error('用户不存在');
   }
 
-  let user = userRes.data;
+  let user = userRes.data[0];
 
   // 如果未初始化等级，先初始化
   if (user.level === undefined) {
@@ -379,7 +383,7 @@ async function claimDailyReward(qcio_id) {
   const reward = rewards[maxRewardLevel];
 
   // 发放奖励
-  await db.collection('qcio_wallet').doc(qcio_id.toString()).update({
+  await db.collection('qcio_wallet').where({ qcio_id }).update({
     data: {
       coins: _.inc(reward.coins || 0),
       qpoints: _.inc(reward.qpoints || 0),
@@ -435,7 +439,7 @@ async function claimLevelReward(qcio_id, level) {
   }
 
   // 发放奖励
-  await db.collection('qcio_wallet').doc(qcio_id.toString()).update({
+  await db.collection('qcio_wallet').where({ qcio_id }).update({
     data: {
       coins: _.inc(reward.coins || 0),
       qpoints: _.inc(reward.qpoints || 0),

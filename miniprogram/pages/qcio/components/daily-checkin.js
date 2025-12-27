@@ -3,6 +3,7 @@
  * 实现签到功能、连续签到奖励（云端存储）
  */
 const { preventDuplicateBehavior } = require('../../../utils/prevent-duplicate');
+const { addDailyCheckinExperience } = require('../../../utils/experience');
 
 Component({
   behaviors: [preventDuplicateBehavior],
@@ -87,6 +88,9 @@ Component({
               todayChecked: true,
               canCheckIn: false
             });
+
+            // 获取签到经验
+            addDailyCheckinExperience();
 
             // 显示奖励
             const reward = data.reward || { coins: 10, qpoints: 0 };

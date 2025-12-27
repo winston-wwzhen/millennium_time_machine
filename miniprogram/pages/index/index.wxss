@@ -308,6 +308,16 @@ page {
   align-items: center;
 }
 
+/* QCIO图标 */
+.qcio-icon {
+  transition: all 0.2s ease;
+}
+
+.qcio-icon:active {
+  transform: scale(0.9);
+  filter: brightness(0.8);
+}
+
 /* 网络信息气泡 */
 .network-bubble {
   position: absolute;

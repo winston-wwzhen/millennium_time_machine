@@ -37,19 +37,10 @@ Component({
   },
 
   methods: {
-    // 添加操作日志
+    // 添加操作日志（使用 logger 模块，带随机有趣话语）
     addLog: function(action, target, details) {
-      wx.cloud.callFunction({
-        name: 'user',
-        data: {
-          type: 'addLog',
-          action: action,
-          target: target,
-          details: details || ''
-        }
-      }).catch(err => {
-        console.error('添加日志失败:', err);
-      });
+      const { addLog: logAction } = require("../../utils/logger");
+      logAction(action, target, details);
     },
     onClose: function() {
       this.triggerEvent('close');

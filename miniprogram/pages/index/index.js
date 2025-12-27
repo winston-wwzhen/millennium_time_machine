@@ -234,6 +234,14 @@ Page({
     }
   },
 
+  // ========== 统一日志记录方法 ==========
+  // 添加操作日志（记录到云端，在我的文档中可见）
+  // 使用 logger 模块的 addLog 函数，带随机有趣话语
+  addLog: function(action, target, details) {
+    const { addLog: logAction } = require("../../utils/logger");
+    logAction(action, target, details);
+  },
+
   // 点击用户横幅 - 打开编辑弹窗
   onUserBannerTap: function () {
     this.setData({
@@ -291,6 +299,8 @@ Page({
           "userInfo.avatar": res.result.avatar,
           showUserEditDialog: false,
         });
+        // 记录用户信息修改日志
+        this.addLog('edit', '用户信息', `昵称: ${nickname}`);
         wx.showToast({ title: "保存成功", icon: "success" });
       } else {
         throw new Error(res.result?.errMsg || "保存失败");
@@ -376,6 +386,11 @@ Page({
         const result = await eggSystem.discover(EGG_IDS.TIME_SPECIAL);
         const isNewDiscovery = result?.isNew || false;
 
+        // 记录彩蛋发现日志
+        if (isNewDiscovery) {
+          this.addLog('egg', '特殊时刻', timeStr);
+        }
+
         const messages = {
           "12:34": "1234，顺顺当当！",
           "04:44": "发发发，好运来~",
@@ -404,6 +419,11 @@ Page({
     if (hour === 0) {
       const result = await eggSystem.discover(EGG_IDS.TIME_MIDNIGHT);
       const isNewDiscovery = result?.isNew || false;
+
+      // 记录彩蛋发现日志
+      if (isNewDiscovery) {
+        this.addLog('egg', '午夜时光', '深夜党专属');
+      }
 
       this.setData({
         isMidnightEgg: true,
@@ -457,6 +477,7 @@ Page({
   onIconTap: function (e) {
     const path = e.currentTarget.dataset.path;
     const iconId = e.currentTarget.id;
+    const icon = this.data.desktopIcons.find(i => i.id === iconId);
 
     // Konami Code 检测 - 通过特定图标模拟方向输入
     const direction = this.getDirectionFromIcon(iconId);
@@ -469,12 +490,14 @@ Page({
 
     // 十分动听 - 打开播放器组件
     if (path && path.includes("ttplayer")) {
+      this.addLog('open', '十分动听');
       this.setData({ showTTPlayer: true });
       return;
     }
 
     // 我的电脑 - 打开组件
     if (path && path.includes("my-computer")) {
+      this.addLog('open', '我的电脑');
       this.setData({
         showMyComputer: true,
         baseZIndex: this.data.baseZIndex + 10,
@@ -485,6 +508,7 @@ Page({
 
     // 我的文档 - 打开组件
     if (path && path.includes("my-documents")) {
+      this.addLog('open', '我的文档');
       this.setData({
         showMyDocuments: true,
         baseZIndex: this.data.baseZIndex + 10,
@@ -495,6 +519,7 @@ Page({
 
     // 网管系统 - 打开组件
     if (path && path.includes("network-neighborhood")) {
+      this.addLog('open', '网管系统');
       this.setData({
         showNetworkSystem: true,
         showNetworkPlugin: true,
@@ -504,10 +529,41 @@ Page({
       return;
     }
 
+    // 回收站 - 打开页面
+    if (path && path.includes("recycle-bin")) {
+      this.addLog('open', '回收站');
+    }
+
+    // 浏览器 - 打开页面
+    if (path && path.includes("browser")) {
+      this.addLog('open', '浏览器');
+    }
+
+    // 非主流相机 - 打开页面
+    if (path && path.includes("avatar")) {
+      this.addLog('open', '非主流相机');
+    }
+
+    // QCIO - 打开页面
+    if (path && path.includes("qcio")) {
+      this.addLog('open', 'QCIO');
+    }
+
+    // 如果当时 - 打开页面
+    if (path && path.includes("ifthen")) {
+      this.addLog('open', '如果当时');
+    }
+
     // 慢播 - 文件损坏提示（致敬快播）
     if (path && path.includes("manbo")) {
+      this.addLog('open', '慢播', '文件损坏');
       this.setData({ showErrorDialog: true });
       return;
+    }
+
+    // 其他页面 - 记录日志
+    if (icon) {
+      this.addLog('open', icon.name);
     }
 
     // 简单的点击反馈延迟，模拟老式系统的加载感
@@ -550,6 +606,11 @@ Page({
       const result = await eggSystem.discover(eggId);
       const isNewDiscovery = result?.isNew || false;
       const config = eggSystem.getConfig(eggId);
+
+      // 记录彩蛋发现日志
+      if (isNewDiscovery) {
+        this.addLog('egg', config.name, '首次发现');
+      }
 
       // 显示发现提示
       wx.showToast({
@@ -600,6 +661,7 @@ Page({
   // 刷新桌面
   refreshDesktop: function () {
     this.hideContextMenu();
+    this.addLog('action', '刷新桌面');
 
     // 触发刷新动画
     this.setData({ isRefreshing: true });
@@ -622,6 +684,7 @@ Page({
   // 显示系统信息
   showSystemInfo: function () {
     this.hideContextMenu();
+    this.addLog('view', '系统信息');
 
     const systemInfo = wx.getSystemInfoSync();
     const now = new Date();
@@ -650,6 +713,7 @@ Page({
   // 打开网管系统
   openNetworkSystem: function () {
     this.hideContextMenu();
+    this.addLog('open', '网管系统', '右键菜单');
     this.setData({
       showNetworkSystem: true,
       showNetworkPlugin: true,
@@ -661,6 +725,7 @@ Page({
   // 显示助手设置
   showAgentSettings: function () {
     this.hideContextMenu();
+    this.addLog('view', '助手设置');
 
     const messages = [
       '小狮子设置：\n\n• 拖动：移动位置\n• 点击：随机互动\n• 长按：怀旧语录\n• 点击10次：触发跳舞',
@@ -684,6 +749,7 @@ Page({
   // 显示关于
   showAbout: function () {
     this.hideContextMenu();
+    this.addLog('view', '关于');
     this.setData({ showAboutDialog: true });
   },
 
@@ -863,6 +929,11 @@ Page({
     const result = await eggSystem.discover(EGG_IDS.LION_DANCE);
     const isNewDiscovery = result?.isNew || false;
 
+    // 记录彩蛋发现日志
+    if (isNewDiscovery) {
+      this.addLog('egg', '舞动的小狮子', '小狮子跳舞');
+    }
+
     this.setData({
       isDancing: true,
       agentMood: "dancing",
@@ -888,6 +959,11 @@ Page({
     // 触发说话彩蛋
     const result = await eggSystem.discover(EGG_IDS.LION_TALK);
     const isNewDiscovery = result?.isNew || false;
+
+    // 记录彩蛋发现日志
+    if (isNewDiscovery) {
+      this.addLog('egg', '小狮子的心里话', '怀旧语录');
+    }
 
     // 怀旧语录库
     const nostalgicQuotes = [
@@ -1208,6 +1284,14 @@ Page({
     this.volumeInfoTimer = setTimeout(() => {
       this.setData({ showVolumeInfo: false });
     }, 2000);
+  },
+
+  // 点击QCIO图标
+  onQcioIconTap: function () {
+    this.addLog('open', 'QCIO');
+    wx.navigateTo({
+      url: '/pages/qcio/index'
+    });
   },
 
   // 点击网管系统插件

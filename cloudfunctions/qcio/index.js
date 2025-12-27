@@ -16,6 +16,13 @@ const { redeemVipCode } = require('./modules/vip');
 const { getAchievements, checkAchievements } = require('./modules/achievements');
 const { saveMoodLog, getMoodLogs, deleteMoodLog, getMoodLogStatus } = require('./modules/moodLog');
 const { getGuestbook, deleteGuestbookMessage } = require('./modules/guestbook');
+const {
+  getLevelInfo,
+  addExperience,
+  syncOnlineTime,
+  claimDailyReward,
+  LEVEL_REWARDS
+} = require('./modules/level');
 
 /**
  * QCIO 核心业务云函数
@@ -146,6 +153,22 @@ exports.main = async (event, context) => {
       // 添加Q点（奖励）
       return await addQpoints(OPENID, event.amount, event.reason, event.openid, db, _);
 
+    case 'getLevelInfo':
+      // 获取等级信息
+      return await getLevelInfo(OPENID, db);
+
+    case 'addExperience':
+      // 增加经验
+      return await addExperience(OPENID, event.source, event.amount, db, _);
+
+    case 'syncOnlineTime':
+      // 同步在线时长并结算经验
+      return await syncOnlineTime(OPENID, event.minutes, db);
+
+    case 'claimDailyReward':
+      // 领取每日等级奖励
+      return await claimDailyReward(OPENID, db, _);
+
     default:
       return { success: false, message: '未知的操作类型' };
   }
@@ -164,9 +187,37 @@ async function initAccount(openid) {
     }).limit(1).get();
 
     if (userRes.data.length > 0) {
+      const user = userRes.data[0];
+
+      // 检查是否需要迁移等级字段（针对老用户）
+      if (user.experience === undefined || user.level_icon === undefined) {
+        try {
+          const { getLevelIcon, getLevelTitle } = require('./modules/level');
+          const level = user.level || 1;
+
+          await qcioCollection.where({ _openid: openid }).update({
+            data: {
+              experience: user.experience || 0,
+              total_experience: user.total_experience || 0,
+              level_icon: user.level_icon || getLevelIcon(level),
+              level_title: user.level_title || getLevelTitle(level)
+            }
+          });
+
+          // 返回更新后的用户数据
+          user.experience = user.experience || 0;
+          user.total_experience = user.total_experience || 0;
+          user.level_icon = user.level_icon || getLevelIcon(level);
+          user.level_title = user.level_title || getLevelTitle(level);
+        } catch (err) {
+          console.error('Migrate level fields error:', err);
+          // 迁移失败不影响主流程
+        }
+      }
+
       return {
         success: true,
-        data: userRes.data[0],
+        data: user,
         message: '获取账号成功'
       };
     }
@@ -217,7 +268,7 @@ async function registerUser(openid, qcio_id, nickname, avatar) {
       };
     }
 
-    // 随机分配 20 个 AI 网友
+    // 随机分配 12 个 AI 网友
     let myContacts = [];
     try {
       const contactsRes = await db.collection('qcio_ai_contacts')
@@ -226,9 +277,9 @@ async function registerUser(openid, qcio_id, nickname, avatar) {
         .get();
 
       if (contactsRes.data.length > 0) {
-        // 随机选择20个网友
+        // 随机选择12个网友
         const shuffled = shuffleArray(contactsRes.data);
-        myContacts = shuffled.slice(0, Math.min(20, shuffled.length)).map(c => c._id);
+        myContacts = shuffled.slice(0, Math.min(12, shuffled.length)).map(c => c._id);
       }
     } catch (err) {
       console.error('Get AI contacts error:', err);
@@ -243,7 +294,13 @@ async function registerUser(openid, qcio_id, nickname, avatar) {
       nickname: nickname,
       signature: '',
       avatar: avatar,
+      // 等级系统字段
       level: 1,
+      experience: 0,
+      total_experience: 0,
+      level_icon: '1★',
+      level_title: '初入江湖',
+      // 其他字段
       isOnline: false,
       myContacts: myContacts, // 用户的好友列表（AI网友ID数组）
       createTime: db.serverDate(),
@@ -721,7 +778,7 @@ async function getChatHistory(openid, contactName) {
 /**
  * 获取用户的 AI 好友列表
  * 先获取用户分配的网友ID，再返回这些网友的详细信息
- * 如果用户没有 myContacts，自动随机分配20个网友
+ * 如果用户没有 myContacts，自动随机分配12个网友
  */
 async function getMyAIContacts(openid) {
   try {
@@ -756,9 +813,9 @@ async function getMyAIContacts(openid) {
         .get();
 
       if (contactsRes.data.length > 0) {
-        // 随机选择20个
+        // 随机选择12个
         const shuffled = shuffleArray(contactsRes.data);
-        myContacts = shuffled.slice(0, Math.min(20, shuffled.length)).map(c => c._id);
+        myContacts = shuffled.slice(0, Math.min(12, shuffled.length)).map(c => c._id);
 
         // 更新用户记录
         if (userRes.data.length > 0) {

@@ -95,6 +95,9 @@
           <text class="volume-status-text">{{soundEnabled ? '音量已开启' : '静音模式'}}</text>
         </view>
       </view>
+      <view class="tray-icon qcio-icon" bindtap="onQcioIconTap">
+        📟
+      </view>
       <view class="system-time" bindtap="onTimeTap">{{systemTime}}</view>
     </view>
   </view>

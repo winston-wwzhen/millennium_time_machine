@@ -80,19 +80,10 @@ Component({
   },
 
   methods: {
-    // 添加操作日志
+    // 添加操作日志（使用 logger 模块，带随机有趣话语）
     addLog: function(action, target, details) {
-      wx.cloud.callFunction({
-        name: 'user',
-        data: {
-          type: 'addLog',
-          action: action,
-          target: target,
-          details: details || ''
-        }
-      }).catch(err => {
-        console.error('添加日志失败:', err);
-      });
+      const { addLog: logAction } = require("../../utils/logger");
+      logAction(action, target, details);
     },
     // 关闭窗口
     onClose: function() {
@@ -216,6 +207,7 @@ Component({
 
     // 显示交易记录对话框
     showTransactionRecords: function() {
+      this.addLog('view', '扣费记录');
       this.setData({ showTransactionDialog: true });
       this.loadTransactionHistory();
     },
@@ -227,6 +219,7 @@ Component({
 
     // 显示兑换对话框
     showExchange: function() {
+      this.addLog('view', '网费兑换');
       this.setData({
         showExchangeDialog: true,
         selectedExchangeIndex: -1
@@ -302,6 +295,9 @@ Component({
           const newNetFee = res.result.newNetFee;
           const newDays = Math.floor(newNetFee / 1440);
           const newMinutes = newNetFee % 1440;
+
+          // 记录网费兑换日志
+          this.addLog('exchange', '网费兑换', `${option.label} (-${option.coins}时光币)`);
 
           this.setData({
             coins: res.result.remainingCoins,

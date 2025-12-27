@@ -134,7 +134,7 @@
         <view class="profile-details">
           <view class="name-row">
             <text class="display-name" bindtap="openEditDialog" data-type="nickname">{{userProfile.nickname}}</text>
-            <view class="growth-display">
+            <view class="growth-display" bindtap="showLevelInfo">
               <block wx:for="{{growthIcons}}" wx:key="index">
                 <text class="lvl-ico">{{item}}</text>
               </block>
@@ -200,6 +200,39 @@
           <!-- 主页内容 -->
           <block wx:if="{{zoneSubTab === 'home'}}">
             <daily-checkin qcioId="{{userProfile.qcio_id}}" bindcheckin="onCheckInSuccess" />
+
+            <!-- 等级经验进度条 -->
+            <view class="level-section" wx:if="{{growthInfo}}">
+              <view class="level-header">
+                <text class="level-title-text">🎯 成长值</text>
+                <level-badge level="{{growthInfo.level}}" size="medium" showTitle="{{true}}" />
+              </view>
+              <exp-progress
+                current-exp="{{growthInfo.experience}}"
+                level="{{growthInfo.level}}"
+                showText="{{true}}"
+              />
+              <!-- 每日等级奖励 -->
+              <view class="daily-reward-section" wx:if="{{growthInfo.daily_reward.daily_bonus_coins || growthInfo.daily_reward.daily_bonus_qpoints}}">
+                <view class="reward-info">
+                  <text class="reward-label">等级奖励: </text>
+                  <text class="reward-amount" wx:if="{{growthInfo.daily_reward.daily_bonus_coins}}">
+                    💰{{growthInfo.daily_reward.daily_bonus_coins}}
+                  </text>
+                  <text class="reward-amount" wx:if="{{growthInfo.daily_reward.daily_bonus_qpoints}}">
+                    💎{{growthInfo.daily_reward.daily_bonus_qpoints}}
+                  </text>
+                </view>
+                <button
+                  class="reward-claim-btn {{growthInfo.has_claimed_daily ? 'claimed' : ''}}"
+                  bindtap="onClaimDailyReward"
+                  disabled="{{growthInfo.has_claimed_daily}}"
+                >
+                  {{growthInfo.has_claimed_daily ? '已领取' : '领取奖励'}}
+                </button>
+              </view>
+            </view>
+
             <!-- 农场入口暂时注释 -->
             <!-- <farm-badge qcioId="{{userProfile.qcio_id}}" /> -->
           </block>
@@ -333,6 +366,91 @@
         <view class="dialog-actions">
           <button class="win98-btn-std" bindtap="confirmLogout">确定退出</button>
           <button class="win98-btn-std" bindtap="cancelLogout">取消</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 6. 等级详情弹窗 -->
+  <view class="win98-overlay" wx:if="{{showLevelInfo}}">
+    <view class="win98-window level-info-box">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">🎯 成长值详情</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="closeLevelInfo">×</button>
+        </view>
+      </view>
+      <view class="win98-window-body">
+        <scroll-view class="level-info-scroll" scroll-y>
+          <view class="level-info-content">
+            <!-- 等级展示 -->
+            <view class="level-display-main">
+              <view class="level-icon-large">{{growthInfo.level_icon || '★'}}</view>
+              <view class="level-number">Lv.{{growthInfo.level || 1}}</view>
+              <view class="level-title">{{growthInfo.level_title || '初入江湖'}}</view>
+            </view>
+
+          <!-- 经验进度 -->
+          <view class="level-exp-section">
+            <view class="exp-label">当前经验</view>
+            <view class="exp-value">{{growthInfo.level_exp || 0}} / {{growthInfo.next_level_exp || 50}}</view>
+            <view class="exp-bar-bg">
+              <view class="exp-bar-fill" style="width: {{growthInfo.progress || 0}}%"></view>
+            </view>
+            <view class="exp-percent">{{growthInfo.progress || 0}}%</view>
+          </view>
+
+          <!-- 升级还需 -->
+          <view class="level-need-section">
+            <text class="need-label">距离升级还需：</text>
+            <text class="need-value">{{growthInfo.need_exp || 50}} 经验</text>
+          </view>
+
+          <!-- 总经验 -->
+          <view class="level-total-section">
+            <text class="total-label">累计总经验：</text>
+            <text class="total-value">{{growthInfo.total_experience || 0}}</text>
+          </view>
+
+          <!-- 经验获取指南 -->
+          <view class="exp-guide-section">
+            <view class="guide-title">📝 经验获取指南</view>
+            <view class="guide-list">
+              <view class="guide-item">
+                <text class="guide-icon">💬</text>
+                <text class="guide-text">聊天发言 +2经验/条 (每日上限100)</text>
+              </view>
+              <view class="guide-item">
+                <text class="guide-icon">📝</text>
+                <text class="guide-text">发布心情日志 +10经验/篇 (每日上限50)</text>
+              </view>
+              <view class="guide-item">
+                <text class="guide-icon">👣</text>
+                <text class="guide-text">访问他人空间 +3经验/次 (每日上限60)</text>
+              </view>
+              <view class="guide-item">
+                <text class="guide-icon">🌾</text>
+                <text class="guide-text">农场收获 +5经验/次 (每日上限100)</text>
+              </view>
+              <view class="guide-item">
+                <text class="guide-icon">✅</text>
+                <text class="guide-text">每日签到 +10经验 (每日1次)</text>
+              </view>
+              <view class="guide-item">
+                <text class="guide-icon">⏰</text>
+                <text class="guide-text">在线挂机 +1经验/分钟 (每10分钟结算，每日上限600)</text>
+              </view>
+              <view class="guide-item">
+                <text class="guide-icon">💎</text>
+                <text class="guide-text">VIP会员额外获得 ×1.5~2.0 经验加成</text>
+              </view>
+            </view>
+          </view>
+          </view>
+        </scroll-view>
+
+        <view class="dialog-actions">
+          <button class="win98-btn-std" bindtap="closeLevelInfo">关闭</button>
         </view>
       </view>
     </view>

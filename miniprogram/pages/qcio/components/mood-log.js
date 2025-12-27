@@ -5,6 +5,7 @@
  */
 const { preventDuplicateBehavior } = require('../../../utils/prevent-duplicate');
 const { isNetworkError, setNetworkDisconnected, showDisconnectDialog } = require('../../../utils/network');
+const { addPostLogExperience } = require('../../../utils/experience');
 
 Component({
   behaviors: [preventDuplicateBehavior],
@@ -122,6 +123,9 @@ Component({
 
               // 清空输入
               this.setData({ keywords: '', selectedMood: null });
+
+              // 获取发布日志经验
+              addPostLogExperience();
 
               // 显示发布成功和奖励信息
               const { reward, newBalance } = saveRes.data;

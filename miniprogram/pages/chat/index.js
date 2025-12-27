@@ -131,7 +131,7 @@ Page({
   // 窗口抖动
   onShake() {
     // 震动反馈
-    wx.vibrateShort({ type: 'heavy' });
+    wx.vibrateShort({ type: 'light' });
 
     // 添加抖动消息到聊天列表
     const shakeMsg = { type: 'me', content: '📳 发送了一个窗口抖动' };

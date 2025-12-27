@@ -2,6 +2,8 @@
  * QCIO 独立聊天页面
  * 复古风格聊天界面，支持多 AI 人设
  */
+const { addChatExperience } = require('../../utils/experience');
+
 Page({
   data: {
     contactName: '',
@@ -162,6 +164,9 @@ Page({
       this.playSound('receive');
       this.scrollToBottom();
 
+      // 获取聊天经验
+      addChatExperience();
+
     } catch (err) {
       console.error('Send message error:', err);
       this.setData({ isSending: false });
@@ -197,7 +202,7 @@ Page({
   // 震动窗口
   vibrate() {
     wx.vibrateShort({
-      type: 'heavy'
+      type: 'light'
     });
   },
 

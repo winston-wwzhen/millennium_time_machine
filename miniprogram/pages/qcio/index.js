@@ -64,6 +64,9 @@ Page({
     // 注销确认弹窗
     showLogoutDialog: false,
 
+    // 等级详情弹窗
+    showLevelInfo: false,
+
     // 好友列表数据（从云端获取）
     contactGroups: []
   },
@@ -295,40 +298,31 @@ Page({
 
   /**
    * 计算QQ风格成长值图标
-   * 1-4级: 星星 (★)
-   * 5-8级: 月亮 (☾)
-   * 9-12级: 太阳 (☼)
-   * 13-16级: 皇冠 (♔)
-   * 17+级: 皇冠+钻石 (♔♢)
+   * 经典QQ等级: 4星星=1月亮, 4月亮=1太阳
    */
   calculateGrowthIcons: function(level) {
     if (!level || level < 1) level = 1;
 
+    // 计算太阳、月亮、星星数量
+    const suns = Math.floor(level / 16);
+    const moons = Math.floor((level % 16) / 4);
+    const stars = level % 4;
+
     let icon = '';
+    if (suns > 0) icon += '☼'.repeat(suns);
+    if (moons > 0) icon += '☾'.repeat(moons);
+    if (stars > 0) icon += '★'.repeat(stars);
+
+    // 获取等级称号
     let title = '';
-
-    if (level <= 4) {
-      icon = `${level}★`;
-      title = '初入江湖';
-    } else if (level <= 8) {
-      icon = `${level - 4}☾`;
-      title = '渐入佳境';
-    } else if (level <= 12) {
-      icon = `${level - 8}☼`;
-      title = '声名鹊起';
-    } else if (level <= 16) {
-      icon = `${level - 12}♔`;
-      title = '风云人物';
-    } else {
-      const crowns = Math.floor((level - 13) / 4) + 1;
-      const diamonds = (level - 13) % 4;
-      icon = diamonds > 0 ? `${crowns}♔${diamonds}♢` : `${crowns}♔`;
-
-      if (level <= 20) title = '一代宗师';
-      else if (level <= 30) title = '登峰造极';
-      else if (level <= 50) title = '传说级别';
-      else title = '殿堂神话';
-    }
+    if (level <= 4) title = '初入江湖';
+    else if (level <= 8) title = '渐入佳境';
+    else if (level <= 12) title = '声名鹊起';
+    else if (level <= 16) title = '风云人物';
+    else if (level <= 32) title = '一代宗师';
+    else if (level <= 48) title = '登峰造极';
+    else if (level <= 64) title = '传说级别';
+    else title = '殿堂神话';
 
     this.setData({
       growthIcons: [icon],
@@ -340,18 +334,13 @@ Page({
    * 从云函数加载完整成长值信息
    */
   loadGrowthInfo: function() {
-    if (!this.data.userProfile.qcio_id) return;
-
     wx.cloud.callFunction({
-      name: 'level',
-      data: {
-        action: 'getLevelInfo',
-        qcio_id: this.data.userProfile.qcio_id
-      }
+      name: 'qcio',
+      data: { action: 'getLevelInfo' }
     }).then(res => {
-      if (res.result && res.result.level) {
+      if (res.result && res.result.success) {
         this.setData({
-          growthInfo: res.result
+          growthInfo: res.result.data
         });
       }
     }).catch(err => {
@@ -715,5 +704,123 @@ Page({
     } else {
       this.loadWalletData();
     }
+  },
+
+  /**
+   * 领取每日等级奖励
+   */
+  onClaimDailyReward: function() {
+    this._runWithLock('onClaimDailyReward', () => {
+      wx.showLoading({ title: '领取中...', mask: true });
+
+      return wx.cloud.callFunction({
+        name: 'qcio',
+        data: { action: 'claimDailyReward' }
+      }).then(res => {
+        if (res.result && res.result.success) {
+          const { coins, qpoints } = res.result;
+
+          // 显示奖励领取成功提示
+          let rewardMsg = '领取成功！';
+          if (coins > 0) rewardMsg += ` 💰+${coins}`;
+          if (qpoints > 0) rewardMsg += ` 💎+${qpoints}`;
+          wx.showToast({ title: rewardMsg, icon: 'success' });
+
+          // 更新钱包余额
+          this.loadWalletData();
+
+          // 更新等级信息（标记已领取）
+          this.loadGrowthInfo();
+        } else {
+          throw new Error(res.result ? res.result.message : '领取失败');
+        }
+      }).catch(err => {
+        console.error('Claim Daily Reward Error:', err);
+        wx.showToast({ title: err.message || '领取失败', icon: 'none' });
+      }).finally(() => {
+        wx.hideLoading();
+      });
+    }, 2000);
+  },
+
+  /**
+   * 获取经验（内部方法，供各功能调用）
+   */
+  addExperience: function(source, amount) {
+    wx.cloud.callFunction({
+      name: 'qcio',
+      data: {
+        action: 'addExperience',
+        source: source,
+        amount: amount
+      }
+    }).then(res => {
+      if (res.result && res.result.success) {
+        const { level_up, new_level, experience } = res.result;
+
+        // 如果升级了，显示升级特效
+        if (level_up) {
+          this.showLevelUpEffect(new_level);
+        }
+
+        // 更新等级信息
+        this.loadGrowthInfo();
+      }
+    }).catch(err => {
+      console.error('Add Experience Error:', err);
+    });
+  },
+
+  /**
+   * 显示升级特效
+   */
+  showLevelUpEffect: function(newLevel) {
+    // 判断升级类型
+    let type = 'normal';
+    if ([20, 30, 50].includes(newLevel)) {
+      type = 'milestone';
+    } else if (newLevel >= 13) {
+      type = 'major';
+    }
+
+    // 使用震动反馈
+    wx.vibrateShort();
+
+    // 显示升级弹窗（如果有 growth-up-dialog 组件）
+    this.setData({
+      showGrowthUpDialog: true,
+      growthUpData: {
+        level: newLevel,
+        type: type
+      }
+    });
+  },
+
+  /**
+   * 关闭升级弹窗
+   */
+  closeGrowthUpDialog: function() {
+    this.setData({
+      showGrowthUpDialog: false,
+      growthUpData: null
+    });
+  },
+
+  /**
+   * 显示等级详情
+   */
+  showLevelInfo: function() {
+    // 确保有等级数据
+    if (!this.data.growthInfo) {
+      this.loadGrowthInfo();
+    }
+    this.setData({ showLevelInfo: true });
+  },
+
+  /**
+   * 关闭等级详情
+   */
+  closeLevelInfo: function() {
+    this.setData({ showLevelInfo: false });
   }
 });

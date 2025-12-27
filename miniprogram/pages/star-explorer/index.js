@@ -1,4 +1,5 @@
 // miniprogram/pages/star-explorer/index.js
+const { addLog } = require("../../utils/logger");
 
 const DIFFICULTY_LEVELS = {
   beginner: {
@@ -62,10 +63,13 @@ Page({
   onLoad() {
     this.loadBestRecords();
     this.initGame(DIFFICULTY_LEVELS[this.data.currentDifficulty]);
-    
+
     // 随机显示一句非主流语录
     const randomIdx = Math.floor(Math.random() * EMO_QUOTES.length);
     this.setData({ randomQuote: EMO_QUOTES[randomIdx] });
+
+    // 记录打开游戏日志
+    addLog('open', '星际探索', '葬爱扫雷 - 心碎之旅开始');
   },
 
   onUnload() {
@@ -293,22 +297,30 @@ Page({
 
     if (win) {
       grid.forEach(c => { if (c.isBlackHole) c.marked = true; });
-      this.setData({ 
+      this.setData({
         grid,
         gameState: 'won',
         beaconsLeft: 0,
         headerTitle: '☆伱是莪的唯一☆'
       });
       this.saveBestRecord();
-      
+
+      // 记录胜利日志
+      const level = DIFFICULTY_LEVELS[this.data.currentDifficulty];
+      addLog('game', '星际探索', `通关 ${level.name}！用时 ${this.data.timeElapsed} 秒 - 莪菂強！`);
+
       wx.showToast({ title: '爱 没 有 终 点', icon: 'none' });
     } else {
       grid.forEach(c => { if (c.isBlackHole) c.revealed = true; });
-      this.setData({ 
-        grid, 
+      this.setData({
+        grid,
         gameState: 'lost',
         headerTitle: '💔心碎了无痕💔'
       });
+
+      // 记录失败日志
+      addLog('game', '星际探索', '踩到黑洞...心碎了...再来！');
+
       wx.vibrateLong();
     }
   },

@@ -4,6 +4,7 @@
  * 支持踩一脚功能
  */
 const { preventDuplicateBehavior } = require('../../utils/prevent-duplicate');
+const { addVisitSpaceExperience } = require('../../utils/experience');
 
 Page({
   behaviors: [preventDuplicateBehavior],
@@ -87,6 +88,11 @@ Page({
           this.loadRecentVisitors(),
           this.checkIfSteppedToday()
         ]);
+
+        // 访问他人空间获取经验
+        if (!isOwnSpace) {
+          addVisitSpaceExperience();
+        }
       }
     } catch (err) {
       console.error('Load data error:', err);

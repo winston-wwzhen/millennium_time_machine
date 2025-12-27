@@ -1,3 +1,5 @@
+const { addLog } = require("../../utils/logger");
+
 Page({
   data: {
     birthYear: 1990,
@@ -22,6 +24,9 @@ Page({
 
     // 加载用户昵称
     this.loadUserName();
+
+    // 记录打开游戏日志
+    addLog('open', '如果当时');
 
     // 追踪分享链接访问
     if (options.shareId || options.endingId) {
@@ -88,6 +93,9 @@ Page({
 
     this.setData({ isLoading: true });
 
+    // 记录开始游戏日志
+    addLog('game', '如果当时', `回到 ${this.data.birthYear} 年，那年我 ${ageIn2005} 岁`);
+
     // 跳转到时间线页面，传递参数
     wx.navigateTo({
       url: `/pages/ifthen/timeline?birthYear=${this.data.birthYear}&gender=${this.data.gender}`
@@ -108,6 +116,7 @@ Page({
 
   // 查看历史结局
   viewHistory: function() {
+    addLog('view', '如果当时', '查看过去的结局');
     wx.navigateTo({
       url: '/pages/ifthen/history'
     });
