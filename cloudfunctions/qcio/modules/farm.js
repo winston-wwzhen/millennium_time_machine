@@ -526,6 +526,52 @@ async function harvestCrop(openid, plotIndex, db, _) {
     // 获得经验
     const expResult = await addExperience(openid, 'farm_harvest', expGain, db, _);
 
+    // 更新每日任务计数
+    try {
+      const now = new Date();
+      const today = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}`;
+
+      const dailyTaskRes = await db.collection('qcio_daily_tasks')
+        .where({
+          _openid: openid,
+          date: today
+        })
+        .get();
+
+      if (dailyTaskRes.data.length > 0) {
+        // 更新现有记录
+        await db.collection('qcio_daily_tasks')
+          .doc(dailyTaskRes.data[0]._id)
+          .update({
+            data: {
+              farmHarvestCount: _.inc(1),
+              updateTime: db.serverDate()
+            }
+          });
+      } else {
+        // 创建新记录
+        await db.collection('qcio_daily_tasks').add({
+          data: {
+            _openid: openid,
+            date: today,
+            checkinDone: false,
+            checkinStreak: 0,
+            moodLogCount: 0,
+            chatCount: 0,
+            lastChatTime: null,
+            farmHarvestCount: 1,
+            farmStealCount: 0,
+            farmVisitCount: 0,
+            createTime: db.serverDate(),
+            updateTime: db.serverDate()
+          }
+        });
+      }
+    } catch (err) {
+      // 更新每日任务失败不影响主流程
+      console.error('Update daily task error:', err);
+    }
+
     // 清空土地
     await db.collection('qcio_farm_plots').doc(plot._id).update({
       data: {
