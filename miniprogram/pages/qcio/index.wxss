@@ -663,6 +663,54 @@ page {
   background: linear-gradient(180deg, #45a049, #3d8b40);
 }
 
+/* 农场入口卡片 */
+.farm-entry-card {
+  display: flex;
+  align-items: center;
+  padding: 16rpx;
+  background: #c0c0c0;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #000;
+  border-bottom: 2px solid #000;
+  margin-top: 16rpx;
+}
+
+.farm-entry-card:active {
+  border-top: 2px solid #000;
+  border-left: 2px solid #000;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
+
+.farm-entry-icon {
+  font-size: 60rpx;
+  margin-right: 16rpx;
+}
+
+.farm-entry-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.farm-entry-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #000;
+}
+
+.farm-entry-desc {
+  font-size: 22rpx;
+  color: #808080;
+}
+
+.farm-entry-arrow {
+  font-size: 36rpx;
+  color: #808080;
+}
+
 /* 等级详情弹窗样式 */
 .level-info-box {
   width: 320px;

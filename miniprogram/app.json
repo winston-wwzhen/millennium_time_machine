@@ -13,7 +13,7 @@
     "pages/qcio/index",
     "pages/qcio/visit",
     "pages/qcio-chat/index",
-    "pages/farm/index",
+    "pages/qcio/farm/index",
     "pages/ifthen/start",
     "pages/ifthen/timeline",
     "pages/ifthen/history",

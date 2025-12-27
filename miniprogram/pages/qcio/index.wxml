@@ -233,8 +233,15 @@
               </view>
             </view>
 
-            <!-- 农场入口暂时注释 -->
-            <!-- <farm-badge qcioId="{{userProfile.qcio_id}}" /> -->
+            <!-- 农场入口 -->
+            <view class="farm-entry-card" bindtap="goToFarm">
+              <view class="farm-entry-icon">🌾</view>
+              <view class="farm-entry-info">
+                <text class="farm-entry-title">我的农场</text>
+                <text class="farm-entry-desc">种植作物，收获金币</text>
+              </view>
+              <view class="farm-entry-arrow">→</view>
+            </view>
           </block>
 
           <!-- 日志内容 -->

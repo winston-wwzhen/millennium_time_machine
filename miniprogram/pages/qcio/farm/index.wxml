@@ -1,0 +1,156 @@
+<!-- 农场页面 - Win98 风格 -->
+<view class="farm-container">
+  <!-- Win98 窗口 -->
+  <view class="win98-window">
+    <!-- 标题栏 -->
+    <view class="win98-title-bar">
+      <view class="win98-title-text">🌾 我的农场</view>
+      <view class="win98-title-controls">
+        <button class="win98-btn-close" bindtap="goBack">×</button>
+      </view>
+    </view>
+
+    <!-- 窗口内容 -->
+    <view class="win98-content">
+      <!-- 农场信息栏 -->
+      <view class="farm-info-bar">
+        <view class="info-item">
+          <text class="info-label">等级:</text>
+          <text class="info-value">Lv.{{farmProfile ? farmProfile.farmLevel : 1}}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">经验:</text>
+          <text class="info-value">{{farmProfile ? farmProfile.farmExp : 0}}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">金币:</text>
+          <text class="info-value gold">💰 {{coins}}</text>
+        </view>
+      </view>
+
+      <!-- 农场土地网格 -->
+      <view class="farm-grid">
+        <block wx:for="{{plots}}" wx:key="index">
+          <view
+            class="farm-plot {{item.status}}"
+            bindtap="onPlotTap"
+            data-index="{{index}}"
+            wx:if="{{index < unlockedPlots}}"
+          >
+            <!-- 空地 -->
+            <view wx:if="{{item.status === 'empty'}}" class="plot-empty">
+              <text class="plot-icon">🟫</text>
+              <text class="plot-hint">点击种植</text>
+            </view>
+
+            <!-- 生长中 -->
+            <view wx:if="{{item.status === 'growing'}}" class="plot-growing">
+              <text class="plot-icon">{{item.cropType === 'mood' ? '💭' : '🌱'}}</text>
+              <view class="progress-bar">
+                <view class="progress-fill" style="width: {{item.progress}}%"></view>
+              </view>
+              <text class="time-left">{{item.progress}}%</text>
+            </view>
+
+            <!-- 成熟 -->
+            <view wx:if="{{item.status === 'mature'}}" class="plot-mature">
+              <text class="plot-icon mature-anim">✨</text>
+              <text class="harvest-hint">点击收获</text>
+            </view>
+          </view>
+
+          <!-- 未解锁土地 -->
+          <view wx:elif="{{index < 24}}" class="farm-plot locked">
+            <text class="plot-icon">🔒</text>
+            <text class="lock-hint">未解锁</text>
+          </view>
+        </block>
+      </view>
+
+      <!-- 操作按钮栏 -->
+      <view class="action-bar">
+        <button class="win98-btn-std" bindtap="openShop">🏪 商店</button>
+        <button class="win98-btn-std" bindtap="refreshData">🔄 刷新</button>
+        <button class="win98-btn-std" bindtap="goBack">🔙 返回</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 商店弹窗 -->
+  <view class="modal-overlay" wx:if="{{showShopModal}}" bindtap="closeShop">
+    <view class="modal-content" catchtap="">
+      <view class="win98-window shop-window">
+        <view class="win98-title-bar">
+          <text class="win98-title-text">🏪 农场商店</text>
+          <button class="win98-btn-close" bindtap="closeShop">×</button>
+        </view>
+
+        <view class="win98-content shop-content">
+          <!-- Tab 切换 -->
+          <view class="shop-tabs">
+            <view
+              class="shop-tab {{shopActiveTab === 'seeds' ? 'active' : ''}}"
+              bindtap="switchShopTab"
+              data-tab="seeds"
+            >
+              🌱 种子
+            </view>
+            <view
+              class="shop-tab {{shopActiveTab === 'decorations' ? 'active' : ''}}"
+              bindtap="switchShopTab"
+              data-tab="decorations"
+            >
+              🎨 装饰
+            </view>
+          </view>
+
+          <!-- 种子列表 -->
+          <scroll-view class="shop-list" scroll-y wx:if="{{shopActiveTab === 'seeds'}}">
+            <!-- 传统作物 -->
+            <view class="shop-section-title">🌾 传统作物</view>
+            <view class="shop-item" wx:for="{{traditionalCrops}}" wx:key="id" bindtap="buySeed" data-crop-type="traditional" data-crop-id="{{item.id}}">
+              <text class="item-icon">{{item.icon}}</text>
+              <view class="item-info">
+                <text class="item-name">{{item.name}}</text>
+                <text class="item-desc">{{item.durationText}}成熟</text>
+              </view>
+              <view class="item-price">
+                <text class="price-icon">💰</text>
+                <text>{{item.cost}}</text>
+              </view>
+            </view>
+
+            <!-- 心情作物 -->
+            <view class="shop-section-title">💭 心情作物</view>
+            <view class="shop-item" wx:for="{{moodCrops}}" wx:key="id" bindtap="buySeed" data-crop-type="mood" data-crop-id="{{item.id}}">
+              <text class="item-icon">{{item.icon}}</text>
+              <view class="item-info">
+                <text class="item-name">{{item.name}}</text>
+                <text class="item-desc">{{item.durationText}}成熟</text>
+              </view>
+              <view class="item-price">
+                <text class="price-icon">💰</text>
+                <text>{{item.cost}}</text>
+              </view>
+            </view>
+          </scroll-view>
+
+          <!-- 装饰列表 -->
+          <scroll-view class="shop-list" scroll-y wx:if="{{shopActiveTab === 'decorations'}}">
+            <view class="shop-item" wx:for="{{decorations}}" wx:key="id" bindtap="buyDecoration" data-id="{{item.id}}">
+              <text class="item-icon">{{item.icon}}</text>
+              <view class="item-info">
+                <text class="item-name">{{item.name}}</text>
+                <text class="item-desc">{{item.effect}}</text>
+              </view>
+              <view class="item-price">
+                <text class="price-icon">💰</text>
+                <text>{{item.cost}}</text>
+              </view>
+            </view>
+          </scroll-view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

@@ -71,7 +71,10 @@ async function dailyCheckin(openid, db, _) {
           moodLogCount: 0,
           chatCount: 0,
           lastChatTime: null,
+          // 农场相关任务
           farmHarvestCount: 0,
+          farmStealCount: 0,
+          farmVisitCount: 0,
           createTime: db.serverDate(),
           updateTime: db.serverDate()
         }
@@ -156,7 +159,13 @@ async function getDailyTasks(openid, db) {
           totalCheckinDays: task.checkinStreak || 0, // 兼容前端字段名
           moodLogCount: task.moodLogCount || 0,
           chatCount: task.chatCount || 0,
+          // 农场相关任务
           farmHarvestCount: task.farmHarvestCount || 0,
+          farmHarvestTarget: 5, // 每日目标：收获5次
+          farmStealCount: task.farmStealCount || 0,
+          farmStealTarget: 3, // 每日目标：偷菜3次
+          farmVisitCount: task.farmVisitCount || 0,
+          farmVisitTarget: 5, // 每日目标：访问好友农场5次
           hasCheckedIn: task.checkinDone || false // 兼容前端字段名
         }
       };
@@ -171,7 +180,13 @@ async function getDailyTasks(openid, db) {
         totalCheckinDays: 0,
         moodLogCount: 0,
         chatCount: 0,
+        // 农场相关任务
         farmHarvestCount: 0,
+        farmHarvestTarget: 5,
+        farmStealCount: 0,
+        farmStealTarget: 3,
+        farmVisitCount: 0,
+        farmVisitTarget: 5,
         hasCheckedIn: false
       }
     };

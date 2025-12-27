@@ -23,6 +23,17 @@ const {
   claimDailyReward,
   LEVEL_REWARDS
 } = require('./modules/level');
+const {
+  getFarmProfile,
+  initFarm,
+  getFarmPlots,
+  buySeed,
+  plantCrop,
+  harvestCrop,
+  getInventory,
+  buyDecoration,
+  activateDecoration
+} = require('./modules/farm');
 
 /**
  * QCIO 核心业务云函数
@@ -168,6 +179,43 @@ exports.main = async (event, context) => {
     case 'claimDailyReward':
       // 领取每日等级奖励
       return await claimDailyReward(OPENID, db, _);
+
+    // ==================== 农场系统 ====================
+    case 'getFarmProfile':
+      // 获取农场数据
+      return await getFarmProfile(OPENID, db);
+
+    case 'initFarm':
+      // 初始化农场
+      return await initFarm(OPENID, event.qcio_id, db);
+
+    case 'getFarmPlots':
+      // 获取土地状态
+      return await getFarmPlots(OPENID, db);
+
+    case 'buySeed':
+      // 购买种子
+      return await buySeed(OPENID, event.cropType, event.cropId, event.quantity, db, _);
+
+    case 'plantCrop':
+      // 种植作物
+      return await plantCrop(OPENID, event.plotIndex, event.cropType, event.cropId, db);
+
+    case 'harvestCrop':
+      // 收获作物
+      return await harvestCrop(OPENID, event.plotIndex, db, _);
+
+    case 'getInventory':
+      // 获取仓库
+      return await getInventory(OPENID, db);
+
+    case 'buyDecoration':
+      // 购买装饰
+      return await buyDecoration(OPENID, event.decorationId, db, _);
+
+    case 'activateDecoration':
+      // 激活装饰
+      return await activateDecoration(OPENID, event.decorationId, db);
 
     default:
       return { success: false, message: '未知的操作类型' };

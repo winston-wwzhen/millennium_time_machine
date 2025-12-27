@@ -636,6 +636,13 @@ Page({
     }
   },
 
+  // 跳转到农场
+  goToFarm: function() {
+    wx.navigateTo({
+      url: '/pages/qcio/farm/index'
+    });
+  },
+
   /**
    * 从云端加载钱包数据
    */
