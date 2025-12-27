@@ -30,8 +30,7 @@
 
   <!-- 桌面助手：小狮子 (Office Assistant 风格) -->
   <view class="desktop-agent {{isDragging ? 'dragging' : ''}} {{isMidnightEgg ? 'midnight-glow' : ''}}" style="transform: translate({{agentTranslateX}}px, {{agentTranslateY}}px);"
-        catchtouchstart="onAgentDragStart" catchtouchmove="onAgentDragMove" catchtouchend="onAgentDragEnd"
-        bindtap="onAgentTap" bindlongpress="onAgentLongPress">
+        catchtouchstart="onAgentDragStart" catchtouchmove="onAgentDragMove" catchtouchend="onAgentDragEnd">
     <view class="agent-bubble {{showMessage ? 'show' : ''}}" wx:if="{{showMessage}}">
       <text>{{agentMessage}}</text>
     </view>

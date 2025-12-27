@@ -1,5 +1,5 @@
 {
-  "navigationBarTitleText": "结局收集",
+  "navigationStyle": "custom",
   "enablePullDownRefresh": true,
   "backgroundTextStyle": "dark"
 }

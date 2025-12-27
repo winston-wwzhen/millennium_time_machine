@@ -11,7 +11,7 @@ page {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding-top: 60px;
+  padding-top: 90px;
   overflow: hidden;
 }
 
@@ -27,7 +27,7 @@ page {
   flex-direction: column;
   width: 98%;
   max-width: 700px;
-  height: calc(100vh - 70px);
+  height: 96%;
   overflow: hidden;
 }
 
@@ -409,4 +409,137 @@ page {
   padding: 2px 8px;
   font-size: 11px;
   background: #c0c0c0;
+}
+
+/* 结局详情弹窗 - Win98 风格 */
+.ending-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.ending-overlay.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.ending-card {
+  background: #c0c0c0;
+  border: 3px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  max-width: 320px;
+  width: 100%;
+  max-height: 70vh;
+  overflow-y: auto;
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.ending-header {
+  background: linear-gradient(180deg, #000080 0%, #000040 100%);
+  padding: 10px 30px 10px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  border-bottom: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  position: relative;
+}
+
+.ending-icon {
+  font-size: 36px;
+}
+
+.ending-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #ffffff;
+  text-align: center;
+}
+
+.win98-close-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+  color: #000000;
+  cursor: pointer;
+}
+
+.win98-close-btn:active {
+  border-color: #808080 #ffffff #ffffff #808080;
+}
+
+.ending-content {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ending-desc {
+  font-size: 13px;
+  color: #000000;
+  line-height: 1.6;
+}
+
+.ending-tag {
+  display: inline-block;
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: bold;
+  text-align: center;
+  border: 2px solid;
+}
+
+.ending-tag.type-special {
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  border-color: #daa520;
+  color: #5c4a00;
+}
+
+.ending-tag.type-good {
+  background: #98fb98;
+  border-color: #32cd32;
+  color: #006400;
+}
+
+.ending-tag.type-normal {
+  background: #87ceeb;
+  border-color: #4682b4;
+  color: #003366;
+}
+
+.ending-tag.type-bad {
+  background: #ffa07a;
+  border-color: #ff6347;
+  color: #8b0000;
+}
+
+.ending-actions {
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  border-top: 1px solid #808080;
 }

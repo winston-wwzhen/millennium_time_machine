@@ -41,7 +41,7 @@ exports.main = async (event, context) => {
  * 保存结局到数据库
  */
 async function saveEnding(openid, data) {
-  const { endingId, birthYear, gender, finalAttributes, playTime } = data;
+  const { endingId, birthYear, gender, avatarName, finalAttributes, playTime, playDuration, currentYear, finalAge } = data;
 
   try {
     // 检查用户是否已获得过该结局
@@ -54,14 +54,20 @@ async function saveEnding(openid, data) {
 
     const isFirstTime = existingResult.data.length === 0;
 
-    // 保存本次游玩记录
+    // 保存本次游玩记录（包含游戏相关信息）
+    // 显式设置 _openid 字段以确保数据正确关联
     await db.collection('ifthen_play_history').add({
       data: {
+        _openid: openid,
         endingId,
         birthYear,
         gender,
+        avatarName: avatarName || 'Admin',
         finalAttributes,
         playTime,
+        playDuration: playDuration || 0,
+        currentYear: currentYear || 2005,
+        finalAge: finalAge || 15,
         createTime: db.serverDate()
       }
     });
@@ -70,11 +76,15 @@ async function saveEnding(openid, data) {
     if (isFirstTime) {
       await db.collection('ifthen_endings').add({
         data: {
+          _openid: openid,
           endingId,
           birthYear,
           gender,
           finalAttributes,
-          firstGetTime: db.serverDate()
+          firstGetTime: db.serverDate(),
+          playDuration: playDuration || 0,
+          currentYear: currentYear || 2005,
+          finalAge: finalAge || 15
         }
       });
     }
@@ -142,8 +152,8 @@ async function getEndingStats(openid) {
       .where({ _openid: openid })
       .count();
 
-    // 统计各类型结局数量
-    const endingsData = require('../miniprogram/data/ifthen-endings.js');
+    // 统计各类型结局数量（从云函数目录读取）
+    const endingsData = require('./ifthen-endings.js');
     const typeStats = {
       special: 0,
       good: 0,
@@ -217,6 +227,7 @@ async function recordShare(openid, data) {
     // 记录分享行为
     await db.collection('ifthen_shares').add({
       data: {
+        _openid: openid,
         endingId,
         shareType,
         shareTime: db.serverDate(),
@@ -230,7 +241,7 @@ async function recordShare(openid, data) {
       reward = 5; // 首次分享奖励5Q点
 
       // 更新QCIO钱包
-      await wx.cloud.callFunction({
+      await cloud.callFunction({
         name: 'qcio',
         data: {
           action: 'addQpoints',
@@ -322,6 +333,7 @@ async function recordShareVisit(data) {
     // 记录访问日志
     await db.collection('ifthen_share_visits').add({
       data: {
+        _openid: visitorOpenid,
         shareId,
         endingId,
         visitorOpenid,
@@ -339,7 +351,7 @@ async function recordShareVisit(data) {
         // 每5个访问奖励2Q点
         const visitCount = (shareRecord.data.visitCount || 0) + 1;
         if (visitCount % 5 === 0) {
-          await wx.cloud.callFunction({
+          await cloud.callFunction({
             name: 'qcio',
             data: {
               action: 'addQpoints',

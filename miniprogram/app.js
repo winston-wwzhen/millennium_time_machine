@@ -11,6 +11,7 @@ App({
 
     this.globalData = {
       userInfo: null,
+      avatarName: null,
       // 挂机定时器数据
       onlineTimer: null,
       onlineMinutes: 0,
@@ -18,8 +19,53 @@ App({
       lastOnlineDate: null,
     };
 
+    // 初始化用户数据（创建 users 集合记录）
+    this.initUserData();
+
     // 启动在线计时
     this.startOnlineTimer();
+  },
+
+  /**
+   * 初始化用户数据
+   * 首次登录时创建 users 集合记录，包含双代币系统初始数据
+   */
+  initUserData: async function() {
+    try {
+      const res = await wx.cloud.callFunction({
+        name: 'user',
+        data: {
+          type: 'login',
+          userData: { username: 'Admin' }
+        }
+      });
+
+      if (res.result.success) {
+        console.log('用户数据初始化成功:', {
+          isNew: res.result.isNew,
+          avatarName: res.result.avatarName,
+          coins: res.result.coins,
+          netFee: res.result.netFee,
+          dailyDeducted: res.result.dailyDeducted
+        });
+
+        // 保存用户头像名称到 globalData
+        if (res.result.avatarName) {
+          this.globalData.avatarName = res.result.avatarName;
+        }
+
+        // 如果是新用户，显示欢迎提示
+        if (res.result.isNew) {
+          wx.showToast({
+            title: `欢迎！你是${res.result.avatarName}`,
+            icon: 'success',
+            duration: 2000
+          });
+        }
+      }
+    } catch (e) {
+      console.error('用户数据初始化失败:', e);
+    }
   },
 
   onShow: function() {

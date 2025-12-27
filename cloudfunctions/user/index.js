@@ -7,6 +7,23 @@ cloud.init({
 const db = cloud.database();
 const _ = db.command;
 
+/**
+ * 生成随机用户名
+ * 格式：形容词 + 名词 + 数字（如：快乐熊猫234、神秘星空789）
+ */
+function generateRandomUsername() {
+  const adjectives = ['快乐', '忧伤', '神秘', '勇敢', '温柔', '热血', '安静', '活泼', '聪明', '呆萌',
+    '飘逸', '霸气', '可爱', '酷炫', '浪漫', '淳朴', '机智', '憨厚', '灵动', '沉稳'];
+  const nouns = ['熊猫', '星空', '飞鸟', '海豚', '狮子', '蝴蝶', '蜻蜓', '猫咪', '兔子', '松鼠',
+    '云朵', '月光', '樱花', '落叶', '流星', '彩虹', '微风', '晨露', '雪花', '烟火'];
+
+  const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
+  const noun = nouns[Math.floor(Math.random() * nouns.length)];
+  const num = Math.floor(Math.random() * 900) + 100; // 100-999随机数字
+
+  return `${adj}${noun}${num}`;
+}
+
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext();
   const openid = wxContext.OPENID; // 用户的唯一标识
@@ -67,10 +84,13 @@ exports.main = async (event, context) => {
         const now = new Date();
         const todayStr = `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}`;
 
+        // 生成随机用户名
+        const randomUsername = generateRandomUsername();
+
         await db.collection('users').add({
           data: {
             _openid: openid,
-            avatarName: userData.username || 'Admin',
+            avatarName: randomUsername,
             createTime: db.serverDate(),
             lastLoginTime: db.serverDate(),
             settings: { theme: 'win98' },
@@ -90,6 +110,7 @@ exports.main = async (event, context) => {
           success: true,
           isNew: true,
           openid,
+          avatarName: randomUsername,
           coins: 0,
           netFee: 43200,
           daysUsed: 1,
@@ -108,6 +129,7 @@ exports.main = async (event, context) => {
       const res = await db.collection('users').where({
         _openid: openid
       }).field({
+        avatarName: true,
         coins: true,
         netFee: true,
         badges: true,
@@ -120,6 +142,7 @@ exports.main = async (event, context) => {
 
       return {
         success: true,
+        avatarName: res.data[0].avatarName || 'Admin',
         coins: res.data[0].coins || 0,
         netFee: res.data[0].netFee || 0,
         badges: res.data[0].badges || [],

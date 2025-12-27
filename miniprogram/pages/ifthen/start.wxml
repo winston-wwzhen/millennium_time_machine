@@ -17,13 +17,10 @@
         <view class="game-title">
           <text class="title-main">千禧时光机</text>
           <text class="title-sub">Millennium Time Machine</text>
+          <text class="title-intro">穿越回2005年，体验那个年代的互联网记忆</text>
+          <text class="title-intro-sub">AI驱动的怀旧时光机，重温千禧时代的点点滴滴</text>
+          <text class="title-user">欢迎，{{avatarName}}</text>
         </view>
-      </view>
-
-      <!-- 说明文字 -->
-      <view class="info-intro">
-        <text class="intro-text">穿越回2005年，体验那个年代的互联网记忆</text>
-        <text class="intro-sub">AI驱动的怀旧时光机，重温千禧时代的点点滴滴</text>
       </view>
 
       <!-- 年份选择 -->

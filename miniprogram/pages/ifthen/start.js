@@ -4,6 +4,7 @@ Page({
     gender: 'male',
     isLoading: false,
     showInstructions: false, // 玩法说明弹窗显示状态
+    avatarName: 'Admin', // 用户昵称
 
     // 可选的出生年份范围
     minYear: 1940,
@@ -18,6 +19,9 @@ Page({
     this.setData({
       birthYear: 1990
     });
+
+    // 加载用户昵称
+    this.loadUserName();
 
     // 追踪分享链接访问
     if (options.shareId || options.endingId) {
@@ -107,6 +111,26 @@ Page({
     wx.navigateTo({
       url: '/pages/ifthen/history'
     });
+  },
+
+  // 加载用户昵称
+  loadUserName: function() {
+    try {
+      wx.cloud.callFunction({
+        name: 'user',
+        data: { type: 'getBalance' }
+      }).then(res => {
+        if (res.result && res.result.success) {
+          this.setData({
+            avatarName: res.result.avatarName || 'Admin'
+          });
+        }
+      }).catch(err => {
+        console.error('加载用户昵称失败:', err);
+      });
+    } catch (e) {
+      console.error('加载用户昵称异常:', e);
+    }
   },
 
   // 返回首页

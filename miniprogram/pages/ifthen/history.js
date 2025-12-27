@@ -25,7 +25,11 @@ Page({
 
     // 所有结局列表（用于展示收集进度）
     allEndings: [],
-    unlockedEndings: new Set()
+    unlockedEndings: new Set(),
+
+    // 结局详情弹框
+    showEndingDetail: false,
+    selectedEnding: null
   },
 
   onLoad: function() {
@@ -157,12 +161,31 @@ Page({
     const ending = endingsData.find(e => e.id === endingId);
 
     if (ending) {
-      wx.showModal({
-        title: ending.title,
-        content: ending.description,
-        showCancel: false
+      this.setData({
+        selectedEnding: ending,
+        showEndingDetail: true
       });
     }
+  },
+
+  // 关闭结局详情弹框
+  closeEndingDetail: function() {
+    this.setData({
+      showEndingDetail: false,
+      selectedEnding: null
+    });
+  },
+
+  // 关闭窗口（返回上一页）
+  closeWindow: function() {
+    wx.navigateBack({
+      fail: () => {
+        // 如果无法返回，跳转到开始页面
+        wx.redirectTo({
+          url: '/pages/ifthen/start'
+        });
+      }
+    });
   },
 
   // 开始新游戏

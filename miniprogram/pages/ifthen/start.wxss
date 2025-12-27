@@ -25,7 +25,7 @@ page {
   flex-direction: column;
   width: 98%;
   max-width: 700px;
-  height: 85%;
+  height: 96%;
 }
 
 /* 标题栏 */
@@ -86,8 +86,8 @@ page {
 /* 游戏标题区域 */
 .game-header {
   display: flex;
-  align-items: center;
-  padding: 10px 12px;
+  align-items: flex-start;
+  padding: 12px 14px;
   background: #ffffff;
   border: 1px solid;
   border-color: #808080 #ffffff #ffffff #808080;
@@ -96,20 +96,21 @@ page {
 
 .game-icon {
   font-size: 32px;
-  margin-right: 10px;
+  margin-right: 12px;
+  flex-shrink: 0;
 }
 
 .game-title {
   flex: 1;
   display: flex;
   flex-direction: column;
+  gap: 4px;
 }
 
 .title-main {
   font-size: 14px;
   font-weight: bold;
   color: #000080;
-  margin-bottom: 2px;
 }
 
 .title-sub {
@@ -118,42 +119,37 @@ page {
   font-style: italic;
 }
 
-/* 工具介绍区域 */
-.info-intro {
-  padding: 10px 12px;
-  background: #e8f4ff;
-  border: 1px solid;
-  border-color: #808080 #ffffff #ffffff #808080;
-  margin-bottom: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.intro-text {
+.title-intro {
   font-size: 11px;
   color: #000080;
-  text-align: center;
   font-weight: bold;
+  margin-top: 2px;
 }
 
-.intro-sub {
+.title-intro-sub {
   font-size: 10px;
   color: #666;
-  text-align: center;
   font-style: italic;
+}
+
+.title-user {
+  font-size: 11px;
+  color: #000080;
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px dashed #c0c0c0;
 }
 
 /* 工具说明区域 */
 .info-section {
-  padding: 12px;
+  padding: 14px 12px;
   background: #ffffff;
   border: 1px solid;
   border-color: #808080 #ffffff #ffffff #808080;
   margin-bottom: 10px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .info-title {

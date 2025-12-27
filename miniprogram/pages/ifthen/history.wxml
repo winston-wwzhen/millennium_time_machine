@@ -6,7 +6,7 @@
       <view class="win98-title-controls">
         <button class="win98-btn-minimize">_</button>
         <button class="win98-btn-maximize">□</button>
-        <button class="win98-btn-close" bindtap="startNewGame">×</button>
+        <button class="win98-btn-close" bindtap="closeWindow">×</button>
       </view>
     </view>
 
@@ -85,6 +85,7 @@
                   <view class="history-tag type-{{item.endingInfo.type}}">{{item.endingInfo.typeText || '普通'}}</view>
                 </view>
                 <view class="history-meta">
+                  <text class="meta-text">👤 {{item.avatarName || 'Admin'}}</text>
                   <text class="meta-text">🎂 {{item.birthYear}}年</text>
                   <text class="meta-text">{{item.gender === 'male' ? '👦 男' : '👧 女'}}</text>
                   <text class="meta-text" wx:if="{{item.finalAttributes}}">😊 {{item.finalAttributes.happiness}}</text>
@@ -126,6 +127,31 @@
     <!-- 状态栏 -->
     <view class="status-bar">
       <text>Ready - {{stats.totalEndings}}/88 Endings Unlocked</text>
+    </view>
+  </view>
+</view>
+
+<!-- 结局详情弹窗 - Win98 风格 -->
+<view class="ending-overlay {{showEndingDetail ? 'visible' : ''}}" wx:if="{{selectedEnding}}">
+  <view class="ending-card" catchtap="closeEndingDetail">
+    <view class="ending-header" catchtap="closeEndingDetail">
+      <text class="ending-icon">{{selectedEnding.icon || '📖'}}</text>
+      <text class="ending-title">{{selectedEnding.title}}</text>
+      <view class="win98-close-btn" catchtap="closeEndingDetail">×</view>
+    </view>
+
+    <view class="ending-content">
+      <text class="ending-desc">{{selectedEnding.description}}</text>
+
+      <!-- 结局类型标签 -->
+      <view class="ending-tag type-{{selectedEnding.type}}">
+        <text>{{selectedEnding.typeText}}</text>
+      </view>
+    </view>
+
+    <!-- 按钮 -->
+    <view class="ending-actions">
+      <button class="win98-btn-std" catchtap="closeEndingDetail">确定</button>
     </view>
   </view>
 </view>

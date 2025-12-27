@@ -517,15 +517,27 @@ Page({
   onAgentDragEnd: function () {
     const dragDuration = Date.now() - this.dragStartTime;
 
-    // 如果没有明显移动且时间很短，当作点击处理
-    if (!this.hasMoved && dragDuration < 300) {
-      this.onAgentTap();
+    // 先重置拖动状态
+    this.setData({ isDragging: false });
+
+    // 如果有移动，不做任何处理
+    if (this.hasMoved) {
+      return;
     }
 
-    this.setData({ isDragging: false });
+    // 长按：超过 350ms 当作长按处理
+    if (dragDuration >= 350) {
+      this.onAgentLongPress();
+      return;
+    }
+
+    // 点击：时间短且没有移动
+    if (dragDuration < 300) {
+      this.onAgentTap();
+    }
   },
 
-  // 小狮子点击互动
+  // 小狮子点击互动（注意：由于 catchtouch 阻止了 tap 事件，主要靠 onAgentDragEnd 调用）
   onAgentTap: function () {
     // 检查小狮子跳舞彩蛋（点击10次触发）
     const shouldTriggerDance = this.incrementEggCounter(EGG_IDS.LION_DANCE, 10);
@@ -590,9 +602,8 @@ Page({
   },
 
   // 小狮子长按 - 触发说话彩蛋
+  // 注意：由 onAgentDragEnd 根据时长调用
   onAgentLongPress: async function() {
-    if (this.data.isDragging) return;  // 拖动中不触发
-
     // 触发说话彩蛋
     const result = await eggSystem.discover(EGG_IDS.LION_TALK);
     const isNewDiscovery = result?.isNew || false;

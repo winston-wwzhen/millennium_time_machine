@@ -67,9 +67,6 @@ const gameEngine = {
 
     // 从事件数据中筛选符合条件的事件
     const yearSpecificEvents = eventsData.filter(event => {
-      // 排除 daily 类别的事件(这些只用于叙事系统)
-      if (event.category === 'daily') return false;
-
       // 检查年份 - 必须匹配当前年份
       if (event.year !== currentYear) return false;
 
@@ -101,11 +98,8 @@ const gameEngine = {
       return true;
     });
 
-    // 筛选日常事件(year为null的事件)
+    // 筛选日常事件(year为null的事件，包含 daily 类别)
     const lifeEvents = eventsData.filter(event => {
-      // 排除 daily 类别的事件(这些只用于叙事系统)
-      if (event.category === 'daily') return false;
-
       // 检查年份 - 必须为null(日常事件)
       if (event.year !== null) return false;
 
@@ -199,11 +193,11 @@ const gameEngine = {
   // 计算结局
   calculateEnding: function() {
     const applicableEndings = endingsData.filter(ending => {
-      // 检查年龄条件
+      // 检查年龄条件 - 使用游戏结束时的实际年龄
       if (ending.conditions.ageRange) {
-        const ageIn2005 = 2005 - this.userState.birthYear;
+        const finalAge = this.userState.age;
         const [min, max] = ending.conditions.ageRange;
-        if (ageIn2005 < min || ageIn2005 > max) return false;
+        if (finalAge < min || finalAge > max) return false;
       }
 
       // 检查最小属性要求
@@ -372,11 +366,17 @@ Page({
     typingTimers: [] // 存储打字机的定时器，用于清除
   },
 
-  onLoad: function(options) {
+  onLoad: async function(options) {
+    // 记录游戏开始时间（用于计算游戏时长）
+    this.gameStartTime = Date.now();
+
     const birthYear = parseInt(options.birthYear) || 1990;
     const gender = options.gender || 'male';
     const age = 2005 - birthYear;
     const genderText = gender === 'male' ? '男孩' : '女孩';
+
+    // 等待获取用户信息完成后再开始游戏
+    await this.loadUserInfo();
 
     this.setData({
       birthYear,
@@ -449,9 +449,34 @@ Page({
     }, 500);
   },
 
+  // 加载用户信息
+  loadUserInfo: async function() {
+    try {
+      const res = await wx.cloud.callFunction({
+        name: 'user',
+        data: {
+          type: 'getBalance'
+        }
+      });
+
+      if (res.result && res.result.success) {
+        this.userData = {
+          avatarName: res.result.avatarName || 'Admin'
+        };
+        console.log('用户信息加载成功:', this.userData);
+      } else {
+        this.userData = { avatarName: 'Admin' };
+      }
+    } catch (e) {
+      console.error('加载用户信息失败:', e);
+      this.userData = { avatarName: 'Admin' };
+    }
+  },
+
   // 游戏主循环
   gameLoop: function() {
-    if (this.data.currentYear > 2025) {
+    // 使用游戏引擎的当前年份判断游戏是否结束
+    if (gameEngine.userState.currentYear > 2025) {
       this.endGame();
       return;
     }
@@ -487,9 +512,13 @@ Page({
 
   // 添加叙事到时间轴
   addNarrativeToTimeline: function(narrative, advanceYear = true) {
+    // 使用游戏引擎的当前年份，确保数据同步
+    const currentYear = gameEngine.userState.currentYear;
+    const currentAge = gameEngine.userState.age;
+
     const timelineItem = {
-      year: this.data.currentYear,
-      age: this.data.age,
+      year: currentYear,
+      age: currentAge,
       eventTitle: '日常成长',
       choice: narrative,
       displayTitle: '',
@@ -512,9 +541,13 @@ Page({
 
   // 添加双重叙事到时间轴
   addDoubleNarrativeToTimeline: function(narrative1, narrative2) {
+    // 使用游戏引擎的当前年份，确保数据同步
+    const currentYear = gameEngine.userState.currentYear;
+    const currentAge = gameEngine.userState.age;
+
     const timelineItem1 = {
-      year: this.data.currentYear,
-      age: this.data.age,
+      year: currentYear,
+      age: currentAge,
       eventTitle: '日常成长',
       choice: narrative1,
       displayTitle: '',
@@ -534,8 +567,8 @@ Page({
     this.startNarrativeTypewriter(0, '日常成长', narrative1, false, () => {
       // 第一个叙事完成后,添加第二个叙事
       const timelineItem2 = {
-        year: this.data.currentYear,
-        age: this.data.age,
+        year: currentYear,
+        age: currentAge,
         eventTitle: '日常成长',
         choice: narrative2,
         displayTitle: '',
@@ -707,9 +740,13 @@ Page({
       displayText += '\n\n【历史背景】\n' + event.context;
     }
 
+    // 使用事件的实际年份，避免数据不同步问题
+    // 对于日常事件(year为null)，使用游戏引擎的当前年份
+    const eventYear = event.year !== null ? event.year : gameEngine.userState.currentYear;
+
     // 添加到时光轴
     const timelineItem = {
-      year: this.data.currentYear,
+      year: eventYear,
       age: this.data.age,
       eventTitle: event.title,
       choice: displayText,
@@ -889,10 +926,15 @@ Page({
         endingId: ending.id,
         birthYear: this.data.birthYear,
         gender: this.data.gender,
+        avatarName: (this.userData && this.userData.avatarName) || 'Admin', // 用户头像名称
         finalAttributes: {
           ...gameEngine.userState.attributes
         },
-        playTime: new Date().getTime()
+        playTime: new Date().getTime(),
+        // 游戏相关信息
+        playDuration: Math.floor((Date.now() - this.gameStartTime) / 1000), // 游戏时长（秒）
+        currentYear: gameEngine.userState.currentYear,
+        finalAge: gameEngine.userState.age
       }
     }).then(res => {
       console.log('结局保存成功:', res.result);
@@ -992,10 +1034,15 @@ Page({
 
     this.setData({ isNavigating: true });
 
-    wx.redirectTo({
-      url: '/pages/ifthen/start',
+    wx.navigateBack({
       fail: () => {
-        // 如果跳转失败，重置标志
+        // 如果无法返回，跳转到开始页面
+        wx.redirectTo({
+          url: '/pages/ifthen/start'
+        });
+      },
+      complete: () => {
+        // 重置标志
         this.setData({ isNavigating: false });
       }
     });
