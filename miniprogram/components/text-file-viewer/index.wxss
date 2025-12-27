@@ -1,0 +1,251 @@
+/* 文本文件查看器组件 - 记事本风格 */
+
+/* 遮罩层 */
+.text-viewer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2200;
+  transition: opacity 0.3s ease;
+}
+
+.text-viewer-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.text-viewer-overlay.hide {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.win98-window {
+  background: #c0c0c0;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  box-shadow: inset 1px 1px #dfdfdf, inset -1px -1px #0a0a0a, 0 10px 30px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+}
+
+.win98-title-bar {
+  background: linear-gradient(90deg, #000080, #1084d0);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 3px 2px 6px;
+  height: 20px;
+}
+
+.win98-title-text {
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  font-family: 'SimSun', 'Courier New', monospace;
+}
+
+.win98-title-controls {
+  display: flex;
+  gap: 2px;
+}
+
+.win98-title-controls button {
+  all: unset;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 16px;
+  height: 14px;
+  background: #c0c0c0;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  font-size: 10px;
+  color: #000;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.win98-title-controls button:active {
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
+}
+
+/* 菜单栏 */
+.menu-bar {
+  display: flex;
+  gap: 4px;
+  padding: 2px 4px;
+  background: #c0c0c0;
+  border-bottom: 1px solid #808080;
+}
+
+.menu-item {
+  font-size: 12px;
+  color: #000;
+  padding: 2px 8px;
+  font-family: 'SimSun', sans-serif;
+}
+
+.menu-item:active {
+  background: #000080;
+  color: white;
+}
+
+.win98-window-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* 文本内容区域 */
+.text-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  margin: 4px;
+  background: #fff;
+  border: 2px inset #c0c0c0;
+  font-size: 12px;
+  font-family: 'SimSun', 'Courier New', monospace;
+  overflow-y: auto;
+}
+
+.preview-title {
+  color: #000080;
+  font-weight: bold;
+  text-align: center;
+  line-height: 1.8;
+}
+
+.preview-section {
+  color: #800000;
+  font-weight: bold;
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
+
+.preview-line {
+  color: #000;
+  line-height: 1.6;
+}
+
+.preview-subtitle {
+  color: #008080;
+  font-weight: bold;
+  line-height: 1.8;
+}
+
+.preview-desc {
+  color: #666;
+  line-height: 1.6;
+  margin-left: 8px;
+}
+
+/* 彩蛋秘籍样式 */
+.secret-egg-item {
+  margin: 8px 0;
+  padding: 4px 0;
+  border-bottom: 1px dashed #c0c0c0;
+}
+
+.secret-egg-item:last-child {
+  border-bottom: none;
+}
+
+.secret-egg-name {
+  color: #0066cc;
+  font-weight: bold;
+  line-height: 1.8;
+}
+
+.secret-egg-method {
+  color: #666;
+  line-height: 1.6;
+  margin-left: 4px;
+  font-size: 11px;
+}
+
+.preview-hint {
+  color: #228B22; /* 森林绿，表示已获得 */
+  line-height: 1.5;
+  display: block;
+  font-size: 11px;
+}
+
+/* 彩蛋列表样式 */
+.egg-list-section {
+  margin: 4px 0;
+}
+
+.egg-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 6px 8px;
+  margin: 3px 0;
+  border-radius: 2px;
+  transition: background 0.2s;
+}
+
+.egg-item.discovered {
+  background: rgba(34, 139, 34, 0.08);
+  border-left: 2px solid #228B22;
+}
+
+.egg-item.undiscovered {
+  background: rgba(128, 128, 128, 0.05);
+  border-left: 2px solid #c0c0c0;
+}
+
+.egg-status {
+  font-size: 12px;
+  margin-right: 6px;
+  line-height: 1.6;
+  flex-shrink: 0;
+}
+
+.egg-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.egg-name {
+  color: #000;
+  font-size: 12px;
+  line-height: 1.6;
+  font-weight: 500;
+}
+
+.egg-hint {
+  color: #228B22;
+  font-size: 11px;
+  line-height: 1.4;
+  margin-top: 2px;
+}
+
+.status-bar {
+  border-top: 1px solid #808080;
+  padding: 2px 8px;
+  font-size: 11px;
+  background: #c0c0c0;
+  flex-shrink: 0;
+}

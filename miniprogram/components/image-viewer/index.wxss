@@ -1,0 +1,222 @@
+/* 图片查看器组件 - Win98 画图风格 */
+
+/* 遮罩层 */
+.image-viewer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2200;
+  transition: opacity 0.3s ease;
+}
+
+.image-viewer-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.image-viewer-overlay.hide {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.image-viewer-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.win98-window {
+  background: #c0c0c0;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  box-shadow: inset 1px 1px #dfdfdf, inset -1px -1px #0a0a0a, 0 10px 30px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  max-width: 400px;
+  max-height: 80vh;
+  overflow: hidden;
+}
+
+.win98-title-bar {
+  background: linear-gradient(90deg, #000080, #1084d0);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 3px 2px 6px;
+  height: 20px;
+}
+
+.win98-title-text {
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  font-family: 'SimSun', 'Courier New', monospace;
+}
+
+.win98-title-controls {
+  display: flex;
+  gap: 2px;
+}
+
+.win98-title-controls button {
+  all: unset;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 16px;
+  height: 14px;
+  background: #c0c0c0;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  font-size: 10px;
+  color: #000;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.win98-title-controls button:active {
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
+}
+
+.menu-bar {
+  display: flex;
+  gap: 16px;
+  padding: 2px 8px;
+  background: #c0c0c0;
+  font-size: 11px;
+}
+
+.menu-item {
+  cursor: pointer;
+}
+
+.menu-item:active {
+  background: #000080;
+  color: white;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: #c0c0c0;
+  border-bottom: 1px solid #808080;
+}
+
+.toolbar-btn {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  cursor: pointer;
+  background: #c0c0c0;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+}
+
+.toolbar-btn:active {
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
+}
+
+.toolbar-divider-vertical {
+  width: 1px;
+  height: 20px;
+  background: #808080;
+  border-right: 1px solid #ffffff;
+  margin: 0 4px;
+}
+
+.image-display-area {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #808080;
+  padding: 4px;
+  overflow: hidden;
+}
+
+.image-canvas {
+  background: #ffffff;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.avatar-placeholder {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+  border: 2px dashed #c0c0c0;
+  border-radius: 8px;
+}
+
+.avatar-emoji {
+  font-size: 120px;
+  margin-bottom: 16px;
+  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.avatar-image {
+  max-width: 100%;
+  max-height: 60vh;
+  width: auto;
+  height: auto;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.avatar-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #000000;
+  margin-bottom: 8px;
+  font-family: 'SimSun', 'Microsoft YaHei', sans-serif;
+}
+
+.avatar-subtitle {
+  font-size: 12px;
+  color: #666666;
+  font-family: 'SimSun', 'Courier New', monospace;
+}
+
+.status-bar {
+  border-top: 1px solid #808080;
+  padding: 2px 8px;
+  font-size: 11px;
+  background: #c0c0c0;
+  flex-shrink: 0;
+}
+
+.status-bar text {
+  font-family: 'SimSun', 'Courier New', monospace;
+}

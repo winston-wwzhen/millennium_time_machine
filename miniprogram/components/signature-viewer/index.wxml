@@ -1,0 +1,107 @@
+<!-- 非主流签名查看器组件 -->
+<view class="signature-overlay {{show ? 'show' : 'hide'}}" catchtap="onClose">
+  <view class="win98-window" catchtap="stopPropagation">
+    <view class="win98-title-bar">
+      <view class="win98-title-text">{{fileName}} - 记事本</view>
+      <view class="win98-title-controls">
+        <button class="win98-btn-minimize">_</button>
+        <button class="win98-btn-maximize">□</button>
+        <button class="win98-btn-close" bindtap="onClose">×</button>
+      </view>
+    </view>
+
+    <!-- 菜单栏 -->
+    <view class="menu-bar">
+      <text class="menu-item">文件(F)</text>
+      <text class="menu-item">编辑(E)</text>
+      <text class="menu-item">格式(O)</text>
+      <text class="menu-item">帮助(H)</text>
+    </view>
+
+    <view class="win98-window-body">
+      <!-- 签名内容区域 -->
+      <view class="signature-content">
+        <text class="signature-title">═══════════════════════════════════════</text>
+        <text class="signature-title">            我的非主流签名集</text>
+        <text class="signature-title">═══════════════════════════════════════</text>
+        <text class="signature-line"></text>
+
+        <text class="signature-category">◆◆ 经典伤感类 ◆◆</text>
+        <text class="signature-line">℡﹏ 莪嫒沵，沵卟嫒莪，這僦媞劫數℡﹏</text>
+        <text class="signature-line">﹏ 莪們の羙麗，媞①場錯覺﹏</text>
+        <text class="signature-line">﹎﹎畩舊の等待，畩舊の傷害﹎﹎</text>
+        <text class="signature-line">╰☆╮愛，①種美麗の傷害╭☆╯</text>
+        <text class="signature-line">〆﹏ 莪扪終於赱散ㄋ錵場〆﹏</text>
+        <text class="signature-line">≮莪扪の結侷，終於呿ㄋ≯</text>
+
+        <text class="signature-line"></text>
+        <text class="signature-category">◆◆ 孤独寂寞类 ◆◆</text>
+        <text class="signature-line">1個囚の尐栵房，卻裝芐ㄋ①整嗰寰宇の寂寞</text>
+        <text class="signature-line">﹏ 孤單，媞①種卟岢説の痛﹏</text>
+        <text class="signature-line">℡﹏ 寂寞の亽，總媞獨ㄌ流浪℡﹏</text>
+        <text class="signature-line">≈ 孤單の詘路，媞什庅？≈</text>
+        <text class="signature-line">﹎﹎莪の迺界，呮冇莪①亽﹎﹎</text>
+        <text class="signature-line">╰↘ 寂寞，莪啨晟の栐伴 ╭↙</text>
+
+        <text class="signature-line"></text>
+        <text class="signature-category">◆◆ 忧郁王子类 ◆◆</text>
+        <text class="signature-line">℡﹏ 憂傷，媞莪の保护色℡﹏</text>
+        <text class="signature-line">﹏ 莪の笶，媞最深の痛﹏</text>
+        <text class="signature-line">≈ 看著沵の悘裑濄，莪呮褦沈默≈</text>
+        <text class="signature-line">〆﹏ 傷痕，媞成哖の記憶〆﹏</text>
+        <text class="signature-line">﹎﹎ 莪扪の濄呿，呮媞①場夢﹎﹎</text>
+        <text class="signature-line">╰☆╮ 痛菿极致，楩媞無聲 ╭☆╯</text>
+
+        <text class="signature-line"></text>
+        <text class="signature-category">◆◆ 逝去青春类 ◆◆</text>
+        <text class="signature-line">℡﹏ 靣春，①嗰卟徊菿の站點℡﹏</text>
+        <text class="signature-line">﹏ 莪扪の悻糧，濄呿ㄋ﹏</text>
+        <text class="signature-line">≈ 指缝悇の嗬堺，赱ㄋ≈</text>
+        <text class="signature-line">〆﹏ 濄呿，終究媞濄呿ㄋ〆﹏</text>
+        <text class="signature-line">﹎﹎ 莪扪，卟恠媞當初の莪扪﹎﹎</text>
+        <text class="signature-line">╰↘ 靘春，①場莈冾劇夲の戲 ╭↙</text>
+
+        <text class="signature-line"></text>
+        <text class="signature-category">◆◆ 等待爱情类 ◆◆</text>
+        <text class="signature-line">℡﹏ 等①個亽，等①嗰啟程℡﹏</text>
+        <text class="signature-line">﹏ 莪恠等①個亽，卟倁誰﹏</text>
+        <text class="signature-line">≈ 等待，媞①種堅持≈</text>
+        <text class="signature-line">〆﹏ 莪扪の遇見，媞諎濄ㄋ嗎〆﹏</text>
+        <text class="signature-line">﹎﹎ 莪扪の距離，恠哪裡﹎﹎</text>
+        <text class="signature-line">╰☆╮ 等，①種媽麗の錯覺 ╭☆╯</text>
+
+        <text class="signature-line"></text>
+        <text class="signature-category">◆◆ 叛逆桀骜类 ◆◆</text>
+        <text class="signature-line">℡﹏ 莪扪，卟啪①苆℡﹏</text>
+        <text class="signature-line">﹏ 這媞莪扪の嗰性﹏</text>
+        <text class="signature-line">≈ 卟婹評判莪扪，莪卟稀罕≈</text>
+        <text class="signature-line">〆﹏ 莪扪の鉽祥，莪扪決萣〆﹏</text>
+        <text class="signature-line">﹎﹎ 瘋誑，媞莪扪の標簽﹎﹎</text>
+        <text class="signature-line">╰↘ 這，僦媞莪扪の檤路 ╭↙</text>
+
+        <text class="signature-line"></text>
+        <text class="signature-category">◆◆ 短句唯美类 ◆◆</text>
+        <text class="signature-line">℡﹏ 莪，①嗰亽の旅行℡﹏</text>
+        <text class="signature-line">﹏ 莪們，終究是過客﹏</text>
+        <text class="signature-line">≈ 愛，那麼近又那麼遠≈</text>
+        <text class="signature-line">〆﹏ 時間，會證明一切〆﹏</text>
+        <text class="signature-line">﹎﹎ 你好，舊時光﹎﹎</text>
+        <text class="signature-line">╰↘ 再見，昨天 ╭↙</text>
+
+        <text class="signature-line"></text>
+        <text class="signature-title">───────────────────────────────────────</text>
+        <text class="signature-line">           收录了42条经典非主流签名</text>
+        <text class="signature-title">───────────────────────────────────────</text>
+        <text class="signature-line"></text>
+        <text class="signature-hint">✎ 使用方法：复制喜欢的签名到QQ资料</text>
+        <text class="signature-hint">✎ 提示：每种签名都代表了那个年代的心情</text>
+        <text class="signature-line"></text>
+      </view>
+    </view>
+
+    <!-- 状态栏 -->
+    <view class="status-bar">
+      <text>Ln 42, Col 1</text>
+    </view>
+  </view>
+</view>

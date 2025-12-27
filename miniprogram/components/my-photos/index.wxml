@@ -1,0 +1,51 @@
+<!-- 我的图片组件 -->
+<view class="my-photos-overlay {{show ? 'show' : 'hide'}}" catchtap="onClose">
+  <view class="win98-window" catchtap="stopPropagation">
+    <view class="win98-title-bar">
+      <view class="win98-title-text">我的图片</view>
+      <view class="win98-title-controls">
+        <button class="win98-btn-minimize">_</button>
+        <button class="win98-btn-maximize">□</button>
+        <button class="win98-btn-close" bindtap="onClose">×</button>
+      </view>
+    </view>
+
+    <view class="win98-window-body">
+      <!-- 工具栏 -->
+      <view class="toolbar">
+        <view class="toolbar-item">文件(F)</view>
+        <view class="toolbar-item">编辑(E)</view>
+        <view class="toolbar-item">查看(V)</view>
+        <view class="toolbar-item">帮助(H)</view>
+      </view>
+
+      <view class="toolbar-divider"></view>
+
+      <!-- 照片网格 -->
+      <view class="photos-grid">
+        <!-- 空状态 -->
+        <view wx:if="{{photos.length === 0 && !loading}}" class="empty-state">
+          <text class="empty-icon">📷</text>
+          <text class="empty-text">还没有照片</text>
+          <text class="empty-hint">去非主流相机拍一张吧！</text>
+        </view>
+
+        <!-- 加载中 -->
+        <view wx:if="{{loading}}" class="loading-state">
+          <text class="loading-text">加载中...</text>
+        </view>
+
+        <!-- 照片列表 -->
+        <view wx:for="{{photos}}" wx:key="_id" class="photo-item">
+          <image class="photo-thumb" src="{{item.fileID}}" mode="aspectFill"></image>
+          <text class="photo-date">{{item.dateStr}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 状态栏 -->
+    <view class="status-bar">
+      <text>{{photos.length}} 个对象</text>
+    </view>
+  </view>
+</view>

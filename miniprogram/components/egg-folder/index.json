@@ -1,0 +1,6 @@
+{
+  "component": true,
+  "usingComponents": {
+    "text-file-viewer": "../text-file-viewer/index"
+  }
+}

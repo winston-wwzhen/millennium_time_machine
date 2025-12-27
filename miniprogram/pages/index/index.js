@@ -1,5 +1,5 @@
 // miniprogram/pages/index/index.js
-const { eggSystem, EGG_IDS } = require('../../utils/egg-system');
+const { eggSystem, EGG_IDS } = require("../../utils/egg-system");
 
 Page({
   data: {
@@ -11,23 +11,23 @@ Page({
     agentMood: "normal", // normal, happy, sleepy, surprised, dancing
     agentMessage: "",
     showMessage: false,
-    isDancing: false,  // 小狮子跳舞状态
-    showBlueScreen: false,  // 蓝屏彩蛋状态
-    isMidnightEgg: false,  // 午夜彩蛋状态（小狮子发光）
-    showHiddenIcon: false,  // 隐藏图标彩蛋状态
-    konamiProgress: [],     // Konami Code 输入进度
-    showGodMode: false,     // 上帝模式状态
-    desktopBgIndex: 0,      // 桌面背景索引
-    lastTapTime: 0,         // 上次点击时间（用于检测双击）
+    isDancing: false, // 小狮子跳舞状态
+    showBlueScreen: false, // 蓝屏彩蛋状态
+    isMidnightEgg: false, // 午夜彩蛋状态（小狮子发光）
+    showHiddenIcon: false, // 隐藏图标彩蛋状态
+    konamiProgress: [], // Konami Code 输入进度
+    showGodMode: false, // 上帝模式状态
+    desktopBgIndex: 0, // 桌面背景索引
+    lastTapTime: 0, // 上次点击时间（用于检测双击）
     // 桌面背景列表（彩蛋用）
     desktopBackgrounds: [
-      '#008080',  // 经典 Win98 青色
-      '#006400',  // 深绿色
-      '#4B0082',  // 靛紫色
-      '#8B4513',  // 古铜色
-      '#2F4F4F',  // 深岩灰
-      '#4A0E4E',  // 复古紫
-      '#1B1B1B'   // 纯黑
+      "#008080", // 经典 Win98 青色
+      "#006400", // 深绿色
+      "#4B0082", // 靛紫色
+      "#8B4513", // 古铜色
+      "#2F4F4F", // 深岩灰
+      "#4A0E4E", // 复古紫
+      "#1B1B1B", // 纯黑
     ],
     // 桌面图标配置
     desktopIcons: [
@@ -38,10 +38,34 @@ Page({
         path: "/pages/my-computer/index",
       },
       {
+        id: "qcio",
+        name: "QCIO",
+        icon: "📟",
+        path: "/pages/qcio/index",
+      },
+      {
+        id: "ifthen",
+        name: "如果当时",
+        icon: "⏳",
+        path: "/pages/ifthen/start",
+      },
+      {
         id: "network-neighborhood",
         name: "网管系统",
         icon: "⚙️",
         path: "/pages/network-neighborhood/index",
+      },
+      {
+        id: "browser",
+        name: "浏览器",
+        icon: "🌐",
+        path: "/pages/browser/index",
+      },
+      {
+        id: "avatar",
+        name: "非主流相机",
+        icon: "📸",
+        path: "/pages/avatar/index",
       },
       {
         id: "my-documents",
@@ -56,44 +80,41 @@ Page({
         path: "/pages/recycle-bin/index",
       },
       {
-        id: "browser",
-        name: "浏览器",
-        icon: "🌐",
-        path: "/pages/browser/index",
-      },
-      {
-        id: "qcio",
-        name: "QCIO",
-        icon: "📟",
-        path: "/pages/qcio/index",
-      },
-      {
-        id: "ifthen",
-        name: "如果当时.exe",
-        icon: "⏳",
-        path: "/pages/ifthen/start",
-      },
-      {
-        id: "avatar",
-        name: "非主流相机",
-        icon: "📸",
-        path: "/pages/avatar/index",
-      },
-      {
         id: "ttplayer",
-        name: "千千静听",
+        name: "十分动听",
         icon: "🎵",
         path: "/pages/ttplayer/index",
+      },
+      {
+        id: "manbo",
+        name: "慢播",
+        icon: "🎬",
+        path: "/pages/manbo/index",
       },
     ],
     showStartMenu: false,
     showSubmenu: false, // 子菜单显示状态
+    showTTPlayer: false, // 十分动听播放器显示状态
+    showMyComputer: false, // 我的电脑显示状态
+    showNetworkSystem: false, // 网管系统显示状态
+    showMyDocuments: false, // 我的文档显示状态
+    // 组件z-index管理（确保后打开的组件显示在上层）
+    baseZIndex: 2000,
+    myComputerZIndex: 2000,
+    networkSystemZIndex: 2000,
+    myDocumentsZIndex: 2000,
     systemTime: "",
     // 网络连接状态
     networkConnected: true, // 默认连接
     networkStatus: "online", // online, offline, connecting
     showNetworkInfo: false, // 显示网络信息气泡
     networkSpeed: { down: "0.00", up: "0.00" }, // 网络速度
+    userNetFee: 0, // 用户网费（分钟）
+    userCoins: 0, // 用户时光币
+    showNetworkPlugin: true, // 网管系统插件显示状态
+    // 音量状态
+    soundEnabled: true, // 音量开启状态
+    showVolumeInfo: false, // 显示音量信息气泡
     // 右键菜单
     showContextMenu: false,
     contextMenuX: 0,
@@ -102,13 +123,55 @@ Page({
     showErrorDialog: false,
     // 日期弹窗
     showDateDialog: false,
-    calendarYear: '',
-    calendarMonth: '',
-    calendarDay: '',
-    calendarDayName: '',
-    fullDateTime: '',
-    lunarDate: '',
+    calendarYear: "",
+    calendarMonth: "",
+    calendarDay: "",
+    calendarDayName: "",
+    fullDateTime: "",
+    lunarDate: "",
     calendarDays: [], // 日历网格数据
+
+    // 用户信息
+    userInfo: {
+      nickname: "载入中...",
+      avatar: "👤",
+    },
+    // 用户编辑弹窗
+    showUserEditDialog: false,
+    editNickname: "",
+    editAvatar: "👤",
+    avatarList: [
+      "👤",
+      "😊",
+      "🤖",
+      "👻",
+      "👽",
+      "🎃",
+      "😎",
+      "🤠",
+      "🥳",
+      "🦊",
+      "🐱",
+      "🐶",
+      "🐸",
+      "🦄",
+      "🌟",
+      "🔥",
+      "💎",
+      "🎵",
+      "🎮",
+      "🚀",
+    ],
+    // 刷新状态
+    isRefreshing: false,
+    // 系统信息弹窗
+    showSystemInfoDialog: false,
+    systemInfoData: {},
+    // 助手设置弹窗
+    showAgentSettingsDialog: false,
+    agentSettingsMessage: '',
+    // 关于弹窗
+    showAboutDialog: false,
   },
 
   onLoad: function () {
@@ -139,15 +202,114 @@ Page({
 
     // 检查时间彩蛋
     this.checkTimeEggs();
+
+    // 加载用户信息
+    this.loadUserInfo();
+
+    // 加载音量状态
+    const soundEnabled = wx.getStorageSync('soundEnabled');
+    if (soundEnabled !== undefined) {
+      this.setData({ soundEnabled });
+    }
+  },
+
+  // 加载用户信息
+  loadUserInfo: async function () {
+    try {
+      const res = await wx.cloud.callFunction({
+        name: "user",
+        data: { type: "getBalance" },
+      });
+      if (res.result && res.result.success) {
+        this.setData({
+          "userInfo.nickname": res.result.avatarName || "用户",
+          "userInfo.avatar": res.result.avatar || "👤",
+          userNetFee: res.result.netFee || 0,
+          userCoins: res.result.coins || 0,
+        });
+      }
+    } catch (e) {
+      console.error("加载用户信息失败:", e);
+      // 保留默认值
+    }
+  },
+
+  // 点击用户横幅 - 打开编辑弹窗
+  onUserBannerTap: function () {
+    this.setData({
+      showUserEditDialog: true,
+      editNickname: this.data.userInfo.nickname,
+      editAvatar: this.data.userInfo.avatar,
+    });
+  },
+
+  // 选择头像
+  selectAvatar: function (e) {
+    const avatar = e.currentTarget.dataset.avatar;
+    this.setData({ editAvatar: avatar });
+  },
+
+  // 昵称输入
+  onNicknameInput: function (e) {
+    this.setData({ editNickname: e.detail.value });
+  },
+
+  // 关闭用户编辑弹窗
+  closeUserEditDialog: function () {
+    this.setData({ showUserEditDialog: false });
+  },
+
+  // 保存用户信息
+  saveUserInfo: async function () {
+    const nickname = this.data.editNickname.trim();
+    const avatar = this.data.editAvatar;
+
+    if (!nickname) {
+      wx.showToast({ title: "请输入昵称", icon: "none" });
+      return;
+    }
+
+    if (nickname.length > 12) {
+      wx.showToast({ title: "昵称最多12个字符", icon: "none" });
+      return;
+    }
+
+    wx.showLoading({ title: "保存中...", mask: true });
+
+    try {
+      const res = await wx.cloud.callFunction({
+        name: "user",
+        data: {
+          type: "updateProfile",
+          data: { nickname, avatar },
+        },
+      });
+
+      if (res.result && res.result.success) {
+        this.setData({
+          "userInfo.nickname": res.result.avatarName,
+          "userInfo.avatar": res.result.avatar,
+          showUserEditDialog: false,
+        });
+        wx.showToast({ title: "保存成功", icon: "success" });
+      } else {
+        throw new Error(res.result?.errMsg || "保存失败");
+      }
+    } catch (e) {
+      console.error("保存用户信息失败:", e);
+      wx.showToast({ title: "保存失败", icon: "none" });
+    } finally {
+      wx.hideLoading();
+    }
   },
 
   // 从云端加载彩蛋数据
-  loadEggData: async function() {
+  loadEggData: async function () {
     try {
       await eggSystem.load();
-      console.log('彩蛋数据加载完成');
+      console.log("彩蛋数据加载完成");
     } catch (e) {
-      console.error('加载彩蛋数据失败:', e);
+      console.error("加载彩蛋数据失败:", e);
     }
   },
 
@@ -155,7 +317,11 @@ Page({
   eggCounters: {},
 
   // 本地计数器辅助函数
-  incrementEggCounter: function(eggId, max) {
+  incrementEggCounter: function (eggId, max) {
+    // 确保 eggCounters 对象存在
+    if (!this.eggCounters) {
+      this.eggCounters = {};
+    }
     if (!this.eggCounters[eggId]) {
       this.eggCounters[eggId] = 0;
     }
@@ -172,17 +338,32 @@ Page({
     this.loadNetworkStatus();
     // 每次显示也检查时间彩蛋
     this.checkTimeEggs();
+
+    // 如果网管系统打开，确保插件也显示
+    if (this.data.showNetworkSystem) {
+      this.setData({ showNetworkPlugin: true });
+    }
   },
 
   // 检查时间相关彩蛋
-  checkTimeEggs: async function() {
+  checkTimeEggs: async function () {
     const now = new Date();
     const hour = now.getHours();
     const minute = now.getMinutes();
-    const timeStr = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+    const timeStr = `${hour.toString().padStart(2, "0")}:${minute
+      .toString()
+      .padStart(2, "0")}`;
 
     // 特殊时刻彩蛋：12:34, 4:44, 11:11, 22:22, 3:33
-    const specialTimes = ['12:34', '04:44', '11:11', '22:22', '03:33', '05:55', '15:15'];
+    const specialTimes = [
+      "12:34",
+      "04:44",
+      "11:11",
+      "22:22",
+      "03:33",
+      "05:55",
+      "15:15",
+    ];
     if (specialTimes.includes(timeStr)) {
       // 检查是否在当前分钟内已经触发过（使用临时标记防止重复触发）
       const lastTriggerKey = `last_special_time_${timeStr}`;
@@ -196,19 +377,21 @@ Page({
         const isNewDiscovery = result?.isNew || false;
 
         const messages = {
-          '12:34': '1234，顺顺当当！',
-          '04:44': '发发发，好运来~',
-          '11:11': '光棍节快乐！',
-          '22:22': '对称之美~',
-          '03:33': '三分天下~',
-          '05:55': '五福临门！',
-          '15:15': '三点一刻~'
+          "12:34": "1234，顺顺当当！",
+          "04:44": "发发发，好运来~",
+          "11:11": "光棍节快乐！",
+          "22:22": "对称之美~",
+          "03:33": "三分天下~",
+          "05:55": "五福临门！",
+          "15:15": "三点一刻~",
         };
 
         this.setData({
-          agentMood: 'happy',
-          agentMessage: isNewDiscovery ? `🎉 ${messages[timeStr]} 发现特殊时刻彩蛋！` : messages[timeStr],
-          showMessage: true
+          agentMood: "happy",
+          agentMessage: isNewDiscovery
+            ? `🎉 ${messages[timeStr]} 发现特殊时刻彩蛋！`
+            : messages[timeStr],
+          showMessage: true,
         });
 
         setTimeout(() => {
@@ -224,9 +407,11 @@ Page({
 
       this.setData({
         isMidnightEgg: true,
-        agentMood: 'surprised',
-        agentMessage: isNewDiscovery ? '🎉 深夜党专属彩蛋！小狮子陪你熬夜~' : '深夜党还在吗？',
-        showMessage: true
+        agentMood: "surprised",
+        agentMessage: isNewDiscovery
+          ? "🎉 深夜党专属彩蛋！小狮子陪你熬夜~"
+          : "深夜党还在吗？",
+        showMessage: true,
       });
 
       // 3秒后隐藏消息
@@ -282,8 +467,45 @@ Page({
     // 图标点击彩蛋检测
     this.checkIconClickEggs(iconId);
 
-    // 千千静听 - 文件损坏提示
-    if (path && path.includes('ttplayer')) {
+    // 十分动听 - 打开播放器组件
+    if (path && path.includes("ttplayer")) {
+      this.setData({ showTTPlayer: true });
+      return;
+    }
+
+    // 我的电脑 - 打开组件
+    if (path && path.includes("my-computer")) {
+      this.setData({
+        showMyComputer: true,
+        baseZIndex: this.data.baseZIndex + 10,
+        myComputerZIndex: this.data.baseZIndex + 10
+      });
+      return;
+    }
+
+    // 我的文档 - 打开组件
+    if (path && path.includes("my-documents")) {
+      this.setData({
+        showMyDocuments: true,
+        baseZIndex: this.data.baseZIndex + 10,
+        myDocumentsZIndex: this.data.baseZIndex + 10
+      });
+      return;
+    }
+
+    // 网管系统 - 打开组件
+    if (path && path.includes("network-neighborhood")) {
+      this.setData({
+        showNetworkSystem: true,
+        showNetworkPlugin: true,
+        baseZIndex: this.data.baseZIndex + 10,
+        networkSystemZIndex: this.data.baseZIndex + 10
+      });
+      return;
+    }
+
+    // 慢播 - 文件损坏提示（致敬快播）
+    if (path && path.includes("manbo")) {
       this.setData({ showErrorDialog: true });
       return;
     }
@@ -304,22 +526,22 @@ Page({
   },
 
   // 检测图标点击彩蛋
-  checkIconClickEggs: async function(iconId) {
+  checkIconClickEggs: async function (iconId) {
     let eggId = null;
-    let clickCount = 5;  // 默认5次触发
+    let clickCount = 5; // 默认5次触发
 
-    switch(iconId) {
-      case 'recycle-bin':
+    switch (iconId) {
+      case "recycle-bin":
         eggId = EGG_IDS.RECYCLE_BIN;
         break;
-      case 'my-computer':
+      case "my-computer":
         eggId = EGG_IDS.MY_COMPUTER;
         break;
-      case 'browser':
+      case "browser":
         eggId = EGG_IDS.BROWSER_CLICK;
         break;
       default:
-        return;  // 不是有彩蛋的图标
+        return; // 不是有彩蛋的图标
     }
 
     const shouldTrigger = this.incrementEggCounter(eggId, clickCount);
@@ -332,8 +554,8 @@ Page({
       // 显示发现提示
       wx.showToast({
         title: isNewDiscovery ? `🎉 ${config.name}` : config.description,
-        icon: 'none',
-        duration: 2000
+        icon: "none",
+        duration: 2000,
       });
     }
   },
@@ -378,41 +600,96 @@ Page({
   // 刷新桌面
   refreshDesktop: function () {
     this.hideContextMenu();
-    wx.showToast({
-      title: "桌面已刷新",
-      icon: "success",
-      duration: 1000,
+
+    // 触发刷新动画
+    this.setData({ isRefreshing: true });
+
+    // 模拟刷新加载
+    setTimeout(() => {
+      // 刷新完成，重新加载一些数据
+      this.updateTime();
+      this.loadNetworkStatus();
+
+      // 刷新隐藏图标彩蛋状态（随机）
+      if (this.data.showHiddenIcon && Math.random() > 0.5) {
+        this.setData({ showHiddenIcon: false });
+      }
+
+      this.setData({ isRefreshing: false });
+    }, 800);
+  },
+
+  // 显示系统信息
+  showSystemInfo: function () {
+    this.hideContextMenu();
+
+    const systemInfo = wx.getSystemInfoSync();
+    const now = new Date();
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+
+    this.setData({
+      systemInfoData: {
+        os: 'Windows 98',
+        cpu: 'Pentium III 800MHz',
+        memory: '128MB RAM',
+        gpu: 'NVIDIA RIVA TNT2',
+        display: `${systemInfo.windowWidth}x${systemInfo.windowHeight}`,
+        time: `${hours}:${minutes}`,
+        network: this.data.networkConnected ? '33.6K 拨号连接' : '未连接'
+      },
+      showSystemInfoDialog: true
     });
   },
 
-  // 排列图标
-  arrangeIcons: function () {
+  // 关闭系统信息弹窗
+  hideSystemInfoDialog: function () {
+    this.setData({ showSystemInfoDialog: false });
+  },
+
+  // 打开网管系统
+  openNetworkSystem: function () {
     this.hideContextMenu();
-    wx.showToast({
-      title: "图标已自动排列",
-      icon: "success",
-      duration: 1000,
+    this.setData({
+      showNetworkSystem: true,
+      showNetworkPlugin: true,
+      baseZIndex: this.data.baseZIndex + 10,
+      networkSystemZIndex: this.data.baseZIndex + 10
     });
   },
 
-  // 新建文件夹
-  newFolder: function () {
+  // 显示助手设置
+  showAgentSettings: function () {
     this.hideContextMenu();
-    wx.showToast({
-      title: "功能开发中...",
-      icon: "none",
-      duration: 1500,
+
+    const messages = [
+      '小狮子设置：\n\n• 拖动：移动位置\n• 点击：随机互动\n• 长按：怀旧语录\n• 点击10次：触发跳舞',
+      '小狮子心情：\n\n😊 开心 - 日常互动\n😴 困倦 - 偶尔状态\n😲 惊讶 - 发现彩蛋\n💃 跳舞 - 特殊互动\n✨ 发光 - 午夜彩蛋',
+      '提示：\n\n小狮子会在不同时段\n给你带来不同的惊喜哦~'
+    ];
+
+    const randomMsg = messages[Math.floor(Math.random() * messages.length)];
+
+    this.setData({
+      agentSettingsMessage: randomMsg,
+      showAgentSettingsDialog: true
     });
   },
 
-  // 显示属性
-  showProperties: function () {
+  // 关闭助手设置弹窗
+  hideAgentSettingsDialog: function () {
+    this.setData({ showAgentSettingsDialog: false });
+  },
+
+  // 显示关于
+  showAbout: function () {
     this.hideContextMenu();
-    wx.showToast({
-      title: "功能开发中...",
-      icon: "none",
-      duration: 1500,
-    });
+    this.setData({ showAboutDialog: true });
+  },
+
+  // 关闭关于弹窗
+  hideAboutDialog: function () {
+    this.setData({ showAboutDialog: false });
   },
 
   // 显示彩蛋收集界面
@@ -429,55 +706,57 @@ Page({
     let netFee = 0;
     try {
       const res = await wx.cloud.callFunction({
-        name: 'user',
-        data: { type: 'getBalance' }
+        name: "user",
+        data: { type: "getBalance" },
       });
       if (res.result.success) {
         coins = res.result.coins || 0;
         netFee = res.result.netFee || 0;
       }
     } catch (e) {
-      console.error('获取余额失败:', e);
+      console.error("获取余额失败:", e);
     }
 
     // 按稀有度分组
-    const rarityOrder = ['legendary', 'epic', 'rare', 'common'];
+    const rarityOrder = ["legendary", "epic", "rare", "common"];
     const rarityNames = {
-      common: '🟢 普通',
-      rare: '🔵 稀有',
-      epic: '🟣 史诗',
-      legendary: '🟠 传说'
+      common: "🟢 普通",
+      rare: "🔵 稀有",
+      epic: "🟣 史诗",
+      legendary: "🟠 传说",
     };
 
     let content = `🎯 彩蛋收集进度: ${progress.discovered}/${progress.total} (${progress.percentage}%)\n\n`;
     content += `💎 时光币余额: ${coins}\n`;
-    content += `🌐 网费余额: ${Math.floor(netFee / 1440)}天${netFee % 1440}分钟\n`;
+    content += `🌐 网费余额: ${Math.floor(netFee / 1440)}天${
+      netFee % 1440
+    }分钟\n`;
     content += `📅 已使用: ${stats.daysUsed || 0}天\n`;
     content += `🏆 累计获得时光币: ${stats.totalEarned}\n\n`;
 
     // 按稀有度显示
     for (const rarity of rarityOrder) {
-      const eggs = Object.values(allConfigs).filter(e => e.rarity === rarity);
+      const eggs = Object.values(allConfigs).filter((e) => e.rarity === rarity);
       if (eggs.length > 0) {
         content += `【${rarityNames[rarity]}】\n`;
         for (const egg of eggs) {
           const isDiscovered = eggSystem.isDiscovered(egg.id);
-          const status = isDiscovered ? '✅' : '❓';
-          const name = isDiscovered ? egg.name : '???';
-          const reward = isDiscovered ? `+${egg.reward.coins}时光币` : '';
-          const hint = isDiscovered ? '' : `\n   💡 ${egg.hint}`;
+          const status = isDiscovered ? "✅" : "❓";
+          const name = isDiscovered ? egg.name : "???";
+          const reward = isDiscovered ? `+${egg.reward.coins}时光币` : "";
+          const hint = isDiscovered ? "" : `\n   💡 ${egg.hint}`;
           content += `${status} ${name} ${reward}${hint}\n`;
         }
-        content += '\n';
+        content += "\n";
       }
     }
 
     wx.showModal({
-      title: '🥚 彩蛋收集册',
+      title: "🥚 彩蛋收集册",
       content: content,
       showCancel: false,
-      confirmText: '继续探索',
-      confirmColor: '#008080'
+      confirmText: "继续探索",
+      confirmColor: "#008080",
     });
   },
 
@@ -580,64 +859,69 @@ Page({
   },
 
   // 触发小狮子跳舞彩蛋
-  triggerLionDance: async function() {
+  triggerLionDance: async function () {
     const result = await eggSystem.discover(EGG_IDS.LION_DANCE);
     const isNewDiscovery = result?.isNew || false;
 
     this.setData({
       isDancing: true,
-      agentMood: 'dancing',
-      agentMessage: isNewDiscovery ? '🎉 发现彩蛋：舞动的小狮子！' : '看我跳舞！💃',
-      showMessage: true
+      agentMood: "dancing",
+      agentMessage: isNewDiscovery
+        ? "🎉 发现彩蛋：舞动的小狮子！"
+        : "看我跳舞！💃",
+      showMessage: true,
     });
 
     // 跳舞动画持续5秒
     setTimeout(() => {
       this.setData({
         isDancing: false,
-        agentMood: 'happy',
-        showMessage: false
+        agentMood: "happy",
+        showMessage: false,
       });
     }, 5000);
   },
 
   // 小狮子长按 - 触发说话彩蛋
   // 注意：由 onAgentDragEnd 根据时长调用
-  onAgentLongPress: async function() {
+  onAgentLongPress: async function () {
     // 触发说话彩蛋
     const result = await eggSystem.discover(EGG_IDS.LION_TALK);
     const isNewDiscovery = result?.isNew || false;
 
     // 怀旧语录库
     const nostalgicQuotes = [
-      '承諾、絠什嚒用？還bùsんì洅見。',
-      '莪們還能回去嗎？那個屬於莪們啲年代...',
-      '45度仰望天空，眼泪才不会掉下来。',
-      '那些年，我们一起追过的女孩...',
-      '哥抽的不是烟，是寂寞。',
-      '华丽的语言背后，是空洞的灵魂。',
-      '非主流，是一种态度，不是一种风格。',
-      '每一个不曾起舞的日子，都是对生命的辜负。',
-      '网线那一端的你，还好吗？',
-      '记得当年在网吧通宵的日子吗？',
-      '那些年我们一起聊过的QQ，还在吗？',
-      '时光不老，我们不散。',
-      '有些话，只能在这里说...'
+      "承諾、絠什嚒用？還bùsんì洅見。",
+      "莪們還能回去嗎？那個屬於莪們啲年代...",
+      "45度仰望天空，眼泪才不会掉下来。",
+      "那些年，我们一起追过的女孩...",
+      "哥抽的不是烟，是寂寞。",
+      "华丽的语言背后，是空洞的灵魂。",
+      "非主流，是一种态度，不是一种风格。",
+      "每一个不曾起舞的日子，都是对生命的辜负。",
+      "网线那一端的你，还好吗？",
+      "记得当年在网吧通宵的日子吗？",
+      "那些年我们一起聊过的QQ，还在吗？",
+      "时光不老，我们不散。",
+      "有些话，只能在这里说...",
     ];
 
-    const randomQuote = nostalgicQuotes[Math.floor(Math.random() * nostalgicQuotes.length)];
+    const randomQuote =
+      nostalgicQuotes[Math.floor(Math.random() * nostalgicQuotes.length)];
 
     this.setData({
-      agentMood: 'surprised',
-      agentMessage: isNewDiscovery ? `🎉 发现彩蛋：${randomQuote}` : randomQuote,
-      showMessage: true
+      agentMood: "surprised",
+      agentMessage: isNewDiscovery
+        ? `🎉 发现彩蛋：${randomQuote}`
+        : randomQuote,
+      showMessage: true,
     });
 
     // 5秒后隐藏消息
     setTimeout(() => {
       this.setData({
         showMessage: false,
-        agentMood: 'normal'
+        agentMood: "normal",
       });
     }, 5000);
   },
@@ -648,7 +932,7 @@ Page({
   },
 
   // 桌面点击 - 检测双击（背景切换）和蓝屏彩蛋
-  onDesktopTap: function(e) {
+  onDesktopTap: function (e) {
     // 如果已经显示蓝屏，不处理
     if (this.data.showBlueScreen) return;
 
@@ -674,60 +958,64 @@ Page({
   },
 
   // 切换桌面背景
-  switchDesktopBackground: async function() {
-    const newIndex = (this.data.desktopBgIndex + 1) % this.data.desktopBackgrounds.length;
+  switchDesktopBackground: async function () {
+    const newIndex =
+      (this.data.desktopBgIndex + 1) % this.data.desktopBackgrounds.length;
 
     this.setData({
-      desktopBgIndex: newIndex
+      desktopBgIndex: newIndex,
     });
 
     // 首次切换发现彩蛋
     if (newIndex === 1) {
       await eggSystem.discover(EGG_IDS.BG_SWITCH);
       wx.showToast({
-        title: '🎨 发现彩蛋：换了个心情',
-        icon: 'none',
-        duration: 2000
+        title: "🎨 发现彩蛋：换了个心情",
+        icon: "none",
+        duration: 2000,
       });
     }
   },
 
   // 图标区域点击 - 阻止桌面点击事件
-  onIconGridTap: function(e) {
+  onIconGridTap: function (e) {
     // 阻止事件冒泡到桌面
     // 图标点击由各自的 onIconTap 处理
   },
 
   // 触发蓝屏彩蛋
-  triggerBlueScreen: async function() {
+  triggerBlueScreen: async function () {
     const result = await eggSystem.discover(EGG_IDS.BLUE_SCREEN);
     const isNewDiscovery = result?.isNew || false;
 
     this.setData({
-      showBlueScreen: true
+      showBlueScreen: true,
     });
 
     // 蓝屏持续3秒后恢复
     setTimeout(() => {
       this.setData({
-        showBlueScreen: false
+        showBlueScreen: false,
       });
 
       // 如果是首次发现，显示发现提示
       if (isNewDiscovery) {
         wx.showToast({
-          title: '🎉 发现彩蛋：那个年代的噩梦',
-          icon: 'none',
-          duration: 3000
+          title: "🎉 发现彩蛋：那个年代的噩梦",
+          icon: "none",
+          duration: 3000,
         });
       }
     }, 3000);
   },
 
   // 点击任务栏 - 检测任务栏惊喜彩蛋
-  onTaskbarTap: async function() {
+  onTaskbarTap: async function () {
     // 点击任务栏10次触发惊喜
-    const shouldTrigger = this.incrementEggCounter(EGG_IDS.TASKBAR_SURPRISE, 10);
+    const shouldTrigger = this.incrementEggCounter(
+      EGG_IDS.TASKBAR_SURPRISE,
+      10
+    );
 
     if (shouldTrigger) {
       const result = await eggSystem.discover(EGG_IDS.TASKBAR_SURPRISE);
@@ -735,16 +1023,18 @@ Page({
 
       // 显示怀旧文字
       wx.showModal({
-        title: '🎉 发现彩蛋！',
-        content: isNewDiscovery ? '任务栏惊喜：\n\n"Windows正在检测你的硬件..."\n\n那个年代的等待记忆...' : '"Windows正在检测你的硬件..."',
+        title: "🎉 发现彩蛋！",
+        content: isNewDiscovery
+          ? '任务栏惊喜：\n\n"Windows正在检测你的硬件..."\n\n那个年代的等待记忆...'
+          : '"Windows正在检测你的硬件..."',
         showCancel: false,
-        confirmText: '回忆满满'
+        confirmText: "回忆满满",
       });
     }
   },
 
   // 切换隐藏图标彩蛋
-  toggleHiddenIcon: async function() {
+  toggleHiddenIcon: async function () {
     const newValue = !this.data.showHiddenIcon;
 
     if (newValue) {
@@ -752,33 +1042,44 @@ Page({
     }
 
     this.setData({
-      showHiddenIcon: newValue
+      showHiddenIcon: newValue,
     });
 
     if (newValue) {
       wx.showToast({
-        title: '🎉 发现隐藏图标！',
-        icon: 'none',
-        duration: 2000
+        title: "🎉 发现隐藏图标！",
+        icon: "none",
+        duration: 2000,
       });
     }
   },
 
   // 点击隐藏图标
-  onHiddenIconTap: function() {
+  onHiddenIconTap: function () {
     wx.showModal({
-      title: '🎮 神秘游戏',
-      content: '这是一个隐藏的入口...\n\n更多内容敬请期待！',
+      title: "🎮 神秘游戏",
+      content: "这是一个隐藏的入口...\n\n更多内容敬请期待！",
       showCancel: false,
-      confirmText: '期待'
+      confirmText: "期待",
     });
   },
 
   // Konami Code 序列检测
   // ↑↑↓↓←→←→BA
   // 通过点击屏幕四个区域来模拟方向输入
-  checkKonamiCode: function(direction) {
-    const KONAMI_SEQUENCE = ['up', 'up', 'down', 'down', 'left', 'right', 'left', 'right', 'b', 'a'];
+  checkKonamiCode: function (direction) {
+    const KONAMI_SEQUENCE = [
+      "up",
+      "up",
+      "down",
+      "down",
+      "left",
+      "right",
+      "left",
+      "right",
+      "b",
+      "a",
+    ];
 
     // 添加当前输入
     this.data.konamiProgress.push(direction);
@@ -789,71 +1090,73 @@ Page({
     }
 
     // 检查是否匹配
-    const input = this.data.konamiProgress.join('');
-    const target = KONAMI_SEQUENCE.join('');
+    const input = this.data.konamiProgress.join("");
+    const target = KONAMI_SEQUENCE.join("");
 
     if (input === target) {
       this.triggerGodMode();
-      this.data.konamiProgress = [];  // 重置
+      this.data.konamiProgress = []; // 重置
     }
 
     this.setData({
-      konamiProgress: this.data.konamiProgress
+      konamiProgress: this.data.konamiProgress,
     });
   },
 
   // 触发上帝模式
-  triggerGodMode: async function() {
+  triggerGodMode: async function () {
     const result = await eggSystem.discover(EGG_IDS.KONAMI_CODE);
     const isNewDiscovery = result?.isNew || false;
 
     this.setData({
       showGodMode: true,
-      agentMood: 'happy',
-      agentMessage: isNewDiscovery ? '🎉 上帝模式已激活！你发现了传说中的秘籍！' : '上帝模式已激活！',
-      showMessage: true
+      agentMood: "happy",
+      agentMessage: isNewDiscovery
+        ? "🎉 上帝模式已激活！你发现了传说中的秘籍！"
+        : "上帝模式已激活！",
+      showMessage: true,
     });
 
     // 显示上帝模式弹窗
     wx.showModal({
-      title: '🎮 上帝模式！',
-      content: isNewDiscovery ?
-        '↑↑↓↓←→←→BA\n\n你发现了传说中的秘籍！\n\n奖励：100 Q点 + 上帝之手徽章' :
-        '上帝模式已激活！\n\n所有能力解锁...',
+      title: "🎮 上帝模式！",
+      content: isNewDiscovery
+        ? "↑↑↓↓←→←→BA\n\n你发现了传说中的秘籍！\n\n奖励：100 Q点 + 上帝之手徽章"
+        : "上帝模式已激活！\n\n所有能力解锁...",
       showCancel: false,
-      confirmText: '太强了！'
+      confirmText: "太强了！",
     });
 
     // 3秒后隐藏消息
     setTimeout(() => {
       this.setData({
         showMessage: false,
-        agentMood: 'normal'
+        agentMood: "normal",
       });
     }, 3000);
   },
 
   // 方向输入辅助函数 - 通过图标ID映射方向
-  getDirectionFromIcon: function(iconId) {
+  getDirectionFromIcon: function (iconId) {
     const directionMap = {
-      'my-computer': 'up',      // 上 ↑
-      'my-documents': 'left',   // 左 ←
-      'recycle-bin': 'down',     // 下 ↓
-      'network-neighborhood': 'right', //右 →
-      'lion': 'b',              // 小狮子 = B
-      'start': 'a'              // 开始按钮 = A
+      "my-computer": "up", // 上 ↑
+      "my-documents": "left", // 左 ←
+      "recycle-bin": "down", // 下 ↓
+      "network-neighborhood": "right", //右 →
+      lion: "b", // 小狮子 = B
+      start: "a", // 开始按钮 = A
     };
     return directionMap[iconId] || null;
   },
 
   // 通过小狮子触发 B 按钮
-  onLionTapKonami: function() {
-    this.checkKonamiCode('b');
+  onLionTapKonami: function () {
+    this.checkKonamiCode("b");
   },
 
   // 通过开始按钮触发 A 按钮
-  onStartTapKonami: function() {
-    this.checkKonamiCode('a');
+  onStartTapKonami: function () {
+    this.checkKonamiCode("a");
   },
 
   // 点击网络图标
@@ -866,23 +1169,14 @@ Page({
         confirmText: "去连接",
         success: (res) => {
           if (res.confirm) {
-            wx.navigateTo({
-              url: "/pages/network-neighborhood/index",
-            });
+            this.setData({ showNetworkSystem: true });
           }
         },
       });
     } else {
-      // 生成随机网速（模拟千禧年拨号上网到宽带的速度）
-      const downSpeed = (Math.random() * 2 + 0.5).toFixed(2); // 0.5-2.5 MB/s
-      const upSpeed = (Math.random() * 0.5 + 0.1).toFixed(2); // 0.1-0.6 MB/s
-
+      // 显示网络信息气泡（33.6K拨号连接）
       this.setData({
         showNetworkInfo: true,
-        networkSpeed: {
-          down: downSpeed,
-          up: upSpeed,
-        },
       });
 
       // 3秒后自动隐藏气泡
@@ -893,6 +1187,42 @@ Page({
         this.setData({ showNetworkInfo: false });
       }, 3000);
     }
+  },
+
+  // 点击音量图标
+  onVolumeIconTap: function () {
+    // 切换静音状态
+    const newSoundEnabled = !this.data.soundEnabled;
+    this.setData({
+      soundEnabled: newSoundEnabled,
+      showVolumeInfo: true
+    });
+
+    // 保存到本地存储
+    wx.setStorageSync('soundEnabled', newSoundEnabled);
+
+    // 2秒后自动隐藏气泡
+    if (this.volumeInfoTimer) {
+      clearTimeout(this.volumeInfoTimer);
+    }
+    this.volumeInfoTimer = setTimeout(() => {
+      this.setData({ showVolumeInfo: false });
+    }, 2000);
+  },
+
+  // 点击网管系统插件
+  onNetworkPluginTap: function () {
+    this.setData({
+      showNetworkSystem: true,
+      showNetworkPlugin: true,
+      baseZIndex: this.data.baseZIndex + 10,
+      networkSystemZIndex: this.data.baseZIndex + 10
+    });
+  },
+
+  // 关闭网管系统插件
+  onCloseNetworkPlugin: function () {
+    this.setData({ showNetworkPlugin: false });
   },
 
   // 关闭错误弹窗
@@ -906,18 +1236,68 @@ Page({
     const year = 2005; // 固定为2005年，符合千禧时光机主题
     const month = now.getMonth() + 1;
     const day = now.getDate();
-    const hours = now.getHours().toString().padStart(2, '0');
-    const minutes = now.getMinutes().toString().padStart(2, '0');
-    const seconds = now.getSeconds().toString().padStart(2, '0');
+    const hours = now.getHours().toString().padStart(2, "0");
+    const minutes = now.getMinutes().toString().padStart(2, "0");
+    const seconds = now.getSeconds().toString().padStart(2, "0");
 
-    const dayNames = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+    const dayNames = [
+      "星期日",
+      "星期一",
+      "星期二",
+      "星期三",
+      "星期四",
+      "星期五",
+      "星期六",
+    ];
     const dayName = dayNames[now.getDay()];
 
     // 简单的农历模拟（非真实计算，仅供娱乐）
-    const lunarMonths = ['正月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '冬月', '腊月'];
-    const lunarDays = ['初一', '初二', '初三', '初四', '初五', '初六', '初七', '初八', '初九', '初十',
-                       '十一', '十二', '十三', '十四', '十五', '十六', '十七', '十八', '十九', '二十',
-                       '廿一', '廿二', '廿三', '廿四', '廿五', '廿六', '廿七', '廿八', '廿九', '三十'];
+    const lunarMonths = [
+      "正月",
+      "二月",
+      "三月",
+      "四月",
+      "五月",
+      "六月",
+      "七月",
+      "八月",
+      "九月",
+      "十月",
+      "冬月",
+      "腊月",
+    ];
+    const lunarDays = [
+      "初一",
+      "初二",
+      "初三",
+      "初四",
+      "初五",
+      "初六",
+      "初七",
+      "初八",
+      "初九",
+      "初十",
+      "十一",
+      "十二",
+      "十三",
+      "十四",
+      "十五",
+      "十六",
+      "十七",
+      "十八",
+      "十九",
+      "二十",
+      "廿一",
+      "廿二",
+      "廿三",
+      "廿四",
+      "廿五",
+      "廿六",
+      "廿七",
+      "廿八",
+      "廿九",
+      "三十",
+    ];
     const lunarMonth = lunarMonths[(month - 1 + 3) % 12];
     const lunarDay = lunarDays[(day - 1) % 30];
 
@@ -935,7 +1315,7 @@ Page({
     for (let d = 1; d <= daysInMonth; d++) {
       calendarDays.push({
         day: d,
-        isToday: d === day
+        isToday: d === day,
       });
     }
 
@@ -947,13 +1327,34 @@ Page({
       calendarDayName: dayName,
       fullDateTime: `${year}年${month}月${day}日 ${hours}:${minutes}:${seconds}`,
       lunarDate: `${lunarMonth}${lunarDay}`,
-      calendarDays: calendarDays
+      calendarDays: calendarDays,
     });
   },
 
   // 关闭日期弹窗
   hideDateDialog: function () {
     this.setData({ showDateDialog: false });
+  },
+
+  // 关闭十分动听播放器
+  onCloseTTPlayer: function () {
+    console.log("onCloseTTPlayer 被调用");
+    this.setData({ showTTPlayer: false });
+  },
+
+  // 关闭我的电脑
+  onCloseMyComputer: function () {
+    this.setData({ showMyComputer: false });
+  },
+
+  // 关闭网管系统
+  onCloseNetworkSystem: function () {
+    this.setData({ showNetworkSystem: false });
+  },
+
+  // 关闭我的文档
+  onCloseMyDocuments: function () {
+    this.setData({ showMyDocuments: false });
   },
 
   onShareAppMessage: function () {

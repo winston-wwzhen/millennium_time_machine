@@ -1,4 +1,4 @@
-<view class="desktop {{showBlueScreen ? 'blue-screen' : ''}}" style="background-color: {{desktopBackgrounds[desktopBgIndex]}};" bindlongpress="onDesktopLongPress" bindtap="onDesktopTap" catchtap="onDesktopTap">
+<view class="desktop {{showBlueScreen ? 'blue-screen' : ''}} {{isRefreshing ? 'refreshing' : ''}}" style="background-color: {{desktopBackgrounds[desktopBgIndex]}};" bindlongpress="onDesktopLongPress" bindtap="onDesktopTap" catchtap="onDesktopTap">
   <!-- 蓝屏彩蛋覆盖层 -->
   <view class="blue-screen-overlay" wx:if="{{showBlueScreen}}">
     <view class="bsod-content">
@@ -7,6 +7,30 @@
       <text class="bsod-text">按 Ctrl+Alt+Del 重启</text>
       <text class="bsod-code">0x000000ED: UNMOUNTABLE_BOOT_VOLUME</text>
       <text class="bsod-hint">那个年代的噩梦...彩蛋发现！</text>
+    </view>
+  </view>
+
+  <!-- 网管系统插件 - 右上角面板 -->
+  <view class="network-plugin-panel" wx:if="{{showNetworkPlugin}}">
+    <view class="plugin-title-bar">
+      <text class="plugin-title-text">💰 余额</text>
+      <text class="plugin-close-btn" bindtap="onCloseNetworkPlugin">×</text>
+    </view>
+    <view class="plugin-body" bindtap="onNetworkPluginTap">
+      <view class="plugin-row">
+        <text class="plugin-row-icon">🌐</text>
+        <view class="plugin-row-info">
+          <text class="plugin-row-label">网费</text>
+          <text class="plugin-row-value">{{userNetFee}}分钟</text>
+        </view>
+      </view>
+      <view class="plugin-row">
+        <text class="plugin-row-icon">💎</text>
+        <view class="plugin-row-info">
+          <text class="plugin-row-label">时光币</text>
+          <text class="plugin-row-value">{{userCoins}}</text>
+        </view>
+      </view>
     </view>
   </view>
 
@@ -57,12 +81,20 @@
         </view>
         <!-- 网络信息气泡 -->
         <view class="network-bubble {{showNetworkInfo ? 'show' : ''}}" wx:if="{{showNetworkInfo}}">
-          <text class="network-status-text">{{networkConnected ? '网络已连接' : '网络未连接'}}</text>
-          <text class="network-speed-text">下载: {{networkSpeed.down}} MB/s</text>
-          <text class="network-speed-text">上传: {{networkSpeed.up}} MB/s</text>
+          <text class="network-status-text">{{networkConnected ? '33.6K 拨号连接' : '网络未连接'}}</text>
+          <text class="network-speed-text" wx:if="{{networkConnected}}">网费: {{userNetFee}} 分钟</text>
+          <text class="network-speed-text" wx:if="{{networkConnected}}">速度: 3-5 KB/s</text>
         </view>
       </view>
-      <view class="tray-icon">🔊</view>
+      <view class="volume-wrapper">
+        <view class="tray-icon volume-icon" bindtap="onVolumeIconTap">
+          {{soundEnabled ? '🔊' : '🔇'}}
+        </view>
+        <!-- 音量状态气泡 -->
+        <view class="volume-bubble {{showVolumeInfo ? 'show' : ''}}" wx:if="{{showVolumeInfo}}">
+          <text class="volume-status-text">{{soundEnabled ? '音量已开启' : '静音模式'}}</text>
+        </view>
+      </view>
       <view class="system-time" bindtap="onTimeTap">{{systemTime}}</view>
     </view>
   </view>
@@ -73,22 +105,22 @@
   <!-- 开始菜单 (弹出层) -->
   <view class="start-menu" wx:if="{{showStartMenu}}">
     <!-- 用户横幅 -->
-    <view class="user-banner">
-      <view class="user-avatar">👤</view>
+    <view class="user-banner" bindtap="onUserBannerTap">
+      <view class="user-avatar">{{userInfo.avatar}}</view>
       <view class="user-info">
-        <text class="user-name">管理员</text>
+        <text class="user-name">{{userInfo.nickname}}</text>
         <text class="user-status">在线</text>
       </view>
     </view>
     <!-- 菜单项 -->
     <view class="menu-items">
-      <view class="menu-item submenu" catchtap="toggleSubmenu">
-        <text class="menu-icon">📂</text>
+      <view class="menu-item submenu {{showSubmenu ? 'selected' : ''}}" catchtap="toggleSubmenu">
+        <text class="menu-icon">🎮</text>
         <text class="menu-text">程序</text>
         <text class="submenu-arrow {{showSubmenu ? 'expanded' : ''}}">{{showSubmenu ? '▾' : '▸'}}</text>
       </view>
       <view class="menu-item" bindtap="onIconTap" data-path="/pages/my-documents/index">
-        <text class="menu-icon">📄</text>
+        <text class="menu-icon">📂</text>
         <text class="menu-text">我的文档</text>
       </view>
       <view class="menu-item" bindtap="onIconTap" data-path="/pages/my-computer/index">
@@ -113,38 +145,48 @@
 
   <!-- 程序子菜单 (独立弹出层) -->
   <view class="submenu-popup {{showSubmenu ? 'show' : ''}}" catchtap="stopPropagation">
-    <view class="submenu-item" catchtap="onIconTap" data-path="/pages/tetris/index">
-      <text class="submenu-icon">🎮</text>
-      <text class="submenu-text">俄罗斯方块</text>
-    </view>
-    <view class="submenu-item" catchtap="onIconTap" data-path="/pages/star-explorer/index">
-      <text class="submenu-icon">🌌</text>
-      <text class="submenu-text">星际探索</text>
-    </view>
     <view class="submenu-item" catchtap="onIconTap" data-path="/pages/mars/index">
       <text class="submenu-icon">🪐</text>
-      <text class="submenu-text">火星翻译</text>
+      <text class="submenu-text">火星文转换器</text>
+    </view>
+    <view class="submenu-item" catchtap="onIconTap" data-path="/pages/translator/index">
+      <text class="submenu-icon">💔</text>
+      <text class="submenu-text">忧伤合成器</text>
+    </view>
+    <view class="submenu-item" catchtap="onIconTap" data-path="/pages/star-explorer/index">
+      <text class="submenu-icon">💣</text>
+      <text class="submenu-text">葬爱心碎</text>
+    </view>
+    <view class="submenu-item" catchtap="onIconTap" data-path="/pages/avatar/index">
+      <text class="submenu-icon">📸</text>
+      <text class="submenu-text">非主流相机</text>
     </view>
   </view>
 
+  <!-- 右键菜单遮罩 (点击外部关闭) -->
+  <view class="context-menu-mask" wx:if="{{showContextMenu}}" catchtap="hideContextMenu"></view>
+
   <!-- 右键菜单 (弹出层) -->
-  <view class="context-menu" wx:if="{{showContextMenu}}" style="left: {{contextMenuX}}px; top: {{contextMenuY}}px;" catchtap="hideContextMenu">
+  <view class="context-menu" wx:if="{{showContextMenu}}" style="left: {{contextMenuX}}px; top: {{contextMenuY}}px;">
     <view class="context-menu-item" bindtap="refreshDesktop">
       <text class="context-icon">🔄</text> 刷新(E)
     </view>
     <view class="menu-line"></view>
-    <view class="context-menu-item" bindtap="arrangeIcons">
-      <text class="context-icon">📋</text> 排列图标(A)
+    <view class="context-menu-item" bindtap="showSystemInfo">
+      <text class="context-icon">📊</text> 系统信息(I)
     </view>
-    <view class="context-menu-item" bindtap="newFolder">
-      <text class="context-icon">📁</text> 新建(W)
+    <view class="context-menu-item" bindtap="openNetworkSystem">
+      <text class="context-icon">⚙️</text> 网管系统(N)
+    </view>
+    <view class="context-menu-item" bindtap="showAgentSettings">
+      <text class="context-icon">🦁</text> 助手设置(A)
+    </view>
+    <view class="context-menu-item" bindtap="showAbout">
+      <text class="context-icon">📱</text> 关于(A)
     </view>
     <view class="menu-line"></view>
     <view class="context-menu-item" bindtap="showEasterEggs">
       <text class="context-icon">🥚</text> 彩蛋收集(G)
-    </view>
-    <view class="context-menu-item" bindtap="showProperties">
-      <text class="context-icon">ℹ️</text> 属性(R)
     </view>
   </view>
 
@@ -222,4 +264,164 @@
       </view>
     </view>
   </view>
+
+  <!-- 用户编辑弹窗遮罩 -->
+  <view class="start-menu-mask" wx:if="{{showUserEditDialog}}" catchtap="closeUserEditDialog"></view>
+
+  <!-- 用户编辑弹窗 -->
+  <view class="user-edit-dialog" wx:if="{{showUserEditDialog}}" catchtap="stopPropagation">
+    <view class="win98-title-bar">
+      <view class="win98-title-text">👤 编辑用户信息</view>
+      <view class="win98-title-controls">
+        <button class="win98-btn-close" bindtap="closeUserEditDialog">×</button>
+      </view>
+    </view>
+    <view class="win98-window-body">
+      <view class="user-edit-content">
+        <!-- 头像选择 -->
+        <view class="edit-section">
+          <text class="edit-label">选择头像：</text>
+          <view class="avatar-grid">
+            <view
+              class="avatar-choice {{editAvatar === item ? 'selected' : ''}}"
+              wx:for="{{avatarList}}"
+              wx:key="index"
+              bindtap="selectAvatar"
+              data-avatar="{{item}}"
+            >
+              {{item}}
+            </view>
+          </view>
+        </view>
+
+        <!-- 昵称输入 -->
+        <view class="edit-section">
+          <text class="edit-label">修改昵称：</text>
+          <input
+            class="win98-input nickname-input"
+            value="{{editNickname}}"
+            bindinput="onNicknameInput"
+            maxlength="12"
+            placeholder="请输入昵称（最多12字）"
+          />
+        </view>
+      </view>
+
+      <view class="dialog-actions">
+        <button class="win98-btn-std" bindtap="saveUserInfo">确定</button>
+        <button class="win98-btn-std" bindtap="closeUserEditDialog">取消</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 系统信息弹窗遮罩 -->
+  <view class="win98-overlay" wx:if="{{showSystemInfoDialog}}" bindtap="hideSystemInfoDialog">
+    <view class="win98-window system-info-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">📊 系统信息</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="hideSystemInfoDialog">×</button>
+        </view>
+      </view>
+      <view class="win98-window-body">
+        <view class="system-info-content">
+          <text class="info-title">千禧时光机 v1.0</text>
+          <view class="info-list">
+            <view class="info-item">
+              <text class="info-label">操作系统:</text>
+              <text class="info-value">{{systemInfoData.os}}</text>
+            </view>
+            <view class="info-item">
+              <text class="info-label">处理器:</text>
+              <text class="info-value">{{systemInfoData.cpu}}</text>
+            </view>
+            <view class="info-item">
+              <text class="info-label">内存:</text>
+              <text class="info-value">{{systemInfoData.memory}}</text>
+            </view>
+            <view class="info-item">
+              <text class="info-label">显卡:</text>
+              <text class="info-value">{{systemInfoData.gpu}}</text>
+            </view>
+            <view class="info-item">
+              <text class="info-label">显示器:</text>
+              <text class="info-value">{{systemInfoData.display}}</text>
+            </view>
+            <view class="info-item">
+              <text class="info-label">当前时间:</text>
+              <text class="info-value">{{systemInfoData.time}}</text>
+            </view>
+            <view class="info-item">
+              <text class="info-label">网络状态:</text>
+              <text class="info-value">{{systemInfoData.network}}</text>
+            </view>
+          </view>
+        </view>
+        <view class="dialog-actions">
+          <button class="win98-btn-std" bindtap="hideSystemInfoDialog">确定</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 助手设置弹窗遮罩 -->
+  <view class="win98-overlay" wx:if="{{showAgentSettingsDialog}}" bindtap="hideAgentSettingsDialog">
+    <view class="win98-window agent-settings-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">🦁 助手设置</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="hideAgentSettingsDialog">×</button>
+        </view>
+      </view>
+      <view class="win98-window-body">
+        <view class="agent-settings-content">
+          <text class="settings-text">{{agentSettingsMessage}}</text>
+        </view>
+        <view class="dialog-actions">
+          <button class="win98-btn-std" bindtap="hideAgentSettingsDialog">知道了</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 关于弹窗遮罩 -->
+  <view class="win98-overlay" wx:if="{{showAboutDialog}}" bindtap="hideAboutDialog">
+    <view class="win98-window about-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">📱 关于千禧时光机</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="hideAboutDialog">×</button>
+        </view>
+      </view>
+      <view class="win98-window-body">
+        <view class="about-content">
+          <text class="about-title">千禧时光机 v1.0</text>
+          <text class="about-text">一款怀旧风格的微信小程序，</text>
+          <text class="about-text">带你回到2005年的QQ时代。</text>
+          <view class="about-features">
+            <text class="about-feature">• Windows 98 桌面风格</text>
+            <text class="about-feature">• 100+ AI 聊天好友</text>
+            <text class="about-feature">• 12个隐藏彩蛋</text>
+            <text class="about-feature">• 双代币系统</text>
+            <text class="about-feature">• 经典小游戏</text>
+          </view>
+        </view>
+        <view class="dialog-actions">
+          <button class="win98-btn-std" bindtap="hideAboutDialog">确定</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 十分动听播放器组件 -->
+  <ttplayer show="{{showTTPlayer}}" bindclose="onCloseTTPlayer"></ttplayer>
+
+  <!-- 我的电脑组件 -->
+  <my-computer show="{{showMyComputer}}" zIndex="{{myComputerZIndex}}" bindclose="onCloseMyComputer"></my-computer>
+
+  <!-- 网管系统组件 -->
+  <network-neighborhood show="{{showNetworkSystem}}" zIndex="{{networkSystemZIndex}}" bindclose="onCloseNetworkSystem"></network-neighborhood>
+
+  <!-- 我的文档组件 -->
+  <my-documents show="{{showMyDocuments}}" zIndex="{{myDocumentsZIndex}}" bindclose="onCloseMyDocuments"></my-documents>
 </view>

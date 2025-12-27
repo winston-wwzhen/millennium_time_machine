@@ -1,0 +1,251 @@
+/* 我的文档组件 - Win98 风格 */
+
+/* 遮罩层 */
+.my-documents-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.3s ease;
+}
+
+.my-documents-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.my-documents-overlay.hide {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.win98-window {
+  background: #c0c0c0;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  box-shadow: inset 1px 1px #dfdfdf, inset -1px -1px #0a0a0a, 0 10px 30px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+}
+
+.win98-title-bar {
+  background: linear-gradient(90deg, #000080, #1084d0);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 3px 2px 6px;
+  height: 20px;
+}
+
+.win98-title-text {
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  font-family: 'SimSun', 'Courier New', monospace;
+}
+
+.win98-title-controls {
+  display: flex;
+  gap: 2px;
+}
+
+.win98-title-controls button {
+  all: unset;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 16px;
+  height: 14px;
+  background: #c0c0c0;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  font-size: 10px;
+  color: #000;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.win98-title-controls button:active {
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
+}
+
+.win98-btn-close::after {
+  content: "×";
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.win98-window-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 4px;
+  overflow-y: auto;
+}
+
+.toolbar {
+  display: flex;
+  gap: 8px;
+  padding: 2px 8px;
+  font-size: 11px;
+}
+
+.toolbar-item {
+  padding: 2px 8px;
+  cursor: pointer;
+}
+
+.toolbar-item:active {
+  background: #000080;
+  color: white;
+}
+
+.toolbar-divider {
+  height: 1px;
+  background: #808080;
+  border-bottom: 1px solid #ffffff;
+  margin: 4px 0;
+}
+
+.files-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 16px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.file-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 80px;
+  padding: 8px;
+}
+
+.file-item:active {
+  background: #000080;
+}
+
+.file-icon {
+  font-size: 40px;
+  margin-bottom: 4px;
+}
+
+.file-label {
+  font-size: 11px;
+  color: #000;
+  text-align: center;
+  word-break: break-all;
+}
+
+.tip-box {
+  background: #ffffe0;
+  border: 1px solid #000;
+  padding: 8px;
+  margin: 8px;
+  font-size: 11px;
+}
+
+.tip-text {
+  color: #000080;
+}
+
+.status-bar {
+  border-top: 1px solid #808080;
+  padding: 2px 8px;
+  font-size: 11px;
+  background: #c0c0c0;
+  flex-shrink: 0;
+}
+
+/* 帮助窗口样式 */
+.help-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2100;
+  transition: opacity 0.3s ease;
+}
+
+.help-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.help-overlay.hide {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.help-window {
+  width: 90%;
+  max-width: 480px;
+  max-height: 75vh;
+}
+
+.help-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  margin: 4px;
+  background: #fff;
+  border: 2px inset #c0c0c0;
+  font-size: 12px;
+  font-family: 'SimSun', 'Courier New', monospace;
+  overflow-y: auto;
+}
+
+.help-title {
+  color: #000080;
+  font-weight: bold;
+  text-align: center;
+  line-height: 1.8;
+}
+
+.help-section {
+  color: #800000;
+  font-weight: bold;
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
+
+.help-line {
+  line-height: 1.6;
+}
+
+.help-text {
+  color: #333;
+  line-height: 1.8;
+  display: block;
+}
+
+.help-item {
+  color: #0066cc;
+  line-height: 1.8;
+  display: block;
+}

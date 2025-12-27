@@ -1,0 +1,103 @@
+<!-- 我的电脑 - Win98 风格窗口组件 -->
+<view class="my-computer-overlay {{show ? 'show' : 'hide'}}" style="{{overlayStyle}}" catchtap="onClose">
+  <view class="win98-window" catchtap="stopPropagation">
+    <view class="win98-title-bar">
+      <view class="win98-title-text">我的电脑</view>
+      <view class="win98-title-controls">
+        <button class="win98-btn-minimize">_</button>
+        <button class="win98-btn-maximize">□</button>
+        <button class="win98-btn-close" bindtap="onClose">×</button>
+      </view>
+    </view>
+
+    <!-- 菜单栏 -->
+    <view class="menu-bar">
+      <text class="menu-item">文件(F)</text>
+      <text class="menu-item">编辑(E)</text>
+      <text class="menu-item">查看(V)</text>
+      <text class="menu-item">帮助(H)</text>
+    </view>
+
+    <view class="win98-window-body">
+      <!-- 驱动器列表 -->
+      <view class="drives-grid">
+        <!-- C盘 - 独占第一行 -->
+        <view class="drive-item drive-c" bindtap="onDriveTap" data-drive="C">
+          <view class="drive-icon">💾</view>
+          <view class="drive-info">
+            <text class="drive-label">(C:)</text>
+            <text class="drive-size">本地磁盘</text>
+            <view class="capacity-bar">
+              <view class="capacity-used" style="width: 99%"></view>
+            </view>
+            <text class="capacity-text">99% 已用 - 空间不足!</text>
+          </view>
+        </view>
+
+        <!-- 分割线 -->
+        <view class="drive-divider"></view>
+
+        <!-- 第二行驱动器容器 -->
+        <view class="drives-row-secondary">
+          <view class="drive-item" bindtap="onDriveTap" data-drive="D">
+          <view class="drive-icon">💿</view>
+          <text class="drive-label">(D:)</text>
+          <text class="drive-size">光盘驱动器</text>
+        </view>
+        <view class="drive-item" bindtap="onDriveTap" data-drive="USB">
+          <view class="drive-icon">📱</view>
+          <text class="drive-label">可移动</text>
+          <text class="drive-size">USB设备</text>
+        </view>
+        </view>
+      </view>
+
+      <!-- 系统信息 -->
+      <view class="system-info">
+        <text class="info-title">系统信息</text>
+        <view class="info-row">
+          <text class="info-label">操作系统:</text>
+          <text class="info-value">Millennium OS 2000</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">处理器:</text>
+          <text class="info-value">英特尔 奔腾 III</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">内存:</text>
+          <text class="info-value">128 MB 内存</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">分辨率:</text>
+          <text class="info-value">800 x 600</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 状态栏 -->
+    <view class="status-bar">
+      <text>3 个对象</text>
+    </view>
+  </view>
+
+  <!-- 驱动器弹窗 -->
+  <view class="win98-dialog-overlay" wx:if="{{showDriveDialog}}" catchtap="closeDriveDialog">
+    <view class="win98-window drive-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">{{driveDialogData.title}}</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="closeDriveDialog">×</button>
+        </view>
+      </view>
+      <view class="win98-window-body">
+        <view class="drive-dialog-content">
+          <view class="drive-dialog-icon">{{driveDialogData.icon}}</view>
+          <text class="drive-dialog-message">{{driveDialogData.message}}</text>
+        </view>
+        <view class="dialog-actions">
+          <button class="win98-btn-std" bindtap="closeDriveDialog">确定</button>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

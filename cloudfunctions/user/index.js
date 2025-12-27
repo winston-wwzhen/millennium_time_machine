@@ -482,5 +482,50 @@ exports.main = async (event, context) => {
     }
   }
 
+  // 📝 添加操作日志
+  if (type === 'addLog') {
+    try {
+      const { action, target, details } = event;
+
+      await db.collection('user_activity_logs').add({
+        data: {
+          _openid: openid,
+          action: action,        // 操作类型：open, close, click等
+          target: target,        // 操作对象：我的电脑、我的文档等
+          details: details || '', // 操作详情
+          createTime: db.serverDate()
+        }
+      });
+
+      return { success: true };
+    } catch (e) {
+      console.error(e);
+      return { success: false, errMsg: e.message };
+    }
+  }
+
+  // 📖 获取操作日志
+  if (type === 'getLogs') {
+    try {
+      const { limit = 100 } = event;
+
+      const res = await db.collection('user_activity_logs')
+        .where({
+          _openid: openid
+        })
+        .orderBy('createTime', 'desc')
+        .limit(limit)
+        .get();
+
+      return {
+        success: true,
+        logs: res.data || []
+      };
+    } catch (e) {
+      console.error(e);
+      return { success: false, errMsg: e.message };
+    }
+  }
+
   return { success: false, errMsg: 'Unknown type' };
 };

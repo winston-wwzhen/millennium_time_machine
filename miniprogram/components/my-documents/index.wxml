@@ -1,0 +1,140 @@
+<!-- 我的文档组件 -->
+<view class="my-documents-overlay {{show ? 'show' : 'hide'}}" style="{{overlayStyle}}" catchtap="onClose">
+  <view class="win98-window" catchtap="stopPropagation">
+    <view class="win98-title-bar">
+      <view class="win98-title-text">我的文档</view>
+      <view class="win98-title-controls">
+        <button class="win98-btn-minimize">_</button>
+        <button class="win98-btn-maximize">□</button>
+        <button class="win98-btn-close" bindtap="onClose">×</button>
+      </view>
+    </view>
+
+    <view class="win98-window-body">
+      <!-- 工具栏 -->
+      <view class="toolbar">
+        <view class="toolbar-item">文件(F)</view>
+        <view class="toolbar-item">编辑(E)</view>
+        <view class="toolbar-item">查看(V)</view>
+        <view class="toolbar-item">收藏(A)</view>
+        <view class="toolbar-item" bindtap="onHelpTap">帮助(H)</view>
+      </view>
+
+      <view class="toolbar-divider"></view>
+
+      <!-- 文件夹列表 -->
+      <view class="files-grid">
+        <view class="file-item" bindtap="onMyPhotosTap">
+          <view class="file-icon">📁</view>
+          <text class="file-label">我的图片</text>
+        </view>
+        <view class="file-item">
+          <view class="file-icon">📁</view>
+          <text class="file-label">我的音乐</text>
+        </view>
+        <view class="file-item">
+          <view class="file-icon">📁</view>
+          <text class="file-label">我的视频</text>
+        </view>
+        <view class="file-item" bindtap="onDiaryTap">
+          <view class="file-icon">📄</view>
+          <text class="file-label">日记.txt</text>
+        </view>
+        <view class="file-item" bindtap="onSignatureTap">
+          <view class="file-icon">📄</view>
+          <text class="file-label">非主流签名.doc</text>
+        </view>
+        <view class="file-item" bindtap="onAvatarTap">
+          <view class="file-icon">🖼️</view>
+          <text class="file-label">头像.bmp</text>
+        </view>
+        <view class="file-item" bindtap="onEggFolderTap">
+          <view class="file-icon">📁</view>
+          <text class="file-label">彩蛋</text>
+        </view>
+      </view>
+
+      <!-- 提示信息 -->
+      <view class="tip-box">
+        <text class="tip-text">💡 这里保存了你在千禧年代的珍贵回忆...</text>
+      </view>
+    </view>
+
+    <!-- 状态栏 -->
+    <view class="status-bar">
+      <text>7 个对象</text>
+    </view>
+  </view>
+
+  <!-- 彩蛋文件夹组件 -->
+  <egg-folder show="{{showEggFolder}}" bindclose="onCloseEggFolder"></egg-folder>
+
+  <!-- 日记查看器组件 -->
+  <diary-viewer show="{{showDiary}}" fileName="日记.txt" bindclose="onCloseDiary"></diary-viewer>
+
+  <!-- 签名查看器组件 -->
+  <signature-viewer show="{{showSignature}}" fileName="非主流签名.doc" bindclose="onCloseSignature"></signature-viewer>
+
+  <!-- 图片查看器组件 -->
+  <image-viewer show="{{showImageViewer}}" fileName="头像.bmp" avatarEmoji="{{userAvatar}}" imageUrl="{{imageUrl}}" bindclose="onCloseImageViewer"></image-viewer>
+
+  <!-- 我的图片组件 -->
+  <my-photos show="{{showMyPhotos}}" bindclose="onCloseMyPhotos"></my-photos>
+
+  <!-- 帮助窗口 -->
+  <view class="help-overlay {{showHelp ? 'show' : 'hide'}}" catchtap="onCloseHelp">
+    <view class="win98-window help-window" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">我的文档 - 帮助</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-minimize">_</button>
+          <button class="win98-btn-maximize">□</button>
+          <button class="win98-btn-close" bindtap="onCloseHelp">×</button>
+        </view>
+      </view>
+
+      <view class="win98-window-body">
+        <view class="help-content">
+          <text class="help-title">═════════════════════════════════</text>
+          <text class="help-title">        我的文档使用指南</text>
+          <text class="help-title">═════════════════════════════════</text>
+
+          <text class="help-line"></text>
+
+          <text class="help-section">【功能介绍】</text>
+          <text class="help-text">这里保存了你在千禧年代的珍贵回忆，</text>
+          <text class="help-text">每一份文件都承载着那段美好的时光。</text>
+
+          <text class="help-line"></text>
+
+          <text class="help-section">【文件说明】</text>
+          <text class="help-item">📁 我的图片 - 查看你上传的珍贵照片</text>
+          <text class="help-item">📁 我的音乐 - 千禧年代经典金曲</text>
+          <text class="help-item">📁 我的视频 - 怀旧视频收藏</text>
+          <text class="help-item">📄 日记 - 记录那些年心事</text>
+          <text class="help-item">📄 非主流签名 - 个性签名大全</text>
+          <text class="help-item">🖼️ 头像 - 非主流头像生成</text>
+          <text class="help-item">📁 彩蛋 - 隐藏的惊喜等你发现</text>
+
+          <text class="help-line"></text>
+
+          <text class="help-section">【操作提示】</text>
+          <text class="help-text">• 点击文件图标可以打开对应内容</text>
+          <text class="help-text">• 部分文件夹可能需要特定操作才能解锁</text>
+          <text class="help-text">• 探索更多隐藏功能，发现彩蛋</text>
+
+          <text class="help-line"></text>
+          <text class="help-title">─────────────────────────────</text>
+          <text class="help-text">   愿这些回忆能温暖你的心...</text>
+          <text class="help-title">─────────────────────────────</text>
+          <text class="help-line"></text>
+        </view>
+      </view>
+
+      <!-- 状态栏 -->
+      <view class="status-bar">
+        <text>如有疑问，请联系网管小哥</text>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,199 @@
+/* 我的图片组件 - Win98 风格 */
+
+/* 遮罩层 */
+.my-photos-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2100;
+  transition: opacity 0.3s ease;
+}
+
+.my-photos-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.my-photos-overlay.hide {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.win98-window {
+  background: #c0c0c0;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  box-shadow: inset 1px 1px #dfdfdf, inset -1px -1px #0a0a0a, 0 10px 30px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  max-width: 600px;
+  height: 55vh;
+}
+
+.win98-title-bar {
+  background: linear-gradient(90deg, #000080, #1084d0);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 3px 2px 6px;
+  height: 20px;
+}
+
+.win98-title-text {
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  font-family: 'SimSun', 'Courier New', monospace;
+}
+
+.win98-title-controls {
+  display: flex;
+  gap: 2px;
+}
+
+.win98-title-controls button {
+  all: unset;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 16px;
+  height: 14px;
+  background: #c0c0c0;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  font-size: 10px;
+  color: #000;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.win98-title-controls button:active {
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
+}
+
+.win98-window-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 4px;
+  overflow-y: auto;
+  background: #ffffff;
+  margin: 2px;
+  min-height: 0;
+}
+
+.toolbar {
+  display: flex;
+  gap: 16px;
+  padding: 4px 8px;
+  font-size: 11px;
+}
+
+.toolbar-item {
+  cursor: pointer;
+}
+
+.toolbar-item:active {
+  background: #000080;
+  color: white;
+}
+
+.toolbar-divider {
+  height: 1px;
+  background: #808080;
+  border-bottom: 1px solid #ffffff;
+  margin: 4px 0;
+}
+
+.photos-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 12px;
+  justify-items: center;
+}
+
+.photo-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 80px;
+  cursor: pointer;
+}
+
+.photo-item:active {
+  opacity: 0.7;
+}
+
+.photo-thumb {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  background: #f0f0f0;
+  border: 1px solid #c0c0c0;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.photo-date {
+  font-size: 10px;
+  color: #666;
+  margin-top: 4px;
+  font-family: 'SimSun', monospace;
+}
+
+.empty-state,
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  grid-column: 1 / -1;
+}
+
+.empty-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.empty-text {
+  font-size: 16px;
+  color: #808080;
+  margin-bottom: 8px;
+  font-family: 'SimSun', sans-serif;
+}
+
+.empty-hint {
+  font-size: 12px;
+  color: #c0c0c0;
+  font-family: 'SimSun', sans-serif;
+}
+
+.loading-text {
+  font-size: 14px;
+  color: #808080;
+  font-family: 'SimSun', sans-serif;
+}
+
+.status-bar {
+  border-top: 1px solid #808080;
+  padding: 2px 8px;
+  font-size: 11px;
+  background: #c0c0c0;
+  flex-shrink: 0;
+}

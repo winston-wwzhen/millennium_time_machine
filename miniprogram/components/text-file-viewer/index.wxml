@@ -1,0 +1,158 @@
+<!-- 文本文件查看器组件 -->
+<view class="text-viewer-overlay {{show ? 'show' : 'hide'}}" catchtap="onClose">
+  <view class="win98-window" catchtap="stopPropagation">
+    <view class="win98-title-bar">
+      <view class="win98-title-text">{{fileName}} - 记事本</view>
+      <view class="win98-title-controls">
+        <button class="win98-btn-minimize">_</button>
+        <button class="win98-btn-maximize">□</button>
+        <button class="win98-btn-close" bindtap="onClose">×</button>
+      </view>
+    </view>
+
+    <!-- 菜单栏 -->
+    <view class="menu-bar">
+      <text class="menu-item">文件(F)</text>
+      <text class="menu-item">编辑(E)</text>
+      <text class="menu-item">搜索(S)</text>
+      <text class="menu-item">帮助(H)</text>
+    </view>
+
+    <view class="win98-window-body">
+      <!-- 文本内容区域 -->
+      <view class="text-content">
+        <!-- 彩蛋秘籍内容 -->
+        <view wx:if="{{isSecretFile}}">
+          <text class="preview-title">═══════════════════════════════════════</text>
+          <text class="preview-title">          千禧时光机 - 彩蛋秘籍</text>
+          <text class="preview-title">═══════════════════════════════════════</text>
+
+          <text class="preview-line"></text>
+          <text class="preview-section">【普通彩蛋达成方案】</text>
+
+          <!-- 彩蛋1 -->
+          <view class="secret-egg-item">
+            <text class="secret-egg-name">🦁 舞动的小狮子 (1000💎)</text>
+            <text class="secret-egg-method">   → 在桌面找到小狮子助手，连续点击3-5次</text>
+          </view>
+
+          <!-- 彩蛋2 -->
+          <view class="secret-egg-item">
+            <text class="secret-egg-name">💬 它会说话 (1000💎)</text>
+            <text class="secret-egg-method">   → 长按桌面上的小狮子助手不松手</text>
+          </view>
+
+          <!-- 彩蛋3 -->
+          <view class="secret-egg-item">
+            <text class="secret-egg-name">📂 底部秘密 (1000💎)</text>
+            <text class="secret-egg-method">   → 连续点击底部任务栏的空白区域3次以上</text>
+          </view>
+
+          <!-- 彩蛋4 -->
+          <view class="secret-egg-item">
+            <text class="secret-egg-name">🎨 换了个心情 (500💎)</text>
+            <text class="secret-egg-method">   → 双击桌面空白处切换背景，重复5次以上</text>
+          </view>
+
+          <!-- 彩蛋5 -->
+          <view class="secret-egg-item">
+            <text class="secret-egg-name">🗑️ 垃圾清理员 (400💎)</text>
+            <text class="secret-egg-method">   → 连续点击桌面上的回收站图标多次</text>
+          </view>
+
+          <!-- 彩蛋6 -->
+          <view class="secret-egg-item">
+            <text class="secret-egg-name">💻 电脑专家 (400💎)</text>
+            <text class="secret-egg-method">   → 连续点击桌面上的我的电脑图标多次</text>
+          </view>
+
+          <!-- 彩蛋7 -->
+          <view class="secret-egg-item">
+            <text class="secret-egg-name">🌐 网瘾少年 (400💎)</text>
+            <text class="secret-egg-method">   → 连续点击桌面上的浏览器图标多次</text>
+          </view>
+
+          <text class="preview-line"></text>
+          <text class="preview-title">───────────────────────────────────────</text>
+          <text class="preview-line">   持续探索发现更多稀有和史诗彩蛋...</text>
+          <text class="preview-title">───────────────────────────────────────</text>
+          <text class="preview-line"></text>
+        </view>
+
+        <!-- 彩蛋大全内容 -->
+        <view wx:else>
+          <text class="preview-title">═══════════════════════════════════════</text>
+          <text class="preview-title">          千禧时光机 - 彩蛋大全</text>
+          <text class="preview-title">═══════════════════════════════════════</text>
+
+          <text class="preview-line"></text>
+
+          <!-- 普通彩蛋 -->
+          <text class="preview-section">【普通彩蛋】</text>
+          <view class="egg-list-section">
+            <view wx:for="{{eggList}}" wx:key="id" wx:if="{{item.rarity === 'common'}}" class="egg-item {{item.discovered ? 'discovered' : 'undiscovered'}}">
+              <text class="egg-status">{{item.discovered ? '✅' : '❓'}}</text>
+              <view class="egg-info">
+                <text class="egg-name">{{item.name}}</text>
+                <text wx:if="{{item.discovered}}" class="egg-hint">   → {{item.hint}}</text>
+              </view>
+            </view>
+          </view>
+
+          <text class="preview-line"></text>
+
+          <!-- 稀有彩蛋 -->
+          <text class="preview-section">【稀有彩蛋】</text>
+          <view class="egg-list-section">
+            <view wx:for="{{eggList}}" wx:key="id" wx:if="{{item.rarity === 'rare'}}" class="egg-item {{item.discovered ? 'discovered' : 'undiscovered'}}">
+              <text class="egg-status">{{item.discovered ? '✅' : '❓'}}</text>
+              <view class="egg-info">
+                <text class="egg-name">{{item.name}}</text>
+                <text wx:if="{{item.discovered}}" class="egg-hint">   → {{item.hint}}</text>
+              </view>
+            </view>
+          </view>
+
+          <text class="preview-line"></text>
+
+          <!-- 史诗彩蛋 -->
+          <text class="preview-section">【史诗彩蛋】</text>
+          <view class="egg-list-section">
+            <view wx:for="{{eggList}}" wx:key="id" wx:if="{{item.rarity === 'epic'}}" class="egg-item {{item.discovered ? 'discovered' : 'undiscovered'}}">
+              <text class="egg-status">{{item.discovered ? '✅' : '❓'}}</text>
+              <view class="egg-info">
+                <text class="egg-name">{{item.name}}</text>
+                <text wx:if="{{item.discovered}}" class="egg-hint">   → {{item.hint}}</text>
+              </view>
+            </view>
+          </view>
+
+          <text class="preview-line"></text>
+
+          <!-- 传说彩蛋 -->
+          <text class="preview-section">【传说彩蛋】</text>
+          <view class="egg-list-section">
+            <view wx:for="{{eggList}}" wx:key="id" wx:if="{{item.rarity === 'legendary'}}" class="egg-item {{item.discovered ? 'discovered' : 'undiscovered'}}">
+              <text class="egg-status">{{item.discovered ? '✅' : '❓'}}</text>
+              <view class="egg-info">
+                <text class="egg-name">{{item.name}}</text>
+                <text wx:if="{{item.discovered}}" class="egg-hint">   → {{item.hint}}</text>
+              </view>
+            </view>
+          </view>
+
+          <text class="preview-line"></text>
+          <text class="preview-title">───────────────────────────────────────</text>
+          <text class="preview-line">   总计: 12个彩蛋 | 已发现: {{discovered}}个</text>
+          <text class="preview-title">───────────────────────────────────────</text>
+          <text class="preview-line"></text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 状态栏 -->
+    <view class="status-bar">
+      <text>Ln 1, Col 1</text>
+    </view>
+  </view>
+</view>

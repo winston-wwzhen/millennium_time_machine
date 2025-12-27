@@ -1,0 +1,10 @@
+{
+  "component": true,
+  "usingComponents": {
+    "egg-folder": "../egg-folder/index",
+    "diary-viewer": "../diary-viewer/index",
+    "signature-viewer": "../signature-viewer/index",
+    "image-viewer": "../image-viewer/index",
+    "my-photos": "../my-photos/index"
+  }
+}

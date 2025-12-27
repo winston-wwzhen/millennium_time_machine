@@ -841,15 +841,47 @@ Page({
             destHeight: exportHeight,
             fileType: 'jpg',
             quality: 0.92,
-            success: (res) => {
+            success: async (res) => {
+              // 先保存到相册
               wx.saveImageToPhotosAlbum({
                 filePath: res.tempFilePath,
-                success: () => {
-                  wx.hideLoading();
-                  wx.showToast({
-                    title: '已保存到相册!',
-                    icon: 'success'
-                  });
+                success: async () => {
+                  // 同时上传到云存储
+                  try {
+                    const cloudPath = `user-photos/${Date.now()}-${Math.random().toString(36).substr(2, 9)}.jpg`;
+                    const uploadRes = await wx.cloud.uploadFile({
+                      cloudPath: cloudPath,
+                      filePath: res.tempFilePath
+                    });
+
+                    const fileID = uploadRes.fileID;
+
+                    // 保存照片记录到数据库
+                    await wx.cloud.callFunction({
+                      name: 'user-photos',
+                      data: {
+                        type: 'savePhoto',
+                        photoData: {
+                          cloudPath: cloudPath,
+                          fileID: fileID
+                        }
+                      }
+                    });
+
+                    wx.hideLoading();
+                    wx.showToast({
+                      title: '已保存到相册和云盘!',
+                      icon: 'success'
+                    });
+                  } catch (err) {
+                    console.error('上传云存储失败:', err);
+                    // 云存储失败不影响相册保存
+                    wx.hideLoading();
+                    wx.showToast({
+                      title: '已保存到相册!',
+                      icon: 'success'
+                    });
+                  }
                 },
                 fail: () => {
                   wx.hideLoading();

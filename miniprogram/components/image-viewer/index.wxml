@@ -1,0 +1,25 @@
+<!-- 图片查看器组件 -->
+<view class="image-viewer-overlay {{show ? 'show' : 'hide'}}" catchtap="onClose">
+  <view class="image-viewer-container" catchtap="stopPropagation">
+    <view class="win98-window">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">{{fileName}} - 图片查看</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="onClose">×</button>
+        </view>
+      </view>
+
+      <!-- 图片显示区域 -->
+      <view class="image-display-area">
+        <view class="image-canvas">
+          <!-- 如果有图片URL，显示真实图片 -->
+          <image wx:if="{{imageUrl}}" class="avatar-image" src="{{imageUrl}}" mode="aspectFit"></image>
+          <!-- 否则显示emoji头像 -->
+          <view wx:else class="avatar-placeholder">
+            <text class="avatar-emoji">{{avatarEmoji}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

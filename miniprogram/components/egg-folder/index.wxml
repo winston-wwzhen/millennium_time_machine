@@ -1,0 +1,57 @@
+<!-- 彩蛋文件夹组件 -->
+<view class="egg-folder-overlay {{show ? 'show' : 'hide'}}" catchtap="onClose">
+  <view class="win98-window" catchtap="stopPropagation">
+    <view class="win98-title-bar">
+      <view class="win98-title-text">彩蛋</view>
+      <view class="win98-title-controls">
+        <button class="win98-btn-minimize">_</button>
+        <button class="win98-btn-maximize">□</button>
+        <button class="win98-btn-close" bindtap="onClose">×</button>
+      </view>
+    </view>
+
+    <view class="win98-window-body">
+      <!-- 工具栏 -->
+      <view class="toolbar">
+        <view class="toolbar-item">文件(F)</view>
+        <view class="toolbar-item">编辑(E)</view>
+        <view class="toolbar-item {{showViewMenu ? 'active' : ''}}" bindtap="onViewMenuTap">查看(V)</view>
+        <view class="toolbar-item">帮助(H)</view>
+      </view>
+
+      <!-- 查看下拉菜单 -->
+      <view class="dropdown-menu {{showViewMenu ? 'show' : ''}}" catchtap="stopPropagation">
+        <view class="dropdown-item" bindtap="onShowHiddenFiles">
+          <text class="dropdown-text">显示隐藏文件</text>
+        </view>
+      </view>
+
+      <view class="toolbar-divider"></view>
+
+      <!-- 文件列表 -->
+      <view class="files-grid">
+        <view class="file-item" bindtap="onFileTap">
+          <view class="file-icon">📄</view>
+          <text class="file-label">彩蛋大全.txt</text>
+        </view>
+
+        <!-- 隐藏的彩蛋秘籍文件 -->
+        <view wx:if="{{showHiddenFiles}}" class="file-item hidden-file" bindtap="onSecretFileTap">
+          <view class="file-icon">📜</view>
+          <text class="file-label">彩蛋秘籍-第一册.txt</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 状态栏 -->
+    <view class="status-bar">
+      <text>{{showHiddenFiles ? '2' : '1'}} 个对象</text>
+    </view>
+  </view>
+
+  <!-- 文本文件查看器 -->
+  <text-file-viewer show="{{showTextViewer}}" fileName="彩蛋大全.txt" bindclose="onCloseTextViewer"></text-file-viewer>
+
+  <!-- 彩蛋秘籍查看器 -->
+  <text-file-viewer show="{{showSecretViewer}}" fileName="彩蛋秘籍-第一册.txt" bindclose="onCloseSecretViewer"></text-file-viewer>
+</view>

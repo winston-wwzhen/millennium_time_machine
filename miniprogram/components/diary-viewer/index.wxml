@@ -1,0 +1,55 @@
+<!-- 日记查看器组件 -->
+<view class="diary-overlay {{show ? 'show' : 'hide'}}" catchtap="onClose">
+  <view class="win98-window" catchtap="stopPropagation">
+    <view class="win98-title-bar">
+      <view class="win98-title-text">{{fileName}} - 记事本</view>
+      <view class="win98-title-controls">
+        <button class="win98-btn-minimize">_</button>
+        <button class="win98-btn-maximize">□</button>
+        <button class="win98-btn-close" bindtap="onClose">×</button>
+      </view>
+    </view>
+
+    <!-- 菜单栏 -->
+    <view class="menu-bar">
+      <text class="menu-item">文件(F)</text>
+      <text class="menu-item">编辑(E)</text>
+      <text class="menu-item">搜索(S)</text>
+      <text class="menu-item">帮助(H)</text>
+    </view>
+
+    <view class="win98-window-body">
+      <!-- 日志内容区域 -->
+      <view class="diary-content">
+        <text class="diary-title">═══════════════════════════════════════</text>
+        <text class="diary-title">          千禧时光机 - 我的日记</text>
+        <text class="diary-title">═══════════════════════════════════════</text>
+
+        <view wx:if="{{logs.length > 0}}" class="log-list">
+          <view class="log-entry" wx:for="{{logs}}" wx:key="index">
+            <text class="log-date">{{item.dateStr}}</text>
+            <text class="log-time">{{item.timeStr}}</text>
+            <text class="log-action">{{item.actionText}} {{item.target}}</text>
+            <text class="log-details" wx:if="{{item.details}}">{{item.details}}</text>
+          </view>
+        </view>
+
+        <view wx:else class="log-empty">
+          <text class="log-empty-text">暂无操作记录</text>
+          <text class="log-empty-hint">你的每一次操作都会被记录在这里...</text>
+        </view>
+
+        <text class="diary-footer"></text>
+        <text class="diary-title">───────────────────────────────────────</text>
+        <text class="log-total">   共 {{logs.length}} 条记录</text>
+        <text class="diary-title">───────────────────────────────────────</text>
+        <text class="diary-footer"></text>
+      </view>
+    </view>
+
+    <!-- 状态栏 -->
+    <view class="status-bar">
+      <text>Ln {{logs.length}}, Col 1</text>
+    </view>
+  </view>
+</view>
