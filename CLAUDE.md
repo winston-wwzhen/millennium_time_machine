@@ -244,7 +244,23 @@ Uses WeChat `msgSecCheck` API for content moderation:
 **Taskbar**:
 - Start button
 - Running tasks display
-- System tray (network status, volume, time)
+- System tray (network status, volume toggle, time)
+
+**Desktop UI Features** (v3.0+):
+- **Network Plugin** (top-right): Sticky note style widget displaying net fee (网费) and time coins (时光币) balance
+  - Z-index: 80 (lower than desktop apps at 2000+)
+  - Click to open network system, X button to close
+  - Style: Low-saturation beige (#f5f0dc), paper texture, 85% opacity
+  - Data loaded from `user` cloud function `login` action
+- **Volume Toggle** (system tray): Click speaker icon (🔊/🔇) to toggle mute/unmute
+  - State persisted via `wx.setStorageSync('soundEnabled')`
+  - Win98-style bubble notification shows for 2 seconds
+- **Dynamic Z-Index Management**: Last opened desktop component appears on top
+  - Global counter `baseZIndex` starts at 2000, increments by 10
+  - Applied to: 我的电脑, 我的文档, 网管系统
+  - Components observe `zIndex` property and update local styles
+- **My Documents Help Window**: Win98-styled help dialog with usage instructions
+  - Accessible via "帮助(H)" menu item in my-documents toolbar
 
 **Helper**: Draggable lion assistant with random interaction messages, easter egg triggers
 
@@ -262,8 +278,12 @@ const OPENID = wxContext.OPENID;
 | File | Purpose |
 |------|---------|
 | `miniprogram/app.js` | Global app configuration, network state |
+| `miniprogram/pages/index/index.js` | Windows 98 desktop homepage, z-index management, network plugin |
+| `miniprogram/pages/index/index.wxml` | Desktop UI structure, network plugin HTML |
+| `miniprogram/pages/index/index.wxss` | Desktop styling, network plugin CSS |
 | `miniprogram/utils/network.js` | Network connection state management |
 | `miniprogram/utils/egg-system.js` | Easter egg system with cloud storage |
+| `miniprogram/components/my-documents/` | My documents component with help window |
 | `cloudfunctions/chat/index.js` | AI chat core with 36 modes |
 | `cloudfunctions/qcio/index.js` | QCIO social features router |
 | `cloudfunctions/user/index.js` | User login, dual currency, easter eggs |
