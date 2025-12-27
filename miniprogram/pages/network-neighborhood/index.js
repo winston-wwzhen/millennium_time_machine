@@ -6,6 +6,8 @@
  * - 拨号连接管理
  * - 双代币显示（时光币、网费）
  * - 时光币兑换网费
+ * - 用户名显示
+ * - 扣费记录查看
  */
 Page({
   data: {
@@ -15,6 +17,10 @@ Page({
     dialStatus: '',
     networkName: '千禧拨号网络',
     currentNetwork: '千禧拨号网络',
+
+    // 用户信息
+    avatarName: '',      // 用户名
+    avatar: '👤',        // 用户头像
 
     // 双代币系统
     coins: 0,           // 时光币
@@ -32,12 +38,26 @@ Page({
       { label: '15天', minutes: 21600, coins: 15000 },
       { label: '30天', minutes: 43200, coins: 30000 }
     ],
-    selectedExchangeIndex: -1
+    selectedExchangeIndex: -1,
+
+    // 兑换成功对话框
+    showSuccessDialog: false,
+    successMessage: '',
+
+    // 时光币不足对话框
+    showInsufficientDialog: false,
+    insufficientMessage: '',
+
+    // 交易记录相关
+    showTransactionDialog: false,
+    transactionRecords: [],
+    transactionLoading: false
   },
 
   onLoad: function() {
     this.loadNetworkStatus();
     this.loadBalance();
+    this.loadTransactionHistory();
   },
 
   onShow: function() {
@@ -69,7 +89,7 @@ Page({
     }
   },
 
-  // 加载双代币余额
+  // 加载双代币余额和用户信息
   loadBalance: async function() {
     try {
       const res = await wx.cloud.callFunction({
@@ -83,12 +103,89 @@ Page({
           coins: res.result.coins || 0,
           netFee: netFee,
           netFeeDays: Math.floor(netFee / 1440),
-          netFeeMinutes: netFee % 1440
+          netFeeMinutes: netFee % 1440,
+          avatarName: res.result.avatarName || 'Admin',
+          avatar: res.result.avatar || '👤'
         });
       }
     } catch (e) {
       console.error('加载余额失败:', e);
     }
+  },
+
+  // 加载交易记录
+  loadTransactionHistory: async function() {
+    try {
+      this.setData({ transactionLoading: true });
+      const res = await wx.cloud.callFunction({
+        name: 'user',
+        data: {
+          type: 'getTransactionHistory',
+          limit: 50
+        }
+      });
+
+      if (res.result.success) {
+        this.setData({
+          transactionRecords: this.formatTransactionRecords(res.result.records || []),
+          transactionLoading: false
+        });
+      } else {
+        this.setData({ transactionLoading: false });
+      }
+    } catch (e) {
+      console.error('加载交易记录失败:', e);
+      this.setData({ transactionLoading: false });
+    }
+  },
+
+  // 格式化交易记录
+  formatTransactionRecords: function(records) {
+    return records.map(record => {
+      const date = new Date(record.createTime);
+      const dateStr = `${date.getMonth() + 1}/${date.getDate()}`;
+      const timeStr = `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+
+      let typeLabel = '';
+      let typeColor = '';
+      switch (record.type) {
+        case 'daily_deduct':
+          typeLabel = '每日扣费';
+          typeColor = '#cc0000';
+          break;
+        case 'exchange':
+          typeLabel = '兑换充值';
+          typeColor = '#00aa00';
+          break;
+        case 'usage':
+          typeLabel = '使用扣费';
+          typeColor = '#cc6600';
+          break;
+        default:
+          typeLabel = '其他';
+          typeColor = '#666';
+      }
+
+      return {
+        ...record,
+        dateStr,
+        timeStr,
+        typeLabel,
+        typeColor,
+        amountDisplay: record.amount >= 0 ? `+${record.amount}分钟` : `${record.amount}分钟`
+      };
+    });
+  },
+
+  // 显示交易记录对话框
+  showTransactionRecords: function() {
+    this.setData({ showTransactionDialog: true });
+    this.loadTransactionHistory();
+  },
+
+  // 隐藏交易记录对话框
+  hideTransactionDialog: function() {
+    this.setData({ showTransactionDialog: false });
   },
 
   // 拨号连接
@@ -193,6 +290,20 @@ Page({
     });
   },
 
+  // 隐藏成功对话框
+  hideSuccessDialog: function() {
+    this.setData({
+      showSuccessDialog: false
+    });
+  },
+
+  // 隐藏时光币不足对话框
+  hideInsufficientDialog: function() {
+    this.setData({
+      showInsufficientDialog: false
+    });
+  },
+
   // 选择兑换选项
   selectExchangeOption: function(e) {
     const index = e.currentTarget.dataset.index;
@@ -216,11 +327,9 @@ Page({
 
     // 检查时光币是否足够
     if (this.data.coins < option.coins) {
-      wx.showModal({
-        title: '时光币不足',
-        content: `当前时光币: ${this.data.coins}\n需要: ${option.coins}\n\n通过发现彩蛋可以获得时光币哦！`,
-        showCancel: false,
-        confirmText: '去发现彩蛋'
+      this.setData({
+        showInsufficientDialog: true,
+        insufficientMessage: `当前时光币: ${this.data.coins}\n需要: ${option.coins}\n\n通过发现彩蛋可以获得时光币哦！`
       });
       return;
     }
@@ -240,21 +349,22 @@ Page({
 
       if (res.result.success) {
         const newNetFee = res.result.newNetFee;
+        const newDays = Math.floor(newNetFee / 1440);
+        const newMinutes = newNetFee % 1440;
+
         this.setData({
           coins: res.result.remainingCoins,
           netFee: newNetFee,
-          netFeeDays: Math.floor(newNetFee / 1440),
-          netFeeMinutes: newNetFee % 1440,
+          netFeeDays: newDays,
+          netFeeMinutes: newMinutes,
           showExchangeDialog: false,
-          selectedExchangeIndex: -1
+          selectedExchangeIndex: -1,
+          showSuccessDialog: true,
+          successMessage: `成功兑换 ${option.label} 网费！\n\n当前网费: ${newDays}天${newMinutes}分钟`
         });
 
-        wx.showModal({
-          title: '🎉 兑换成功',
-          content: `成功兑换 ${option.label} 网费！\n\n当前网费: ${this.data.netFeeDays}天${this.data.netFeeMinutes}分钟`,
-          showCancel: false,
-          confirmText: '太棒了'
-        });
+        // 刷新交易记录
+        this.loadTransactionHistory();
       } else {
         wx.showToast({
           title: res.result.errMsg || '兑换失败',
@@ -269,6 +379,11 @@ Page({
         icon: 'none'
       });
     }
+  },
+
+  // 阻止事件冒泡
+  stopPropagation: function() {
+    // 阻止点击事件冒泡
   },
 
   // 返回

@@ -54,18 +54,28 @@ exports.main = async (event, context) => {
           await db.collection('users').doc(user._id).update({
             data: {
               lastLoginTime: db.serverDate(),
-              avatarName: userData.username,
               netFee: _.inc(-1440),  // 每日扣除1天网费（1440分钟）
               'eggStats.daysUsed': _.inc(1),
               'eggStats.lastDailyDate': todayStr
+            }
+          });
+
+          // 记录每日扣费交易
+          await db.collection('user_transactions').add({
+            data: {
+              _openid: openid,
+              type: 'daily_deduct',
+              description: '每日登录扣费',
+              amount: -1440,
+              balanceAfter: (user.netFee || 0) - 1440,
+              createTime: db.serverDate()
             }
           });
         } else {
           // 同一天，只更新登录时间
           await db.collection('users').doc(user._id).update({
             data: {
-              lastLoginTime: db.serverDate(),
-              avatarName: userData.username
+              lastLoginTime: db.serverDate()
             }
           });
         }
@@ -73,6 +83,7 @@ exports.main = async (event, context) => {
         return {
           success: true,
           isNew: false,
+          avatarName: user.avatarName,
           openid,
           dailyDeducted,
           daysUsed: newDaysUsed,
@@ -91,6 +102,7 @@ exports.main = async (event, context) => {
           data: {
             _openid: openid,
             avatarName: randomUsername,
+            avatar: '👤',          // 默认头像
             createTime: db.serverDate(),
             lastLoginTime: db.serverDate(),
             settings: { theme: 'win98' },
@@ -130,6 +142,7 @@ exports.main = async (event, context) => {
         _openid: openid
       }).field({
         avatarName: true,
+        avatar: true,
         coins: true,
         netFee: true,
         badges: true,
@@ -143,6 +156,7 @@ exports.main = async (event, context) => {
       return {
         success: true,
         avatarName: res.data[0].avatarName || 'Admin',
+        avatar: res.data[0].avatar || '👤',
         coins: res.data[0].coins || 0,
         netFee: res.data[0].netFee || 0,
         badges: res.data[0].badges || [],
@@ -219,6 +233,19 @@ exports.main = async (event, context) => {
         }
       });
 
+      // 记录兑换交易
+      await db.collection('user_transactions').add({
+        data: {
+          _openid: openid,
+          type: 'exchange',
+          description: `时光币兑换网费 ${Math.ceil(amount / 1440)}天`,
+          amount: netFeeToAdd,
+          coinsUsed: coinsNeeded,
+          balanceAfter: (res.data[0].netFee || 0) + netFeeToAdd,
+          createTime: db.serverDate()
+        }
+      });
+
       return {
         success: true,
         exchanged: amount,
@@ -266,6 +293,18 @@ exports.main = async (event, context) => {
       if (updateRes.stats.updated === 0) {
         return { success: false, errMsg: '扣除失败' };
       }
+
+      // 记录使用扣费交易
+      await db.collection('user_transactions').add({
+        data: {
+          _openid: openid,
+          type: 'usage',
+          description: 'AI功能使用扣费',
+          amount: -amount,
+          balanceAfter: currentNetFee - amount,
+          createTime: db.serverDate()
+        }
+      });
 
       return {
         success: true,
@@ -364,6 +403,79 @@ exports.main = async (event, context) => {
       }
 
       return { success: true, isNew: true, reward: reward };
+    } catch (e) {
+      console.error(e);
+      return { success: false, errMsg: e.message };
+    }
+  }
+
+  // 👤 更新用户资料（昵称、头像）
+  if (type === 'updateProfile') {
+    try {
+      const { nickname, avatar } = event.data || {};
+
+      // 构建更新数据（只更新提供的字段）
+      const updateData = {};
+      if (nickname !== undefined && nickname !== null) {
+        updateData.avatarName = nickname;
+      }
+      if (avatar !== undefined && avatar !== null) {
+        updateData.avatar = avatar;
+      }
+
+      // 如果没有任何更新
+      if (Object.keys(updateData).length === 0) {
+        return { success: false, errMsg: '没有需要更新的数据' };
+      }
+
+      const updateRes = await db.collection('users').where({
+        _openid: openid
+      }).update({
+        data: updateData
+      });
+
+      if (updateRes.stats.updated === 0) {
+        return { success: false, errMsg: '用户不存在或更新失败' };
+      }
+
+      // 获取更新后的完整用户数据
+      const userRes = await db.collection('users').where({
+        _openid: openid
+      }).field({
+        avatarName: true,
+        avatar: true,
+        coins: true,
+        netFee: true
+      }).get();
+
+      return {
+        success: true,
+        avatarName: userRes.data[0]?.avatarName || '用户',
+        avatar: userRes.data[0]?.avatar || '👤'
+      };
+    } catch (e) {
+      console.error(e);
+      return { success: false, errMsg: e.message };
+    }
+  }
+
+  // 📜 获取交易记录（扣费记录）
+  if (type === 'getTransactionHistory') {
+    try {
+      const { limit = 20 } = event;
+
+      const res = await db.collection('user_transactions')
+        .where({
+          _openid: openid
+        })
+        .orderBy('createTime', 'desc')
+        .limit(limit)
+        .get();
+
+      return {
+        success: true,
+        records: res.data || []
+      };
     } catch (e) {
       console.error(e);
       return { success: false, errMsg: e.message };

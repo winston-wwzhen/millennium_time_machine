@@ -1,6 +1,6 @@
 <!-- 网管系统 -->
 <view class="desktop">
-  <view class="win98-window">
+  <view class="win98-window main-window">
     <view class="win98-title-bar">
       <view class="win98-title-text">网管系统</view>
       <view class="win98-title-controls">
@@ -11,20 +11,21 @@
     </view>
 
     <view class="win98-window-body">
-      <!-- 工具栏 -->
-      <view class="toolbar">
-        <view class="toolbar-item">文件(F)</view>
-        <view class="toolbar-item">编辑(E)</view>
-        <view class="toolbar-item">查看(V)</view>
-        <view class="toolbar-item">帮助(H)</view>
-      </view>
-
-      <view class="toolbar-divider"></view>
-
       <!-- 地址栏 -->
       <view class="address-bar">
         <text class="address-label">地址</text>
         <view class="address-input">网管系统</view>
+      </view>
+
+      <!-- 用户信息显示 -->
+      <view class="user-info-panel" wx:if="{{!isConnecting}}">
+        <view class="user-info-row">
+          <text class="user-avatar">{{avatar}}</text>
+          <view class="user-info-text">
+            <text class="user-label">用户:</text>
+            <text class="user-name">{{avatarName}}</text>
+          </view>
+        </view>
       </view>
 
       <!-- 双代币余额显示 -->
@@ -49,7 +50,50 @@
         <view class="balance-hint">
           <text>💡 时光币可通过发现彩蛋获得，用于兑换网费</text>
         </view>
-        <button class="exchange-btn" bindtap="showExchange">兑换网费</button>
+
+        <!-- 网费用途说明 -->
+        <view class="netfee-usage-info">
+          <text class="usage-title">📖 网费用途说明</text>
+          <view class="usage-list">
+            <view class="usage-item">
+              <text class="usage-bullet">•</text>
+              <text class="usage-text">每日登录自动扣除1天网费</text>
+            </view>
+            <view class="usage-item">
+              <text class="usage-bullet">•</text>
+              <text class="usage-text">AI聊天功能每次对话消耗网费</text>
+            </view>
+            <view class="usage-item">
+              <text class="usage-bullet">•</text>
+              <text class="usage-text">访问QCIO空间需要网费支持</text>
+            </view>
+            <view class="usage-item">
+              <text class="usage-bullet">•</text>
+              <text class="usage-text">所有互联网功能都依赖网费余额</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 网费耗尽警告 -->
+        <view class="balance-warning" wx:if="{{netFeeDays === 0 && netFeeMinutes < 100}}">
+          <text class="warning-icon">⚠️</text>
+          <view class="warning-text">
+            <text class="warning-title">网费即将耗尽！</text>
+            <text class="warning-desc">网费耗尽后将无法使用AI聊天、QCIO空间等互联网应用功能</text>
+          </view>
+        </view>
+        <view class="balance-warning low" wx:elif="{{netFeeDays < 3}}">
+          <text class="warning-icon">🔔</text>
+          <view class="warning-text">
+            <text class="warning-title">网费余额不足</text>
+            <text class="warning-desc">建议及时充值以免影响使用</text>
+          </view>
+        </view>
+
+        <view class="balance-actions">
+          <button class="exchange-btn" bindtap="showExchange">兑换网费</button>
+          <button class="history-btn" bindtap="showTransactionRecords">扣费记录</button>
+        </view>
       </view>
 
       <!-- 网络连接状态 -->
@@ -66,18 +110,7 @@
 
       <!-- 网络列表 -->
       <view class="network-grid" wx:if="{{!isConnecting}}">
-        <!-- 整个网络图标 -->
-        <view class="network-item" bindtap="dialConnection" wx:if="{{!networkConnected}}">
-          <view class="network-icon offline">🌍</view>
-          <text class="network-label">整个网络</text>
-          <text class="network-desc">点击建立连接</text>
-        </view>
-
-        <view class="network-item" wx:if="{{networkConnected}}">
-          <view class="network-icon online">🌍</view>
-          <text class="network-label">整个网络</text>
-          <text class="network-desc">已连接</text>
-        </view>
+        <!-- 网络图标已移除，请使用其他方式连接网络 -->
       </view>
 
       <!-- 连接信息面板 -->
@@ -117,32 +150,121 @@
 
   <!-- 兑换对话框遮罩 -->
   <view class="exchange-overlay" wx:if="{{showExchangeDialog}}" bindtap="hideExchange">
-    <view class="exchange-dialog" catchtap="stopPropagation">
-      <view class="exchange-header">
-        <text class="exchange-title">💎 兑换网费</text>
-        <button class="exchange-close" bindtap="hideExchange">×</button>
+    <view class="win98-window exchange-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">💎 兑换网费</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="hideExchange">×</button>
+        </view>
       </view>
 
-      <view class="exchange-balance-info">
-        <text class="exchange-balance-text">当前时光币: {{coins}}</text>
-      </view>
+      <view class="win98-window-body">
+        <view class="exchange-balance-info">
+          <text class="exchange-balance-text"><text class="exchange-balance-icon">💎</text>当前时光币: {{coins}}</text>
+        </view>
 
-      <view class="exchange-options">
-        <block wx:for="{{exchangeOptions}}" wx:key="minutes">
-          <view class="exchange-option {{selectedExchangeIndex === index ? 'selected' : ''}}"
-                bindtap="selectExchangeOption" data-index="{{index}}">
-            <view class="option-info">
-              <text class="option-label">{{item.label}}</text>
-              <text class="option-cost">{{item.coins}} 时光币</text>
+        <view class="exchange-options">
+          <block wx:for="{{exchangeOptions}}" wx:key="minutes">
+            <view class="exchange-option {{selectedExchangeIndex === index ? 'selected' : ''}}"
+                  bindtap="selectExchangeOption" data-index="{{index}}">
+              <view class="option-info">
+                <text class="option-label">{{item.label}}</text>
+                <text class="option-cost"><text class="option-cost-icon">💎</text>{{item.coins}} 时光币</text>
+              </view>
+              <view class="option-check">{{selectedExchangeIndex === index ? '✓' : ''}}</view>
             </view>
-            <view class="option-check">{{selectedExchangeIndex === index ? '✓' : ''}}</view>
-          </view>
-        </block>
+          </block>
+        </view>
+
+        <view class="exchange-actions">
+          <button class="exchange-btn-cancel" bindtap="hideExchange">取消</button>
+          <button class="exchange-btn-confirm" bindtap="confirmExchange">确认兑换</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 交易记录对话框遮罩 -->
+  <view class="exchange-overlay" wx:if="{{showTransactionDialog}}" bindtap="hideTransactionDialog">
+    <view class="win98-window transaction-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">📜 扣费记录</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="hideTransactionDialog">×</button>
+        </view>
       </view>
 
-      <view class="exchange-actions">
-        <button class="exchange-btn-cancel" bindtap="hideExchange">取消</button>
-        <button class="exchange-btn-confirm" bindtap="confirmExchange">确认兑换</button>
+      <view class="win98-window-body">
+        <view class="transaction-content">
+          <view wx:if="{{transactionLoading}}" class="transaction-loading">
+            <text>加载中...</text>
+          </view>
+          <view wx:elif="{{transactionRecords.length === 0}}" class="transaction-empty">
+            <text>暂无记录</text>
+          </view>
+          <view wx:else class="transaction-list">
+            <block wx:for="{{transactionRecords}}" wx:key="_id">
+              <view class="transaction-item">
+                <view class="transaction-left">
+                  <text class="transaction-type" style="color: {{item.typeColor}}">{{item.typeLabel}}</text>
+                  <text class="transaction-desc">{{item.description}}</text>
+                </view>
+                <view class="transaction-right">
+                  <text class="transaction-amount" style="color: {{item.amount >= 0 ? '#00aa00' : '#cc0000'}}">{{item.amountDisplay}}</text>
+                  <text class="transaction-time">{{item.dateStr}} {{item.timeStr}}</text>
+                </view>
+              </view>
+            </block>
+          </view>
+        </view>
+
+        <view class="exchange-actions">
+          <button class="exchange-btn-cancel" bindtap="hideTransactionDialog">关闭</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 兑换成功对话框 -->
+  <view class="exchange-overlay" wx:if="{{showSuccessDialog}}" bindtap="hideSuccessDialog">
+    <view class="win98-window success-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">🎉 兑换成功</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="hideSuccessDialog">×</button>
+        </view>
+      </view>
+
+      <view class="win98-window-body">
+        <view class="success-content">
+          <text class="success-text">{{successMessage}}</text>
+        </view>
+
+        <view class="exchange-actions">
+          <button class="exchange-btn-confirm" bindtap="hideSuccessDialog">太棒了</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 时光币不足对话框 -->
+  <view class="exchange-overlay" wx:if="{{showInsufficientDialog}}" bindtap="hideInsufficientDialog">
+    <view class="win98-window insufficient-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">⚠️ 时光币不足</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="hideInsufficientDialog">×</button>
+        </view>
+      </view>
+
+      <view class="win98-window-body">
+        <view class="insufficient-content">
+          <text class="insufficient-text">{{insufficientMessage}}</text>
+        </view>
+
+        <view class="exchange-actions">
+          <button class="exchange-btn-confirm insufficient-btn" bindtap="hideInsufficientDialog">知道了</button>
+        </view>
       </view>
     </view>
   </view>

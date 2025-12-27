@@ -1,5 +1,3 @@
 {
-  "navigationBarTitleText": "网管系统",
-  "navigationBarBackgroundColor": "#008080",
-  "navigationBarTextStyle": "white"
+  "navigationStyle": "custom"
 }

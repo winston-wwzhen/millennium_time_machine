@@ -3,7 +3,7 @@ page {
   height: 100vh;
   background: #008080;
   box-sizing: border-box;
-  padding: 65px 5px 5px 5px;
+  padding: 10px 5px 5px 5px;
 }
 
 .desktop {
@@ -22,9 +22,13 @@ page {
   box-shadow: inset 1px 1px #dfdfdf, inset -1px -1px #0a0a0a;
   display: flex;
   flex-direction: column;
+}
+
+/* 主窗口高度 */
+.main-window {
   width: 90%;
   max-width: 600px;
-  height: 80%;
+  height: 75%;
 }
 
 .win98-title-bar {
@@ -127,12 +131,47 @@ page {
   font-size: 11px;
 }
 
+/* 用户信息面板 */
+.user-info-panel {
+  margin: 8px 8px 4px 8px;
+  padding: 8px;
+  background: #ffffe0;
+  border: 2px inset #c0c0c0;
+}
+
+.user-info-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-avatar {
+  font-size: 32px;
+}
+
+.user-info-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.user-label {
+  font-size: 10px;
+  color: #666;
+}
+
+.user-name {
+  font-size: 14px;
+  font-weight: bold;
+  color: #000080;
+}
+
 /* 拨号动画面板 */
 .network-status-panel {
-  padding: 20px;
+  padding: 16px;
   background: #ffffe0;
   border: 1px solid #808080;
-  margin: 10px;
+  margin: 8px;
 }
 
 .dialing-animation {
@@ -238,8 +277,8 @@ page {
 
 /* 连接信息面板 */
 .connection-info {
-  margin-top: 10px;
-  padding: 16px;
+  margin-top: 6px;
+  padding: 12px;
   background: #ffffe0;
   border-top: 1px solid #808080;
 }
@@ -278,8 +317,8 @@ page {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  padding: 20px;
-  margin: 20px;
+  padding: 16px;
+  margin: 12px;
   background: #ffffe0;
   border: 1px dashed #808080;
 }
@@ -310,8 +349,8 @@ page {
 
 /* 双代币余额面板 */
 .balance-panel {
-  margin: 10px;
-  padding: 16px;
+  margin: 4px 8px 6px 8px;
+  padding: 12px;
   background: #ffffe0;
   border: 2px inset #808080;
 }
@@ -320,13 +359,13 @@ page {
   font-size: 12px;
   font-weight: bold;
   color: #000080;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .balance-row {
   display: flex;
   gap: 10px;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .balance-item {
@@ -360,17 +399,108 @@ page {
 }
 
 .balance-hint {
-  padding: 8px;
+  padding: 6px 8px;
   background: #fffacd;
   border: 1px dashed #808080;
   font-size: 10px;
   color: #666;
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
-.exchange-btn {
-  width: 100%;
+/* 网费用途说明 */
+.netfee-usage-info {
+  padding: 8px 10px;
+  background: #f0f8ff;
+  border: 1px dashed #87ceeb;
+  margin-bottom: 8px;
+}
+
+.usage-title {
+  font-size: 11px;
+  font-weight: bold;
+  color: #000080;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.usage-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.usage-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.usage-bullet {
+  font-size: 10px;
+  color: #000080;
+  flex-shrink: 0;
+  line-height: 1.4;
+}
+
+.usage-text {
+  font-size: 10px;
+  color: #333;
+  line-height: 1.4;
+  flex: 1;
+}
+
+.balance-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 10px;
+  background: #ffe6e6;
+  border: 2px inset #ffcccc;
+  margin-bottom: 8px;
+}
+
+.balance-warning.low {
+  background: #fff3cd;
+  border-color: #ffe6a0;
+}
+
+.warning-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.warning-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.warning-title {
+  font-size: 12px;
+  font-weight: bold;
+  color: #cc0000;
+}
+
+.balance-warning.low .warning-title {
+  color: #cc8800;
+}
+
+.warning-desc {
+  font-size: 10px;
+  color: #666;
+  line-height: 1.4;
+}
+
+.balance-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.exchange-btn,
+.history-btn {
+  flex: 1;
   padding: 8px;
   background: #c0c0c0;
   border-top: 1px solid #ffffff;
@@ -382,7 +512,8 @@ page {
   font-weight: bold;
 }
 
-.exchange-btn:active {
+.exchange-btn:active,
+.history-btn:active {
   border-top: 1px solid #808080;
   border-left: 1px solid #808080;
   border-right: 1px solid #ffffff;
@@ -397,87 +528,103 @@ page {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
 }
 
-.exchange-dialog {
-  width: 85%;
-  max-width: 350px;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #808080;
-  border-bottom: 2px solid #808080;
-  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
-.exchange-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 4px 8px;
-  background: linear-gradient(90deg, #000080, #1084d0);
+.exchange-dialog,
+.transaction-dialog {
+  width: 88%;
+  max-width: 360px;
+  max-height: 85vh;
+  box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.6);
+  animation: slideUp 0.3s ease-out;
 }
 
-.exchange-title {
-  color: white;
-  font-weight: bold;
-  font-size: 13px;
-}
-
-.exchange-close {
-  all: unset;
-  width: 18px;
-  height: 16px;
-  background: #c0c0c0;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #808080;
-  border-bottom: 1px solid #808080;
-  font-size: 14px;
-  font-weight: bold;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .exchange-balance-info {
-  padding: 12px;
-  background: #ffffe0;
-  border-bottom: 1px solid #808080;
+  padding: 14px 16px;
+  background: linear-gradient(180deg, #ffffe0 0%, #fffacd 100%);
+  border-bottom: 2px solid #808080;
   text-align: center;
+  flex-shrink: 0;
 }
 
 .exchange-balance-text {
-  font-size: 12px;
+  font-size: 13px;
   color: #000080;
   font-weight: bold;
 }
 
+.exchange-balance-icon {
+  font-size: 16px;
+  margin-right: 4px;
+}
+
 .exchange-options {
-  padding: 10px;
-  max-height: 250px;
+  padding: 12px;
+  max-height: 380px;
   overflow-y: auto;
+  background: #d4d4d4;
 }
 
 .exchange-option {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
+  padding: 12px 14px;
   margin-bottom: 8px;
   background: #fff;
-  border: 2px outset #ffffff;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #c0c0c0;
+  border-bottom: 2px solid #c0c0c0;
   cursor: pointer;
+  transition: all 0.15s;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
+}
+
+.exchange-option:active {
+  border-top: 2px solid #c0c0c0;
+  border-left: 2px solid #c0c0c0;
+  border-right: 2px solid #ffffff;
+  border-bottom: 2px solid #ffffff;
+  background: #e8e8e8;
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
 }
 
 .exchange-option.selected {
-  background: #000080;
-  border: 2px inset #808080;
+  background: linear-gradient(135deg, #000080 0%, #0000a0 100%);
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #ffffff;
+  border-bottom: 2px solid #ffffff;
+  box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.3);
+  transform: none;
 }
 
 .exchange-option.selected .option-label,
@@ -493,50 +640,231 @@ page {
 }
 
 .option-label {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: bold;
   color: #000;
 }
 
 .option-cost {
-  font-size: 11px;
+  font-size: 12px;
   color: #666;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.option-cost-icon {
+  font-size: 12px;
 }
 
 .option-check {
-  font-size: 16px;
+  font-size: 18px;
   color: #00aa00;
   font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .exchange-actions {
   display: flex;
-  gap: 10px;
-  padding: 10px;
-  border-top: 1px solid #808080;
+  gap: 12px;
+  padding: 12px 14px;
+  border-top: 2px solid #808080;
+  background: #c0c0c0;
+  flex-shrink: 0;
 }
 
 .exchange-btn-cancel,
 .exchange-btn-confirm {
   flex: 1;
-  padding: 8px;
-  font-size: 12px;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: bold;
   background: #c0c0c0;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #808080;
-  border-bottom: 1px solid #808080;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #808080;
+  border-bottom: 2px solid #808080;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+  transition: all 0.1s;
 }
 
 .exchange-btn-confirm {
-  background: #000080;
+  background: linear-gradient(180deg, #0000a0 0%, #000080 100%);
   color: white;
+  border-top: 2px solid #4040ff;
+  border-left: 2px solid #4040ff;
+  border-right: 2px solid #000040;
+  border-bottom: 2px solid #000040;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .exchange-btn-cancel:active,
 .exchange-btn-confirm:active {
-  border-top: 1px solid #808080;
-  border-left: 1px solid #808080;
-  border-right: 1px solid #ffffff;
-  border-bottom: 1px solid #ffffff;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #ffffff;
+  border-bottom: 2px solid #ffffff;
+  box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.2);
+  transform: translate(1px, 1px);
+}
+
+/* 交易记录对话框 */
+.transaction-content {
+  flex: 1;
+  overflow-y: auto;
+  max-height: 380px;
+}
+
+.transaction-loading,
+.transaction-empty {
+  padding: 40px;
+  text-align: center;
+  font-size: 12px;
+  color: #666;
+}
+
+.transaction-list {
+  padding: 8px;
+}
+
+.transaction-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 6px;
+  background: #fff;
+  border: 1px solid #c0c0c0;
+}
+
+.transaction-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.transaction-type {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.transaction-desc {
+  font-size: 10px;
+  color: #666;
+}
+
+.transaction-right {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-end;
+}
+
+.transaction-amount {
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.transaction-time {
+  font-size: 10px;
+  color: #999;
+}
+
+/* 兑换成功对话框 */
+.success-dialog {
+  width: 85%;
+  max-width: 300px;
+  max-height: 180px;
+  box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.6);
+  animation: slideUp 0.3s ease-out;
+}
+
+.success-content {
+  padding: 16px 18px;
+  text-align: center;
+  background: #ffffe0;
+  border-bottom: 2px solid #808080;
+}
+
+.success-text {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #333;
+  white-space: pre-line;
+}
+
+/* 成功对话框按钮样式 */
+.success-dialog .exchange-actions {
+  padding: 8px 12px;
+  justify-content: center;
+}
+
+.success-dialog .exchange-btn-confirm {
+  width: auto;
+  min-width: 80px;
+  padding: 6px 16px;
+  font-size: 12px;
+  background: linear-gradient(180deg, #0000a0 0%, #000080 100%);
+  color: white;
+  border-top: 2px solid #4040ff;
+  border-left: 2px solid #4040ff;
+  border-right: 2px solid #000040;
+  border-bottom: 2px solid #000040;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.success-dialog .exchange-btn-confirm:active {
+  border-top: 2px solid #000040;
+  border-left: 2px solid #000040;
+  border-right: 2px solid #4040ff;
+  border-bottom: 2px solid #4040ff;
+}
+
+/* 时光币不足对话框 */
+.insufficient-dialog {
+  width: 85%;
+  max-width: 300px;
+  box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.6);
+  animation: slideUp 0.3s ease-out;
+}
+
+.insufficient-content {
+  padding: 16px 18px;
+  text-align: center;
+  background: #ffe0e0;
+  border-bottom: 2px solid #808080;
+}
+
+.insufficient-text {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #333;
+  white-space: pre-line;
+}
+
+.insufficient-dialog .exchange-actions {
+  padding: 8px 12px;
+  justify-content: center;
+}
+
+.insufficient-dialog .insufficient-btn {
+  width: auto;
+  min-width: 80px;
+  padding: 6px 16px;
+  font-size: 12px;
+  background: linear-gradient(180deg, #a0a0a0 0%, #808080 100%);
+  color: white;
+  border-top: 2px solid #e0e0e0;
+  border-left: 2px solid #e0e0e0;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.insufficient-dialog .insufficient-btn:active {
+  border-top: 2px solid #404040;
+  border-left: 2px solid #404040;
+  border-right: 2px solid #e0e0e0;
+  border-bottom: 2px solid #e0e0e0;
 }
