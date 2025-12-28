@@ -233,7 +233,7 @@ Page({
 
     // 注册彩蛋发现回调
     const { eggSystem } = require('../../utils/egg-system');
-    eggSystem.setEggDiscoveryCallback((config) => {
+    this.eggCallbackKey = eggSystem.setEggDiscoveryCallback((config) => {
       const rarityNames = {
         common: '普通',
         rare: '稀有',
@@ -253,6 +253,14 @@ Page({
         }
       });
     });
+  },
+
+  // 页面卸载时清理彩蛋回调
+  onUnload: function() {
+    const { eggSystem } = require('../../utils/egg-system');
+    if (this.eggCallbackKey) {
+      eggSystem.unregisterEggDiscoveryCallback(this.eggCallbackKey);
+    }
   },
 
   // 加载用户信息（使用缓存）

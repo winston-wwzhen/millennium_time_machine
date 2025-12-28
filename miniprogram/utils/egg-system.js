@@ -295,12 +295,32 @@ class EggSystem {
     };
     this.badges = [];           // 徽章列表
     this.loaded = false;        // 是否已从云端加载
-    this.discoveryCallback = null; // 彩蛋发现回调
+    this.discoveryCallbacks = new Map(); // 彩蛋发现回调Map: key -> callback
+    this.callbackCounter = 0;   // 回调计数器，用于生成唯一key
+  }
+
+  // 注册彩蛋发现回调（返回用于取消注册的key）
+  // 用于自定义弹窗样式，支持多个页面同时注册
+  registerEggDiscoveryCallback(callback) {
+    const key = `callback_${++this.callbackCounter}`;
+    this.discoveryCallbacks.set(key, callback);
+    return key;
   }
 
   // 设置彩蛋发现回调（用于自定义弹窗样式）
+  // 保留此方法以兼容旧代码，但建议使用 registerEggDiscoveryCallback
   setEggDiscoveryCallback(callback) {
-    this.discoveryCallback = callback;
+    // 清除所有旧回调，设置新的单一回调
+    this.discoveryCallbacks.clear();
+    this.callbackCounter = 0;
+    return this.registerEggDiscoveryCallback(callback);
+  }
+
+  // 取消注册彩蛋发现回调
+  unregisterEggDiscoveryCallback(key) {
+    if (key) {
+      this.discoveryCallbacks.delete(key);
+    }
   }
 
   // 从云端加载彩蛋数据
@@ -394,9 +414,15 @@ class EggSystem {
 
   // 显示发现效果
   showDiscoveryEffect(config) {
-    // 如果注册了自定义回调，使用回调显示
-    if (this.discoveryCallback) {
-      this.discoveryCallback(config);
+    // 调用所有注册的回调
+    if (this.discoveryCallbacks.size > 0) {
+      this.discoveryCallbacks.forEach((callback) => {
+        try {
+          callback(config);
+        } catch (e) {
+          console.error('彩蛋发现回调执行失败:', e);
+        }
+      });
       return;
     }
 

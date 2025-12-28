@@ -158,7 +158,7 @@ Component({
       this.generateTrash();
 
       // 注册彩蛋发现回调
-      eggSystem.setEggDiscoveryCallback((config) => {
+      this.eggCallbackKey = eggSystem.setEggDiscoveryCallback((config) => {
         const rarityNames = {
           common: '普通',
           rare: '稀有',
@@ -178,6 +178,14 @@ Component({
           }
         });
       });
+    },
+
+    detached() {
+      // 组件卸载时清理彩蛋回调
+      if (this.eggCallbackKey) {
+        const { eggSystem } = require('../../utils/egg-system');
+        eggSystem.unregisterEggDiscoveryCallback(this.eggCallbackKey);
+      }
     }
   },
 

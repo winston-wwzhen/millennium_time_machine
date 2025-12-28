@@ -98,7 +98,7 @@ Page({
     this.loadAIContacts();
 
     // 注册彩蛋发现回调
-    eggSystem.setEggDiscoveryCallback((config) => {
+    this.eggCallbackKey = eggSystem.setEggDiscoveryCallback((config) => {
       const rarityNames = {
         common: '普通',
         rare: '稀有',
@@ -1020,5 +1020,15 @@ Page({
     }).finally(() => {
       wx.hideLoading();
     });
+  }
+});
+
+  /**
+   * 生命周期函数--监听页面卸载
+   */
+  onUnload: function() {
+    if (this.eggCallbackKey) {
+      eggSystem.unregisterEggDiscoveryCallback(this.eggCallbackKey);
+    }
   }
 });

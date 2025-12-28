@@ -113,7 +113,7 @@ Page({
     this.generateTrash();
 
     // 注册彩蛋发现回调
-    eggSystem.setEggDiscoveryCallback((config) => {
+    this.eggCallbackKey = eggSystem.setEggDiscoveryCallback((config) => {
       const rarityNames = {
         common: '普通',
         rare: '稀有',
@@ -216,5 +216,11 @@ Page({
   // 关闭彩蛋发现弹窗
   hideEggDiscoveryDialog: function() {
     this.setData({ showEggDiscoveryDialog: false });
+  },
+
+  onUnload: function() {
+    if (this.eggCallbackKey) {
+      eggSystem.unregisterEggDiscoveryCallback(this.eggCallbackKey);
+    }
   }
 });
