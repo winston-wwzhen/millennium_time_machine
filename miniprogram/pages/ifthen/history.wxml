@@ -149,7 +149,34 @@
 
     <!-- 按钮 -->
     <view class="ending-actions">
+      <button class="win98-btn-std win98-btn-share" catchtap="shareEndingPoster">
+        📸 分享
+      </button>
       <button class="win98-btn-std" catchtap="closeEndingDetail">确定</button>
     </view>
   </view>
 </view>
+
+<!-- 海报预览弹窗 - Win98 风格 -->
+<view class="poster-overlay {{showPosterPreview ? 'visible' : ''}}" wx:if="{{posterImageUrl}}" catchtap="closePosterPreview">
+  <view class="poster-preview-card" catchtap="stopPropagation">
+    <view class="win98-title-bar">
+      <view class="win98-title-text">分享预览</view>
+      <view class="win98-title-controls">
+        <button class="win98-btn-close" catchtap="closePosterPreview">×</button>
+      </view>
+    </view>
+
+    <view class="poster-preview-body">
+      <image class="poster-image" src="{{posterImageUrl}}" mode="widthFix" show-menu-by-longpress />
+    </view>
+
+    <view class="poster-actions">
+      <button class="win98-btn-std" catchtap="closePosterPreview">关闭</button>
+      <button class="win98-btn-std win98-btn-primary" catchtap="savePosterToAlbum">保存到相册</button>
+    </view>
+  </view>
+</view>
+
+<!-- 海报生成Canvas -->
+<canvas type="2d" id="posterCanvas" class="poster-canvas" style="width: 375px; height: 600px; position: fixed; left: -9999px; top: -9999px;"></canvas>

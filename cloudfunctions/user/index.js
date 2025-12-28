@@ -24,6 +24,19 @@ function generateRandomUsername() {
   return `${adj}${noun}${num}`;
 }
 
+/**
+ * 生成唯一分享ID
+ * 格式：8位随机字符串（大写字母+数字）
+ */
+function generateShareId() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // 去除易混淆字符 0OI1
+  let result = '';
+  for (let i = 0; i < 8; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+}
+
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext();
   const openid = wxContext.OPENID; // 用户的唯一标识
@@ -770,6 +783,231 @@ exports.main = async (event, context) => {
       return {
         success: true,
         logs: res.data || []
+      };
+    } catch (e) {
+      console.error(e);
+      return { success: false, errMsg: e.message };
+    }
+  }
+
+  // 🎁 记录分享并奖励
+  if (type === 'recordShare') {
+    try {
+      const { shareType, itemId, currency } = event;
+
+      // 检查用户是否已经分享过此内容
+      const existingShare = await db.collection('user_shares')
+        .where({
+          _openid: openid,
+          shareType: shareType,
+          itemId: itemId
+        })
+        .get();
+
+      const firstTimeShare = existingShare.data.length === 0;
+      let shareId = '';
+
+      // 定义奖励规则
+      const REWARD_RULES = {
+        timecoin: 500,   // 如果当时等应用分享奖励500时光币
+        gold: 100        // QCIO分享奖励100金币
+      };
+
+      const reward = REWARD_RULES[currency] || REWARD_RULES.timecoin;
+
+      if (firstTimeShare) {
+        // 生成唯一分享ID（用于回流追踪）
+        shareId = this.generateShareId();
+
+        // 记录分享
+        const addRes = await db.collection('user_shares').add({
+          data: {
+            _openid: openid,
+            shareId: shareId,
+            shareType: shareType,   // ending, qcio_space 等
+            itemId: itemId,         // 结局ID、QCIO账号等
+            currency: currency,     // timecoin 或 gold
+            reward: reward,
+            referralCount: 0,      // 回流计数
+            createTime: db.serverDate()
+          }
+        });
+
+        // 从返回结果中获取记录ID（如果生成失败则用记录ID作为shareId）
+        if (!shareId || shareId === '') {
+          shareId = addRes._id;
+        }
+      } else {
+        // 已分享过，使用现有的shareId
+        shareId = existingShare.data[0].shareId || existingShare.data[0]._id;
+      }
+
+      // 如果是首次分享，发放奖励
+      if (firstTimeShare) {
+        if (currency === 'timecoin') {
+          // 奖励时光币
+          await db.collection('users').where({
+            _openid: openid
+          }).update({
+            data: {
+              coins: _.inc(reward),
+              lastUpdateTime: db.serverDate()
+            }
+          });
+        } else if (currency === 'gold') {
+          // 奖励金币 - 调用qcio云函数
+          try {
+            await cloud.callFunction({
+              name: 'qcio',
+              data: {
+                action: 'addGold',
+                amount: reward
+              }
+            });
+          } catch (qcioErr) {
+            console.error('奖励金币失败:', qcioErr);
+          }
+        }
+
+        // 记录交易
+        await db.collection('user_transactions').add({
+          data: {
+            _openid: openid,
+            type: 'share_reward',
+            description: `首次分享${shareType === 'ending' ? '结局' : '空间'}奖励`,
+            amount: reward,
+            currency: currency,
+            balanceAfter: null, // 由前端刷新获取
+            createTime: db.serverDate()
+          }
+        });
+
+        return {
+          success: true,
+          reward: reward,
+          currency: currency,
+          firstTimeShare: true,
+          shareId: shareId
+        };
+      }
+
+      return {
+        success: true,
+        reward: 0,
+        currency: currency,
+        firstTimeShare: false,
+        shareId: shareId
+      };
+    } catch (e) {
+      console.error(e);
+      return { success: false, errMsg: e.message };
+    }
+  }
+
+  // 🔗 记录分享回流访问
+  if (type === 'recordShareVisit') {
+    try {
+      const { shareId } = event;
+
+      if (!shareId) {
+        return { success: false, errMsg: '缺少分享ID' };
+      }
+
+      // 查找分享记录
+      const shareRes = await db.collection('user_shares')
+        .where({ shareId: shareId })
+        .get();
+
+      if (shareRes.data.length === 0) {
+        return { success: false, errMsg: '分享记录不存在' };
+      }
+
+      const shareRecord = shareRes.data[0];
+
+      // 防止同一用户重复计数（24小时内）
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const recentVisit = await db.collection('user_share_visits')
+        .where({
+          shareId: shareId,
+          visitorOpenid: openid,
+          visitTime: _.gte(today)
+        })
+        .get();
+
+      const isDuplicateVisit = recentVisit.data.length > 0;
+
+      // 记录访问
+      await db.collection('user_share_visits').add({
+        data: {
+          shareId: shareId,
+          sharerOpenid: shareRecord._openid,
+          visitorOpenid: openid,
+          shareType: shareRecord.shareType,
+          isNewUser: !isDuplicateVisit,
+          visitTime: db.serverDate()
+        }
+      });
+
+      // 如果是新访问（非重复），更新分享者的回流计数
+      let referralReward = 0;
+      if (!isDuplicateVisit) {
+        await db.collection('user_shares').doc(shareRecord._id).update({
+          data: {
+            referralCount: _.inc(1)
+          }
+        });
+
+        // 每获得一个新访问，分享者获得额外奖励
+        const REFERRAL_REWARDS = {
+          timecoin: 100,  // 每个新访问奖励100时光币
+          gold: 20        // 每个新访问奖励20金币
+        };
+
+        referralReward = REFERRAL_REWARDS[shareRecord.currency] || REFERRAL_REWARDS.timecoin;
+
+        if (shareRecord.currency === 'timecoin') {
+          await db.collection('users').where({
+            _openid: shareRecord._openid
+          }).update({
+            data: {
+              coins: _.inc(referralReward)
+            }
+          });
+        } else if (shareRecord.currency === 'gold') {
+          try {
+            await cloud.callFunction({
+              name: 'qcio',
+              data: {
+                action: 'addGold',
+                amount: referralReward
+              }
+            });
+          } catch (qcioErr) {
+            console.error('奖励金币失败:', qcioErr);
+          }
+        }
+
+        // 记录交易
+        await db.collection('user_transactions').add({
+          data: {
+            _openid: shareRecord._openid,
+            type: 'referral_reward',
+            description: '分享回流奖励',
+            amount: referralReward,
+            currency: shareRecord.currency,
+            shareId: shareId,
+            createTime: db.serverDate()
+          }
+        });
+      }
+
+      return {
+        success: true,
+        isNewVisit: !isDuplicateVisit,
+        referralReward: isDuplicateVisit ? 0 : referralReward,
+        shareType: shareRecord.shareType
       };
     } catch (e) {
       console.error(e);

@@ -541,5 +541,73 @@ page {
   padding: 10px;
   display: flex;
   justify-content: center;
+  gap: 8px;
   border-top: 1px solid #808080;
+}
+
+.win98-btn-share {
+  flex: 1;
+}
+
+/* 海报预览弹窗 - Win98 风格 */
+.poster-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.poster-overlay.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.poster-preview-card {
+  background: #c0c0c0;
+  border: 3px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  max-width: 400px;
+  width: 100%;
+  max-height: 85vh;
+  overflow: hidden;
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+}
+
+.poster-preview-body {
+  flex: 1;
+  overflow-y: auto;
+  background: #ffffff;
+  padding: 10px;
+}
+
+.poster-image {
+  width: 100%;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+}
+
+.poster-actions {
+  padding: 10px;
+  display: flex;
+  gap: 8px;
+  background: #c0c0c0;
+  border-top: 1px solid #808080;
+}
+
+.poster-canvas {
+  position: fixed;
+  left: -9999px;
+  top: -9999px;
 }

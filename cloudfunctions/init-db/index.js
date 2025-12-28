@@ -15,6 +15,8 @@ const COLLECTIONS = [
   { name: 'user_transactions', description: '用户交易记录（双币种交易日志）' },
   { name: 'user_activity_logs', description: '用户活动日志（彩蛋发现等）' },
   { name: 'user_photos', description: '非主流照片存储' },
+  { name: 'user_shares', description: '用户分享记录（分享激励系统）' },
+  { name: 'user_share_visits', description: '用户分享回流访问记录' },
 
   // QCIO社交系统
   { name: 'qcio_users', description: 'QCIO用户资料' },
@@ -114,6 +116,8 @@ async function createIndexes(collectionName) {
     user_transactions: ['_openid', 'createdAt'],
     user_activity_logs: ['_openid', 'action', 'createdAt'],
     user_photos: ['_openid', 'createdAt'],
+    user_shares: ['_openid', 'shareType', 'itemId', 'createTime'],
+    user_share_visits: ['shareId', 'visitorOpenid', 'visitTime'],
     ifthen_play_history: ['_openid', 'storyId', 'createdAt'],
     ifthen_share_visits: ['shareId', 'visitedAt'],
   };

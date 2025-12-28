@@ -16,6 +16,8 @@ const COLLECTIONS = [
   'user_transactions',
   'user_activity_logs',
   'user_photos',
+  'user_shares',
+  'user_share_visits',
 
   // QCIO社交系统
   'qcio_users',
