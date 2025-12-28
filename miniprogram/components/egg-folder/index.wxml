@@ -38,12 +38,18 @@
           <view class="file-icon">📜</view>
           <text class="file-label">彩蛋秘籍-第一册.txt</text>
         </view>
+
+        <!-- 彩蛋秘籍第二册（还原后显示） -->
+        <view wx:if="{{secretBook2Restored}}" class="file-item secret-file-2" bindtap="onSecretFile2Tap">
+          <view class="file-icon">📜</view>
+          <text class="file-label">彩蛋秘籍-第二册.txt</text>
+        </view>
       </view>
     </view>
 
     <!-- 状态栏 -->
     <view class="status-bar">
-      <text>{{showHiddenFiles ? '2' : '1'}} 个对象</text>
+      <text>{{showHiddenFiles ? (secretBook2Restored ? '3' : '2') : (secretBook2Restored ? '2' : '1')}} 个对象</text>
     </view>
   </view>
 
@@ -52,4 +58,7 @@
 
   <!-- 彩蛋秘籍查看器 -->
   <text-file-viewer show="{{showSecretViewer}}" fileName="彩蛋秘籍-第一册.txt" bindclose="onCloseSecretViewer"></text-file-viewer>
+
+  <!-- 彩蛋秘籍第二册查看器 -->
+  <text-file-viewer show="{{showSecretViewer2}}" fileName="彩蛋秘籍-第二册.txt" bindclose="onCloseSecretViewer2"></text-file-viewer>
 </view>

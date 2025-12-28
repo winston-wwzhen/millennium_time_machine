@@ -98,11 +98,13 @@ Page({
     showMyComputer: false, // 我的电脑显示状态
     showNetworkSystem: false, // 网管系统显示状态
     showMyDocuments: false, // 我的文档显示状态
+    showRecycleBin: false, // 回收站显示状态
     // 组件z-index管理（确保后打开的组件显示在上层）
     baseZIndex: 2000,
     myComputerZIndex: 2000,
     networkSystemZIndex: 2000,
     myDocumentsZIndex: 2000,
+    recycleBinZIndex: 2000,
     systemTime: "",
     // 网络连接状态
     networkConnected: true, // 默认连接
@@ -560,9 +562,15 @@ Page({
       return;
     }
 
-    // 回收站 - 打开页面
+    // 回收站 - 打开组件
     if (path && path.includes("recycle-bin")) {
       this.addLog('open', '回收站');
+      this.setData({
+        showRecycleBin: true,
+        baseZIndex: this.data.baseZIndex + 10,
+        recycleBinZIndex: this.data.baseZIndex + 10
+      });
+      return;
     }
 
     // 浏览器 - 打开页面
@@ -1518,6 +1526,11 @@ Page({
   // 关闭我的文档
   onCloseMyDocuments: function () {
     this.setData({ showMyDocuments: false });
+  },
+
+  // 关闭回收站
+  onCloseRecycleBin: function () {
+    this.setData({ showRecycleBin: false });
   },
 
   onShareAppMessage: function () {

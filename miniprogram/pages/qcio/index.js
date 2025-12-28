@@ -27,7 +27,7 @@ Page({
     },
 
     // 头像选择列表
-    avatarList: ['👤', '😊', '🤖', '👻'],
+    avatarList: ['👤', '😊', '🤖', '👻', '🎭', '🦊', '🐱', '🐶', '🐼', '🐨', '🐯', '🦁', '🐸', '🐵', '🦄', '🐲'],
 
     // 用户个人资料模型
     userProfile: {
@@ -69,6 +69,10 @@ Page({
 
     // 等级详情弹窗
     showLevelInfo: false,
+
+    // 头像选择弹窗
+    showAvatarDialog: false,
+    selectedAvatar: '',
 
     // 好友列表数据（从云端获取）
     contactGroups: [],
@@ -607,7 +611,12 @@ Page({
           this.calculateGrowthIcons(res.result.data.level);
           wx.showToast({ title: '同步成功', icon: 'success' });
         } else {
-          wx.showToast({ title: '保存失败', icon: 'none' });
+          // 检查是否是内容安全检测失败
+          if (res.result && res.result.error === 'CONTENT_UNSAFE') {
+            wx.showToast({ title: res.result.message || '内容违规，请修改', icon: 'none', duration: 2000 });
+          } else {
+            wx.showToast({ title: '保存失败', icon: 'none' });
+          }
         }
       }).catch(err => {
         console.error('Update Profile Error:', err);
@@ -910,5 +919,72 @@ Page({
    */
   hideEggDiscoveryDialog: function() {
     this.setData({ showEggDiscoveryDialog: false });
+  },
+
+  /**
+   * 打开头像选择弹窗
+   */
+  openAvatarDialog: function() {
+    this.setData({
+      showAvatarDialog: true,
+      selectedAvatar: this.data.userProfile.avatar || '👤'
+    });
+  },
+
+  /**
+   * 关闭头像选择弹窗
+   */
+  closeAvatarDialog: function() {
+    this.setData({
+      showAvatarDialog: false,
+      selectedAvatar: ''
+    });
+  },
+
+  /**
+   * 选择新头像
+   */
+  selectNewAvatar: function(e) {
+    const avatar = e.currentTarget.dataset.avatar;
+    this.setData({ selectedAvatar: avatar });
+  },
+
+  /**
+   * 确认修改头像
+   */
+  confirmAvatarChange: function() {
+    const newAvatar = this.data.selectedAvatar;
+
+    if (!newAvatar) {
+      wx.showToast({ title: '请选择头像', icon: 'none' });
+      return;
+    }
+
+    this.closeAvatarDialog();
+
+    // 调用云函数更新头像
+    wx.showLoading({ title: '更新中...', mask: true });
+
+    wx.cloud.callFunction({
+      name: 'qcio',
+      data: {
+        action: 'updateProfile',
+        data: { avatar: newAvatar }
+      }
+    }).then(res => {
+      if (res.result && res.result.success) {
+        this.setData({
+          userProfile: res.result.data
+        });
+        wx.showToast({ title: '头像已更新', icon: 'success' });
+      } else {
+        wx.showToast({ title: '更新失败', icon: 'none' });
+      }
+    }).catch(err => {
+      console.error('Update Avatar Error:', err);
+      wx.showToast({ title: '服务器未响应', icon: 'none' });
+    }).finally(() => {
+      wx.hideLoading();
+    });
   }
 });

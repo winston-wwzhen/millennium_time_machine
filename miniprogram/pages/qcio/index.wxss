@@ -882,3 +882,64 @@ page {
   line-height: 1.5;
   flex: 1;
 }
+
+/* --- 头像选择弹窗样式 --- */
+
+.avatar-dialog-box {
+  width: 320px;
+  max-width: 90%;
+}
+
+.avatar-dialog-content {
+  padding: 16px;
+}
+
+.avatar-dialog-label {
+  display: block;
+  font-size: 12px;
+  color: #000;
+  margin-bottom: 12px;
+  font-family: 'SimSun', serif;
+}
+
+.avatar-selection-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  padding: 8px;
+  background: #ffffff;
+  border: 1px solid #808080;
+  border-radius: 2px;
+}
+
+.avatar-option {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
+  font-size: 28px;
+  background: #c0c0c0;
+  border: 1px solid #808080;
+  cursor: pointer;
+  transition: all 0.1s;
+}
+
+.avatar-option:active {
+  background: #000080;
+}
+
+.avatar-option.selected {
+  background: rgba(255, 215, 0, 0.3);
+  border: 2px solid #ffd700;
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+}
+
+/* 头像可点击提示 */
+.avatar-inset {
+  cursor: pointer;
+}
+
+.avatar-inset:active {
+  opacity: 0.8;
+}

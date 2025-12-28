@@ -22,9 +22,12 @@ Component({
   observers: {
     'fileName': function(newVal) {
       const isSecretFile = newVal === '彩蛋秘籍-第一册.txt';
+      const isSecretFile2 = newVal === '彩蛋秘籍-第二册.txt';
       this.setData({ isSecretFile });
       if (isSecretFile) {
         this.loadSecretEggList();
+      } else if (isSecretFile2) {
+        this.loadSecretEggList2();
       } else if (newVal === '彩蛋大全.txt') {
         this.loadEggList();
       }
@@ -33,6 +36,8 @@ Component({
       if (newVal) {
         if (this.data.fileName === '彩蛋秘籍-第一册.txt') {
           this.loadSecretEggList();
+        } else if (this.data.fileName === '彩蛋秘籍-第二册.txt') {
+          this.loadSecretEggList2();
         } else if (this.data.fileName === '彩蛋大全.txt') {
           this.loadEggList();
         }
@@ -45,6 +50,8 @@ Component({
       this.updateProgress();
       if (this.data.fileName === '彩蛋秘籍-第一册.txt') {
         this.loadSecretEggList();
+      } else if (this.data.fileName === '彩蛋秘籍-第二册.txt') {
+        this.loadSecretEggList2();
       } else if (this.data.fileName === '彩蛋大全.txt') {
         this.loadEggList();
       }
@@ -131,6 +138,36 @@ Component({
         { id: EGG_IDS.AVATAR_MASTER, ...allConfigs[EGG_IDS.AVATAR_MASTER], discovered: discoveredIds.has(EGG_IDS.AVATAR_MASTER) },
         { id: EGG_IDS.QCIO_SPACE_VISITOR, ...allConfigs[EGG_IDS.QCIO_SPACE_VISITOR], discovered: discoveredIds.has(EGG_IDS.QCIO_SPACE_VISITOR) },
         { id: EGG_IDS.START_MENU_FAN, ...allConfigs[EGG_IDS.START_MENU_FAN], discovered: discoveredIds.has(EGG_IDS.START_MENU_FAN) }
+      ];
+
+      this.setData({ eggList });
+    },
+
+    // 加载彩蛋秘籍（第二册：稀有、史诗、传说彩蛋，以及第一册外的普通彩蛋）
+    loadSecretEggList2: async function() {
+      // 确保先加载云端数据
+      await eggSystem.load();
+
+      const allConfigs = eggSystem.getAllConfigs();
+      const badges = eggSystem.getBadges();
+      const discoveredIds = new Set(badges.map(b => b.eggId));
+
+      // 第二册：第一册外的普通彩蛋 + 稀有 + 史诗 + 传说
+      const eggList = [
+        // 普通彩蛋（第一册外）
+        { id: EGG_IDS.MARS_TRANSLATOR, ...allConfigs[EGG_IDS.MARS_TRANSLATOR], discovered: discoveredIds.has(EGG_IDS.MARS_TRANSLATOR) },
+        { id: EGG_IDS.NETWORK_EXCHANGER, ...allConfigs[EGG_IDS.NETWORK_EXCHANGER], discovered: discoveredIds.has(EGG_IDS.NETWORK_EXCHANGER) },
+        // 稀有彩蛋
+        { id: EGG_IDS.BLUE_SCREEN, ...allConfigs[EGG_IDS.BLUE_SCREEN], discovered: discoveredIds.has(EGG_IDS.BLUE_SCREEN) },
+        { id: EGG_IDS.HIDDEN_ICON, ...allConfigs[EGG_IDS.HIDDEN_ICON], discovered: discoveredIds.has(EGG_IDS.HIDDEN_ICON) },
+        { id: EGG_IDS.TIME_SPECIAL, ...allConfigs[EGG_IDS.TIME_SPECIAL], discovered: discoveredIds.has(EGG_IDS.TIME_SPECIAL) },
+        { id: EGG_IDS.CHAT_LOVER, ...allConfigs[EGG_IDS.CHAT_LOVER], discovered: discoveredIds.has(EGG_IDS.CHAT_LOVER) },
+        { id: EGG_IDS.RECYCLE_BIN_EMPTYER, ...allConfigs[EGG_IDS.RECYCLE_BIN_EMPTYER], discovered: discoveredIds.has(EGG_IDS.RECYCLE_BIN_EMPTYER) },
+        { id: EGG_IDS.GROUP_CHAT_PARTY, ...allConfigs[EGG_IDS.GROUP_CHAT_PARTY], discovered: discoveredIds.has(EGG_IDS.GROUP_CHAT_PARTY) },
+        // 史诗彩蛋
+        { id: EGG_IDS.TIME_MIDNIGHT, ...allConfigs[EGG_IDS.TIME_MIDNIGHT], discovered: discoveredIds.has(EGG_IDS.TIME_MIDNIGHT) },
+        // 传说彩蛋
+        { id: EGG_IDS.KONAMI_CODE, ...allConfigs[EGG_IDS.KONAMI_CODE], discovered: discoveredIds.has(EGG_IDS.KONAMI_CODE) }
       ];
 
       this.setData({ eggList });

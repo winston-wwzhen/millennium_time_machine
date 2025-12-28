@@ -1,10 +1,10 @@
-<!-- 回收站 -->
-<view class="desktop">
-  <view class="win98-window">
+<!-- 回收站 - Win98 风格窗口组件 -->
+<view class="recycle-bin-overlay {{show ? 'show' : 'hide'}}" style="{{overlayStyle}}" catchtap="onClose">
+  <view class="win98-window" catchtap="stopPropagation">
     <view class="win98-title-bar">
       <view class="win98-title-text">回收站</view>
       <view class="win98-title-controls">
-        <button class="win98-btn-close" bindtap="goBack">×</button>
+        <button class="win98-btn-close" bindtap="onClose">×</button>
       </view>
     </view>
 
@@ -28,16 +28,18 @@
 
       <!-- 垃圾文件列表 -->
       <view class="trash-grid" wx:if="{{hasTrash}}">
-        <view class="trash-item" wx:for="{{trashFiles}}" wx:key="index">
+        <view
+          class="trash-item {{item.isSpecial ? 'special-file' : ''}}"
+          wx:for="{{trashFiles}}"
+          wx:key="index"
+          bindtap="onTrashItemTap"
+          data-file="{{item}}"
+          data-index="{{index}}"
+        >
           <view class="trash-icon">{{item.icon}}</view>
           <text class="trash-label">{{item.name}}</text>
           <text class="trash-date">{{item.date}}</text>
         </view>
-      </view>
-
-      <!-- 提示信息 -->
-      <view class="tip-box">
-        <text class="tip-text">💡 删除的文件会在这里暂存，可以恢复哦~</text>
       </view>
 
       <!-- 清空按钮 -->
@@ -109,4 +111,28 @@
     eggRewardText="{{eggDiscoveryData.rewardText}}"
     bindclose="hideEggDiscoveryDialog">
   </egg-discovery-dialog>
+
+  <!-- 还原确认弹窗 -->
+  <view class="win98-dialog-overlay {{showRestoreDialog ? 'show' : ''}}" wx:if="{{showRestoreDialog}}" catchtap="cancelRestoreSecretBook">
+    <view class="win98-window restore-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">确认还原</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="cancelRestoreSecretBook">×</button>
+        </view>
+      </view>
+      <view class="win98-window-body">
+        <view class="restore-content">
+          <view class="restore-icon">📜</view>
+          <text class="restore-title">彩蛋秘籍第二册.txt</text>
+          <text class="restore-message">是否要还原此文件？</text>
+          <text class="restore-hint">还原后将出现在我的文档/彩蛋文件夹中</text>
+        </view>
+        <view class="dialog-actions">
+          <button class="win98-btn-std" bindtap="cancelRestoreSecretBook">取消</button>
+          <button class="win98-btn-std win98-btn-primary" bindtap="confirmRestoreSecretBook">还原</button>
+        </view>
+      </view>
+    </view>
+  </view>
 </view>

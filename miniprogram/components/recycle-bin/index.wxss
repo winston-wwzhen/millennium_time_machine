@@ -1,16 +1,22 @@
 /* 回收站 - Win98 风格 */
-page {
-  height: 100vh;
-  background: #008080;
-  box-sizing: border-box;
-  padding: 65px 5px 5px 5px;
-}
-
-.desktop {
-  height: 100%;
+.recycle-bin-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
   justify-content: center;
   align-items: center;
+  pointer-events: none;
+}
+
+.recycle-bin-overlay.show {
+  pointer-events: auto;
+}
+
+.recycle-bin-overlay.hide {
+  display: none;
 }
 
 .win98-window {
@@ -24,7 +30,7 @@ page {
   flex-direction: column;
   width: 90%;
   max-width: 600px;
-  height: 80%;
+  height: 620px;
 }
 
 .win98-title-bar {
@@ -144,7 +150,8 @@ page {
   flex-direction: column;
   align-items: center;
   width: 80px;
-  padding: 8px;
+  height: 95px;
+  padding: 4px;
 }
 
 .trash-item:active {
@@ -179,6 +186,34 @@ page {
 
 .tip-text {
   color: #000080;
+}
+
+.win98-button {
+  font-size: 12px;
+  color: #000;
+  height: 26px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #c0c0c0;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+}
+
+.win98-button:active {
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  padding: 8px;
 }
 
 .status-bar {
@@ -299,4 +334,65 @@ page {
   border-left: 1px solid #808080;
   border-right: 1px solid #ffffff;
   border-bottom: 1px solid #ffffff;
+}
+
+.win98-btn-primary {
+  font-weight: bold;
+}
+
+/* 特殊文件样式（彩蛋秘籍第二册） */
+.trash-item.special-file {
+  background: rgba(255, 215, 0, 0.2);
+  border: 1px dashed #ffd700;
+  cursor: pointer;
+}
+
+.trash-item.special-file:active {
+  background: rgba(255, 215, 0, 0.4);
+}
+
+.trash-item.special-file .trash-icon {
+  opacity: 1;
+  filter: drop-shadow(0 0 5px #ffd700);
+}
+
+/* 还原确认弹窗样式 */
+.restore-dialog {
+  width: 320px;
+  max-width: 90%;
+}
+
+.restore-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  text-align: center;
+}
+
+.restore-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+  filter: drop-shadow(0 0 10px #ffd700);
+}
+
+.restore-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #000080;
+  margin-bottom: 12px;
+  font-family: 'SimSun', serif;
+}
+
+.restore-message {
+  font-size: 13px;
+  color: #000;
+  margin-bottom: 8px;
+  font-family: 'SimSun', serif;
+}
+
+.restore-hint {
+  font-size: 11px;
+  color: #808080;
+  font-family: 'SimSun', serif;
 }

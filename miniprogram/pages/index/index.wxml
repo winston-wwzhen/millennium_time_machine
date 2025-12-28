@@ -529,4 +529,7 @@
 
   <!-- 我的文档组件 -->
   <my-documents show="{{showMyDocuments}}" zIndex="{{myDocumentsZIndex}}" bindclose="onCloseMyDocuments"></my-documents>
+
+  <!-- 回收站组件 -->
+  <recycle-bin show="{{showRecycleBin}}" zIndex="{{recycleBinZIndex}}" bindclose="onCloseRecycleBin"></recycle-bin>
 </view>

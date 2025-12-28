@@ -199,9 +199,15 @@ async function getLevelInfo(openid, db) {
     // 计算升级进度
     const currentLevelExp = getExpForLevel(level);
     const nextLevelExp = getExpForLevel(level + 1);
-    const levelExp = experience - currentLevelExp; // 当前等级已获得的经验
+    // 修复：当前等级已获得的经验 = 总经验 - 上一等级所需经验
+    const prevLevelExp = level > 1 ? getExpForLevel(level - 1) : 0;
+    const levelExp = Math.max(0, experience - prevLevelExp); // 当前等级已获得的经验
     const needExp = nextLevelExp - experience; // 升级还需要的经验
-    const progress = Math.min(100, Math.floor((levelExp / (nextLevelExp - currentLevelExp)) * 100));
+    // 修复：确保进度不为负数
+    const levelExpRange = nextLevelExp - prevLevelExp;
+    const progress = levelExpRange > 0
+      ? Math.min(100, Math.max(0, Math.floor((levelExp / levelExpRange) * 100)))
+      : (experience >= nextLevelExp ? 100 : 0);
 
     // 获取等级奖励配置
     const rewardConfig = LEVEL_REWARDS[level] || {};

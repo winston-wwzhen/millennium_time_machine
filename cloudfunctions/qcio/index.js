@@ -16,6 +16,7 @@ const { redeemVipCode } = require('./modules/vip');
 const { getAchievements, checkAchievements } = require('./modules/achievements');
 const { saveMoodLog, getMoodLogs, deleteMoodLog, getMoodLogStatus } = require('./modules/moodLog');
 const { getGuestbook, deleteGuestbookMessage } = require('./modules/guestbook');
+const { checkContentSafety } = require('./modules/safety');
 const {
   getLevelInfo,
   addExperience,
@@ -403,12 +404,42 @@ async function setOnlineStatus(openid, status) {
 
 /**
  * 更新用户资料并返回更新后的对象
+ * 包含内容安全检测
  */
 async function updateProfile(openid, data) {
   try {
     const updateFields = {};
-    if (data.nickname) updateFields.nickname = data.nickname;
-    if (data.signature) updateFields.signature = data.signature;
+
+    // 昵称需要内容安全检测
+    if (data.nickname) {
+      const nicknameCheck = await checkContentSafety(cloud, data.nickname);
+      if (!nicknameCheck.safe) {
+        return {
+          success: false,
+          error: 'CONTENT_UNSAFE',
+          message: '昵称包含违规内容，请修改后重试'
+        };
+      }
+      updateFields.nickname = data.nickname;
+    }
+
+    // 签名需要内容安全检测
+    if (data.signature) {
+      const signatureCheck = await checkContentSafety(cloud, data.signature);
+      if (!signatureCheck.safe) {
+        return {
+          success: false,
+          error: 'CONTENT_UNSAFE',
+          message: '签名包含违规内容，请修改后重试'
+        };
+      }
+      updateFields.signature = data.signature;
+    }
+
+    // 头像无需安全检测，直接更新
+    if (data.avatar) {
+      updateFields.avatar = data.avatar;
+    }
 
     await db.collection('qcio_users').where({ _openid: openid }).update({
       data: {

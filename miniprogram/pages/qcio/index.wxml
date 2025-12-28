@@ -127,8 +127,8 @@
 
       <!-- 用户信息面板 -->
       <view class="user-profile-bar">
-        <view class="avatar-inset">
-          <text class="avatar-emoji">👤</text>
+        <view class="avatar-inset" bindtap="openAvatarDialog">
+          <text class="avatar-emoji">{{userProfile.avatar || '👤'}}</text>
           <view class="online-status"></view>
         </view>
         <view class="profile-details">
@@ -144,8 +144,8 @@
             <text class="growth-title-text">{{growthTitle}}</text>
           </view>
           <view class="id-row">QCIO: {{userProfile.qcio_id}}</view>
-          <view class="sig-row" bindtap="openEditDialog" data-type="signature">
-            {{userProfile.signature || '点击编辑个性签名...'}}
+          <view class="sig-row">
+            {{userProfile.signature || '暂无个性签名'}}
           </view>
         </view>
         <!-- 钱包显示区域 -->
@@ -473,4 +473,36 @@
     eggRewardText="{{eggDiscoveryData.rewardText}}"
     bindclose="hideEggDiscoveryDialog">
   </egg-discovery-dialog>
+
+  <!-- 8. 头像选择弹窗 -->
+  <view class="win98-overlay" wx:if="{{showAvatarDialog}}">
+    <view class="win98-window avatar-dialog-box">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">🎭 修改头像</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="closeAvatarDialog">×</button>
+        </view>
+      </view>
+      <view class="win98-window-body">
+        <view class="avatar-dialog-content">
+          <text class="avatar-dialog-label">请选择新头像:</text>
+          <view class="avatar-selection-grid">
+            <view
+              class="avatar-option {{selectedAvatar === item ? 'selected' : ''}}"
+              wx:for="{{avatarList}}"
+              wx:key="index"
+              bindtap="selectNewAvatar"
+              data-avatar="{{item}}"
+            >
+              {{item}}
+            </view>
+          </view>
+        </view>
+        <view class="dialog-actions">
+          <button class="win98-btn-std win98-btn-primary" bindtap="confirmAvatarChange">确定</button>
+          <button class="win98-btn-std" bindtap="closeAvatarDialog">取消</button>
+        </view>
+      </view>
+    </view>
+  </view>
 </view>
