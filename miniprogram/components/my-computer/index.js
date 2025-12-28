@@ -20,6 +20,7 @@ Component({
       icon: '',
       message: ''
     },
+    showHelpDialog: false,
     overlayStyle: ''
   },
 
@@ -161,6 +162,20 @@ Component({
     closeDriveDialog: function() {
       this.setData({
         showDriveDialog: false
+      });
+    },
+
+    // 显示帮助弹窗
+    onShowHelp: function() {
+      this.setData({
+        showHelpDialog: true
+      });
+    },
+
+    // 关闭帮助弹窗
+    onCloseHelpDialog: function() {
+      this.setData({
+        showHelpDialog: false
       });
     }
   }

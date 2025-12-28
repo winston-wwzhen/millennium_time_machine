@@ -9,29 +9,29 @@ const eventsData = [
     year: 2005,
     category: 'entertainment',
     trigger: { ageRange: [10, 25], gender: null },
-    title: 'QQ秀风靡',
-    description: 'QQ秀成为了年轻人展示自我的重要方式。你的同学们都在讨论最新的QQ秀装扮。',
-    context: '2005年,腾讯推出QQ秀虚拟形象系统,用户可以购买虚拟服装和道具装扮自己。这个功能迅速成为年轻人社交的必备元素。',
+    title: '虚拟形象风靡',
+    description: '虚拟形象成为了年轻人展示自我的重要方式。你的同学们都在讨论最新的虚拟形象装扮。',
+    context: '2005年,即时通讯软件推出虚拟形象系统,用户可以购买虚拟服装和道具装扮自己。这个功能迅速成为年轻人社交的必备元素。',
     choices: [
       {
-        text: '花零花钱买一套炫酷QQ秀',
+        text: '花零花钱买一套炫酷虚拟装扮',
         hint: '社交+10,财富-5',
         effects: { social: 10, wealth: -5 },
         flags: { has_qq_show: true },
-        result: '你花零花钱买了一套炫酷的QQ秀,同学们都夸你很有品味!'
+        result: '你花零花钱买了一套炫酷的虚拟装扮,同学们都夸你很有品味!'
       },
       {
         text: '觉得太幼稚,专注于学习',
         hint: '学识+5,但错过社交话题',
         effects: { education: 8, social: -5 },
-        result: '你觉得QQ秀没什么意思,选择了专注于学习。'
+        result: '你觉得虚拟装扮没什么意思,选择了专注于学习。'
       },
       {
         text: '学习PS自己制作头像',
         hint: '技术+10,开启创作之路',
         effects: { tech_skill: 12, charm: 5 },
         flags: { made_custom_avatar: true },
-        result: '你开始学习PS,制作自己的QQ头像,这让你对设计产生了兴趣。'
+        result: '你开始学习PS,制作自己的个人头像,这让你对设计产生了兴趣。'
       }
     ]
   },
@@ -266,29 +266,29 @@ const eventsData = [
     year: 2007,
     category: 'game',
     trigger: { ageRange: [10, 20], gender: null },
-    title: 'QQ宠物',
-    description: 'QQ宠物成为很多人的"电子伴侣",需要喂食、打扫、看病。',
-    context: '2007年,QQ宠物达到巅峰,很多年轻人沉迷于照顾这只电子企鹅,甚至愿意花钱买各种道具。',
+    title: '电子宠物热潮',
+    description: '电子宠物成为很多人的"电子伴侣",需要喂食、打扫、看病。',
+    context: '2007年,电子宠物达到巅峰,很多年轻人沉迷于照顾这只电子伙伴,甚至愿意花钱买各种道具。',
     choices: [
       {
         text: '领养一只,悉心照料',
         hint: '快乐+10,社交+5,财富-5',
         effects: { happiness: 10, social: 5, wealth: -5 },
         flags: { has_qq_pet: true },
-        result: '你领养了QQ宠物,每天记得喂食,它成为了你的好伙伴。'
+        result: '你领养了电子宠物,每天记得喂食,它成为了你的好伙伴。'
       },
       {
         text: '觉得浪费时间,不养',
         hint: '学识+5,技术+3',
         effects: { education: 5, tech_skill: 3 },
-        result: '你觉得QQ宠物很无聊,没有领养。'
+        result: '你觉得电子宠物很无聊,没有领养。'
       },
       {
         text: '研究背后的商业模式',
         hint: '技术+10,财富+5,学识+8',
         effects: { tech_skill: 10, wealth: 5, education: 8 },
         flags: { business_mindset: true },
-        result: '你对QQ宠物的充值模式很感兴趣,开始思考虚拟产品的商业模式。'
+        result: '你对电子宠物的充值模式很感兴趣,开始思考虚拟产品的商业模式。'
       }
     ]
   },

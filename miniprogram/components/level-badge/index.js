@@ -48,7 +48,7 @@ Component({
     },
 
     getLevelIcon(level) {
-      // 经典QQ等级: 4星星=1月亮, 4月亮=1太阳
+      // 经典QCIO等级: 4星星=1月亮, 4月亮=1太阳
       const suns = Math.floor(level / 16);
       const moons = Math.floor((level % 16) / 4);
       const stars = level % 4;

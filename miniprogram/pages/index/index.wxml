@@ -395,7 +395,7 @@
       <view class="win98-window-body">
         <scroll-view class="about-content" scroll-y>
           <text class="about-title">千禧时光机 v1.0</text>
-          <text class="about-text">一款怀旧风格的微信小程序，带你回到2005年的QQ时代。</text>
+          <text class="about-text">一款怀旧风格的微信小程序，带你回到2005年的那个年代。</text>
 
           <view class="about-section">
             <text class="about-section-title">🖥️ 桌面功能</text>

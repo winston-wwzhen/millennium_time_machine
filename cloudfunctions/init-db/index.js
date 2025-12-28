@@ -12,6 +12,9 @@ const _ = db.command;
 const COLLECTIONS = [
   // 用户系统
   { name: 'users', description: '桌面级用户数据（双代币、彩蛋）' },
+  { name: 'user_transactions', description: '用户交易记录（双币种交易日志）' },
+  { name: 'user_activity_logs', description: '用户活动日志（彩蛋发现等）' },
+  { name: 'user_photos', description: '非主流照片存储' },
 
   // QCIO社交系统
   { name: 'qcio_users', description: 'QCIO用户资料' },
@@ -38,6 +41,8 @@ const COLLECTIONS = [
   { name: 'ifthen_games', description: '如果当时游戏记录' },
   { name: 'ifthen_endings', description: '如果当时结局统计' },
   { name: 'ifthen_shares', description: '如果当时分享记录' },
+  { name: 'ifthen_play_history', description: '如果当时游玩历史记录' },
+  { name: 'ifthen_share_visits', description: '如果当时分享链接访问记录' },
 ];
 
 // AI联系人数据
@@ -106,6 +111,11 @@ async function createIndexes(collectionName) {
     qcio_mood_logs: ['_openid', 'createdAt'],
     qcio_guestbook: ['owner_qcio_id', 'visitor_qcio_id'],
     ifthen_shares: ['shareId'],
+    user_transactions: ['_openid', 'createdAt'],
+    user_activity_logs: ['_openid', 'action', 'createdAt'],
+    user_photos: ['_openid', 'createdAt'],
+    ifthen_play_history: ['_openid', 'storyId', 'createdAt'],
+    ifthen_share_visits: ['shareId', 'visitedAt'],
   };
 
   if (indexes[collectionName]) {

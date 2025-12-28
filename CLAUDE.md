@@ -31,16 +31,32 @@ bash uploadCloudFunction.sh [envId]
 
 ### Database Initialization
 
-1. Create collections in WeChat Cloud Console:
-   - `users` - Desktop-level user data (dual currency, easter eggs)
-   - `qcio_users`, `qcio_wallet`, `qcio_daily_tasks`, `qcio_achievements`, `qcio_mood_logs`
-   - `qcio_ai_contacts`, `qcio_groups`
-   - `qcio_chat_history`, `qcio_group_chat_history`, `qcio_guestbook`
-   - `mood_garden`
+**Total Collections: 25**
 
-2. Import AI data from `db-init/`:
-   - `db-init/qcio_ai_contacts/contacts_import.json` → `qcio_ai_contacts` collection
-   - `db-init/qcio_groups/groups_import.json` → `qcio_groups` collection
+Use the `init-db` cloud function to automatically create all collections:
+
+```javascript
+wx.cloud.callFunction({
+  name: 'init-db',
+  data: { action: 'init' }
+})
+```
+
+**Collections**:
+- User System: `users`, `user_transactions`, `user_activity_logs`, `user_photos`
+- QCIO Social: `qcio_users`, `qcio_wallet`, `qcio_daily_tasks`, `qcio_achievements`, `qcio_mood_logs`, `qcio_guestbook`, `qcio_experience_logs`, `qcio_user_level_rewards`, `qcio_visit_stats`, `qcio_space_logs`
+- AI & Groups: `qcio_ai_contacts`, `qcio_groups`, `qcio_chat_history`, `qcio_group_chat_history`
+- Games: `mood_garden`, `ifthen_games`, `ifthen_endings`, `ifthen_shares`, `ifthen_play_history`, `ifthen_share_visits`
+
+For testing, use `clear-db` to reset all data:
+```javascript
+wx.cloud.callFunction({
+  name: 'clear-db',
+  data: { action: 'clear', confirm: true }
+})
+```
+
+**See Also**: Development Conventions section for adding new tables.
 
 ## Architecture
 
@@ -76,7 +92,9 @@ cloudfunctions/       # Backend
 │       ├── moodLog.js      # Mood logs
 │       └── guestbook.js    # Guestbook/留言板
 ├── user/             # User login, QCIO account management
-└── mood_logic/       # Mood farm game logic
+├── mood_logic/       # Mood farm game logic
+├── init-db/          # Database initialization (25 collections)
+└── clear-db/         # Database clearing for testing
 
 db-init/              # Database initialization data
 ├── qcio_ai_contacts/ # 100 AI contacts JSON
@@ -91,6 +109,8 @@ db-init/              # Database initialization data
 | `qcio` | All QCIO social features (visit, wallet, tasks, guestbook) |
 | `user` | User login, 5-digit QCIO account (10000-99999), random friend assignment, dual currency system, easter eggs |
 | `mood_logic` | Mood farm game logic |
+| `init-db` | Initialize all 25 database collections with AI data |
+| `clear-db` | Clear all data for testing (requires confirm=true) |
 
 ### Dual Currency System
 
@@ -348,11 +368,67 @@ const OPENID = wxContext.OPENID;
 | `miniprogram/utils/network.js` | Network connection state management |
 | `miniprogram/utils/egg-system.js` | Easter egg system with cloud storage |
 | `miniprogram/components/my-documents/` | My documents component with help window |
+| `miniprogram/components/my-computer/` | My computer component with help dialog and Konami code egg |
+| `miniprogram/components/egg-discovery-dialog/` | Win98 style reusable discovery modal |
 | `cloudfunctions/chat/index.js` | AI chat core with 36 modes |
 | `cloudfunctions/qcio/index.js` | QCIO social features router |
 | `cloudfunctions/user/index.js` | User login, dual currency, easter eggs |
+| `cloudfunctions/init-db/index.js` | Database initialization (25 collections) |
+| `cloudfunctions/clear-db/index.js` | Database clearing for testing |
 
 ## Documentation
 
 - `README.md` - Project overview, features, changelog
 - `CLAUDE.md` - This file, guidance for Claude Code
+
+## Development Conventions
+
+### Dialog/Modal Style Convention
+
+**All new dialogs and modals MUST use Win98 style to maintain visual consistency.**
+
+The app uses Windows 98 styled dialogs throughout. When adding new dialogs:
+
+1. Use the existing Win98 dialog pattern from components like `egg-discovery-dialog`, `my-computer`, `my-documents`
+2. Include characteristic Win98 elements:
+   - Gray background (#c0c0c0)
+   - 3D beveled borders (white top/left, dark bottom/right)
+   - Blue gradient title bar
+   - SimSun/Courier New font family
+   - Standard Win98 button styling
+
+3. Reference existing implementations:
+   - `miniprogram/components/egg-discovery-dialog/` - Win98 style discovery modal
+   - `miniprogram/components/my-computer/index.wxml` - Help dialog example
+   - `miniprogram/components/my-documents/` - Help window example
+
+### Database Table Management
+
+**When adding new database tables, you MUST update both init-db and clear-db cloud functions.**
+
+All database tables must be registered in:
+1. `cloudfunctions/init-db/index.js` - Add to `COLLECTIONS` array with description and indexes
+2. `cloudfunctions/clear-db/index.js` - Add to `COLLECTIONS` array
+
+Current table count: **25 collections**
+
+Steps to add a new table:
+1. Add collection name and description to `COLLECTIONS` array in `init-db/index.js`
+2. Add index configuration (if needed) to `createIndexes()` function in `init-db/index.js`
+3. Add collection name to `COLLECTIONS` array in `clear-db/index.js`
+4. Test with `wx.cloud.callFunction({ name: 'clear-db', data: { action: 'check' } })` to verify
+
+**Example**:
+```javascript
+// init-db/index.js
+{ name: 'new_table', description: '新功能数据表' }
+
+// createIndexes function
+new_table: ['_openid', 'createdAt'],
+
+// clear-db/index.js
+const COLLECTIONS = [
+  // ... existing tables
+  'new_table',
+];
+```

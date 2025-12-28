@@ -30,7 +30,7 @@
   background: #e6f0ff;
 }
 
-/* 群头像区域 - QQ 风格多头像拼接 */
+/* 群头像区域 - QCIO 风格多头像拼接 */
 .group-avatar-box {
   position: relative;
   width: 45px;

@@ -1,6 +1,6 @@
 /**
  * QCIO 群聊列表组件
- * 显示 QQ 风格的群聊会话列表
+ * 显示 QCIO 风格的群聊会话列表
  */
 Component({
   properties: {

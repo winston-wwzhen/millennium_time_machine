@@ -128,10 +128,10 @@
 
 /* C盘 - 独占第一行 */
 .drive-item.drive-c {
-  width: 100%;
+  width: 90%;
   flex-direction: row;
   justify-content: flex-start;
-  padding: 16px;
+  padding: 16px 16px 8px 48px;
   cursor: pointer;
 }
 
@@ -339,4 +339,66 @@
   border-left: 1px solid #808080;
   border-right: 1px solid #ffffff;
   border-bottom: 1px solid #ffffff;
+}
+
+/* 帮助弹窗样式 */
+.help-dialog {
+  width: 380px;
+  max-width: 90%;
+  max-height: 70vh;
+}
+
+.help-dialog .win98-window-body {
+  padding: 0;
+  flex: unset;
+}
+
+.help-content {
+  max-height: 400px;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.help-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #000080;
+  margin-bottom: 8px;
+  font-family: 'SimSun', serif;
+}
+
+.help-text {
+  font-size: 12px;
+  color: #333;
+  margin-bottom: 16px;
+  line-height: 1.6;
+  font-family: 'SimSun', serif;
+}
+
+.help-section {
+  margin-bottom: 16px;
+}
+
+.help-section-title {
+  font-size: 12px;
+  font-weight: bold;
+  color: #000080;
+  margin-bottom: 8px;
+  display: block;
+  font-family: 'SimSun', serif;
+}
+
+.help-features {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-left: 8px;
+}
+
+.help-feature {
+  font-size: 11px;
+  color: #333;
+  line-height: 1.5;
+  font-family: 'SimSun', serif;
 }

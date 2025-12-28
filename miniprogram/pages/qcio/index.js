@@ -371,8 +371,8 @@ Page({
   },
 
   /**
-   * 计算QQ风格成长值图标
-   * 经典QQ等级: 4星星=1月亮, 4月亮=1太阳
+   * 计算QCIO风格成长值图标
+   * 经典QCIO等级: 4星星=1月亮, 4月亮=1太阳
    */
   calculateGrowthIcons: function(level) {
     if (!level || level < 1) level = 1;

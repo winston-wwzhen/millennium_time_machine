@@ -8,13 +8,13 @@
       </view>
     </view>
 
-    <!-- 菜单栏 (暂未实现功能，先隐藏) -->
-    <!-- <view class="menu-bar">
+    <!-- 菜单栏 -->
+    <view class="menu-bar">
       <text class="menu-item">文件(F)</text>
       <text class="menu-item">编辑(E)</text>
       <text class="menu-item">查看(V)</text>
-      <text class="menu-item">帮助(H)</text>
-    </view> -->
+      <text class="menu-item" bindtap="onShowHelp">帮助(H)</text>
+    </view>
 
     <view class="win98-window-body">
       <!-- 驱动器列表 -->
@@ -94,6 +94,53 @@
         </view>
         <view class="dialog-actions">
           <button class="win98-btn-std" bindtap="closeDriveDialog">确定</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 帮助弹窗 -->
+  <view class="win98-dialog-overlay" wx:if="{{showHelpDialog}}" catchtap="onCloseHelpDialog">
+    <view class="win98-window help-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">💡 我的电脑 - 帮助</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="onCloseHelpDialog">×</button>
+        </view>
+      </view>
+      <view class="win98-window-body">
+        <scroll-view class="help-content" scroll-y>
+          <text class="help-title">我的电脑</text>
+          <text class="help-text">浏览虚拟驱动器和系统信息。</text>
+
+          <view class="help-section">
+            <text class="help-section-title">💾 驱动器说明</text>
+            <view class="help-features">
+              <text class="help-feature">• (C:) 本地磁盘 - 主硬盘，存储系统文件</text>
+              <text class="help-feature">• (D:) 光盘驱动器 - 用于播放CD/DVD</text>
+              <text class="help-feature">• 可移动磁盘 - USB闪存设备</text>
+            </view>
+          </view>
+
+          <view class="help-section">
+            <text class="help-section-title">⚙️ 系统信息</text>
+            <view class="help-features">
+              <text class="help-feature">• 查看当前操作系统版本</text>
+              <text class="help-feature">• 查看处理器和内存配置</text>
+              <text class="help-feature">• 查看屏幕分辨率设置</text>
+            </view>
+          </view>
+
+          <view class="help-section">
+            <text class="help-section-title">🎮 彩蛋提示</text>
+            <view class="help-features">
+              <text class="help-feature">• 连续点击驱动器可能发现隐藏彩蛋</text>
+              <text class="help-feature">• 尝试不同的操作顺序...</text>
+            </view>
+          </view>
+        </scroll-view>
+        <view class="dialog-actions">
+          <button class="win98-btn-std" bindtap="onCloseHelpDialog">确定</button>
         </view>
       </view>
     </view>
