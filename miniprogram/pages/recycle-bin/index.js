@@ -38,7 +38,7 @@ const TRASH_FILES_POOL = {
 
 // 随机日期生成器
 function generateRandomDate() {
-  const year = 2005;
+  const year = 2006;
   const month = Math.floor(Math.random() * 12) + 1;
   const day = Math.floor(Math.random() * 28) + 1;
   return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;

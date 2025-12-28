@@ -1,17 +1,17 @@
-// 历史事件数据 - 2005-2025
+// 历史事件数据 - 2006-2026
 // 去除政治相关事件,专注于娱乐、文化、科技、体育、生活等方面
 // 包含历史大事件 + 日常事件,共200+事件
 
 const eventsData = [
-  // ==================== 2005年 ====================
+  // ==================== 2006年 ====================
   {
-    id: 'event_2005_qq_show',
-    year: 2005,
+    id: 'event_2006_qq_show',
+    year: 2006,
     category: 'entertainment',
     trigger: { ageRange: [10, 25], gender: null },
     title: '虚拟形象风靡',
     description: '虚拟形象成为了年轻人展示自我的重要方式。你的同学们都在讨论最新的虚拟形象装扮。',
-    context: '2005年,即时通讯软件推出虚拟形象系统,用户可以购买虚拟服装和道具装扮自己。这个功能迅速成为年轻人社交的必备元素。',
+    context: '2006年,即时通讯软件推出虚拟形象系统,用户可以购买虚拟服装和道具装扮自己。这个功能迅速成为年轻人社交的必备元素。',
     choices: [
       {
         text: '花零花钱买一套炫酷虚拟装扮',
@@ -37,13 +37,13 @@ const eventsData = [
   },
 
   {
-    id: 'event_2005_super_girl',
-    year: 2005,
+    id: 'event_2006_super_girl',
+    year: 2006,
     category: 'entertainment',
     trigger: { ageRange: [12, 22], gender: null },
     title: '超级女声热潮',
     description: '超级女声比赛火热进行中,李宇春、周笔畅、张靓颖成为全民偶像。',
-    context: '2005年,湖南卫视举办的超级女声创造了选秀奇迹,总决赛收视率超过央视春晚,开启了中国选秀时代。',
+    context: '2006年,湖南卫视举办的超级女声创造了选秀奇迹,总决赛收视率超过央视春晚,开启了中国选秀时代。',
     choices: [
       {
         text: '疯狂投票支持喜欢的选手',
@@ -69,13 +69,13 @@ const eventsData = [
   },
 
   {
-    id: 'event_2005_warcraft',
-    year: 2005,
+    id: 'event_2006_warcraft',
+    year: 2006,
     category: 'game',
     trigger: { ageRange: [14, 28], gender: null },
     title: '魔兽世界国服公测',
     description: '《魔兽世界》在中国开启公测,无数玩家涌入艾泽拉斯大陆。',
-    context: '2005年,暴雪的《魔兽世界》国服公测,这款MMORPG彻底改变了中国网游市场,成为一代人的青春记忆。',
+    context: '2006年,暴雪的《魔兽世界》国服公测,这款MMORPG彻底改变了中国网游市场,成为一代人的青春记忆。',
     choices: [
       {
         text: '沉迷游戏,经常通宵',
@@ -101,13 +101,13 @@ const eventsData = [
   },
 
   {
-    id: 'event_2005_chen_yifa',
-    year: 2005,
+    id: 'event_2006_chen_yifa',
+    year: 2006,
     category: 'entertainment',
     trigger: { ageRange: [12, 25], gender: 'male' },
     title: '陈亦菲出道',
     description: '陈亦菲主演《神雕侠侣》播出,清纯小龙女形象深入人心。',
-    context: '2005年,陈亦菲版《神雕侠侣》播出,她饰演的小龙女被称为"最美小龙女",成为无数男性的梦中情人。',
+    context: '2006年,陈亦菲版《神雕侠侣》播出,她饰演的小龙女被称为"最美小龙女",成为无数男性的梦中情人。',
     choices: [
       {
         text: '成为粉丝,追她的所有作品',
@@ -1625,15 +1625,15 @@ const eventsData = [
     ]
   },
 
-  // ==================== 2025年 ====================
+  // ==================== 2026年 ====================
   {
-    id: 'event_2025_reflection',
-    year: 2025,
+    id: 'event_2026_reflection',
+    year: 2026,
     category: 'milestone',
     trigger: { ageRange: [10, 50], gender: null },
     title: '回顾这20年',
-    description: '2005-2025,你经历了人生最重要的20年。是时候回顾和总结了。',
-    context: '2025年,你站在人生的十字路口。20年前,你还是懵懂少年;20年后,你已经历了太多变迁。',
+    description: '2006-2026,你经历了人生最重要的20年。是时候回顾和总结了。',
+    context: '2026年,你站在人生的十字路口。20年前,你还是懵懂少年;20年后,你已经历了太多变迁。',
     choices: [
       {
         text: '这20年我很满意',
@@ -2779,15 +2779,15 @@ const eventsData = [
 
   // ==================== 更多历史大事件 ====================
 
-  // 2005-2010年补充
+  // 2006-2011年补充
   {
-    id: 'event_2005_mp3_player',
-    year: 2005,
+    id: 'event_2006_mp3_player',
+    year: 2006,
     category: 'tech',
     trigger: { ageRange: [12, 25], gender: null },
     title: 'MP3播放器流行',
     description: 'MP3播放器成为学生必备,可以随时随地听音乐。',
-    context: '2005年前后,MP3播放器在学生中普及,iPod shuffle等成为热门产品。',
+    context: '2006年前后,MP3播放器在学生中普及,iPod shuffle等成为热门产品。',
     choices: [
       {
         text: '攒钱买一个',

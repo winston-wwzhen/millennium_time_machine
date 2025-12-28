@@ -11,7 +11,7 @@ Page({
 
     // 可选的出生年份范围
     minYear: 1940,
-    maxYear: 2005,
+    maxYear: 2006,
 
     // 年份滑块配置
     yearStep: 1,
@@ -104,12 +104,12 @@ Page({
   startGame: function() {
     if (this.data.isLoading) return;
 
-    const ageIn2005 = 2005 - this.data.birthYear;
+    const ageIn2006 = 2006 - this.data.birthYear;
 
     // 验证年龄
-    if (ageIn2005 < 0) {
+    if (ageIn2006 < 0) {
       wx.showToast({
-        title: '出生年份不能晚于2005年',
+        title: '出生年份不能晚于2006年',
         icon: 'none'
       });
       return;
@@ -121,7 +121,7 @@ Page({
     this.saveUserPreferences();
 
     // 记录开始游戏日志
-    addLog('game', '如果当时', `回到 ${this.data.birthYear} 年，那年我 ${ageIn2005} 岁`);
+    addLog('game', '如果当时', `回到 ${this.data.birthYear} 年，那年我 ${ageIn2006} 岁`);
 
     // 跳转到时间线页面，传递参数
     wx.navigateTo({

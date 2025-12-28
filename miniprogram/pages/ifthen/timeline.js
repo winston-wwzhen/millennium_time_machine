@@ -10,7 +10,7 @@ const gameEngine = {
   userState: {
     birthYear: 1990,
     gender: 'male',
-    currentYear: 2005,
+    currentYear: 2006,
     age: 15,
     attributes: {
       tech_skill: 50,
@@ -33,8 +33,8 @@ const gameEngine = {
   initGame: function(birthYear, gender) {
     this.userState.birthYear = birthYear;
     this.userState.gender = gender;
-    this.userState.currentYear = 2005;
-    this.userState.age = 2005 - birthYear;
+    this.userState.currentYear = 2006;
+    this.userState.age = 2006 - birthYear;
     this.userState.flags = {};
     this.userState.history = { choices: [], events: [] };
 
@@ -330,7 +330,7 @@ Page({
     birthYear: 1990,
     gender: 'male',
     age: 15,
-    currentYear: 2005,
+    currentYear: 2006,
 
     // 人物属性
     attributes: {
@@ -373,7 +373,7 @@ Page({
 
     const birthYear = parseInt(options.birthYear) || 1990;
     const gender = options.gender || 'male';
-    const age = 2005 - birthYear;
+    const age = 2006 - birthYear;
     const genderText = gender === 'male' ? '男孩' : '女孩';
 
     // 等待获取用户信息完成后再开始游戏
@@ -400,13 +400,13 @@ Page({
         ? `一声啼哭划破了${birthYear}年的宁静，你作为男孩降生到这个世界。从此，一段独一无二的人生旅程开始了，无数个第一次、无数个抉择、无数个可能都在等待着你去书写...`
         : `一声啼哭划破了${birthYear}年的宁静，你作为女孩降生到这个世界。从此，一段独一无二的人生旅程开始了，无数个第一次、无数个抉择、无数个可能都在等待着你去书写...`;
 
-      // 添加2005年事件（先添加这个，因为它是最新的）
-      const startNarrative = `时光荏苒，岁月如梭。转眼间已经是2005年了，${age}岁的你站在人生的十字路口。这个时代充满了机遇与挑战，互联网浪潮席卷而来，世界正在发生翻天覆地的变化。你的人生，将由你来主宰...`;
+      // 添加2006年事件（先添加这个，因为它是最新的）
+      const startNarrative = `时光荏苒，岁月如梭。转眼间已经是2006年了，${age}岁的你站在人生的十字路口。这个时代充满了机遇与挑战，互联网浪潮席卷而来，世界正在发生翻天覆地的变化。你的人生，将由你来主宰...`;
 
       const currentStatusItem = {
-        year: 2005,
+        year: 2006,
         age: age,
-        eventTitle: `2005年，你${age}岁了`,
+        eventTitle: `2006年，你${age}岁了`,
         choice: startNarrative,
         displayTitle: '',
         displayChoice: '',
@@ -419,9 +419,9 @@ Page({
         currentTimelineIndex: 0
       });
 
-      // 开始打字2005年事件
-      this.startNarrativeTypewriter(0, `2005年，你${age}岁了`, startNarrative, false, () => {
-        // 2005年事件完成后，添加并开始出生事件
+      // 开始打字2006年事件
+      this.startNarrativeTypewriter(0, `2006年，你${age}岁了`, startNarrative, false, () => {
+        // 2006年事件完成后，添加并开始出生事件
         const initialTimelineItem = {
           year: birthYear,
           age: 0,
@@ -433,7 +433,7 @@ Page({
           advanceYear: false
         };
 
-        // 倒序添加，所以出生事件在2005年之后（实际显示在下方）
+        // 倒序添加，所以出生事件在2006年之后（实际显示在下方）
         const newTimelineData = [initialTimelineItem, ...this.data.timelineData];
         this.setData({
           timelineData: newTimelineData,
@@ -472,7 +472,7 @@ Page({
   // 游戏主循环
   gameLoop: function() {
     // 使用游戏引擎的当前年份判断游戏是否结束
-    if (gameEngine.userState.currentYear > 2025) {
+    if (gameEngine.userState.currentYear > 2026) {
       this.endGame();
       return;
     }

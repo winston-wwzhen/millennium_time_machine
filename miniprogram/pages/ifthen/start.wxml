@@ -15,7 +15,7 @@
         <view class="game-title">
           <text class="title-main">千禧时光机</text>
           <text class="title-sub">Millennium Time Machine</text>
-          <text class="title-intro">穿越回2005年，体验那个年代的互联网记忆</text>
+          <text class="title-intro">穿越回2006年，体验那个年代的互联网记忆</text>
           <text class="title-intro-sub">AI驱动的怀旧时光机，重温千禧时代的点点滴滴</text>
           <text class="title-user">欢迎，{{avatarName}}</text>
         </view>
@@ -51,7 +51,7 @@
           </view>
         </view>
         <view class="age-preview">
-          <text>2005年时你的年龄：{{2005 - birthYear}}岁</text>
+          <text>2006年时你的年龄：{{2006 - birthYear}}岁</text>
         </view>
       </view>
 
@@ -81,7 +81,7 @@
       <!-- 工具说明 -->
       <view class="info-section">
         <text class="info-title">✨ 功能特色</text>
-        <text class="info-desc">• AI模拟2005-2025年历史事件</text>
+        <text class="info-desc">• AI模拟2006-2026年历史事件</text>
         <text class="info-desc">• 重温千禧时代的互联网记忆</text>
         <text class="info-desc">• 探索不同选择下的人生轨迹</text>
         <text class="info-note">✨ 怀旧工具 • AI驱动 • 免费体验</text>
@@ -121,14 +121,14 @@
     <view class="instructions-body">
       <view class="instructions-section">
         <text class="instructions-heading">⏰ 千禧时光机</text>
-        <text class="instructions-text">这是一个AI驱动的怀旧工具，带你重温2005-2025年的互联网记忆和时代变迁。</text>
+        <text class="instructions-text">这是一个AI驱动的怀旧工具，带你重温2006-2026年的互联网记忆和时代变迁。</text>
         <text class="instructions-text">通过AI模拟历史事件，探索不同选择下的人生轨迹。</text>
       </view>
 
       <view class="instructions-section">
         <text class="instructions-heading">📖 如何使用</text>
         <text class="instructions-text">1. 选择你的出生年份和性别</text>
-        <text class="instructions-text">2. 从2005年开始，体验20年时代变迁</text>
+        <text class="instructions-text">2. 从2006年开始，体验20年时代变迁</text>
         <text class="instructions-text">3. 遇到历史事件时，做出你的选择</text>
         <text class="instructions-text">4. 查看不同选择带来的人生轨迹</text>
         <text class="instructions-text">5. 收集记录，分享你的怀旧体验</text>
@@ -136,7 +136,7 @@
 
       <view class="instructions-section">
         <text class="instructions-heading">🎯 功能特点</text>
-        <text class="instructions-text">• AI模拟2005-2025年真实历史事件</text>
+        <text class="instructions-text">• AI模拟2006-2026年真实历史事件</text>
         <text class="instructions-text">• 探索多种不同的人生轨迹</text>
         <text class="instructions-text">• 免费体验，无需付费</text>
         <text class="instructions-text">• 纯净怀旧，无广告干扰</text>

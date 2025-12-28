@@ -66,7 +66,7 @@ async function saveEnding(openid, data) {
         finalAttributes,
         playTime,
         playDuration: playDuration || 0,
-        currentYear: currentYear || 2005,
+        currentYear: currentYear || 2006,
         finalAge: finalAge || 15,
         createTime: db.serverDate()
       }
@@ -83,7 +83,7 @@ async function saveEnding(openid, data) {
           finalAttributes,
           firstGetTime: db.serverDate(),
           playDuration: playDuration || 0,
-          currentYear: currentYear || 2005,
+          currentYear: currentYear || 2006,
           finalAge: finalAge || 15
         }
       });

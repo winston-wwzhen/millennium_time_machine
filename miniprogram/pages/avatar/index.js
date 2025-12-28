@@ -84,7 +84,7 @@ Page({
 
     // 日期水印数据
     showDateStamp: false,
-    dateStampText: '2005/12/25',
+    dateStampText: '2006/12/25',
     dateFormat: 'YYYY/MM/DD',
     dateStampColor: '#ff0000',
     dateStampPosition: 'top-right'
@@ -572,8 +572,8 @@ Page({
     const now = new Date();
     let format = this.data.dateFormat;
 
-    // 固定为2005年，符合千禧时光机主题
-    let year = 2005;
+    // 固定为2006年，符合千禧时光机主题
+    let year = 2006;
     let month = String(now.getMonth() + 1).padStart(2, '0');
     let day = String(now.getDate()).padStart(2, '0');
 

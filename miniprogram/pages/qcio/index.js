@@ -1,5 +1,5 @@
 /**
- * QCIO 2005 完整业务逻辑
+ * QCIO 2006 完整业务逻辑
  * 状态持久化：通过云端数据库 isOnline 字段驱动登录态，实现多端同步
  */
 const { preventDuplicateBehavior } = require('../../utils/prevent-duplicate');
@@ -298,7 +298,7 @@ Page({
 
   /**
    * 获取随机昵称
-   * 2005年左右流行的网名风格
+   * 2006年左右流行的网名风格
    */
   getRandomNickname: function() {
     const nicknames = [

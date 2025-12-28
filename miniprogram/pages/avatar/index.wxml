@@ -165,7 +165,7 @@
       <text>|</text>
       <text>分辨率: 640×480</text>
       <text>|</text>
-      <text>© 2005</text>
+      <text>© 2006</text>
     </view>
   </view>
 
@@ -399,10 +399,10 @@
             <text class="dialog-option-label">格式:</text>
             <view class="format-picker">
               <view class="format-option {{dateFormat === 'YYYY/MM/DD' ? 'active' : ''}}" bindtap="setDateFormat" data-format="YYYY/MM/DD">
-                <text>2005/12/25</text>
+                <text>2006/12/25</text>
               </view>
               <view class="format-option {{dateFormat === 'DD-MM-YYYY' ? 'active' : ''}}" bindtap="setDateFormat" data-format="DD-MM-YYYY">
-                <text>25-12-2005</text>
+                <text>25-12-2006</text>
               </view>
             </view>
           </view>
@@ -478,7 +478,7 @@
             <text style="display: block; margin-bottom: 10px;">• 点击"清除效果"重置所有</text>
 
             <view style="margin-bottom: 6px; padding-top: 8px; border-top: 1px dashed #808080;">
-              <text style="color: #666; font-style: italic;">© 2005 非主流时代 · 怀旧珍藏</text>
+              <text style="color: #666; font-style: italic;">© 2006 非主流时代 · 怀旧珍藏</text>
             </view>
           </view>
         </scroll-view>

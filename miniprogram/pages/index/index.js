@@ -1432,7 +1432,7 @@ Page({
   // 点击系统时间显示日期详情
   onTimeTap: function () {
     const now = new Date();
-    const year = 2005; // 固定为2005年，符合千禧时光机主题
+    const year = 2006; // 固定为2006年，符合千禧时光机主题
     const month = now.getMonth() + 1;
     const day = now.getDate();
     const hours = now.getHours().toString().padStart(2, "0");

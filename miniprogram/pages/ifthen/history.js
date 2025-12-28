@@ -354,12 +354,12 @@ Page({
     ctx.font = '11px SimSun, sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText('长按保存图片，分享你的故事', width / 2, 510);
-    ctx.fillText('千禧时光机 - 重温2005年的青葱岁月', width / 2, 530);
+    ctx.fillText('千禧时光机 - 重温2006年的青葱岁月', width / 2, 530);
 
     // 水印
     ctx.fillStyle = '#999999';
     ctx.font = '10px SimSun, sans-serif';
-    ctx.fillText('© 2025 千禧时光机', width / 2, 555);
+    ctx.fillText('© 2026 千禧时光机', width / 2, 555);
 
     // 导出为图片
     wx.canvasToTempFilePath({

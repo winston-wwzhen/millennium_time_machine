@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-千禧时光机 (Millennium Time Machine) - A nostalgic WeChat Mini Program that recreates the 2005 QQ/QQ Space experience with a Windows 98 desktop interface and AI-powered social interactions.
+千禧时光机 (Millennium Time Machine) - A nostalgic WeChat Mini Program that recreates the 2006 QQ/QQ Space experience with a Windows 98 desktop interface and AI-powered social interactions.
 
 **Platform**: WeChat Mini Program (微信小程序) - Native Framework
 **Language**: JavaScript (WXML + WXSS + JavaScript)
@@ -74,7 +74,6 @@ miniprogram/          # Frontend (import this in WeChat Developer Tools)
 │   ├── qcio-chat/    # QCIO chat interface
 │   ├── farm/         # Mood farm game
 │   ├── network-neighborhood/  # Network Management System (dual currency, exchange)
-│   ├── tetris/       # Tetris game
 │   ├── star-explorer/  # Star explorer game
 │   ├── mars/         # Mars translator
 │   └── avatar/       # Non-mainstream avatar generator
@@ -349,7 +348,6 @@ Uses WeChat `msgSecCheck` API for content moderation:
 - 非主流相机 📸
 
 **Start Menu Programs**:
-- 俄罗斯方块 🎮
 - 星际探索 🌌
 - 火星翻译 🪐
 
