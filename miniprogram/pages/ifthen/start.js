@@ -17,13 +17,11 @@ Page({
   },
 
   onLoad: function(options) {
-    // 设置默认年份为1990年（千禧一代的代表）
-    this.setData({
-      birthYear: 1990
-    });
-
     // 加载用户昵称
     this.loadUserName();
+
+    // 加载用户上次选择的参数
+    this.loadUserPreferences();
 
     // 记录打开游戏日志
     addLog('open', '如果当时');
@@ -43,6 +41,47 @@ Page({
         console.error('记录分享访问失败:', err);
       });
     }
+  },
+
+  // 加载用户上次选择的参数
+  loadUserPreferences: function() {
+    wx.cloud.callFunction({
+      name: 'user',
+      data: {
+        type: 'getIfthenPreferences'
+      }
+    }).then(res => {
+      if (res.result && res.result.success && res.result.preferences) {
+        const { birthYear, gender } = res.result.preferences;
+        this.setData({
+          birthYear: birthYear || 1990,
+          gender: gender || 'male'
+        });
+      }
+    }).catch(err => {
+      console.error('加载用户偏好失败:', err);
+      // 保持默认值
+      this.setData({
+        birthYear: 1990,
+        gender: 'male'
+      });
+    });
+  },
+
+  // 保存用户选择的参数
+  saveUserPreferences: function() {
+    wx.cloud.callFunction({
+      name: 'user',
+      data: {
+        type: 'setIfthenPreferences',
+        birthYear: this.data.birthYear,
+        gender: this.data.gender
+      }
+    }).then(res => {
+      console.log('用户偏好保存成功');
+    }).catch(err => {
+      console.error('保存用户偏好失败:', err);
+    });
   },
 
   // 年份滑块变化
@@ -92,6 +131,9 @@ Page({
     }
 
     this.setData({ isLoading: true });
+
+    // 保存用户选择
+    this.saveUserPreferences();
 
     // 记录开始游戏日志
     addLog('game', '如果当时', `回到 ${this.data.birthYear} 年，那年我 ${ageIn2005} 岁`);

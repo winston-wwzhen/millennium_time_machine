@@ -1015,5 +1015,50 @@ exports.main = async (event, context) => {
     }
   }
 
+  // 📖 获取如果当时偏好设置
+  if (type === 'getIfthenPreferences') {
+    try {
+      const res = await db.collection('users').where({
+        _openid: openid
+      }).field({
+        ifthenPreferences: true
+      }).get();
+
+      if (res.data.length === 0) {
+        return { success: true, preferences: null };
+      }
+
+      return {
+        success: true,
+        preferences: res.data[0].ifthenPreferences || null
+      };
+    } catch (e) {
+      console.error(e);
+      return { success: false, errMsg: e.message };
+    }
+  }
+
+  // 💾 保存如果当时偏好设置
+  if (type === 'setIfthenPreferences') {
+    try {
+      const { birthYear, gender } = event;
+
+      await db.collection('users').where({
+        _openid: openid
+      }).update({
+        data: {
+          'ifthenPreferences.birthYear': birthYear,
+          'ifthenPreferences.gender': gender,
+          lastUpdateTime: db.serverDate()
+        }
+      });
+
+      return { success: true };
+    } catch (e) {
+      console.error(e);
+      return { success: false, errMsg: e.message };
+    }
+  }
+
   return { success: false, errMsg: 'Unknown type' };
 };
