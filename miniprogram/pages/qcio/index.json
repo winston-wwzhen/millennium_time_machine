@@ -7,7 +7,6 @@
     "step-counter": "./components/step-counter",
     "guestbook": "./components/guestbook",
     "message-list": "./components/message-list",
-    "farm-badge": "./components/farm-badge",
     "daily-checkin": "./components/daily-checkin",
     "level-badge": "/components/level-badge/index",
     "exp-progress": "/components/exp-progress/index",
