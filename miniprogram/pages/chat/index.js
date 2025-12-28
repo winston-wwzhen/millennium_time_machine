@@ -1,6 +1,7 @@
 const { preventDuplicateBehavior } = require('../../utils/prevent-duplicate');
 const { isNetworkError, setNetworkDisconnected, showDisconnectDialog } = require('../../utils/network');
 const { eggSystem, EGG_IDS } = require('../../utils/egg-system');
+const { userApi, qcioApi, chatApi } = require('../../utils/api-client');
 
 Page({
   behaviors: [preventDuplicateBehavior],
@@ -98,21 +99,15 @@ Page({
     this.playSound('login');
   },
 
-  // 加载聊天历史
+  // 加载聊天历史（使用 API 客户端）
   async loadChatHistory() {
     try {
-      const res = await wx.cloud.callFunction({
-        name: 'qcio',
-        data: {
-          action: 'getChatHistory',
-          contactName: this.data.contactName
-        }
-      });
+      const result = await qcioApi.getChatHistory(this.data.contactName);
 
-      if (res.result && res.result.success && res.result.data.length > 0) {
+      if (result && result.success && result.data.length > 0) {
         // 有历史记录，直接使用
         this.setData({
-          chatList: res.result.data,
+          chatList: result.data,
           scrollToView: 'msg-bottom'  // 滚动到最后一条消息
         });
       } else {
@@ -270,27 +265,19 @@ Page({
         wx.showNavigationBarLoading();
 
         // 4. 调用 chat 云函数，使用不同的 mode（人设）
-        const res = await wx.cloud.callFunction({
-          name: 'chat',
-          data: {
-            userMessage: text,
-            history: history,
-            mode: this.data.chatMode,  // 使用当前联系人的聊天模式
-            contactName: this.data.contactName  // 传递联系人名称以获取自定义 prompt
-          }
-        });
+        const result = await chatApi.sendMessage(text, history, this.data.chatMode, this.data.contactName);
 
         // 5. 处理结果
         wx.hideNavigationBarLoading();
         wx.setNavigationBarTitle({ title: `${this.data.contactName} (在线)` });
 
-        if (res.result && res.result.success) {
-          this.replyFromAI(res.result.reply);
+        if (result && result.success) {
+          this.replyFromAI(result.reply);
           // 彩蛋：聊天狂魔
           this.checkChatEgg();
         } else {
           // 错误处理
-          console.warn('AI Error:', res.result.errMsg);
+          console.warn('AI Error:', result.errMsg);
           this.replyFromAI("系统繁忙，请稍后再试 o(╥﹏╥)o");
         }
 
@@ -331,20 +318,11 @@ Page({
     this.saveChatHistory(newChatList);
   },
 
-  // 保存聊天历史到数据库
+  // 保存聊天历史到数据库（使用 API 客户端）
   async saveChatHistory(chatList) {
     try {
-      const res = await wx.cloud.callFunction({
-        name: 'qcio',
-        data: {
-          action: 'saveChatHistory',
-          data: {
-            contactName: this.data.contactName,
-            messages: chatList
-          }
-        }
-      });
-      console.log('Save chat history result:', res.result);
+      const result = await qcioApi.saveChatHistory(this.data.contactName, chatList);
+      console.log('Save chat history result:', result);
     } catch (err) {
       console.error('Save chat history error:', err);
       // 静默失败，不影响用户体验
@@ -352,19 +330,16 @@ Page({
   },
 
   // ==================== 彩蛋检查 ====================
-  // 检查聊天狂魔彩蛋（累计发送100条消息）
+  // 检查聊天狂魔彩蛋（累计发送100条消息）- 使用 API 客户端
   async checkChatEgg() {
     if (this.data.chatLoverAchieved) return;
 
     try {
-      const res = await wx.cloud.callFunction({
-        name: 'user',
-        data: { type: 'checkChatEgg' }
-      });
+      const result = await userApi.checkChatEgg();
 
-      if (res.result.success) {
+      if (result && result.success) {
         // 如果云函数返回shouldTrigger为true，说明达到了100条消息
-        if (res.result.shouldTrigger) {
+        if (result.shouldTrigger) {
           this.setData({ chatLoverAchieved: true });
           eggSystem.discover(EGG_IDS.CHAT_LOVER);
         }

@@ -154,6 +154,13 @@ const userApi = {
       type: 'getTransactionHistory',
       limit
     });
+  },
+
+  /**
+   * 检查聊天彩蛋（聊天狂魔）
+   */
+  checkChatEgg() {
+    return callCloudFunction('user', { type: 'checkChatEgg' });
   }
 };
 
@@ -324,13 +331,18 @@ const chatApi = {
    * @param {string} userMessage - 用户消息
    * @param {Array} history - 聊天历史
    * @param {string} mode - 聊天模式
+   * @param {string} contactName - 联系人名称（可选）
    */
-  sendMessage(userMessage, history = [], mode = 'chat') {
-    return callCloudFunction('chat', {
+  sendMessage(userMessage, history = [], mode = 'chat', contactName) {
+    const data = {
       userMessage,
       history,
       mode
-    });
+    };
+    if (contactName) {
+      data.contactName = contactName;
+    }
+    return callCloudFunction('chat', data);
   },
 
   /**
