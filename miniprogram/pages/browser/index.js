@@ -4,15 +4,15 @@ const app = getApp();
 Page({
   data: {
     // --- 浏览器状态 ---
-    currentUrl: 'http://www.time-machine.com/portal',
+    currentUrl: 'http://www.hao2006.com',
     isLoading: true,
     progress: 0,
     statusText: '正在连接服务器...',
-    historyStack: ['http://www.time-machine.com/portal'],
+    historyStack: ['http://www.hao2006.com'],
     currentIndex: 0,
     canGoBack: false,
     canGoForward: false,
-    
+
     // 每日彩蛋
     dailyQuote: '',
   },
@@ -129,7 +129,7 @@ Page({
   },
 
   goHome: function() {
-    this.navigateInternal('http://www.time-machine.com/portal');
+    this.navigateInternal('http://www.hao2006.com');
   },
   
   onLinkTap: function(e) {
