@@ -14,75 +14,111 @@
     <view class="win98-content">
       <!-- 农场信息栏 -->
       <view class="farm-info-bar">
-        <view class="info-item">
+        <view class="info-item" bindtap="showLevelInfo">
           <text class="info-label">等级:</text>
-          <text class="info-value">Lv.{{farmProfile ? farmProfile.farmLevel : 1}}</text>
+          <text class="info-value clickable">Lv.{{farmProfile ? farmProfile.farmLevel : 1}}</text>
         </view>
-        <view class="info-item">
+        <view class="info-item" bindtap="showExpInfo">
           <text class="info-label">经验:</text>
-          <text class="info-value">{{farmProfile ? farmProfile.farmExp : 0}}</text>
+          <text class="info-value clickable">{{farmProfile ? farmProfile.farmExp : 0}}</text>
         </view>
-        <view class="info-item">
+        <view class="info-item" bindtap="showCoinInfo">
           <text class="info-label">金币:</text>
-          <text class="info-value gold">💰 {{coins}}</text>
+          <text class="info-value gold clickable">💰 {{coins}}</text>
         </view>
       </view>
 
       <!-- 农场土地网格 -->
-      <view class="farm-grid">
-        <block wx:for="{{plots}}" wx:key="index">
-          <view
-            class="farm-plot {{item.status}}"
-            bindtap="onPlotTap"
-            data-index="{{index}}"
-            wx:if="{{index < unlockedPlots}}"
-          >
-            <!-- 空地 -->
-            <view wx:if="{{item.status === 'empty'}}" class="plot-empty">
-              <text class="plot-icon">🟫</text>
-              <text class="plot-hint">点击种植</text>
+      <view class="farm-tips">💡 点击空地选种并种植 • 点击成熟作物收获</view>
+      <scroll-view class="farm-scroll" scroll-y>
+        <view class="farm-grid">
+          <block wx:for="{{plots}}" wx:key="index">
+            <!-- 已解锁土地 -->
+            <view
+              class="farm-plot {{item.status}}"
+              bindtap="onPlotTap"
+              data-index="{{index}}"
+              wx:if="{{index < unlockedPlots}}"
+            >
+              <!-- 空地 -->
+              <block wx:if="{{item.status === 'empty'}}">
+              </block>
+
+              <!-- 生长中 -->
+              <block wx:elif="{{item.status === 'growing'}}">
+                <text class="plot-crop-icon">{{item.cropIcon || '🌱'}}</text>
+                <view class="progress-bar">
+                  <view class="progress-fill" style="width: {{item.progress}}%"></view>
+                </view>
+                <text class="time-left">{{item.progress}}%</text>
+              </block>
+
+              <!-- 已成熟 -->
+              <block wx:elif="{{item.status === 'mature'}}">
+                <text class="plot-crop-icon mature">{{item.cropIcon || '🌾'}}</text>
+              </block>
             </view>
 
-            <!-- 生长中 -->
-            <view wx:if="{{item.status === 'growing'}}" class="plot-growing">
-              <text class="plot-icon">{{item.cropType === 'mood' ? '💭' : '🌱'}}</text>
-              <view class="progress-bar">
-                <view class="progress-fill" style="width: {{item.progress}}%"></view>
-              </view>
-              <text class="time-left">{{item.progress}}%</text>
+            <!-- 未解锁土地 -->
+            <view wx:elif="{{index < 24}}" class="farm-plot locked">
+              <text class="plot-icon">🔒</text>
             </view>
-
-            <!-- 成熟 -->
-            <view wx:if="{{item.status === 'mature'}}" class="plot-mature">
-              <text class="plot-icon mature-anim">✨</text>
-              <text class="harvest-hint">点击收获</text>
-            </view>
-          </view>
-
-          <!-- 未解锁土地 -->
-          <view wx:elif="{{index < 24}}" class="farm-plot locked">
-            <text class="plot-icon">🔒</text>
-            <text class="lock-hint">未解锁</text>
-          </view>
-        </block>
-      </view>
+          </block>
+        </view>
+      </scroll-view>
 
       <!-- 操作按钮栏 -->
       <view class="action-bar">
         <button class="win98-btn-std" bindtap="openShop">🏪 商店</button>
         <button class="win98-btn-std" bindtap="refreshData">🔄 刷新</button>
-        <button class="win98-btn-std" bindtap="goBack">🔙 返回</button>
+        <button class="win98-btn-std" bindtap="openLogModal">📋 记录</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 农场记录弹窗 -->
+  <view class="modal-overlay" wx:if="{{showLogModal}}">
+    <view class="modal-content" catchtap="">
+      <view class="win98-window log-window">
+        <view class="win98-title-bar">
+          <text class="win98-title-text">📋 农场记录</text>
+          <view class="win98-title-controls">
+            <button class="win98-btn-close" bindtap="closeLogModal">×</button>
+          </view>
+        </view>
+
+        <view class="win98-content log-content">
+          <scroll-view class="log-list" scroll-y wx:if="{{farmLogs.length > 0}}">
+            <view class="log-item" wx:for="{{farmLogs}}" wx:key="index">
+              <text class="log-time">{{item.time}}</text>
+              <text class="log-action {{item.type}}">{{item.icon}} {{item.action}}</text>
+              <text class="log-detail" wx:if="{{item.detail}}">{{item.detail}}</text>
+            </view>
+          </scroll-view>
+
+          <view class="log-empty" wx:else>
+            <text class="empty-icon">📋</text>
+            <text class="empty-text">暂无农场记录</text>
+            <text class="empty-hint">种植作物后将显示相关记录</text>
+          </view>
+        </view>
+
+        <view class="log-footer">
+          <button class="win98-btn-std log-ok-btn" bindtap="closeLogModal">关闭</button>
+        </view>
       </view>
     </view>
   </view>
 
   <!-- 商店弹窗 -->
-  <view class="modal-overlay" wx:if="{{showShopModal}}" bindtap="closeShop">
+  <view class="modal-overlay" wx:if="{{showShopModal}}">
     <view class="modal-content" catchtap="">
       <view class="win98-window shop-window">
         <view class="win98-title-bar">
           <text class="win98-title-text">🏪 农场商店</text>
-          <button class="win98-btn-close" bindtap="closeShop">×</button>
+          <view class="win98-title-controls">
+            <button class="win98-btn-close" bindtap="closeShop">×</button>
+          </view>
         </view>
 
         <view class="win98-content shop-content">
@@ -92,6 +128,7 @@
               class="shop-tab {{shopActiveTab === 'seeds' ? 'active' : ''}}"
               bindtap="switchShopTab"
               data-tab="seeds"
+              wx:if="{{selectedPlotIndex >= 0}}"
             >
               🌱 种子
             </view>
@@ -149,6 +186,152 @@
               </view>
             </view>
           </scroll-view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 收获结果弹窗 - Win98 风格 -->
+  <view class="modal-overlay" wx:if="{{harvestResult.show}}">
+    <view class="modal-content" catchtap="">
+      <view class="win98-window harvest-window">
+        <view class="win98-title-bar">
+          <text class="win98-title-text">🎉 收获成功</text>
+          <view class="win98-title-controls">
+            <button class="win98-btn-close" bindtap="closeHarvestModal">×</button>
+          </view>
+        </view>
+
+        <view class="win98-content harvest-content">
+          <view class="harvest-icon-section">
+            <text class="harvest-crop-icon">{{harvestResult.icon}}</text>
+            <text class="harvest-crop-name">{{harvestResult.cropName}}</text>
+          </view>
+
+          <view class="harvest-quality-section">
+            <text class="quality-label">品质:</text>
+            <block wx:for="{{[1,2,3,4,5]}}" wx:key="index">
+              <text class="quality-star {{item <= harvestResult.quality ? 'active' : ''}}">★</text>
+            </block>
+          </view>
+
+          <view class="harvest-divider"></view>
+
+          <view class="harvest-rewards">
+            <view class="reward-row">
+              <text class="reward-icon">💰</text>
+              <text class="reward-label">获得金币:</text>
+              <text class="reward-value">{{harvestResult.sellPrice}}</text>
+            </view>
+            <view class="reward-row">
+              <text class="reward-icon">⭐</text>
+              <text class="reward-label">获得经验:</text>
+              <text class="reward-value">{{harvestResult.expGain}}</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="harvest-footer">
+          <button class="win98-btn-std harvest-ok-btn" bindtap="closeHarvestModal">确定</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 农场信息弹窗 -->
+  <view class="modal-overlay" wx:if="{{showInfoModal}}">
+    <view class="modal-content" catchtap="">
+      <view class="win98-window info-window">
+        <view class="win98-title-bar">
+          <text class="win98-title-text">{{infoModalTitle}}</text>
+          <view class="win98-title-controls">
+            <button class="win98-btn-close" bindtap="closeInfoModal">×</button>
+          </view>
+        </view>
+
+        <view class="win98-content info-content">
+          <scroll-view class="info-scroll" scroll-y>
+            <view class="info-sections">
+              <!-- 等级信息 -->
+              <view class="info-section" wx:if="{{infoType === 'level'}}">
+                <view class="info-section-title">🌾 农场等级系统</view>
+                <view class="info-row">
+                  <text class="info-row-label">当前等级:</text>
+                  <text class="info-row-value">Lv.{{farmProfile ? farmProfile.farmLevel : 1}}</text>
+                </view>
+                <view class="info-row">
+                  <text class="info-row-label">解锁土地:</text>
+                  <text class="info-row-value">{{unlockedPlots}} 块</text>
+                </view>
+                <view class="info-divider"></view>
+                <view class="info-section-title">📈 升级表</view>
+                <view class="level-table">
+                  <view class="level-table-row level-table-header">
+                    <text class="col-level">等级</text>
+                    <text class="col-exp">所需经验</text>
+                    <text class="col-plots">土地数量</text>
+                  </view>
+                  <view class="level-table-row" wx:for="{{levelTable}}" wx:key="level">
+                    <text class="col-level">Lv.{{item.level}}</text>
+                    <text class="col-exp">{{item.exp}}</text>
+                    <text class="col-plots">{{item.plots}}块</text>
+                  </view>
+                </view>
+              </view>
+
+              <!-- 经验信息 -->
+              <view class="info-section" wx:if="{{infoType === 'exp'}}">
+                <view class="info-section-title">⭐ 农场经验系统</view>
+                <view class="info-row">
+                  <text class="info-row-label">当前经验:</text>
+                  <text class="info-row-value">{{farmProfile ? farmProfile.farmExp : 0}}</text>
+                </view>
+                <view class="info-row">
+                  <text class="info-row-label">下一级:</text>
+                  <text class="info-row-value">需要 {{nextLevelExp}} 经验</text>
+                </view>
+                <view class="info-row" wx:if="{{isMaxLevel}}">
+                  <text class="info-row-value max-level">🎉 已达到最高等级！</text>
+                </view>
+                <view class="info-divider"></view>
+                <view class="info-section-title">📖 经验获取方式</view>
+                <view class="exp-list">
+                  <view class="exp-item" wx:for="{{expSources}}" wx:key="name">
+                    <text class="exp-name">{{item.name}}</text>
+                    <text class="exp-value">+{{item.exp}} 经验</text>
+                  </view>
+                </view>
+              </view>
+
+              <!-- 金币信息 -->
+              <view class="info-section" wx:if="{{infoType === 'coin'}}">
+                <view class="info-section-title">💰 金币系统</view>
+                <view class="info-row">
+                  <text class="info-row-label">当前金币:</text>
+                  <text class="info-row-value gold">💰 {{coins}}</text>
+                </view>
+                <view class="info-divider"></view>
+                <view class="info-section-title">📖 金币获取方式</view>
+                <view class="coin-list">
+                  <view class="coin-item" wx:for="{{coinSources}}" wx:key="name">
+                    <text class="coin-name">{{item.name}}</text>
+                    <text class="coin-desc">{{item.desc}}</text>
+                  </view>
+                </view>
+                <view class="info-divider"></view>
+                <view class="info-section-title">🛒 金币用途</view>
+                <view class="coin-uses">
+                  <text class="coin-use">• 购买种子</text>
+                  <text class="coin-use">• 购买装饰</text>
+                  <text class="coin-use">• 解锁土地</text>
+                </view>
+              </view>
+            </view>
+          </scroll-view>
+        </view>
+
+        <view class="info-footer">
+          <button class="win98-btn-std info-ok-btn" bindtap="closeInfoModal">关闭</button>
         </view>
       </view>
     </view>

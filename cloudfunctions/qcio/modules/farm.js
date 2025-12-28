@@ -14,7 +14,12 @@ const TRADITIONAL_CROPS = {
   corn: { name: '玉米', icon: '🌽', cost: 20, sell: 55, duration: 60000, exp: 8 },
   tomato: { name: '番茄', icon: '🍅', cost: 50, sell: 150, duration: 120000, exp: 12 },
   pumpkin: { name: '南瓜', icon: '🎃', cost: 100, sell: 350, duration: 300000, exp: 20 },
-  strawberry: { name: '草莓', icon: '🍓', cost: 200, sell: 700, duration: 600000, exp: 35 }
+  strawberry: { name: '草莓', icon: '🍓', cost: 200, sell: 700, duration: 600000, exp: 35 },
+  cotton: { name: '棉花', icon: '🌿', cost: 300, sell: 1200, duration: 1800000, exp: 50 },
+  sunflower: { name: '向日葵', icon: '🌻', cost: 500, sell: 2500, duration: 7200000, exp: 80 },
+  grape: { name: '葡萄', icon: '🍇', cost: 800, sell: 5000, duration: 21600000, exp: 150 },
+  apple: { name: '苹果', icon: '🍎', cost: 1200, sell: 9000, duration: 43200000, exp: 250 },
+  ginseng: { name: '人参', icon: '🌱', cost: 2000, sell: 20000, duration: 86400000, exp: 500 }
 };
 
 /**
@@ -23,7 +28,10 @@ const TRADITIONAL_CROPS = {
 const MOOD_CROPS = {
   sadness: { name: '忧伤.exe', icon: '😢', cost: 5, sell: 15, duration: 60000, exp: 3, mood_output: 10 },
   lonely: { name: '寂寞.bat', icon: '😔', cost: 10, sell: 35, duration: 1800000, exp: 8, mood_output: 20 },
-  love: { name: '初恋.dll', icon: '💕', cost: 20, sell: 80, duration: 3600000, exp: 15, mood_output: 50 }
+  love: { name: '初恋.dll', icon: '💕', cost: 20, sell: 80, duration: 3600000, exp: 15, mood_output: 50 },
+  memory: { name: '记忆.dat', icon: '🧠', cost: 100, sell: 500, duration: 10800000, exp: 50, mood_output: 100 },
+  dream: { name: '梦境.exe', icon: '💭', cost: 200, sell: 1500, duration: 43200000, exp: 150, mood_output: 200 },
+  destiny: { name: '命运.dll', icon: '✨', cost: 500, sell: 5000, duration: 86400000, exp: 400, mood_output: 500 }
 };
 
 /**
@@ -184,9 +192,10 @@ async function initFarm(openid, qcioId, db) {
 
     const profileRes = await profileCollection.add({ data: profile });
 
-    // 创建初始土地（6块）
+    // 创建24块土地（前6块已解锁，其他18块锁定）
     const plots = [];
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 24; i++) {
+      const isUnlocked = i < 6;
       plots.push({
         _openid: openid,
         plot_index: i,
@@ -196,6 +205,7 @@ async function initFarm(openid, qcioId, db) {
         plant_time: null,
         maturity_time: null,
         status: 'empty',
+        is_unlocked: isUnlocked,
         base_yield: 0,
         current_yield: 0,
         quality: 0,
@@ -246,6 +256,16 @@ async function getFarmPlots(openid, db) {
       let progress = 0;
       let timeLeft = 0;
       let status = plot.status;
+      let cropIcon = '';
+
+      // 获取作物图标
+      if (plot.crop_type && plot.crop_id) {
+        if (plot.crop_type === 'mood') {
+          cropIcon = MOOD_CROPS[plot.crop_id]?.icon || '🌱';
+        } else {
+          cropIcon = TRADITIONAL_CROPS[plot.crop_id]?.icon || '🌱';
+        }
+      }
 
       if (plot.status === 'growing' && plot.plant_time && plot.maturity_time) {
         const now = Date.now();
@@ -272,6 +292,7 @@ async function getFarmPlots(openid, db) {
         plotType: plot.plot_type || 'normal',
         cropId: plot.crop_id,
         cropType: plot.crop_type,
+        cropIcon: cropIcon,
         plantTime: plot.plant_time,
         maturityTime: plot.maturity_time,
         status: status,
@@ -422,7 +443,7 @@ async function plantCrop(openid, plotIndex, cropType, cropId, db) {
       return { success: false, message: '土地已有作物' };
     }
 
-    // 计算成熟时间
+    // 计算成熟时间（使用 Date 对象直接存储）
     const now = new Date();
     const maturityTime = new Date(now.getTime() + cropConfig.duration);
 
@@ -431,15 +452,15 @@ async function plantCrop(openid, plotIndex, cropType, cropId, db) {
       data: {
         crop_id: cropId,
         crop_type: cropType,
-        plant_time: db.serverDate(),
-        maturity_time: db.serverDate({ offset: cropConfig.duration }),
+        plant_time: now,
+        maturity_time: maturityTime,
         status: 'growing',
         base_yield: cropConfig.mood_output || 1,
         current_yield: cropConfig.mood_output || 1,
         quality: 1,
         stolen_by: [],
         steal_count: 0,
-        updateTime: db.serverDate()
+        updateTime: now
       }
     });
 
@@ -809,6 +830,49 @@ async function activateDecoration(openid, decorationId, db) {
   }
 }
 
+// ==================== 农场日志 ====================
+
+/**
+ * 获取农场日志
+ */
+async function getFarmLogs(openid, db) {
+  try {
+    const res = await db.collection('qcio_farm_logs')
+      .where({ _openid: openid })
+      .orderBy('createTime', 'desc')
+      .limit(50)
+      .get();
+
+    return {
+      success: true,
+      data: res.data
+    };
+  } catch (err) {
+    console.error('getFarmLogs Error:', err);
+    return { success: false, error: err, message: '获取日志失败' };
+  }
+}
+
+/**
+ * 添加农场日志
+ */
+async function addFarmLog(openid, logData, db) {
+  try {
+    await db.collection('qcio_farm_logs').add({
+      data: {
+        _openid: openid,
+        ...logData,
+        createTime: logData.createTime || db.serverDate()
+      }
+    });
+
+    return { success: true };
+  } catch (err) {
+    console.error('addFarmLog Error:', err);
+    return { success: false, error: err, message: '添加日志失败' };
+  }
+}
+
 // ==================== 导出 ====================
 module.exports = {
   // 配置
@@ -827,5 +891,9 @@ module.exports = {
   harvestCrop,
   getInventory,
   buyDecoration,
-  activateDecoration
+  activateDecoration,
+
+  // 日志功能
+  getFarmLogs,
+  addFarmLog
 };

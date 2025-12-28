@@ -6,7 +6,7 @@
 .farm-container {
   min-height: 100vh;
   background: #008080;
-  padding: 20rpx;
+  padding: 180rpx 20rpx 20rpx;
   box-sizing: border-box;
 }
 
@@ -38,35 +38,57 @@
 
 .win98-title-controls {
   display: flex;
-  gap: 8rpx;
+  gap: 2px;
+}
+
+/* 按钮样式重写：彻底消除小程序默认干扰 */
+.win98-title-controls button {
+  all: unset;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 16px;
+  height: 14px;
+  background: #c0c0c0;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  box-shadow: inset 1px 1px #dfdfdf, inset -1px -1px #0a0a0a;
+  padding: 0 !important;
+  margin: 0 !important;
+  min-height: unset !important;
+  min-width: 16px !important;
+  line-height: 1 !important;
+  box-sizing: border-box;
+  border-radius: 0;
+}
+
+/* 按钮点击下沉效果 */
+.win98-title-controls button:active {
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
+  box-shadow: inset 1px 1px #0a0a0a, inset -1px -1px #dfdfdf;
+  padding: 1px 0 0 1px !important;
 }
 
 .win98-btn-close {
-  width: 48rpx;
-  height: 48rpx;
-  background: #c0c0c0;
-  border-top: 2px solid #fff;
-  border-left: 2px solid #fff;
-  border-right: 2px solid #000;
-  border-bottom: 2px solid #000;
-  font-size: 32rpx;
-  line-height: 44rpx;
-  padding: 0;
-  text-align: center;
-  color: #000;
+  font-size: 16px;
   font-weight: bold;
-}
-
-.win98-btn-close:active {
-  border-top: 2px solid #000;
-  border-left: 2px solid #000;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
+  color: #000;
+  line-height: 14px;
 }
 
 /* ==================== 窗口内容 ==================== */
 .win98-content {
   padding: 24rpx;
+  height: 70vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 /* ==================== 农场信息栏 ==================== */
@@ -80,6 +102,7 @@
   border-right: 2px solid #fff;
   border-bottom: 2px solid #fff;
   margin-bottom: 24rpx;
+  flex-shrink: 0;
 }
 
 .info-item {
@@ -104,18 +127,55 @@
   color: #d4a017;
 }
 
-/* ==================== 农场网格 ==================== */
-.farm-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16rpx;
-  padding: 20rpx;
+/* ==================== 操作提示 ==================== */
+.farm-tips {
+  padding: 16rpx 20rpx;
+  background: #c0c0c0;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  margin-bottom: 16rpx;
+  text-align: center;
+  font-size: 24rpx;
+  color: #000;
+  flex-shrink: 0;
+}
+
+/* ==================== 农场滚动容器 ==================== */
+.farm-scroll {
+  flex: 1;
+  overflow-y: scroll;
   background: #8d6e63;
   border-top: 2px solid #808080;
   border-left: 2px solid #808080;
   border-right: 2px solid #fff;
   border-bottom: 2px solid #fff;
   margin-bottom: 24rpx;
+}
+
+/* ==================== 农场网格 ==================== */
+.farm-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16rpx;
+  padding: 20rpx;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 滚动条样式 */
+.farm-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.farm-scroll::-webkit-scrollbar-thumb {
+  background: #c0c0c0;
+  border: 1px solid #808080;
+}
+
+.farm-scroll::-webkit-scrollbar-track {
+  background: #5d4037;
 }
 
 .farm-plot {
@@ -150,19 +210,17 @@
   margin-bottom: 12rpx;
 }
 
-.plot-hint,
-.harvest-hint,
-.lock-hint {
-  font-size: 22rpx;
-  color: #fff;
-  text-shadow: 1px 1px 2px #000;
+.plot-crop-icon {
+  font-size: 100rpx;
+  margin-bottom: 12rpx;
 }
 
-/* 生长中状态 */
-.plot-growing {
-  position: relative;
+.plot-crop-icon.mature {
+  animation: mature-pulse 1.5s ease-in-out infinite;
+  font-size: 110rpx;
 }
 
+/* 生长进度条 */
 .progress-bar {
   width: 80%;
   height: 12rpx;
@@ -183,11 +241,7 @@
   color: #8bc34a;
 }
 
-/* 成熟状态 */
-.plot-mature {
-  background: #6d4c41;
-}
-
+/* 成熟动画 */
 .mature-anim {
   animation: mature-pulse 1.5s ease-in-out infinite;
 }
@@ -209,6 +263,12 @@
   justify-content: center;
   gap: 24rpx;
   padding: 20rpx;
+  background: #c0c0c0;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  flex-shrink: 0;
 }
 
 .win98-btn-std {
@@ -253,10 +313,15 @@
 
 .shop-window {
   max-height: 80vh;
+  border-top: 3px solid #fff;
+  border-left: 3px solid #fff;
+  border-right: 3px solid #000;
+  border-bottom: 3px solid #000;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.4);
 }
 
 .shop-content {
-  height: 500rpx;
+  height: 650rpx;
   display: flex;
   flex-direction: column;
 }
@@ -288,7 +353,7 @@
 
 /* ==================== 商品列表 ==================== */
 .shop-list {
-  flex: 1;
+  height: 520rpx;
   padding: 8rpx;
 }
 
@@ -352,4 +417,565 @@
 
 .price-icon {
   font-size: 24rpx;
+}
+
+/* ==================== 收获弹窗 ==================== */
+.harvest-window {
+  width: 90%;
+  max-width: 600rpx;
+  height: 680rpx;
+  max-height: 55vh;
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.5);
+}
+
+.harvest-content {
+  height: 540rpx;
+  padding: 12rpx 16rpx 12rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(180deg, #ffffff 0%, #f0f0f0 100%);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.harvest-icon-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 12rpx;
+  width: 100%;
+}
+
+.harvest-crop-icon {
+  font-size: 100rpx;
+  margin-bottom: 8rpx;
+  animation: harvest-bounce 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  filter: drop-shadow(0 4rpx 8rpx rgba(0, 0, 0, 0.2));
+}
+
+@keyframes harvest-bounce {
+  0% {
+    transform: scale(0) rotate(-15deg);
+    opacity: 0;
+  }
+  40% {
+    transform: scale(1.3) rotate(5deg);
+  }
+  60% {
+    transform: scale(0.9) rotate(-3deg);
+  }
+  80% {
+    transform: scale(1.05) rotate(1deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+.harvest-crop-name {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #000080;
+  font-family: 'SimSun', serif;
+  text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
+  margin-bottom: 2rpx;
+}
+
+.harvest-quality-section {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  margin-bottom: 12rpx;
+  padding: 8rpx 20rpx;
+  background: linear-gradient(135deg, #fff9e6 0%, #fff3cd 100%);
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #d4a017;
+  border-bottom: 2px solid #d4a017;
+  box-shadow: inset 0 2rpx 4rpx rgba(212, 160, 23, 0.1);
+}
+
+.quality-label {
+  font-size: 22rpx;
+  color: #8b4513;
+  margin-right: 4rpx;
+  font-weight: bold;
+}
+
+.quality-star {
+  font-size: 28rpx;
+  color: #d4d4d4;
+  text-shadow: 1px 1px 2rpx rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.quality-star.active {
+  color: #ffd700;
+  text-shadow: 0 0 8rpx rgba(255, 215, 0, 0.6), 1px 1px 2rpx rgba(0, 0, 0, 0.3);
+  animation: star-glow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes star-glow {
+  0% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  100% {
+    transform: scale(1.1);
+    filter: brightness(1.2);
+  }
+}
+
+.harvest-divider {
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #d4a017, transparent);
+  margin-bottom: 12rpx;
+  position: relative;
+}
+
+.harvest-divider::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 8rpx;
+  height: 8rpx;
+  background: #d4a017;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 4rpx rgba(212, 160, 23, 0.5);
+}
+
+.harvest-rewards {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.reward-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10rpx 16rpx;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f8f8 100%);
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #a0a0a0;
+  border-bottom: 2px solid #a0a0a0;
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+}
+
+.reward-row:hover {
+  transform: translateX(4rpx);
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.12);
+}
+
+.reward-icon {
+  font-size: 36rpx;
+  width: 50rpx;
+  text-align: center;
+  filter: drop-shadow(0 2rpx 4rpx rgba(0, 0, 0, 0.15));
+  animation: reward-icon-bounce 0.6s ease-out;
+}
+
+@keyframes reward-icon-bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6rpx);
+  }
+}
+
+.reward-label {
+  flex: 1;
+  font-size: 24rpx;
+  color: #333;
+  font-family: 'SimSun', serif;
+  font-weight: 500;
+}
+
+.reward-value {
+  font-size: 30rpx;
+  font-weight: bold;
+  background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+  filter: drop-shadow(0 1rpx 2rpx rgba(212, 160, 23, 0.3));
+}
+
+.harvest-footer {
+  padding: 8rpx 16rpx 10rpx;
+  display: flex;
+  justify-content: center;
+  background: linear-gradient(180deg, #f5f5f5 0%, #ebebeb 100%);
+  border-top: 1px solid #d0d0d0;
+}
+
+.harvest-ok-btn {
+  min-width: 140rpx;
+  padding: 8rpx 40rpx;
+  font-size: 26rpx;
+  font-weight: bold;
+  background: linear-gradient(180deg, #4caf50 0%, #45a049 100%);
+  color: #fff;
+  border-top: 2px solid #66bb6a;
+  border-left: 2px solid #66bb6a;
+  border-right: 2px solid #2e7d32;
+  border-bottom: 2px solid #2e7d32;
+  text-shadow: 0 1rpx 2rpx rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4rpx 8rpx rgba(76, 175, 80, 0.3);
+  transition: all 0.2s ease;
+}
+
+.harvest-ok-btn:active {
+  background: linear-gradient(180deg, #45a049 0%, #3d8b40 100%);
+  border-top: 2px solid #2e7d32;
+  border-left: 2px solid #2e7d32;
+  border-right: 2px solid #66bb6a;
+  border-bottom: 2px solid #66bb6a;
+  box-shadow: 0 2rpx 4rpx rgba(76, 175, 80, 0.2);
+  transform: translateY(2rpx);
+}
+
+/* ==================== 农场记录弹窗 ==================== */
+.log-window {
+  max-height: 80vh;
+  border-top: 3px solid #fff;
+  border-left: 3px solid #fff;
+  border-right: 3px solid #000;
+  border-bottom: 3px solid #000;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.4);
+}
+
+.log-content {
+  height: 650rpx;
+  display: flex;
+  flex-direction: column;
+  padding: 16rpx;
+}
+
+.log-list {
+  flex: 1;
+  padding: 8rpx;
+}
+
+.log-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+  padding: 12rpx;
+  margin-bottom: 8rpx;
+  background: #f5f5f5;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #808080;
+  border-bottom: 2px solid #808080;
+}
+
+.log-time {
+  font-size: 20rpx;
+  color: #808080;
+  font-family: 'SimSun', serif;
+}
+
+.log-action {
+  font-size: 26rpx;
+  font-weight: bold;
+  color: #000;
+  font-family: 'SimSun', serif;
+}
+
+.log-action.plant {
+  color: #228b22;
+}
+
+.log-action.harvest {
+  color: #d4a017;
+}
+
+.log-action.buy {
+  color: #000080;
+}
+
+.log-detail {
+  font-size: 24rpx;
+  color: #666;
+  font-family: 'SimSun', serif;
+}
+
+.log-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60rpx 40rpx;
+  color: #808080;
+}
+
+.empty-icon {
+  font-size: 100rpx;
+  margin-bottom: 20rpx;
+  opacity: 0.5;
+}
+
+.empty-text {
+  font-size: 28rpx;
+  margin-bottom: 12rpx;
+  font-family: 'SimSun', serif;
+}
+
+.empty-hint {
+  font-size: 22rpx;
+  color: #a0a0a0;
+  font-family: 'SimSun', serif;
+}
+
+.log-footer {
+  padding: 16rpx 24rpx 24rpx;
+  display: flex;
+  justify-content: center;
+  border-top: 1px solid #c0c0c0;
+}
+
+.log-ok-btn {
+  min-width: 160rpx;
+  padding: 12rpx 48rpx;
+}
+
+/* ==================== 信息弹窗 ==================== */
+.info-window {
+  max-height: 80vh;
+  border-top: 3px solid #fff;
+  border-left: 3px solid #fff;
+  border-right: 3px solid #000;
+  border-bottom: 3px solid #000;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.4);
+}
+
+.info-content {
+  height: 650rpx;
+  padding: 12rpx 16rpx;
+  display: flex;
+  flex-direction: column;
+  background: #f5f5f5;
+}
+
+.info-scroll {
+  flex: 1;
+  overflow-y: scroll;
+}
+
+.info-sections {
+  padding: 8rpx 0;
+}
+
+.info-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.info-section-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #000080;
+  font-family: 'SimSun', serif;
+  padding: 8rpx 0;
+  border-bottom: 1px solid #c0c0c0;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10rpx 16rpx;
+  background: #fff;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+}
+
+.info-row-label {
+  font-size: 26rpx;
+  color: #333;
+  font-family: 'SimSun', serif;
+}
+
+.info-row-value {
+  font-size: 26rpx;
+  font-weight: bold;
+  color: #000080;
+}
+
+.info-row-value.gold {
+  color: #d4a017;
+}
+
+.info-row-value.max-level {
+  color: #4caf50;
+  font-size: 28rpx;
+  text-align: center;
+  width: 100%;
+}
+
+.info-divider {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #c0c0c0, transparent);
+  margin: 8rpx 0;
+}
+
+/* 等级表格 */
+.level-table {
+  border: 1px solid #808080;
+  background: #fff;
+}
+
+.level-table-row {
+  display: flex;
+  padding: 10rpx 8rpx;
+  border-bottom: 1px solid #c0c0c0;
+}
+
+.level-table-row:last-child {
+  border-bottom: none;
+}
+
+.level-table-header {
+  background: #000080;
+  color: #fff;
+  font-weight: bold;
+}
+
+.col-level {
+  flex: 1;
+  text-align: center;
+  font-size: 24rpx;
+  font-family: 'SimSun', serif;
+}
+
+.col-exp {
+  flex: 1;
+  text-align: center;
+  font-size: 24rpx;
+  font-family: 'SimSun', serif;
+}
+
+.col-plots {
+  flex: 1;
+  text-align: center;
+  font-size: 24rpx;
+  font-family: 'SimSun', serif;
+}
+
+/* 经验列表 */
+.exp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.exp-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10rpx 16rpx;
+  background: #fff;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+}
+
+.exp-name {
+  font-size: 26rpx;
+  color: #333;
+  font-family: 'SimSun', serif;
+}
+
+.exp-value {
+  font-size: 24rpx;
+  font-weight: bold;
+  color: #4caf50;
+}
+
+/* 金币列表 */
+.coin-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.coin-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10rpx 16rpx;
+  background: #fff;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+}
+
+.coin-name {
+  font-size: 26rpx;
+  font-weight: bold;
+  color: #333;
+  font-family: 'SimSun', serif;
+}
+
+.coin-desc {
+  font-size: 22rpx;
+  color: #666;
+  font-family: 'SimSun', serif;
+}
+
+.coin-uses {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+  padding: 10rpx 16rpx;
+  background: #fff;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+}
+
+.coin-use {
+  font-size: 26rpx;
+  color: #333;
+  font-family: 'SimSun', serif;
+}
+
+.info-footer {
+  padding: 8rpx 16rpx 10rpx;
+  display: flex;
+  justify-content: center;
+  background: linear-gradient(180deg, #f5f5f5 0%, #ebebeb 100%);
+  border-top: 1px solid #d0d0d0;
+}
+
+.info-ok-btn {
+  min-width: 140rpx;
+  padding: 8rpx 40rpx;
+  font-size: 26rpx;
+}
+
+/* 可点击样式 */
+.clickable {
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-color: #c0c0c0;
+  cursor: pointer;
 }

@@ -32,7 +32,9 @@ const {
   harvestCrop,
   getInventory,
   buyDecoration,
-  activateDecoration
+  activateDecoration,
+  getFarmLogs,
+  addFarmLog
 } = require('./modules/farm');
 
 /**
@@ -216,6 +218,14 @@ exports.main = async (event, context) => {
     case 'activateDecoration':
       // 激活装饰
       return await activateDecoration(OPENID, event.decorationId, db);
+
+    case 'getFarmLogs':
+      // 获取农场日志
+      return await getFarmLogs(OPENID, db);
+
+    case 'addFarmLog':
+      // 添加农场日志
+      return await addFarmLog(OPENID, event.log, db);
 
     default:
       return { success: false, message: '未知的操作类型' };
