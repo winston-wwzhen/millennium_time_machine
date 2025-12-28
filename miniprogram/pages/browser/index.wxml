@@ -43,7 +43,7 @@
           <!-- 顶部通栏跑马灯 -->
           <view class="top-banner">
             <view class="marquee-text">
-              <text>★ 欢迎访问千禧导航！本站已被访问 9,999,999 次 ★ 推荐：使用 IE 6.0 浏览器获得最佳体验 ★ 2006最具人气导航网站 ★ </text>
+              <text>★ 欢迎访问千禧导航！推荐使用 IE 6.0 浏览器 ★</text>
             </view>
           </view>
 
@@ -63,14 +63,6 @@
               <view class="search-input-row">
                 <input class="search-input" placeholder="请输入关键词..." />
                 <button class="search-btn">百度一下</button>
-              </view>
-              <view class="hot-keywords">
-                <text class="hot-label">热门搜索：</text>
-                <text class="hot-keyword">QQ空间</text>
-                <text class="hot-keyword">非主流</text>
-                <text class="hot-keyword">传奇</text>
-                <text class="hot-keyword">劲舞团</text>
-                <text class="hot-keyword">火星文</text>
               </view>
             </view>
           </view>
@@ -117,10 +109,8 @@
                   <view class="nav-item"><text class="nav-link">搜狐</text></view>
                   <view class="nav-item"><text class="nav-link">网易</text></view>
                   <view class="nav-item"><text class="nav-link">腾讯</text></view>
-                  <view class="nav-item"><text class="nav-link">雅虎</text></view>
                   <view class="nav-item"><text class="nav-link">百度</text></view>
-                  <view class="nav-item"><text class="nav-link">人民网</text></view>
-                  <view class="nav-item"><text class="nav-link">新华网</text></view>
+                  <view class="nav-item"><text class="nav-link">雅虎</text></view>
                 </view>
               </view>
 
@@ -135,14 +125,9 @@
                   </view>
                   <view class="nav-item"><text class="nav-link highlight">奇迹</text></view>
                   <view class="nav-item"><text class="nav-link">梦幻西游</text></view>
-                  <view class="nav-item"><text class="nav-link">冒险岛</text></view>
-                  <view class="nav-item">
-                    <text class="nav-link">劲舞团</text>
-                    <text class="new-tag">NEW</text>
-                  </view>
+                  <view class="nav-item"><text class="nav-link">劲舞团</text></view>
                   <view class="nav-item"><text class="nav-link">泡泡堂</text></view>
                   <view class="nav-item"><text class="nav-link">跑跑卡丁车</text></view>
-                  <view class="nav-item"><text class="nav-link">魔兽世界</text></view>
                 </view>
               </view>
 
@@ -153,12 +138,10 @@
                 <view class="nav-grid">
                   <view class="nav-item"><text class="nav-link">百度MP3</text></view>
                   <view class="nav-item"><text class="nav-link">一听音乐</text></view>
-                  <view class="nav-item"><text class="nav-link">酷狗音乐</text></view>
                   <view class="nav-item"><text class="nav-link">优酷视频</text></view>
                   <view class="nav-item"><text class="nav-link">土豆网</text></view>
-                  <view class="nav-item"><text class="nav-link">六间房</text></view>
+                  <view class="nav-item"><text class="nav-link">酷狗音乐</text></view>
                   <view class="nav-item"><text class="nav-link">迅雷看看</text></view>
-                  <view class="nav-item"><text class="nav-link">PPLive</text></view>
                 </view>
               </view>
 
@@ -169,12 +152,7 @@
                 <view class="nav-grid">
                   <view class="nav-item"><text class="nav-link highlight">天涯社区</text></view>
                   <view class="nav-item"><text class="nav-link">猫扑大杂烩</text></view>
-                  <view class="nav-item"><text class="nav-link">西祠胡同</text></view>
-                  <view class="nav-item">
-                    <text class="nav-link">校内网</text>
-                    <text class="new-tag">NEW</text>
-                  </view>
-                  <view class="nav-item"><text class="nav-link">51.com</text></view>
+                  <view class="nav-item"><text class="nav-link">校内网</text></view>
                   <view class="nav-item"><text class="nav-link">贴吧</text></view>
                   <view class="nav-item"><text class="nav-link">豆瓣</text></view>
                   <view class="nav-item"><text class="nav-link">新浪论坛</text></view>
@@ -196,11 +174,8 @@
                   </view>
                   <view class="news-item"><text class="news-title">■ 网络游戏实名制今起实施</text></view>
                   <view class="news-item"><text class="news-title">■ 淘宝网击败eBay易趣</text></view>
-                  <view class="news-item"><text class="news-title">■ 百度市值突破100亿美元</text></view>
                   <view class="news-item"><text class="news-title">■ QQ同时在线人数突破2000万</text></view>
                   <view class="news-item"><text class="news-title">■ 劲舞团引发社会争议</text></view>
-                  <view class="news-item"><text class="news-title">■ 迅雷获巨额风险投资</text></view>
-                  <view class="news-item"><text class="news-title">■ 《疯狂的石头》成票房黑马</text></view>
                 </view>
               </view>
 
@@ -216,7 +191,6 @@
                   <view class="news-item"><text class="news-title">■ 周杰伦新专辑《依然范特西》</text></view>
                   <view class="news-item"><text class="news-title">■ 《武林外传》持续热播</text></view>
                   <view class="news-item"><text class="news-title">■ 刘亦菲清纯照片曝光</text></view>
-                  <view class="news-item"><text class="news-title">■ 郭敬明《悲伤逆流成河》</text></view>
                   <view class="news-item"><text class="news-title">■ 非主流造型大赛报名中</text></view>
                 </view>
               </view>
@@ -290,19 +264,7 @@
                   </view>
                   <view class="hot-item">
                     <text class="hot-rank">5</text>
-                    <text class="hot-name">传奇私服</text>
-                  </view>
-                  <view class="hot-item">
-                    <text class="hot-rank">6</text>
-                    <text class="hot-name">网游加速器</text>
-                  </view>
-                  <view class="hot-item">
-                    <text class="hot-rank">7</text>
                     <text class="hot-name">手机铃声</text>
-                  </view>
-                  <view class="hot-item">
-                    <text class="hot-rank">8</text>
-                    <text class="hot-name">MP3下载</text>
                   </view>
                 </view>
               </view>
@@ -351,8 +313,6 @@
               <text class="footer-link">关于我们</text>
               <text class="footer-divider">|</text>
               <text class="footer-link">联系方式</text>
-              <text class="footer-divider">|</text>
-              <text class="footer-link">广告服务</text>
             </view>
             <text class="footer-copyright">Copyright © 2006 www.hao2006.com All Rights Reserved.</text>
             <text class="footer-icp">京ICP备06000000号</text>
