@@ -241,18 +241,55 @@ async function getQcioData(openid) {
 - ✅ `saveChatHistory()`: 使用 `qcioApi.saveChatHistory()`
 - ✅ `checkChatEgg()`: 使用 `userApi.checkChatEgg()`
 
+**pages/group-chat/index.js 优化：**
+- ✅ 引入 `userApi`, `qcioApi`, `chatApi`
+- ✅ `loadChatHistory()`: 使用 `qcioApi.getGroupChatHistory()`
+- ✅ `sendMessage()`: 使用 `chatApi.sendGroupMessage()`
+- ✅ `saveChatHistory()`: 使用 `qcioApi.saveGroupChatHistory()`
+- ✅ `checkGroupChatEgg()`: 使用 `userApi.checkGroupChatEgg()`
+
+**pages/qcio/visit.js 优化：**
+- ✅ 引入 `qcioApi`
+- ✅ `loadData()`: 使用 `qcioApi.init()`
+- ✅ `loadOwnerProfile()`: 使用 `qcioApi.getUserByQcioId()`
+- ✅ `loadVisitStats()`: 使用 `qcioApi.getVisitStatsByQcioId()`
+- ✅ `loadMessages()`: 使用 `qcioApi.getGuestbookByQcioId()`
+- ✅ `loadRecentVisitors()`: 使用 `qcioApi.getRecentVisitorsByQcioId()`
+- ✅ `checkIfSteppedToday()`: 使用 `qcioApi.checkIfSteppedToday()`
+- ✅ `doStep()`: 使用 `qcioApi.recordVisit()`
+
+**pages/mars/index.js 优化：**
+- ✅ 引入 `chatApi`, `userApi`
+- ✅ `startConvert()`: 使用 `chatApi.sendMessage()`
+- ✅ `checkMarsTranslatorEgg()`: 使用 `userApi.checkMarsTranslatorEgg()`
+
+**pages/avatar/index.js 优化：**
+- ✅ 引入 `userApi`
+- ✅ `onSaveImage()`: 使用 `userApi.savePhoto()`
+
 **api-client.js 新增/更新方法：**
 - ✅ `userApi.updateProfile()`
 - ✅ `userApi.checkQcioEgg()`
 - ✅ `userApi.getTransactionHistory()`
+- ✅ `userApi.checkChatEgg()`
+- ✅ `userApi.checkGroupChatEgg()`
+- ✅ `userApi.checkMarsTranslatorEgg()`
+- ✅ `userApi.savePhoto()`
 - ✅ `qcioApi.register()`
 - ✅ `qcioApi.getLevelInfo()`
 - ✅ `qcioApi.logout()`
 - ✅ `qcioApi.getAIContacts()`
-- ✅ `qcioApi.recordVisit()`
+- ✅ `qcioApi.recordVisit()` (3参数版本)
 - ✅ `qcioApi.getChatHistory()`
 - ✅ `qcioApi.saveChatHistory()`
-- ✅ `userApi.checkChatEgg()`
+- ✅ `qcioApi.getGroupChatHistory()`
+- ✅ `qcioApi.saveGroupChatHistory()`
+- ✅ `qcioApi.getUserByQcioId()`
+- ✅ `qcioApi.getVisitStatsByQcioId()`
+- ✅ `qcioApi.getGuestbookByQcioId()`
+- ✅ `qcioApi.getRecentVisitorsByQcioId()`
+- ✅ `qcioApi.checkIfSteppedToday()`
+- ✅ `qcioApi.recordVisit()` (4参数版本，带 visitorAvatar)
 - ✅ `chatApi.sendMessage()` 更新（添加 contactName 参数）
 
 **提交记录：**
@@ -260,6 +297,7 @@ async function getQcioData(openid) {
 - ✅ commit `af2867e`: 应用公共工具模块优化网管系统组件
 - ✅ commit `2363201`: 应用公共工具模块优化QCIO聊天页面
 - ✅ commit `5bb2a7b`: 应用公共工具模块优化单人聊天页面
+- ✅ commit `69b6d27`: 应用公共工具模块优化群聊、访问、翻译和头像页面
 
 ---
 
