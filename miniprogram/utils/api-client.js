@@ -178,6 +178,33 @@ const userApi = {
   },
 
   /**
+   * 检查回收站清理者彩蛋
+   */
+  checkRecycleBinEgg() {
+    return callCloudFunction('user', { type: 'checkRecycleBinEgg' });
+  },
+
+  /**
+   * 获取如果当时用户偏好
+   */
+  getIfthenPreferences() {
+    return callCloudFunction('user', { type: 'getIfthenPreferences' });
+  },
+
+  /**
+   * 设置如果当时用户偏好
+   * @param {number} birthYear - 出生年份
+   * @param {string} gender - 性别
+   */
+  setIfthenPreferences(birthYear, gender) {
+    return callCloudFunction('user', {
+      type: 'setIfthenPreferences',
+      birthYear,
+      gender
+    });
+  },
+
+  /**
    * 保存照片记录
    * @param {string} cloudPath - 云存储路径
    * @param {string} fileID - 文件ID

@@ -1,5 +1,6 @@
 // components/recycle-bin/index.js
 const { eggSystem, EGG_IDS } = require('../../utils/egg-system');
+const { userApi } = require('../../utils/api-client');
 
 // 垃圾文件数据池
 const TRASH_FILES_POOL = {
@@ -227,18 +228,15 @@ Component({
       }, 800);
     },
 
-    // 检查回收站清理者彩蛋
+    // 检查回收站清理者彩蛋（使用 API 客户端）
     checkRecycleBinEgg: async function() {
       if (this.data.eggAchieved) return;
 
       try {
-        const res = await wx.cloud.callFunction({
-          name: 'user',
-          data: { type: 'checkRecycleBinEgg' }
-        });
+        const result = await userApi.checkRecycleBinEgg();
 
-        if (res.result.success) {
-          if (res.result.shouldTrigger) {
+        if (result.success) {
+          if (result.shouldTrigger) {
             this.setData({ eggAchieved: true });
             await eggSystem.discover(EGG_IDS.RECYCLE_BIN_EMPTYER);
           }

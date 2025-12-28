@@ -1,4 +1,5 @@
 const { addLog } = require("../../utils/logger");
+const { userApi, gameApi } = require("../../utils/api-client");
 
 Page({
   data: {
@@ -26,15 +27,11 @@ Page({
     // 记录打开游戏日志
     addLog('open', '如果当时');
 
-    // 追踪分享链接访问
+    // 追踪分享链接访问（使用 API 客户端）
     if (options.shareId || options.endingId) {
-      wx.cloud.callFunction({
-        name: 'ifthen',
-        data: {
-          action: 'recordShareVisit',
-          shareId: options.shareId || '',
-          endingId: options.endingId || ''
-        }
+      gameApi.ifthen('recordShareVisit', {
+        shareId: options.shareId || '',
+        endingId: options.endingId || ''
       }).then(res => {
         console.log('分享访问记录成功');
       }).catch(err => {
@@ -43,16 +40,11 @@ Page({
     }
   },
 
-  // 加载用户上次选择的参数
+  // 加载用户上次选择的参数（使用 API 客户端）
   loadUserPreferences: function() {
-    wx.cloud.callFunction({
-      name: 'user',
-      data: {
-        type: 'getIfthenPreferences'
-      }
-    }).then(res => {
-      if (res.result && res.result.success && res.result.preferences) {
-        const { birthYear, gender } = res.result.preferences;
+    userApi.getIfthenPreferences().then(result => {
+      if (result && result.success && result.preferences) {
+        const { birthYear, gender } = result.preferences;
         this.setData({
           birthYear: birthYear || 1990,
           gender: gender || 'male'
@@ -68,16 +60,9 @@ Page({
     });
   },
 
-  // 保存用户选择的参数
+  // 保存用户选择的参数（使用 API 客户端）
   saveUserPreferences: function() {
-    wx.cloud.callFunction({
-      name: 'user',
-      data: {
-        type: 'setIfthenPreferences',
-        birthYear: this.data.birthYear,
-        gender: this.data.gender
-      }
-    }).then(res => {
+    userApi.setIfthenPreferences(this.data.birthYear, this.data.gender).then(() => {
       console.log('用户偏好保存成功');
     }).catch(err => {
       console.error('保存用户偏好失败:', err);
@@ -164,24 +149,17 @@ Page({
     });
   },
 
-  // 加载用户昵称
+  // 加载用户昵称（使用 API 客户端）
   loadUserName: function() {
-    try {
-      wx.cloud.callFunction({
-        name: 'user',
-        data: { type: 'getBalance' }
-      }).then(res => {
-        if (res.result && res.result.success) {
-          this.setData({
-            avatarName: res.result.avatarName || 'Admin'
-          });
-        }
-      }).catch(err => {
-        console.error('加载用户昵称失败:', err);
-      });
-    } catch (e) {
-      console.error('加载用户昵称异常:', e);
-    }
+    userApi.getBalance().then(result => {
+      if (result && result.success) {
+        this.setData({
+          avatarName: result.avatarName || 'Admin'
+        });
+      }
+    }).catch(err => {
+      console.error('加载用户昵称失败:', err);
+    });
   },
 
   // 返回首页
