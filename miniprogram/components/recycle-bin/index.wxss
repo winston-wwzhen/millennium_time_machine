@@ -358,8 +358,10 @@
 
 /* 还原确认弹窗样式 */
 .restore-dialog {
-  width: 320px;
+  width: 300px;
   max-width: 90%;
+  height: 200px;
+  max-height: 400px;
 }
 
 .restore-content {
