@@ -4,6 +4,7 @@
  */
 const { preventDuplicateBehavior } = require('../../utils/prevent-duplicate');
 const { isNetworkError, setNetworkDisconnected, showDisconnectDialog } = require('../../utils/network');
+const { eggSystem, EGG_IDS } = require('../../utils/egg-system');
 
 Page({
   behaviors: [preventDuplicateBehavior],
@@ -15,6 +16,8 @@ Page({
     loginProgress: 0,     // 进度条百分比 (0-100)
     needsRegister: false, // 是否需要注册
     returnToVisit: '',    // 登录后返回的踩一踩页面 owner_qcio_id
+    // 彩蛋达成状态
+    qcioVisitorEggAchieved: false,
 
     // 注册表单数据
     registerForm: {
@@ -68,7 +71,17 @@ Page({
     showLevelInfo: false,
 
     // 好友列表数据（从云端获取）
-    contactGroups: []
+    contactGroups: [],
+
+    // 彩蛋发现弹窗
+    showEggDiscoveryDialog: false,
+    eggDiscoveryData: {
+      name: '',
+      description: '',
+      rarity: '',
+      rarityName: '',
+      rewardText: ''
+    }
   },
 
   /**
@@ -78,10 +91,71 @@ Page({
     this.initAccountFromCloud();
     this.loadAIContacts();
 
+    // 注册彩蛋发现回调
+    eggSystem.setEggDiscoveryCallback((config) => {
+      const rarityNames = {
+        common: '普通',
+        rare: '稀有',
+        epic: '史诗',
+        legendary: '传说'
+      };
+      const reward = config.reward;
+      const rewardText = reward.coins ? `+${reward.coins}时光币` : '';
+      this.setData({
+        showEggDiscoveryDialog: true,
+        eggDiscoveryData: {
+          name: config.name,
+          description: config.description,
+          rarity: config.rarity,
+          rarityName: rarityNames[config.rarity],
+          rewardText: rewardText
+        }
+      });
+    });
+
+    // 检查QCIO空间常客彩蛋
+    this.checkQcioEgg();
+
     // 保存返回目标（用于登录/注册成功后跳转）
     if (options && options.visit) {
       this.setData({ returnToVisit: options.visit });
       // 移除自动踩一脚，让用户手动参与
+    }
+  },
+
+  /**
+   * 检查QCIO空间访问彩蛋（累计访问计数）
+   */
+  checkQcioEgg: async function() {
+    // 先加载彩蛋系统数据
+    await eggSystem.load();
+
+    // 检查是否已经达成过
+    if (eggSystem.isDiscovered(EGG_IDS.QCIO_SPACE_VISITOR)) {
+      this.setData({ qcioVisitorEggAchieved: true });
+      return;
+    }
+
+    // 调用云函数检查/更新计数
+    try {
+      const res = await wx.cloud.callFunction({
+        name: 'user',
+        data: { type: 'checkQcioEgg' }
+      });
+
+      if (res.result && res.result.success) {
+        const { shouldTrigger, alreadyAchieved } = res.result;
+
+        if (alreadyAchieved) {
+          this.setData({ qcioVisitorEggAchieved: true });
+        } else if (shouldTrigger) {
+          // 触发彩蛋
+          await eggSystem.discover(EGG_IDS.QCIO_SPACE_VISITOR);
+          this.setData({ qcioVisitorEggAchieved: true });
+        }
+      }
+    } catch (e) {
+      console.error('Check QCIO egg error:', e);
     }
   },
 
@@ -829,5 +903,12 @@ Page({
    */
   closeLevelInfo: function() {
     this.setData({ showLevelInfo: false });
+  },
+
+  /**
+   * 关闭彩蛋发现弹窗
+   */
+  hideEggDiscoveryDialog: function() {
+    this.setData({ showEggDiscoveryDialog: false });
   }
 });

@@ -493,4 +493,15 @@
 
   <!-- 离屏Canvas用于图片合成 -->
   <canvas type="2d" id="photoCanvas" class="offscreen-canvas"></canvas>
+
+  <!-- 彩蛋发现弹窗 -->
+  <egg-discovery-dialog
+    show="{{showEggDiscoveryDialog}}"
+    eggName="{{eggDiscoveryData.name}}"
+    eggDescription="{{eggDiscoveryData.description}}"
+    eggRarity="{{eggDiscoveryData.rarity}}"
+    eggRarityName="{{eggDiscoveryData.rarityName}}"
+    eggRewardText="{{eggDiscoveryData.rewardText}}"
+    bindclose="hideEggDiscoveryDialog">
+  </egg-discovery-dialog>
 </view>

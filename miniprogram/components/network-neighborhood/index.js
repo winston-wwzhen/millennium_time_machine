@@ -1,6 +1,8 @@
 /**
  * 网管系统组件 - Win98 风格的网络连接管理窗口
  */
+const { eggSystem, EGG_IDS } = require("../../utils/egg-system");
+
 Component({
   properties: {
     show: {
@@ -55,7 +57,20 @@ Component({
     // 交易记录相关
     showTransactionDialog: false,
     transactionRecords: [],
-    transactionLoading: false
+    transactionLoading: false,
+
+    // 彩蛋达成状态
+    exchangeEggAchieved: false,
+
+    // 彩蛋发现弹窗
+    showEggDiscoveryDialog: false,
+    eggDiscoveryData: {
+      name: '',
+      description: '',
+      rarity: '',
+      rarityName: '',
+      rewardText: ''
+    }
   },
 
   observers: {
@@ -73,6 +88,35 @@ Component({
 
   lifetimes: {
     attached() {
+      // 加载彩蛋系统
+      eggSystem.load();
+      // 检查网费兑换者彩蛋是否已达成
+      this.setData({
+        exchangeEggAchieved: eggSystem.isDiscovered(EGG_IDS.NETWORK_EXCHANGER)
+      });
+
+      // 注册彩蛋发现回调
+      eggSystem.setEggDiscoveryCallback((config) => {
+        const rarityNames = {
+          common: '普通',
+          rare: '稀有',
+          epic: '史诗',
+          legendary: '传说'
+        };
+        const reward = config.reward;
+        const rewardText = reward.coins ? `+${reward.coins}时光币` : '';
+        this.setData({
+          showEggDiscoveryDialog: true,
+          eggDiscoveryData: {
+            name: config.name,
+            description: config.description,
+            rarity: config.rarity,
+            rarityName: rarityNames[config.rarity],
+            rewardText: rewardText
+          }
+        });
+      });
+
       this.loadNetworkStatus();
       this.loadBalance();
       this.loadTransactionHistory();
@@ -312,6 +356,9 @@ Component({
 
           // 刷新交易记录
           this.loadTransactionHistory();
+
+          // 彩蛋：首次兑换
+          this.checkNetworkExchangerEgg();
         } else {
           wx.showToast({
             title: res.result.errMsg || '兑换失败',
@@ -326,6 +373,21 @@ Component({
           icon: 'none'
         });
       }
+    },
+
+    // ==================== 彩蛋检查 ====================
+    // 检查网费兑换者彩蛋（首次兑换）
+    async checkNetworkExchangerEgg() {
+      if (this.data.exchangeEggAchieved) return;
+
+      // 这是一个一次性的彩蛋，直接触发即可
+      this.setData({ exchangeEggAchieved: true });
+      await eggSystem.discover(EGG_IDS.NETWORK_EXCHANGER);
+    },
+
+    // 关闭彩蛋发现弹窗
+    hideEggDiscoveryDialog: function() {
+      this.setData({ showEggDiscoveryDialog: false });
     }
   }
 });

@@ -12,6 +12,16 @@ Page({
     // 彩蛋达成状态
     avatarEggAchieved: false,
 
+    // 彩蛋发现弹窗
+    showEggDiscoveryDialog: false,
+    eggDiscoveryData: {
+      name: '',
+      description: '',
+      rarity: '',
+      rarityName: '',
+      rewardText: ''
+    },
+
     // 菜单状态
     openMenu: null,
 
@@ -88,6 +98,28 @@ Page({
     // 检查非主流达人彩蛋是否已达成
     this.setData({
       avatarEggAchieved: eggSystem.isDiscovered(EGG_IDS.AVATAR_MASTER)
+    });
+
+    // 注册彩蛋发现回调
+    eggSystem.setEggDiscoveryCallback((config) => {
+      const rarityNames = {
+        common: '普通',
+        rare: '稀有',
+        epic: '史诗',
+        legendary: '传说'
+      };
+      const reward = config.reward;
+      const rewardText = reward.coins ? `+${reward.coins}时光币` : '';
+      this.setData({
+        showEggDiscoveryDialog: true,
+        eggDiscoveryData: {
+          name: config.name,
+          description: config.description,
+          rarity: config.rarity,
+          rarityName: rarityNames[config.rarity],
+          rewardText: rewardText
+        }
+      });
     });
   },
 
@@ -978,5 +1010,10 @@ Page({
   // 返回
   goBack() {
     wx.navigateBack();
+  },
+
+  // 关闭彩蛋发现弹窗
+  hideEggDiscoveryDialog: function() {
+    this.setData({ showEggDiscoveryDialog: false });
   }
 });

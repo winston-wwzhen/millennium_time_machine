@@ -15,7 +15,7 @@ Page({
     showBlueScreen: false, // 蓝屏彩蛋状态
     isMidnightEgg: false, // 午夜彩蛋状态（小狮子发光）
     showHiddenIcon: false, // 隐藏图标彩蛋状态
-    konamiProgress: [], // Konami Code 输入进度
+    konamiHalfCompleted: false, // Konami Code 前半部分完成状态
     showGodMode: false, // 上帝模式状态
     desktopBgIndex: 0, // 桌面背景索引
     lastTapTime: 0, // 上次点击时间（用于检测双击）
@@ -139,6 +139,9 @@ Page({
       rarityName: '',
       rewardText: ''
     },
+    // 开始菜单计数（彩蛋用）
+    startMenuOpenCount: 0,
+    startMenuEggAchieved: false,
 
     // 用户信息
     userInfo: {
@@ -511,12 +514,6 @@ Page({
     const iconId = e.currentTarget.id;
     const icon = this.data.desktopIcons.find(i => i.id === iconId);
 
-    // Konami Code 检测 - 通过特定图标模拟方向输入
-    const direction = this.getDirectionFromIcon(iconId);
-    if (direction) {
-      this.checkKonamiCode(direction);
-    }
-
     // 图标点击彩蛋检测
     this.checkIconClickEggs(iconId);
 
@@ -660,6 +657,23 @@ Page({
       showContextMenu: false,
       showSubmenu: false, // 关闭开始菜单时也关闭子菜单
     });
+
+    // Konami Code: 检查 A 输入（点击开始按钮）
+    if (newShowStartMenu) {
+      this.checkKonamiFinal('a');
+    }
+
+    // 彩蛋：开始菜单爱好者（仅在打开时计数）
+    if (newShowStartMenu && !this.data.startMenuEggAchieved) {
+      const newCount = this.data.startMenuOpenCount + 1;
+      this.setData({ startMenuOpenCount: newCount });
+
+      if (newCount >= 20) {
+        this.setData({ startMenuEggAchieved: true });
+        const { eggSystem, EGG_IDS } = require('../../utils/egg-system');
+        eggSystem.discover(EGG_IDS.START_MENU_FAN);
+      }
+    }
   },
 
   // 切换子菜单显示
@@ -921,6 +935,9 @@ Page({
 
   // 小狮子点击互动（注意：由于 catchtouch 阻止了 tap 事件，主要靠 onAgentDragEnd 调用）
   onAgentTap: function () {
+    // Konami Code: 检查 B 输入（点击小狮子）
+    this.checkKonamiFinal('b');
+
     // 检查小狮子跳舞彩蛋（点击10次触发）
     const shouldTriggerDance = this.incrementEggCounter(EGG_IDS.LION_DANCE, 10);
 
@@ -1177,43 +1194,70 @@ Page({
     });
   },
 
-  // Konami Code 序列检测
-  // ↑↑↓↓←→←→BA
-  // 通过点击屏幕四个区域来模拟方向输入
-  checkKonamiCode: function (direction) {
-    const KONAMI_SEQUENCE = [
-      "up",
-      "up",
-      "down",
-      "down",
-      "left",
-      "right",
-      "left",
-      "right",
-      "b",
-      "a",
-    ];
+  // ==================== Konami Code 相关 ====================
+  // Konami Code 序列检测（两阶段）
+  // 阶段1: 在我的电脑窗口按顺序点击驱动器并关闭弹窗，最后关闭窗口
+  //        序列: C→关→C→关→D→关→USB→关→D→关→C→关 → 关闭窗口
+  // 阶段2: 点击小狮子(B) + 点击开始按钮(A)
+  //
+  // 设计理念: 正常用户点击驱动器后关闭弹窗，可以继续操作或关闭窗口
+  //           只有刻意按照序列 C→C→D→USB→D→C 操作后立即关闭窗口才会触发彩蛋
 
-    // 添加当前输入
-    this.data.konamiProgress.push(direction);
-
-    // 只保留最近10个输入
-    if (this.data.konamiProgress.length > 10) {
-      this.data.konamiProgress = this.data.konamiProgress.slice(-10);
+  // Konami 半程完成事件（由 my-computer 组件触发）
+  onKonamiHalfComplete: function() {
+    // 清除之前的超时定时器
+    if (this.konamiTimer) {
+      clearTimeout(this.konamiTimer);
     }
 
-    // 检查是否匹配
-    const input = this.data.konamiProgress.join("");
-    const target = KONAMI_SEQUENCE.join("");
+    this.setData({ konamiHalfCompleted: true });
 
-    if (input === target) {
-      this.triggerGodMode();
-      this.data.konamiProgress = []; // 重置
-    }
+    // 10秒内未完成则重置
+    this.konamiTimer = setTimeout(() => {
+      this.setData({ konamiHalfCompleted: false });
+    }, 10000);
 
+    // 提示用户
     this.setData({
-      konamiProgress: this.data.konamiProgress,
+      agentMood: "surprised",
+      agentMessage: "已输入一半...继续完成秘籍？",
+      showMessage: true,
     });
+
+    setTimeout(() => {
+      this.setData({ showMessage: false });
+    }, 2000);
+  },
+
+  // 检查 Konami 最终输入（B 和 A）
+  checkKonamiFinal: function(input) {
+    if (!this.data.konamiHalfCompleted) return;
+
+    // 静态变量跟踪输入
+    if (!this.konamiFinalInputs) {
+      this.konamiFinalInputs = [];
+    }
+
+    this.konamiFinalInputs.push(input);
+
+    // 检查是否匹配 BA
+    if (this.konamiFinalInputs.length === 2 &&
+        this.konamiFinalInputs[0] === 'b' &&
+        this.konamiFinalInputs[1] === 'a') {
+      this.triggerGodMode();
+      this.konamiFinalInputs = [];
+      this.setData({ konamiHalfCompleted: false });
+      if (this.konamiTimer) {
+        clearTimeout(this.konamiTimer);
+      }
+    } else if (this.konamiFinalInputs.length >= 2) {
+      // 输入错误，重置
+      this.konamiFinalInputs = [];
+      this.setData({ konamiHalfCompleted: false });
+      if (this.konamiTimer) {
+        clearTimeout(this.konamiTimer);
+      }
+    }
   },
 
   // 触发上帝模式
@@ -1225,19 +1269,9 @@ Page({
       showGodMode: true,
       agentMood: "happy",
       agentMessage: isNewDiscovery
-        ? "🎉 上帝模式已激活！你发现了传说中的秘籍！"
+        ? "🎉 传说中的秘籍！↑↑↓↓←→←→BA"
         : "上帝模式已激活！",
       showMessage: true,
-    });
-
-    // 显示上帝模式弹窗
-    wx.showModal({
-      title: "🎮 上帝模式！",
-      content: isNewDiscovery
-        ? "↑↑↓↓←→←→BA\n\n你发现了传说中的秘籍！\n\n奖励：100 Q点 + 上帝之手徽章"
-        : "上帝模式已激活！\n\n所有能力解锁...",
-      showCancel: false,
-      confirmText: "太强了！",
     });
 
     // 3秒后隐藏消息
@@ -1247,29 +1281,6 @@ Page({
         agentMood: "normal",
       });
     }, 3000);
-  },
-
-  // 方向输入辅助函数 - 通过图标ID映射方向
-  getDirectionFromIcon: function (iconId) {
-    const directionMap = {
-      "my-computer": "up", // 上 ↑
-      "my-documents": "left", // 左 ←
-      "recycle-bin": "down", // 下 ↓
-      "network-neighborhood": "right", //右 →
-      lion: "b", // 小狮子 = B
-      start: "a", // 开始按钮 = A
-    };
-    return directionMap[iconId] || null;
-  },
-
-  // 通过小狮子触发 B 按钮
-  onLionTapKonami: function () {
-    this.checkKonamiCode("b");
-  },
-
-  // 通过开始按钮触发 A 按钮
-  onStartTapKonami: function () {
-    this.checkKonamiCode("a");
   },
 
   // 点击网络图标

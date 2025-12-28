@@ -25,10 +25,11 @@
         <view wx:if="{{isSecretFile}}">
           <text class="preview-title">═══════════════════════════════════════</text>
           <text class="preview-title">          千禧时光机 - 彩蛋秘籍</text>
+          <text class="preview-title">               【第一册】</text>
           <text class="preview-title">═══════════════════════════════════════</text>
 
           <text class="preview-line"></text>
-          <text class="preview-section">【普通彩蛋达成方案】</text>
+          <text class="preview-section">【普通彩蛋达成方案】(10/10)</text>
 
           <!-- 彩蛋1 -->
           <view class="secret-egg-item">
@@ -78,26 +79,22 @@
             <text class="secret-egg-method">   → 在非主流相机连续保存5张照片</text>
           </view>
 
-          <text class="preview-line"></text>
-          <text class="preview-title">───────────────────────────────────────</text>
-          <text class="preview-section">【稀有彩蛋达成方案】</text>
-          <text class="preview-title">───────────────────────────────────────</text>
-
-          <!-- 稀有彩蛋1 -->
+          <!-- 彩蛋9 -->
           <view class="secret-egg-item">
-            <text class="secret-egg-name">🔵 蓝屏噩梦 (2000💎)</text>
-            <text class="secret-egg-method">   → 点击桌面左上角区域触发蓝屏</text>
+            <text class="secret-egg-name">🚀 开始菜单爱好者 (500💎)</text>
+            <text class="secret-egg-method">   → 累计打开开始菜单20次</text>
           </view>
 
-          <!-- 稀有彩蛋2 -->
+          <!-- 彩蛋10 -->
           <view class="secret-egg-item">
-            <text class="secret-egg-name">💬 聊天狂魔 (2500💎)</text>
-            <text class="secret-egg-method">   → 累计发送100条聊天消息</text>
+            <text class="secret-egg-name">👣 踩空间达人 (600💎)</text>
+            <text class="secret-egg-method">   → 累计访问QCIO空间10次</text>
           </view>
 
           <text class="preview-line"></text>
           <text class="preview-title">───────────────────────────────────────</text>
-          <text class="preview-line">   持续探索发现更多史诗和传说彩蛋...</text>
+          <text class="preview-line">   更多稀有、史诗、传说彩蛋...</text>
+          <text class="preview-line">   请探索《彩蛋秘籍-第二册》</text>
           <text class="preview-title">───────────────────────────────────────</text>
           <text class="preview-line"></text>
         </view>
@@ -166,7 +163,7 @@
 
           <text class="preview-line"></text>
           <text class="preview-title">───────────────────────────────────────</text>
-          <text class="preview-line">   总计: 14个彩蛋 | 已发现: {{discovered}}个</text>
+          <text class="preview-line">   总计: 20个彩蛋 | 已发现: {{discovered}}个</text>
           <text class="preview-title">───────────────────────────────────────</text>
           <text class="preview-line"></text>
         </view>

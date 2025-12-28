@@ -10,6 +10,7 @@
     "daily-checkin": "./components/daily-checkin",
     "level-badge": "/components/level-badge/index",
     "exp-progress": "/components/exp-progress/index",
-    "growth-up-dialog": "/components/growth-up-dialog/index"
+    "growth-up-dialog": "/components/growth-up-dialog/index",
+    "egg-discovery-dialog": "/components/egg-discovery-dialog/index"
   }
 }

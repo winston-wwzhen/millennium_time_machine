@@ -1,4 +1,6 @@
 // miniprogram/pages/mars/index.js
+const { eggSystem, EGG_IDS } = require('../../utils/egg-system');
+
 Page({
   data: {
     inputText: "",
@@ -18,6 +20,49 @@ Page({
     ],
     modeIndex: 0,
     currentModeLabel: "火星文", // 默认显示
+    // 彩蛋达成状态
+    marsEggAchieved: false,
+
+    // 彩蛋发现弹窗
+    showEggDiscoveryDialog: false,
+    eggDiscoveryData: {
+      name: '',
+      description: '',
+      rarity: '',
+      rarityName: '',
+      rewardText: ''
+    }
+  },
+
+  onLoad() {
+    // 加载彩蛋系统状态
+    eggSystem.load();
+    // 检查火星文大师彩蛋是否已达成
+    this.setData({
+      marsEggAchieved: eggSystem.isDiscovered(EGG_IDS.MARS_TRANSLATOR)
+    });
+
+    // 注册彩蛋发现回调
+    eggSystem.setEggDiscoveryCallback((config) => {
+      const rarityNames = {
+        common: '普通',
+        rare: '稀有',
+        epic: '史诗',
+        legendary: '传说'
+      };
+      const reward = config.reward;
+      const rewardText = reward.coins ? `+${reward.coins}时光币` : '';
+      this.setData({
+        showEggDiscoveryDialog: true,
+        eggDiscoveryData: {
+          name: config.name,
+          description: config.description,
+          rarity: config.rarity,
+          rarityName: rarityNames[config.rarity],
+          rewardText: rewardText
+        }
+      });
+    });
   },
 
   // 监听输入
@@ -88,6 +133,9 @@ Page({
           outputText: result,
           statusText: "转换成功",
         });
+
+        // 彩蛋：火星文大师
+        this.checkMarsTranslatorEgg();
       } else {
         throw new Error("No reply");
       }
@@ -122,4 +170,31 @@ Page({
   goBack() {
     wx.navigateBack();
   },
+
+  // ==================== 彩蛋检查 ====================
+  // 检查火星文大师彩蛋（累计使用翻译10次）
+  async checkMarsTranslatorEgg() {
+    if (this.data.marsEggAchieved) return;
+
+    try {
+      const res = await wx.cloud.callFunction({
+        name: 'user',
+        data: { type: 'checkMarsTranslatorEgg' }
+      });
+
+      if (res.result.success) {
+        if (res.result.shouldTrigger) {
+          this.setData({ marsEggAchieved: true });
+          await eggSystem.discover(EGG_IDS.MARS_TRANSLATOR);
+        }
+      }
+    } catch (err) {
+      console.error('Check mars translator egg error:', err);
+    }
+  },
+
+  // 关闭彩蛋发现弹窗
+  hideEggDiscoveryDialog: function() {
+    this.setData({ showEggDiscoveryDialog: false });
+  }
 });

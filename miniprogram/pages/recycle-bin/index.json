@@ -1,4 +1,7 @@
 {
   "navigationStyle": "custom",
-  "navigationBarTitleText": "回收站"
+  "navigationBarTitleText": "回收站",
+  "usingComponents": {
+    "egg-discovery-dialog": "/components/egg-discovery-dialog/index"
+  }
 }

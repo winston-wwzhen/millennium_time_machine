@@ -51,6 +51,11 @@
       <view class="tip-box">
         <text class="tip-text">💡 删除的文件会在这里暂存，可以恢复哦~</text>
       </view>
+
+      <!-- 清空按钮 -->
+      <view class="action-buttons" wx:if="{{hasTrash}}">
+        <button class="win98-button" bindtap="emptyRecycleBin">清空回收站</button>
+      </view>
     </view>
 
     <!-- 状态栏 -->
@@ -58,4 +63,15 @@
       <text>{{hasTrash ? '3 个对象' : '0 个对象'}}</text>
     </view>
   </view>
+
+  <!-- 彩蛋发现弹窗 -->
+  <egg-discovery-dialog
+    show="{{showEggDiscoveryDialog}}"
+    eggName="{{eggDiscoveryData.name}}"
+    eggDescription="{{eggDiscoveryData.description}}"
+    eggRarity="{{eggDiscoveryData.rarity}}"
+    eggRarityName="{{eggDiscoveryData.rarityName}}"
+    eggRewardText="{{eggDiscoveryData.rewardText}}"
+    bindclose="hideEggDiscoveryDialog">
+  </egg-discovery-dialog>
 </view>

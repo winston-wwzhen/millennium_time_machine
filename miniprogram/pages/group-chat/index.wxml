@@ -68,3 +68,14 @@
     </view>
   </view>
 </view>
+
+<!-- 彩蛋发现弹窗 -->
+<egg-discovery-dialog
+  show="{{showEggDiscoveryDialog}}"
+  eggName="{{eggDiscoveryData.name}}"
+  eggDescription="{{eggDiscoveryData.description}}"
+  eggRarity="{{eggDiscoveryData.rarity}}"
+  eggRarityName="{{eggDiscoveryData.rarityName}}"
+  eggRewardText="{{eggDiscoveryData.rewardText}}"
+  bindclose="hideEggDiscoveryDialog">
+</egg-discovery-dialog>

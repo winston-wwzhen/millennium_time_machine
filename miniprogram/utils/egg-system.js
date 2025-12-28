@@ -31,6 +31,12 @@ const EGG_IDS = {
   TIME_SPECIAL: 'time_special',       // 特殊时刻
   AVATAR_MASTER: 'avatar_master',     // 非主流达人
   CHAT_LOVER: 'chat_lover',           // 聊天狂魔
+  QCIO_SPACE_VISITOR: 'qcio_space_visitor', // 空间常客
+  START_MENU_FAN: 'start_menu_fan',   // 开始菜单爱好者
+  RECYCLE_BIN_EMPTYER: 'recycle_bin_emptyer', // 回收站清理者
+  GROUP_CHAT_PARTY: 'group_chat_party',       // 群聊狂欢
+  MARS_TRANSLATOR: 'mars_translator',         // 火星文大师
+  NETWORK_EXCHANGER: 'network_exchanger',     // 网费兑换者
 };
 
 // 彩蛋配置 - 时光币奖励（单位：分钟）
@@ -204,6 +210,78 @@ const EGG_CONFIG = {
       coins: 2500,
       badge: '话痨'
     }
+  },
+  [EGG_IDS.QCIO_SPACE_VISITOR]: {
+    id: EGG_IDS.QCIO_SPACE_VISITOR,
+    name: '空间常客',
+    description: '你是QCIO空间的常客...',
+    hint: '累计访问10次QCIO空间',
+    rarity: 'common',
+    type: 'action',
+    reward: {
+      coins: 600,
+      badge: '踩空间达人'
+    }
+  },
+  [EGG_IDS.START_MENU_FAN]: {
+    id: EGG_IDS.START_MENU_FAN,
+    name: '开始菜单爱好者',
+    description: '你真的很喜欢开始菜单...',
+    hint: '累计打开开始菜单20次',
+    rarity: 'common',
+    type: 'action',
+    reward: {
+      coins: 500,
+      badge: '菜单控'
+    }
+  },
+  [EGG_IDS.RECYCLE_BIN_EMPTYER]: {
+    id: EGG_IDS.RECYCLE_BIN_EMPTYER,
+    name: '回收站清理者',
+    description: '你的回收站总是干干净净的...',
+    hint: '在回收站页面清空回收站5次',
+    rarity: 'rare',
+    type: 'action',
+    reward: {
+      coins: 1500,
+      badge: '清洁大师'
+    }
+  },
+  [EGG_IDS.GROUP_CHAT_PARTY]: {
+    id: EGG_IDS.GROUP_CHAT_PARTY,
+    name: '群聊狂欢',
+    description: '群聊才是真正的战场...',
+    hint: '在群聊累计发送50条消息',
+    rarity: 'rare',
+    type: 'action',
+    reward: {
+      coins: 2000,
+      badge: '群星'
+    }
+  },
+  [EGG_IDS.MARS_TRANSLATOR]: {
+    id: EGG_IDS.MARS_TRANSLATOR,
+    name: '火星文大师',
+    description: '你已经掌握了火星文的奥秘...',
+    hint: '使用火星翻译功能10次',
+    rarity: 'common',
+    type: 'action',
+    reward: {
+      coins: 700,
+      badge: '火星使者'
+    }
+  },
+  [EGG_IDS.NETWORK_EXCHANGER]: {
+    id: EGG_IDS.NETWORK_EXCHANGER,
+    name: '网费兑换者',
+    description: '你懂得如何管理网费...',
+    hint: '首次在网管系统兑换网费',
+    rarity: 'common',
+    type: 'action',
+    reward: {
+      coins: 500,
+      badge: '理财达人'
+    }
   }
 };
 
@@ -322,31 +400,21 @@ class EggSystem {
       return;
     }
 
-    // 否则使用默认的 wx.showModal（保底方案）
-    const rarityColors = {
-      common: '#909399',
-      rare: '#409EFF',
-      epic: '#A855F7',
-      legendary: '#F59E0B'
-    };
-
-    const rarityNames = {
-      common: '普通',
-      rare: '稀有',
-      epic: '史诗',
-      legendary: '传说'
-    };
-
+    // 否则使用简单的 toast 提示（保底方案）
     const reward = config.reward;
     const rewardText = reward.coins ? `+${reward.coins}时光币` : '';
 
-    wx.showModal({
-      title: '🎉 发现彩蛋！',
-      content: `${config.name}\n\n"${config.description}"\n\n稀有度: ${rarityNames[config.rarity]}\n奖励: ${rewardText}`,
-      showCancel: false,
-      confirmText: '太棒了！',
-      confirmColor: rarityColors[config.rarity]
+    wx.showToast({
+      title: `发现彩蛋！${config.name}`,
+      icon: 'success',
+      duration: 2000
     });
+
+    // 控制台输出详细信息
+    console.log(`🎉 发现彩蛋：${config.name}`);
+    console.log(`"${config.description}"`);
+    console.log(`稀有度: ${config.rarity}`);
+    console.log(`奖励: ${rewardText}`);
   }
 
   // 获取已发现彩蛋数量

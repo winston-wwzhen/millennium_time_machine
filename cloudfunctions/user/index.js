@@ -400,6 +400,206 @@ exports.main = async (event, context) => {
     }
   }
 
+  // 🥚 检查QCIO空间访问彩蛋（累计访问计数）
+  if (type === 'checkQcioEgg') {
+    try {
+      const userRes = await db.collection('users').where({
+        _openid: openid
+      }).field({
+        badges: true,
+        'eggStats.qcioSpaceVisitCount': true
+      }).get();
+
+      if (userRes.data.length === 0) {
+        return { success: false, errMsg: '用户不存在' };
+      }
+
+      const badges = userRes.data[0].badges || [];
+      const currentCount = userRes.data[0].eggStats?.qcioSpaceVisitCount || 0;
+
+      // 检查是否已经达成过空间常客彩蛋
+      const hasQcioVisitor = badges.some(b => b.eggId === 'qcio_space_visitor');
+      if (hasQcioVisitor) {
+        return { success: true, shouldTrigger: false, alreadyAchieved: true, count: currentCount };
+      }
+
+      // 增加计数
+      const newCount = currentCount + 1;
+
+      // 更新计数
+      await db.collection('users').where({
+        _openid: openid
+      }).update({
+        data: {
+          'eggStats.qcioSpaceVisitCount': newCount
+        }
+      });
+
+      // 检查是否达到阈值（10次）
+      const shouldTrigger = newCount >= 10;
+
+      return {
+        success: true,
+        shouldTrigger: shouldTrigger,
+        count: newCount,
+        alreadyAchieved: false
+      };
+    } catch (e) {
+      console.error(e);
+      return { success: false, errMsg: e.message };
+    }
+  }
+
+  // 🥚 检查回收站清空彩蛋（累计清空计数）
+  if (type === 'checkRecycleBinEgg') {
+    try {
+      const userRes = await db.collection('users').where({
+        _openid: openid
+      }).field({
+        badges: true,
+        'eggStats.recycleBinEmptyCount': true
+      }).get();
+
+      if (userRes.data.length === 0) {
+        return { success: false, errMsg: '用户不存在' };
+      }
+
+      const badges = userRes.data[0].badges || [];
+      const currentCount = userRes.data[0].eggStats?.recycleBinEmptyCount || 0;
+
+      // 检查是否已经达成过回收站清理者彩蛋
+      const hasRecycleBinEmptyer = badges.some(b => b.eggId === 'recycle_bin_emptyer');
+      if (hasRecycleBinEmptyer) {
+        return { success: true, shouldTrigger: false, alreadyAchieved: true, count: currentCount };
+      }
+
+      // 增加计数
+      const newCount = currentCount + 1;
+
+      // 更新计数
+      await db.collection('users').where({
+        _openid: openid
+      }).update({
+        data: {
+          'eggStats.recycleBinEmptyCount': newCount
+        }
+      });
+
+      // 检查是否达到阈值（5次）
+      const shouldTrigger = newCount >= 5;
+
+      return {
+        success: true,
+        shouldTrigger: shouldTrigger,
+        count: newCount,
+        alreadyAchieved: false
+      };
+    } catch (e) {
+      console.error(e);
+      return { success: false, errMsg: e.message };
+    }
+  }
+
+  // 🥚 检查群聊彩蛋（累计发送群聊消息计数）
+  if (type === 'checkGroupChatEgg') {
+    try {
+      const userRes = await db.collection('users').where({
+        _openid: openid
+      }).field({
+        badges: true,
+        'eggStats.groupChatMessageCount': true
+      }).get();
+
+      if (userRes.data.length === 0) {
+        return { success: false, errMsg: '用户不存在' };
+      }
+
+      const badges = userRes.data[0].badges || [];
+      const currentCount = userRes.data[0].eggStats?.groupChatMessageCount || 0;
+
+      // 检查是否已经达成过群聊狂欢彩蛋
+      const hasGroupChatParty = badges.some(b => b.eggId === 'group_chat_party');
+      if (hasGroupChatParty) {
+        return { success: true, shouldTrigger: false, alreadyAchieved: true, count: currentCount };
+      }
+
+      // 增加计数
+      const newCount = currentCount + 1;
+
+      // 更新计数
+      await db.collection('users').where({
+        _openid: openid
+      }).update({
+        data: {
+          'eggStats.groupChatMessageCount': newCount
+        }
+      });
+
+      // 检查是否达到阈值（50条）
+      const shouldTrigger = newCount >= 50;
+
+      return {
+        success: true,
+        shouldTrigger: shouldTrigger,
+        count: newCount,
+        alreadyAchieved: false
+      };
+    } catch (e) {
+      console.error(e);
+      return { success: false, errMsg: e.message };
+    }
+  }
+
+  // 🥚 检查火星翻译彩蛋（累计使用翻译计数）
+  if (type === 'checkMarsTranslatorEgg') {
+    try {
+      const userRes = await db.collection('users').where({
+        _openid: openid
+      }).field({
+        badges: true,
+        'eggStats.marsTranslatorCount': true
+      }).get();
+
+      if (userRes.data.length === 0) {
+        return { success: false, errMsg: '用户不存在' };
+      }
+
+      const badges = userRes.data[0].badges || [];
+      const currentCount = userRes.data[0].eggStats?.marsTranslatorCount || 0;
+
+      // 检查是否已经达成过火星文大师彩蛋
+      const hasMarsTranslator = badges.some(b => b.eggId === 'mars_translator');
+      if (hasMarsTranslator) {
+        return { success: true, shouldTrigger: false, alreadyAchieved: true, count: currentCount };
+      }
+
+      // 增加计数
+      const newCount = currentCount + 1;
+
+      // 更新计数
+      await db.collection('users').where({
+        _openid: openid
+      }).update({
+        data: {
+          'eggStats.marsTranslatorCount': newCount
+        }
+      });
+
+      // 检查是否达到阈值（10次）
+      const shouldTrigger = newCount >= 10;
+
+      return {
+        success: true,
+        shouldTrigger: shouldTrigger,
+        count: newCount,
+        alreadyAchieved: false
+      };
+    } catch (e) {
+      console.error(e);
+      return { success: false, errMsg: e.message };
+    }
+  }
+
   // 🥚 发现新彩蛋
   if (type === 'discoverEgg') {
     try {

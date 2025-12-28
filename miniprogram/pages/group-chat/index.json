@@ -1,4 +1,7 @@
 {
   "navigationStyle": "custom",
-  "navigationBarTitleText": "群聊"
+  "navigationBarTitleText": "群聊",
+  "usingComponents": {
+    "egg-discovery-dialog": "/components/egg-discovery-dialog/index"
+  }
 }

@@ -1,4 +1,7 @@
 {
   "navigationStyle": "custom",
-  "navigationBarTitleText": "我的网友 - 聊天中"
+  "navigationBarTitleText": "我的网友 - 聊天中",
+  "usingComponents": {
+    "egg-discovery-dialog": "/components/egg-discovery-dialog/index"
+  }
 }

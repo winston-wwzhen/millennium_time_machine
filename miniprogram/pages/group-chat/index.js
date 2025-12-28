@@ -4,6 +4,7 @@
  */
 const { preventDuplicateBehavior } = require('../../utils/prevent-duplicate');
 const { isNetworkError, setNetworkDisconnected, showDisconnectDialog } = require('../../utils/network');
+const { eggSystem, EGG_IDS } = require('../../utils/egg-system');
 
 Page({
   behaviors: [preventDuplicateBehavior],
@@ -23,7 +24,19 @@ Page({
     chatList: [],
     showMembers: false, // 控制群成员列表展开/收起
     maxLength: 50, // 最大输入长度
-    inputLength: 0 // 当前输入长度
+    inputLength: 0, // 当前输入长度
+    // 彩蛋达成状态
+    groupChatEggAchieved: false,
+
+    // 彩蛋发现弹窗
+    showEggDiscoveryDialog: false,
+    eggDiscoveryData: {
+      name: '',
+      description: '',
+      rarity: '',
+      rarityName: '',
+      rewardText: ''
+    }
   },
 
   // 配置常量
@@ -31,6 +44,35 @@ Page({
   lastSendTime: 0, // 上次发送时间
 
   onLoad(options) {
+    // 加载彩蛋系统
+    eggSystem.load();
+    // 检查群聊狂欢彩蛋是否已达成
+    this.setData({
+      groupChatEggAchieved: eggSystem.isDiscovered(EGG_IDS.GROUP_CHAT_PARTY)
+    });
+
+    // 注册彩蛋发现回调
+    eggSystem.setEggDiscoveryCallback((config) => {
+      const rarityNames = {
+        common: '普通',
+        rare: '稀有',
+        epic: '史诗',
+        legendary: '传说'
+      };
+      const reward = config.reward;
+      const rewardText = reward.coins ? `+${reward.coins}时光币` : '';
+      this.setData({
+        showEggDiscoveryDialog: true,
+        eggDiscoveryData: {
+          name: config.name,
+          description: config.description,
+          rarity: config.rarity,
+          rarityName: rarityNames[config.rarity],
+          rewardText: rewardText
+        }
+      });
+    });
+
     // 获取群聊信息
     let members = [];
     if (options.members) {
@@ -249,6 +291,9 @@ Page({
         // 保存聊天历史到数据库
         this.saveChatHistory(this.data.chatList);
 
+        // 彩蛋：群聊狂欢
+        this.checkGroupChatEgg();
+
       } catch (err) {
         console.error('Cloud Function Error:', err);
         wx.hideNavigationBarLoading();
@@ -347,5 +392,32 @@ Page({
       console.error('Save group chat history error:', err);
       // 静默失败，不影响用户体验
     }
+  },
+
+  // ==================== 彩蛋检查 ====================
+  // 检查群聊狂欢彩蛋（累计发送50条群聊消息）
+  async checkGroupChatEgg() {
+    if (this.data.groupChatEggAchieved) return;
+
+    try {
+      const res = await wx.cloud.callFunction({
+        name: 'user',
+        data: { type: 'checkGroupChatEgg' }
+      });
+
+      if (res.result.success) {
+        if (res.result.shouldTrigger) {
+          this.setData({ groupChatEggAchieved: true });
+          await eggSystem.discover(EGG_IDS.GROUP_CHAT_PARTY);
+        }
+      }
+    } catch (err) {
+      console.error('Check group chat egg error:', err);
+    }
+  },
+
+  // 关闭彩蛋发现弹窗
+  hideEggDiscoveryDialog: function() {
+    this.setData({ showEggDiscoveryDialog: false });
   }
 });

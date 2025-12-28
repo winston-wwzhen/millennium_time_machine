@@ -1,0 +1,29 @@
+<!-- 彩蛋发现弹窗 - Win98 风格 -->
+<view class="win98-overlay {{show ? 'show' : 'hide'}}" wx:if="{{show}}" bindtap="onClose">
+  <view class="win98-window egg-discovery-dialog" catchtap="stopPropagation">
+    <view class="win98-title-bar">
+      <view class="win98-title-text">🎉 发现彩蛋！</view>
+      <view class="win98-title-controls">
+        <button class="win98-btn-close" bindtap="onClose">×</button>
+      </view>
+    </view>
+    <view class="win98-window-body">
+      <view class="egg-discovery-content">
+        <view class="egg-icon-wrapper">
+          <text class="egg-icon-emoji">🥚</text>
+        </view>
+        <view class="egg-discovery-info">
+          <text class="egg-name">{{eggName}}</text>
+          <text class="egg-description">"{{eggDescription}}"</text>
+          <view class="egg-rarity-badge rarity-{{eggRarity}}">
+            <text class="rarity-text">{{eggRarityName}}</text>
+          </view>
+          <text class="egg-reward">奖励: {{eggRewardText}}</text>
+        </view>
+      </view>
+      <view class="dialog-actions">
+        <button class="win98-btn-std" bindtap="onClose">太棒了！</button>
+      </view>
+    </view>
+  </view>
+</view>

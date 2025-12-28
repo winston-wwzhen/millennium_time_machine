@@ -132,6 +132,70 @@ The app features a dual currency system that creates a gameplay loop:
 
 **Egg System File**: `miniprogram/utils/egg-system.js`
 
+### Legendary Easter Egg: KONAMI_CODE
+
+**⚠️ IMPORTANT: When modifying the "my-computer" component or "index" page, be aware of this egg!**
+
+The **KONAMI_CODE** (传说中的秘籍) is the most complex easter egg in the system. It involves a multi-step sequence that spans across the desktop and the "我的电脑" (My Computer) window.
+
+**Trigger Sequence** (11 steps):
+```
+C盘 → 关闭弹窗 → C盘 → 关闭弹窗 → D盘 → 关闭弹窗 → USB → 关闭弹窗 → D盘 → 关闭弹窗 → C盘 → 关闭弹窗 → 关闭窗口 → 点击小狮子 → 点击开始菜单
+```
+
+**Implementation Files**:
+1. **`miniprogram/components/my-computer/index.js`** - Detects the first 9 steps (drive clicks + dialog closes)
+2. **`miniprogram/pages/index/index.js`** - Completes the final 3 steps (window close → lion → start menu)
+
+**How It Works**:
+
+**Phase 1: My Computer Window** (first 9 steps)
+- Each drive click opens a dialog (C, D, or USB)
+- The dialog close event is tracked
+- Sequence is stored in a `konamiSequence` array: `['C', 'D', 'USB']`
+- Expected sequence: `['C', 'C', 'D', 'USB', 'D', 'C']` (5 drives, each followed by dialog close)
+- After each correct sequence completion, a flag `konamiCodeCompleted` is set to `true`
+- This flag is passed back to parent page via `bindwindowclose` event
+
+**Phase 2: Desktop** (final 3 steps)
+- `onMyComputerWindowClose()` receives the `konamiCodeCompleted` flag
+- Sets `konamiCodePhase1Completed` to `true`
+- `onLionClick()` checks if phase 1 is complete
+- `onStartMenuClick()` triggers the egg if both phase 1 and lion click are complete
+
+**Key Implementation Details**:
+
+```javascript
+// my-computer/index.js
+konamiSequence: ['C', 'C', 'D', 'USB', 'D', 'C']  // Expected sequence
+currentKonamiIndex: 0  // Current position in sequence
+konamiCodeCompleted: false  // Set to true when sequence complete
+
+// Pages/index/index.js
+konamiCodePhase1Completed: false  // Receives from my-computer component
+konamiCodeLionClicked: false  // Set to true after lion click
+```
+
+**⚠️ Modification Guidelines**:
+
+When modifying **`miniprogram/components/my-computer/`**:
+- **DO NOT** remove or rename the `konamiSequence`, `currentKonamiIndex`, or `konamiCodeCompleted` data properties
+- **DO NOT** change the `onDriveClick()` or `closeDriveDialog()` methods without preserving the Konami code logic
+- **DO NOT** modify the `bindwindowclose` event to remove the `konamiCodeCompleted` parameter
+- If adding new drive dialogs, update the sequence logic accordingly
+
+When modifying **`miniprogram/pages/index/`**:
+- **DO NOT** remove or rename the `konamiCodePhase1Completed`, `konamiCodeLionClicked` data properties
+- **DO NOT** modify `onMyComputerWindowClose()`, `onLionClick()`, or `onStartMenuClick()` without preserving the Konami code logic
+- The egg requires my-computer to close cleanly via its X button, not programmatic closing
+
+**Reward**: 10000 💎 (时光币) + Win98-style discovery modal
+
+**Why This Design?**
+- Users can normally click drives and close dialogs for legitimate file viewing
+- The egg only triggers when the specific sequence is followed intentionally
+- Does not interfere with normal "我的电脑" window usage
+
 ### Network Simulation
 
 The app simulates **33.6 Kbps dial-up networking**:

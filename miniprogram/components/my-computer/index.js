@@ -1,4 +1,6 @@
 // 我的电脑组件
+const { eggSystem, EGG_IDS } = require("../../utils/egg-system");
+
 Component({
   properties: {
     show: {
@@ -25,12 +27,26 @@ Component({
     'show': function(newVal) {
       if (newVal) {
         this.addLog('open', '我的电脑');
+        // 打开窗口时重置 Konami 序列
+        this.resetKonamiSequence();
       }
     },
     'zIndex': function(newVal) {
       this.setData({
         overlayStyle: `z-index: ${newVal};`
       });
+    }
+  },
+
+  lifetimes: {
+    attached() {
+      // 初始化 Konami 序列计数
+      this.konamiSequence = [];
+      this.waitingForWindowClose = false; // 等待关闭窗口的标志
+
+      // 加载彩蛋系统检查是否已达成
+      eggSystem.load();
+      this.konamiAchieved = eggSystem.isDiscovered(EGG_IDS.KONAMI_CODE);
     }
   },
 
@@ -49,8 +65,15 @@ Component({
         console.error('添加日志失败:', err);
       });
     },
+
     // 关闭窗口
     onClose: function() {
+      // 检查 Konami 序列：等待关闭窗口（第二次关闭）
+      if (this.waitingForWindowClose) {
+        this.triggerEvent('konamihalf', { completed: true });
+        this.resetKonamiSequence();
+      }
+
       this.triggerEvent('close');
     },
 
@@ -59,9 +82,49 @@ Component({
       // 空函数，仅用于阻止事件冒泡
     },
 
+    // 重置 Konami 序列
+    resetKonamiSequence: function() {
+      this.konamiSequence = [];
+      this.waitingForWindowClose = false;
+    },
+
     // 点击驱动器
     onDriveTap: function(e) {
       const drive = e.currentTarget.dataset.drive;
+
+      // 如果已经达成，不再检测
+      if (this.konamiAchieved) {
+        this.showDriveDialogAndReset(drive);
+        return;
+      }
+
+      // 添加到序列
+      this.konamiSequence.push(drive);
+
+      // 只保留最近6个输入
+      if (this.konamiSequence.length > 6) {
+        this.konamiSequence = this.konamiSequence.slice(-6);
+      }
+
+      // 检查是否匹配序列
+      const KONAMI_DRIVE_SEQUENCE = ['C', 'C', 'D', 'USB', 'D', 'C'];
+      const input = this.konamiSequence.join(',');
+      const target = KONAMI_DRIVE_SEQUENCE.join(',');
+
+      if (input === target) {
+        // 序列匹配，设置等待标志
+        this.waitingForWindowClose = true;
+      } else if (this.konamiSequence.length === 6 && input !== target) {
+        // 序列不匹配，重置
+        this.resetKonamiSequence();
+      }
+
+      // 显示对话框
+      this.showDriveDialogAndReset(drive);
+    },
+
+    // 显示驱动器对话框（如果序列不匹配则重置）
+    showDriveDialogAndReset: function(drive) {
       let dialogData = {};
 
       switch(drive) {
