@@ -366,33 +366,33 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
+  padding: 12px 16px;
   text-align: center;
 }
 
 .restore-icon {
-  font-size: 48px;
-  margin-bottom: 12px;
+  font-size: 40px;
+  margin-bottom: 8px;
   filter: drop-shadow(0 0 10px #ffd700);
 }
 
 .restore-title {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: bold;
   color: #000080;
-  margin-bottom: 12px;
+  margin-bottom: 6px;
   font-family: 'SimSun', serif;
 }
 
 .restore-message {
-  font-size: 13px;
+  font-size: 12px;
   color: #000;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
   font-family: 'SimSun', serif;
 }
 
 .restore-hint {
-  font-size: 11px;
+  font-size: 10px;
   color: #808080;
   font-family: 'SimSun', serif;
 }
