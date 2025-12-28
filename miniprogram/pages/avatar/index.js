@@ -1,4 +1,5 @@
 const { eggSystem, EGG_IDS } = require('../../utils/egg-system');
+const { userApi } = require('../../utils/api-client');
 
 Page({
   data: {
@@ -898,17 +899,8 @@ Page({
 
                     const fileID = uploadRes.fileID;
 
-                    // 保存照片记录到数据库
-                    await wx.cloud.callFunction({
-                      name: 'user-photos',
-                      data: {
-                        type: 'savePhoto',
-                        photoData: {
-                          cloudPath: cloudPath,
-                          fileID: fileID
-                        }
-                      }
-                    });
+                    // 保存照片记录到数据库（使用 API 客户端）
+                    await userApi.savePhoto(cloudPath, fileID);
 
                     wx.hideLoading();
                     wx.showToast({

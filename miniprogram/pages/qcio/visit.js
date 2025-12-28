@@ -5,6 +5,7 @@
  */
 const { preventDuplicateBehavior } = require('../../utils/prevent-duplicate');
 const { addVisitSpaceExperience } = require('../../utils/experience');
+const { qcioApi } = require('../../utils/api-client');
 
 Page({
   behaviors: [preventDuplicateBehavior],
@@ -46,19 +47,16 @@ Page({
     this.loadData();
   },
 
-  // 加载数据
+  // 加载数据（使用 API 客户端）
   async loadData() {
     wx.showLoading({ title: '加载中...', mask: true });
 
     try {
       // 先获取当前用户信息
-      const myRes = await wx.cloud.callFunction({
-        name: 'qcio',
-        data: { action: 'init' }
-      });
+      const myResult = await qcioApi.init();
 
-      if (myRes.result && myRes.result.success) {
-        const myProfile = myRes.result.data;
+      if (myResult && myResult.success) {
+        const myProfile = myResult.data;
 
         // 判断是否已注册
         const isRegistered = !!myProfile.qcio_id;
@@ -102,21 +100,14 @@ Page({
     }
   },
 
-  // 加载被访问者的资料
+  // 加载被访问者的资料（使用 API 客户端）
   async loadOwnerProfile() {
     try {
-      // 通过 qcio_id 查找用户
-      const res = await wx.cloud.callFunction({
-        name: 'qcio',
-        data: {
-          action: 'getUserByQcioId',
-          qcioId: this.data.ownerQcioId
-        }
-      });
+      const result = await qcioApi.getUserByQcioId(this.data.ownerQcioId);
 
-      if (res.result && res.result.success && res.result.data) {
+      if (result && result.success && result.data) {
         this.setData({
-          ownerProfile: res.result.data
+          ownerProfile: result.data
         });
       } else {
         wx.showToast({ title: '用户不存在', icon: 'none' });
@@ -126,20 +117,14 @@ Page({
     }
   },
 
-  // 加载访问统计
+  // 加载访问统计（使用 API 客户端）
   async loadVisitStats() {
     try {
-      const res = await wx.cloud.callFunction({
-        name: 'qcio',
-        data: {
-          action: 'getVisitStatsByQcioId',
-          qcioId: this.data.ownerQcioId
-        }
-      });
+      const result = await qcioApi.getVisitStatsByQcioId(this.data.ownerQcioId);
 
-      if (res.result && res.result.success) {
+      if (result && result.success) {
         this.setData({
-          visitStats: res.result.data || { totalVisits: 0, todayVisits: 0 }
+          visitStats: result.data || { totalVisits: 0, todayVisits: 0 }
         });
       }
     } catch (err) {
@@ -147,20 +132,14 @@ Page({
     }
   },
 
-  // 加载留言
+  // 加载留言（使用 API 客户端）
   async loadMessages() {
     try {
-      const res = await wx.cloud.callFunction({
-        name: 'qcio',
-        data: {
-          action: 'getGuestbookByQcioId',
-          qcioId: this.data.ownerQcioId
-        }
-      });
+      const result = await qcioApi.getGuestbookByQcioId(this.data.ownerQcioId);
 
-      if (res.result && res.result.success) {
+      if (result && result.success) {
         this.setData({
-          messages: res.result.data || []
+          messages: result.data || []
         });
       }
     } catch (err) {
@@ -168,20 +147,14 @@ Page({
     }
   },
 
-  // 加载最近访客
+  // 加载最近访客（使用 API 客户端）
   async loadRecentVisitors() {
     try {
-      const res = await wx.cloud.callFunction({
-        name: 'qcio',
-        data: {
-          action: 'getRecentVisitorsByQcioId',
-          qcioId: this.data.ownerQcioId
-        }
-      });
+      const result = await qcioApi.getRecentVisitorsByQcioId(this.data.ownerQcioId);
 
-      if (res.result && res.result.success) {
+      if (result && result.success) {
         this.setData({
-          recentVisitors: res.result.data || []
+          recentVisitors: result.data || []
         });
       }
     } catch (err) {
@@ -189,24 +162,18 @@ Page({
     }
   },
 
-  // 检查今天是否已经踩过
+  // 检查今天是否已经踩过（使用 API 客户端）
   async checkIfSteppedToday() {
     if (!this.data.isLoggedIn) {
       return;
     }
 
     try {
-      const res = await wx.cloud.callFunction({
-        name: 'qcio',
-        data: {
-          action: 'checkIfSteppedToday',
-          ownerQcioId: this.data.ownerQcioId
-        }
-      });
+      const result = await qcioApi.checkIfSteppedToday(this.data.ownerQcioId);
 
-      if (res.result && res.result.success) {
+      if (result && result.success) {
         this.setData({
-          hasSteppedToday: res.result.data.hasStepped || false
+          hasSteppedToday: result.data.hasStepped || false
         });
       }
     } catch (err) {
@@ -236,18 +203,14 @@ Page({
       wx.showLoading({ title: '踩一脚中...', mask: true });
 
       try {
-        const res = await wx.cloud.callFunction({
-          name: 'qcio',
-          data: {
-            action: 'recordVisit',
-            visitorId: this.data.myProfile.qcio_id,
-            visitorName: this.data.myProfile.nickname,
-            visitorAvatar: this.data.myProfile.avatar,
-            ownerQcioId: this.data.ownerQcioId
-          }
-        });
+        const result = await qcioApi.recordVisit(
+          this.data.myProfile.qcio_id,
+          this.data.myProfile.nickname,
+          this.data.myProfile.avatar,
+          this.data.ownerQcioId
+        );
 
-        if (res.result && res.result.success) {
+        if (result && result.success) {
           this.setData({ hasSteppedToday: true });
 
           // 重新加载数据

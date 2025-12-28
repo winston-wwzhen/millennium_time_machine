@@ -5,6 +5,7 @@
 const { preventDuplicateBehavior } = require('../../utils/prevent-duplicate');
 const { isNetworkError, setNetworkDisconnected, showDisconnectDialog } = require('../../utils/network');
 const { eggSystem, EGG_IDS } = require('../../utils/egg-system');
+const { userApi, qcioApi, chatApi } = require('../../utils/api-client');
 
 Page({
   behaviors: [preventDuplicateBehavior],
@@ -104,21 +105,15 @@ Page({
     this.playSound('login');
   },
 
-  // 加载聊天历史
+  // 加载聊天历史（使用 API 客户端）
   async loadChatHistory() {
     try {
-      const res = await wx.cloud.callFunction({
-        name: 'qcio',
-        data: {
-          action: 'getGroupChatHistory',
-          groupName: this.data.groupName
-        }
-      });
+      const result = await qcioApi.getGroupChatHistory(this.data.groupName);
 
-      if (res.result && res.result.success && res.result.data.length > 0) {
+      if (result && result.success && result.data.length > 0) {
         // 有历史记录，直接使用
         this.setData({
-          chatList: res.result.data,
+          chatList: result.data,
           scrollToView: 'msg-bottom'  // 滚动到最后一条消息
         });
       } else {
@@ -232,22 +227,14 @@ Page({
         // 4. 随机选择发言成员
         const speakers = this.getRandomSpeakers();
 
-        // 5. 一次性调用后端，获取多个回复
-        const res = await wx.cloud.callFunction({
-          name: 'chat',
-          data: {
-            userMessage: text,
-            history: history,
-            mode: this.data.chatMode,
-            groupChat: {
-              enabled: true,
-              speakers: speakers.map(s => ({
-                name: s.name,
-                avatar: s.avatar,
-                mode: s.mode || this.data.chatMode
-              }))
-            }
-          }
+        // 5. 一次性调用后端，获取多个回复（使用 API 客户端）
+        const result = await chatApi.sendGroupMessage(text, history, this.data.chatMode, {
+          enabled: true,
+          speakers: speakers.map(s => ({
+            name: s.name,
+            avatar: s.avatar,
+            mode: s.mode || this.data.chatMode
+          }))
         });
 
         // 6. 处理结果
@@ -255,8 +242,8 @@ Page({
         wx.setNavigationBarTitle({ title: `${this.data.groupName} (${this.data.memberCount}人)` });
 
         let replies = [];
-        if (res.result && res.result.success) {
-          replies = res.result.replies || [];
+        if (result && result.success) {
+          replies = result.replies || [];
         }
 
         // 7. 依次显示每个回复
@@ -374,20 +361,11 @@ Page({
     return new Promise(resolve => setTimeout(resolve, ms));
   },
 
-  // 保存聊天历史到数据库
+  // 保存聊天历史到数据库（使用 API 客户端）
   async saveChatHistory(chatList) {
     try {
-      const res = await wx.cloud.callFunction({
-        name: 'qcio',
-        data: {
-          action: 'saveGroupChatHistory',
-          data: {
-            groupName: this.data.groupName,
-            messages: chatList
-          }
-        }
-      });
-      console.log('Save group chat history result:', res.result);
+      const result = await qcioApi.saveGroupChatHistory(this.data.groupName, chatList);
+      console.log('Save group chat history result:', result);
     } catch (err) {
       console.error('Save group chat history error:', err);
       // 静默失败，不影响用户体验
@@ -395,18 +373,15 @@ Page({
   },
 
   // ==================== 彩蛋检查 ====================
-  // 检查群聊狂欢彩蛋（累计发送50条群聊消息）
+  // 检查群聊狂欢彩蛋（累计发送50条群聊消息）（使用 API 客户端）
   async checkGroupChatEgg() {
     if (this.data.groupChatEggAchieved) return;
 
     try {
-      const res = await wx.cloud.callFunction({
-        name: 'user',
-        data: { type: 'checkGroupChatEgg' }
-      });
+      const result = await userApi.checkGroupChatEgg();
 
-      if (res.result.success) {
-        if (res.result.shouldTrigger) {
+      if (result.success) {
+        if (result.shouldTrigger) {
           this.setData({ groupChatEggAchieved: true });
           await eggSystem.discover(EGG_IDS.GROUP_CHAT_PARTY);
         }

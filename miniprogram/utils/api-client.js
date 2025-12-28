@@ -161,6 +161,32 @@ const userApi = {
    */
   checkChatEgg() {
     return callCloudFunction('user', { type: 'checkChatEgg' });
+  },
+
+  /**
+   * 检查群聊狂欢彩蛋
+   */
+  checkGroupChatEgg() {
+    return callCloudFunction('user', { type: 'checkGroupChatEgg' });
+  },
+
+  /**
+   * 检查火星文大师彩蛋
+   */
+  checkMarsTranslatorEgg() {
+    return callCloudFunction('user', { type: 'checkMarsTranslatorEgg' });
+  },
+
+  /**
+   * 保存照片记录
+   * @param {string} cloudPath - 云存储路径
+   * @param {string} fileID - 文件ID
+   */
+  savePhoto(cloudPath, fileID) {
+    return callCloudFunction('user-photos', {
+      type: 'savePhoto',
+      photoData: { cloudPath, fileID }
+    });
   }
 };
 
@@ -318,6 +344,101 @@ const qcioApi = {
     return callCloudFunction('qcio', {
       action: 'saveChatHistory',
       data: { contactName, messages }
+    });
+  },
+
+  /**
+   * 获取群聊历史
+   * @param {string} groupName - 群名称
+   */
+  getGroupChatHistory(groupName) {
+    return callCloudFunction('qcio', {
+      action: 'getGroupChatHistory',
+      groupName
+    });
+  },
+
+  /**
+   * 保存群聊历史
+   * @param {string} groupName - 群名称
+   * @param {Array} messages - 消息列表
+   */
+  saveGroupChatHistory(groupName, messages) {
+    return callCloudFunction('qcio', {
+      action: 'saveGroupChatHistory',
+      data: { groupName, messages }
+    });
+  },
+
+  /**
+   * 根据 qcio_id 获取用户信息
+   * @param {string} qcioId - QCIO 号码
+   */
+  getUserByQcioId(qcioId) {
+    return callCloudFunction('qcio', {
+      action: 'getUserByQcioId',
+      qcioId
+    });
+  },
+
+  /**
+   * 根据 qcio_id 获取访问统计
+   * @param {string} qcioId - QCIO 号码
+   */
+  getVisitStatsByQcioId(qcioId) {
+    return callCloudFunction('qcio', {
+      action: 'getVisitStatsByQcioId',
+      qcioId
+    });
+  },
+
+  /**
+   * 根据 qcio_id 获取留言板
+   * @param {string} qcioId - QCIO 号码
+   */
+  getGuestbookByQcioId(qcioId) {
+    return callCloudFunction('qcio', {
+      action: 'getGuestbookByQcioId',
+      qcioId
+    });
+  },
+
+  /**
+   * 根据 qcio_id 获取最近访客
+   * @param {string} qcioId - QCIO 号码
+   */
+  getRecentVisitorsByQcioId(qcioId) {
+    return callCloudFunction('qcio', {
+      action: 'getRecentVisitorsByQcioId',
+      qcioId
+    });
+  },
+
+  /**
+   * 检查今天是否踩过
+   * @param {string} ownerQcioId - 被访问空间ID
+   */
+  checkIfSteppedToday(ownerQcioId) {
+    return callCloudFunction('qcio', {
+      action: 'checkIfSteppedToday',
+      ownerQcioId
+    });
+  },
+
+  /**
+   * 记录访问（踩一踩）
+   * @param {string} visitorId - 访问者ID
+   * @param {string} visitorName - 访问者昵称
+   * @param {string} visitorAvatar - 访问者头像
+   * @param {string} ownerQcioId - 被访问空间ID
+   */
+  recordVisit(visitorId, visitorName, visitorAvatar, ownerQcioId) {
+    return callCloudFunction('qcio', {
+      action: 'recordVisit',
+      visitorId,
+      visitorName,
+      visitorAvatar,
+      ownerQcioId
     });
   }
 };

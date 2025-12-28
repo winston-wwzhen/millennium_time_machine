@@ -1,5 +1,6 @@
 // miniprogram/pages/mars/index.js
 const { eggSystem, EGG_IDS } = require('../../utils/egg-system');
+const { chatApi, userApi } = require('../../utils/api-client');
 
 Page({
   data: {
@@ -118,19 +119,13 @@ Page({
     try {
       const currentModeKey = this.data.modes[this.data.modeIndex].key;
 
-      // 调用云函数
-      const res = await wx.cloud.callFunction({
-        name: "chat",
-        data: {
-          userMessage: text,
-          mode: currentModeKey,
-        },
-      });
+      // 调用云函数（使用 API 客户端）
+      const result = await chatApi.sendMessage(text, [], currentModeKey);
 
-      if (res.result && res.result.reply) {
-        const result = res.result.reply;
+      if (result && result.reply) {
+        const reply = result.reply;
         this.setData({
-          outputText: result,
+          outputText: reply,
           statusText: "转换成功",
         });
 
@@ -172,18 +167,15 @@ Page({
   },
 
   // ==================== 彩蛋检查 ====================
-  // 检查火星文大师彩蛋（累计使用翻译10次）
+  // 检查火星文大师彩蛋（累计使用翻译10次）（使用 API 客户端）
   async checkMarsTranslatorEgg() {
     if (this.data.marsEggAchieved) return;
 
     try {
-      const res = await wx.cloud.callFunction({
-        name: 'user',
-        data: { type: 'checkMarsTranslatorEgg' }
-      });
+      const result = await userApi.checkMarsTranslatorEgg();
 
-      if (res.result.success) {
-        if (res.result.shouldTrigger) {
+      if (result.success) {
+        if (result.shouldTrigger) {
           this.setData({ marsEggAchieved: true });
           await eggSystem.discover(EGG_IDS.MARS_TRANSLATOR);
         }
