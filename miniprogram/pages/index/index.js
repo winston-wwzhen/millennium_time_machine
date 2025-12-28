@@ -263,23 +263,25 @@ Page({
     }
   },
 
-  // 加载用户信息（使用缓存）
-  loadUserInfo: async function () {
-    // 先尝试从缓存获取
-    const cachedUserInfo = userInfoCache.get();
-    const cachedBalance = userBalanceCache.get();
+  // 加载用户信息（使用缓存，支持强制刷新）
+  loadUserInfo: async function (forceRefresh = false) {
+    // 先尝试从缓存获取（除非强制刷新）
+    if (!forceRefresh) {
+      const cachedUserInfo = userInfoCache.get();
+      const cachedBalance = userBalanceCache.get();
 
-    if (cachedUserInfo && cachedBalance) {
-      this.setData({
-        "userInfo.nickname": cachedUserInfo.avatarName || "用户",
-        "userInfo.avatar": cachedUserInfo.avatar || "👤",
-        userNetFee: cachedBalance.netFee || 0,
-        userCoins: cachedBalance.coins || 0,
-      });
-      return;
+      if (cachedUserInfo && cachedBalance) {
+        this.setData({
+          "userInfo.nickname": cachedUserInfo.avatarName || "用户",
+          "userInfo.avatar": cachedUserInfo.avatar || "👤",
+          userNetFee: cachedBalance.netFee || 0,
+          userCoins: cachedBalance.coins || 0,
+        });
+        return;
+      }
     }
 
-    // 缓存未命中，调用API
+    // 缓存未命中或强制刷新时，调用API
     try {
       const balanceResult = await userApi.getBalance();
       if (balanceResult && balanceResult.success) {
@@ -413,11 +415,14 @@ Page({
     return false;
   },
 
-  // 页面显示时重新加载网络状态
+  // 页面显示时重新加载网络状态和用户余额
   onShow: function () {
     this.loadNetworkStatus();
     // 每次显示也检查时间彩蛋
     this.checkTimeEggs();
+
+    // 强制刷新用户余额，确保网管插件显示最新数据
+    this.loadUserInfo(true);
 
     // 如果网管系统打开，确保插件也显示
     if (this.data.showNetworkSystem) {
