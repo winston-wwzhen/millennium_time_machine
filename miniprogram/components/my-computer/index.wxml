@@ -8,13 +8,13 @@
       </view>
     </view>
 
-    <!-- 菜单栏 -->
-    <view class="menu-bar">
+    <!-- 菜单栏 (暂未实现功能，先隐藏) -->
+    <!-- <view class="menu-bar">
       <text class="menu-item">文件(F)</text>
       <text class="menu-item">编辑(E)</text>
       <text class="menu-item">查看(V)</text>
       <text class="menu-item">帮助(H)</text>
-    </view>
+    </view> -->
 
     <view class="win98-window-body">
       <!-- 驱动器列表 -->

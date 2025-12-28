@@ -184,6 +184,8 @@ Page({
     agentSettingsMessage: '',
     // 关于弹窗
     showAboutDialog: false,
+    // 关机弹窗
+    showShutdownDialog: false,
   },
 
   onLoad: function () {
@@ -807,34 +809,30 @@ Page({
   // 关机
   onShutdown: function () {
     this.hideContextMenu();
+    this.setData({ showShutdownDialog: true });
+  },
 
-    // 显示确认弹窗
-    wx.showModal({
-      title: '关机',
-      content: '时光机即将关闭...\n\n那段青涩的年华，那些非主流的签名，火星文的交流，踩空间的执着...\n\n都已成为了回忆。\n\n但请记住，怀念过去是为了更好地走向未来。\n\n关机后，回到现实，继续书写属于你的精彩人生！\n\n确定要关机吗？',
-      confirmText: '关机',
-      cancelText: '再留一会',
-      confirmColor: '#000080',
-      success: (res) => {
-        if (res.confirm) {
-          // 用户点击确定，执行关机
-          wx.exitMiniProgram({
-            success: () => {
-              console.log('小程序已关闭');
-            },
-            fail: (err) => {
-              console.log('关闭小程序失败:', err);
-              // 开发者工具中会失败，给提示
-              wx.showToast({
-                title: '关机功能仅真机有效',
-                icon: 'none',
-                duration: 2000
-              });
-            }
-          });
-        }
+  // 关机弹窗 - 确认关机
+  onShutdownConfirm: function () {
+    wx.exitMiniProgram({
+      success: () => {
+        console.log('小程序已关闭');
+      },
+      fail: (err) => {
+        console.log('关闭小程序失败:', err);
+        // 开发者工具中会失败，给提示
+        wx.showToast({
+          title: '关机功能仅真机有效',
+          icon: 'none',
+          duration: 2000
+        });
       }
     });
+  },
+
+  // 关机弹窗 - 取消关机
+  onShutdownCancel: function () {
+    this.setData({ showShutdownDialog: false });
   },
 
   // 关闭彩蛋发现弹窗

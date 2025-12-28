@@ -492,6 +492,32 @@
     </view>
   </view>
 
+  <!-- Windows 11 风格关机弹窗 -->
+  <view class="win11-overlay {{showShutdownDialog ? 'show' : ''}}" wx:if="{{showShutdownDialog}}" bindtap="onShutdownCancel">
+    <view class="win11-dialog" catchtap="stopPropagation">
+      <view class="win11-icon">🔌</view>
+      <text class="win11-title">关机</text>
+
+      <view class="win11-content">
+        <text class="win11-text">时光机即将关闭...</text>
+        <text class="win11-text win11-spacer"></text>
+        <text class="win11-text">那段青涩的年华，那些非主流的签名，</text>
+        <text class="win11-text">火星文的交流，踩空间的执着...</text>
+        <text class="win11-text win11-spacer"></text>
+        <text class="win11-text">都已成为了回忆。</text>
+        <text class="win11-text win11-spacer"></text>
+        <text class="win11-text win11-emphasis">但请记住，怀念过去是为了更好地走向未来。</text>
+        <text class="win11-text win11-spacer"></text>
+        <text class="win11-text">关机后，回到现实，继续书写属于你的精彩人生！</text>
+      </view>
+
+      <view class="win11-actions">
+        <button class="win11-btn win11-btn-secondary" bindtap="onShutdownCancel">再留一会</button>
+        <button class="win11-btn win11-btn-primary" bindtap="onShutdownConfirm">关机</button>
+      </view>
+    </view>
+  </view>
+
   <!-- 十分动听播放器组件 -->
   <ttplayer show="{{showTTPlayer}}" bindclose="onCloseTTPlayer"></ttplayer>
 
