@@ -234,7 +234,14 @@ async function getQcioData(openid) {
 - ✅ `saveChatHistory()`: 使用 `qcioApi.saveChatHistory()`
 - ✅ `sendMessage()`: 使用 `userApi.deductNetFee()` 和 `chatApi.sendMessage()`
 
-**api-client.js 新增方法：**
+**pages/chat/index.js 优化：**
+- ✅ 引入 `userApi`, `qcioApi`, `chatApi`
+- ✅ `loadChatHistory()`: 使用 `qcioApi.getChatHistory()`
+- ✅ `sendMessage()`: 使用 `chatApi.sendMessage()`
+- ✅ `saveChatHistory()`: 使用 `qcioApi.saveChatHistory()`
+- ✅ `checkChatEgg()`: 使用 `userApi.checkChatEgg()`
+
+**api-client.js 新增/更新方法：**
 - ✅ `userApi.updateProfile()`
 - ✅ `userApi.checkQcioEgg()`
 - ✅ `userApi.getTransactionHistory()`
@@ -245,11 +252,14 @@ async function getQcioData(openid) {
 - ✅ `qcioApi.recordVisit()`
 - ✅ `qcioApi.getChatHistory()`
 - ✅ `qcioApi.saveChatHistory()`
+- ✅ `userApi.checkChatEgg()`
+- ✅ `chatApi.sendMessage()` 更新（添加 contactName 参数）
 
 **提交记录：**
 - ✅ commit `0ff49be`: 应用公共工具模块优化首页和QCIO页面
 - ✅ commit `af2867e`: 应用公共工具模块优化网管系统组件
 - ✅ commit `2363201`: 应用公共工具模块优化QCIO聊天页面
+- ✅ commit `5bb2a7b`: 应用公共工具模块优化单人聊天页面
 
 ---
 
