@@ -123,18 +123,29 @@ The app features a dual currency system that creates a gameplay loop:
 **Exchange Rate**: 1000 时光币 = 1 day (1440 min) of 网费, i.e., 1 时光币 ≈ 1.44 minutes
 
 **Game Loop**:
-1. New users get 30 days free 网费
+1. New users get 30 days free 网费 (recorded in transaction history as "新用户赠送30天网费")
 2. Daily login deducts 1 day of 网费 automatically
 3. Explore desktop to discover easter eggs → earn 时光币
 4. Use 网管系统 to exchange 时光币 for 网费
 5. Continue using AI features with purchased 网费
 
+**Net Fee Zero Logic**:
+- Daily login deduction allows negative balance (no check)
+- Feature usage (chat, mood logs, etc.) requires sufficient balance
+- When balance insufficient: users blocked with "网费不足" error
+- Transaction history shows all fee changes (daily_deduct, exchange, usage types)
+
 **Cloud Function Operations** (`user`):
-- `login` - Daily login with net fee deduction
+- `login` - Daily login with net fee deduction, records transaction for new users
 - `getBalance` - Fetch both currency balances
 - `exchangeNetFee` - Exchange 时光币 → 网费 (1:1 ratio)
-- `deductNetFee` - Consume 网费 for AI features
+- `deductNetFee` - Consume 网费 for AI features, records usage transaction
 - `discoverEgg` - Record easter egg discovery, award 时光币
+
+**Transaction History**:
+- Stored in `user_transactions` collection
+- Types: `daily_deduct` (daily login), `exchange` (top-up), `usage` (chat/AI features)
+- Viewable in 网管系统 via "扣费记录" button
 
 ### Easter Egg System
 
@@ -301,8 +312,25 @@ The app simulates **33.6 Kbps dial-up networking**:
 ### Content Safety
 
 Uses WeChat `msgSecCheck` API for content moderation:
-- Input check: When user sends messages
+- Input check: When user sends messages, updates nickname/signature
 - Output check: When AI generates replies
+- **Fail-open strategy**: If API call fails, content is allowed (prevents false blocking)
+- **Required permissions**: Cloud functions using `msgSecCheck` need `"security.msgSecCheck"` in `config.json`
+
+**Cloud Functions with Safety Check**:
+- `chat` - Chat messages (input + output)
+- `qcio` - Nickname/signature updates
+
+**Config Example**:
+```json
+{
+  "permissions": {
+    "openapi": [
+      "security.msgSecCheck"
+    ]
+  }
+}
+```
 
 ### Rate Limits
 
@@ -365,14 +393,19 @@ const OPENID = wxContext.OPENID;
 | `miniprogram/pages/index/index.js` | Windows 98 desktop homepage, z-index management, network plugin |
 | `miniprogram/pages/index/index.wxml` | Desktop UI structure, network plugin HTML |
 | `miniprogram/pages/index/index.wxss` | Desktop styling, network plugin CSS |
+| `miniprogram/pages/qcio/index.wxml` | QCIO main panel with dialog labels (昵称/签名) |
+| `miniprogram/pages/qcio-chat/index.js` | QCIO chat with net fee deduction and network check |
 | `miniprogram/utils/network.js` | Network connection state management |
 | `miniprogram/utils/egg-system.js` | Easter egg system with cloud storage |
 | `miniprogram/components/my-documents/` | My documents component with help window |
 | `miniprogram/components/my-computer/` | My computer component with help dialog and Konami code egg |
 | `miniprogram/components/egg-discovery-dialog/` | Win98 style reusable discovery modal |
 | `cloudfunctions/chat/index.js` | AI chat core with 36 modes |
-| `cloudfunctions/qcio/index.js` | QCIO social features router |
-| `cloudfunctions/user/index.js` | User login, dual currency, easter eggs |
+| `cloudfunctions/chat/safety.js` | Content safety check with fail-open strategy |
+| `cloudfunctions/qcio/index.js` | QCIO social features router with nickname/signature validation |
+| `cloudfunctions/qcio/modules/safety.js` | Content safety check for QCIO features |
+| `cloudfunctions/qcio/config.json` | QCIO cloud function API permissions |
+| `cloudfunctions/user/index.js` | User login, dual currency, easter eggs, transaction history |
 | `cloudfunctions/init-db/index.js` | Database initialization (25 collections) |
 | `cloudfunctions/clear-db/index.js` | Database clearing for testing |
 

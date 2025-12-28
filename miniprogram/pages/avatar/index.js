@@ -53,10 +53,8 @@ Page({
     // 边框列表
     borderList: [
       { id: 0, name: '原图', src: '', color: '#dddddd' },
-      { id: 1, name: '千禧甜心', src: '/images/borders/border_y2k.png', color: '#ff69b4' },
       { id: 2, name: '暗黑赛博', src: '/images/borders/border_cyber.png', color: '#00ff00' },
-      { id: 3, name: 'Win98', src: '/images/borders/border_win98.png', color: '#000080' },
-      { id: 4, name: '电子包浆', src: '/images/borders/border_noise.png', color: '#808080' }
+      { id: 3, name: 'Win98', src: '/images/borders/border_win98.png', color: '#000080' }
     ],
 
     // 贴纸数据

@@ -111,7 +111,7 @@ exports.main = async (event, context) => {
         // 生成随机用户名
         const randomUsername = generateRandomUsername();
 
-        await db.collection('users').add({
+        const userRes = await db.collection('users').add({
           data: {
             _openid: openid,
             avatarName: randomUsername,
@@ -129,6 +129,18 @@ exports.main = async (event, context) => {
               daysUsed: 1,         // 第一天也算使用
               lastDailyDate: todayStr
             }
+          }
+        });
+
+        // 记录新用户初始赠送网费交易
+        await db.collection('user_transactions').add({
+          data: {
+            _openid: openid,
+            type: 'exchange',
+            description: '新用户赠送30天网费',
+            amount: 43200,
+            balanceAfter: 43200,
+            createTime: db.serverDate()
           }
         });
         return {

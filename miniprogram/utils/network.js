@@ -114,22 +114,22 @@ function isNetworkConnected() {
 /**
  * 显示断网提示对话框
  * @param {string} reason - 断开原因
- * @returns {Promise<boolean>} - 是否跳转到联网页面
+ * @returns {Promise<boolean>} - 是否跳转到桌面
  */
 function showDisconnectDialog(reason = '网络连接中断') {
   return new Promise((resolve) => {
     wx.showModal({
       title: '网络断开',
-      content: `${reason}\n\n请通过"网上邻居"重新连接网络后继续使用聊天功能。`,
-      confirmText: '去连接',
+      content: `${reason}\n\n请通过桌面"网管系统"重新连接网络后继续使用聊天功能。`,
+      confirmText: '回桌面',
       cancelText: '稍后再说',
       confirmColor: '#000080',
       showCancel: true,
       success: (res) => {
         if (res.confirm) {
-          // 跳转到网上邻居页面
-          wx.navigateTo({
-            url: '/pages/network-neighborhood/index',
+          // 跳转回桌面
+          wx.switchTab({
+            url: '/pages/index/index',
             success: () => resolve(true),
             fail: () => resolve(false)
           });

@@ -3,6 +3,7 @@
  * 复古风格聊天界面，支持多 AI 人设
  */
 const { addChatExperience } = require('../../utils/experience');
+const { isNetworkConnected } = require('../../utils/network');
 
 Page({
   data: {
@@ -110,7 +111,60 @@ Page({
     const text = this.data.inputText.trim();
     if (!text || this.data.isSending) return;
 
-    // 添加用户消息
+    // 1️⃣ 检查网络连接状态
+    if (!isNetworkConnected()) {
+      wx.showModal({
+        title: '网络未连接',
+        content: '请通过桌面"网管系统"连接网络后才能聊天',
+        confirmText: '回桌面',
+        cancelText: '取消',
+        confirmColor: '#000080',
+        success: (res) => {
+          if (res.confirm) {
+            wx.switchTab({
+              url: '/pages/index/index'
+            });
+          }
+        }
+      });
+      return;
+    }
+
+    // 2️⃣ 扣除网费（每次聊天消耗10分钟网费）
+    try {
+      const deductRes = await wx.cloud.callFunction({
+        name: 'user',
+        data: {
+          action: 'deductNetFee',
+          amount: 10 // 每次聊天消耗10分钟网费
+        }
+      });
+
+      if (!deductRes.result || !deductRes.result.success) {
+        // 网费不足
+        wx.showModal({
+          title: '网费不足',
+          content: deductRes.result?.message || '您的网费不足，请通过桌面"网管系统"充值',
+          confirmText: '去充值',
+          cancelText: '取消',
+          confirmColor: '#000080',
+          success: (res) => {
+            if (res.confirm) {
+              wx.switchTab({
+                url: '/pages/index/index'
+              });
+            }
+          }
+        });
+        return;
+      }
+    } catch (err) {
+      console.error('Deduct net fee error:', err);
+      wx.showToast({ title: '网费扣除失败', icon: 'none' });
+      return;
+    }
+
+    // 3️⃣ 添加用户消息
     const userMsg = {
       role: 'user',
       content: text,
@@ -127,7 +181,7 @@ Page({
     this.playSound('send');
 
     try {
-      // 调用 AI
+      // 4️⃣ 调用 AI
       const history = this.data.messages.map(m => ({
         role: m.role,
         content: m.content
@@ -197,13 +251,6 @@ Page({
     // 简化处理：使用系统提示音代替
     // 实际项目中可以使用云存储的音频文件
     return '';
-  },
-
-  // 震动窗口
-  vibrate() {
-    wx.vibrateShort({
-      type: 'light'
-    });
   },
 
   // 复制消息

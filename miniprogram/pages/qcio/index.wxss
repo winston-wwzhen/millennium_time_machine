@@ -130,8 +130,8 @@ page {
   z-index: 1000;
 }
 
-.login-dialog { width: 280px; }
-.register-dialog { width: 320px; }
+.login-dialog { width: 340px; }
+.register-dialog { width: 340px; }
 
 .login-header, .register-header {
   display: flex;
@@ -152,6 +152,20 @@ page {
   font-size: 11px;
   color: #666;
   margin-top: 5px;
+}
+
+/* 注册页面特色标语样式 */
+.register-note {
+  margin-top: 8px;
+  padding: 4px 12px;
+  background: linear-gradient(135deg, #e8f4ff, #f0e6ff);
+  border: 1px dashed #9999ff;
+  border-radius: 4px;
+  font-size: 10px;
+  color: #6666cc;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  text-align: center;
 }
 
 .field-row { display: flex; align-items: center; margin-bottom: 12px; padding: 0 20px; }
@@ -175,17 +189,20 @@ page {
 /* 头像选择区域 */
 .avatar-inline {
   display: flex;
-  gap: 4px;
+  flex-wrap: wrap;
+  gap: 6px;
   align-items: center;
+  justify-content: flex-start;
+  max-width: 200px;
 }
 
 .avatar-item {
-  width: 22px;
-  height: 22px;
+  width: 28px;
+  height: 28px;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 14px;
+  font-size: 16px;
   background: #fff;
   border-top: 1px solid #ffffff;
   border-left: 1px solid #ffffff;
