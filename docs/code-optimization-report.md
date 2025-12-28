@@ -202,15 +202,41 @@ async function getQcioData(openid) {
 
 ## 📋 实施计划
 
-### 第一阶段：使用公共模块（1周）
+### ✅ 已完成（2025-12-28）
 
-1. ✅ 创建 api-client.js
-2. ✅ 创建 error-handler.js
-3. ✅ 创建 cache-manager.js
-4. ⏳ 在现有代码中应用新模块
-   - 替换 pages/index/index.js 中的云函数调用
-   - 替换 pages/qcio/index.js 中的云函数调用
-   - 替换 components/network-neighborhood 中的云函数调用
+#### 第一阶段：公共模块应用
+
+**pages/index/index.js 优化：**
+- ✅ 引入 `userApi`, `userInfoCache`, `userBalanceCache`
+- ✅ `loadUserInfo()`: 使用缓存优先策略
+- ✅ `saveUserInfo()`: 使用 `userApi.updateProfile` 并更新缓存
+- ✅ `showEasterEggs()`: 优先从缓存获取余额
+
+**pages/qcio/index.js 优化：**
+- ✅ 引入 `userApi`, `qcioApi`, `qcioContactsCache`, `qcioProfileCache`
+- ✅ `checkQcioEgg()`: 使用 `userApi.checkQcioEgg`
+- ✅ `loadAIContacts()`: 使用缓存优先策略
+- ✅ `handleVisitFromShare()`: 使用 `qcioApi.init` 和 `recordVisit`
+- ✅ `initAccountFromCloud()`: 使用 `qcioApi.init` 并缓存用户资料
+- ✅ `submitRegister()`: 使用 `qcioApi.register` 和 `updateProfile`
+- ✅ `loadGrowthInfo()`: 使用 `qcioApi.getLevelInfo`
+- ✅ `confirmLogout()`: 使用 `qcioApi.logout`
+
+**api-client.js 新增方法：**
+- ✅ `userApi.updateProfile()`
+- ✅ `userApi.checkQcioEgg()`
+- ✅ `qcioApi.register()`
+- ✅ `qcioApi.getLevelInfo()`
+- ✅ `qcioApi.logout()`
+- ✅ `qcioApi.getAIContacts()`
+- ✅ `qcioApi.recordVisit()`
+
+**提交记录：**
+- ✅ commit `0ff49be`: 应用公共工具模块优化首页和QCIO页面
+
+---
+
+### 待完成
 
 ### 第二阶段：性能优化（1周）
 
@@ -285,4 +311,5 @@ async function getQcioData(openid) {
 ---
 
 **生成时间：** 2025-12-28
-**分支：** refactor/code-optimization
+**最后更新：** 2025-12-28
+**分支：** main
