@@ -69,6 +69,9 @@ Component({
       const badges = eggSystem.getBadges();
       const discoveredIds = new Set(badges.map(b => b.eggId));
 
+      // 更新已发现数量（使用最新的云端数据）
+      this.setData({ discovered: discoveredIds.size });
+
       // 按稀有度分组
       const eggList = [
         // 普通彩蛋
