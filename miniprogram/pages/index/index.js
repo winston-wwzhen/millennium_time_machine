@@ -1174,11 +1174,6 @@ Page({
     // 首次切换发现彩蛋
     if (newIndex === 1) {
       await eggSystem.discover(EGG_IDS.BG_SWITCH);
-      wx.showToast({
-        title: "🎨 发现彩蛋：换了个心情",
-        icon: "none",
-        duration: 2000,
-      });
     }
   },
 
