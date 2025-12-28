@@ -50,12 +50,12 @@
           <view class="nav-links">
             <view class="section-title">导航目录</view>
 
-            <!-- 游戏入口：内部跳转 -->
-            <view class="link-item special-link" bindtap="onLinkTap" data-url="http://galaxy.farm">
+            <!-- 游戏入口：原生跳转 -->
+            <view class="link-item" bindtap="onLinkTap" data-path="/pages/qcio/farm/index">
               <text class="link-icon">🌱</text>
               <view class="link-text">
-                <text class="link-title">我的主页花园</text>
-                <text class="link-desc">种植植物并访问好友！</text>
+                <text class="link-title">QCIO农场</text>
+                <text class="link-desc">种植作物，收获经验！</text>
               </view>
             </view>
 
@@ -77,11 +77,6 @@
             </view>
           </view>
         </view>
-      </block>
-
-      <!-- ================= SCENE B: Game Component ================= -->
-      <block wx:if="{{currentUrl === 'http://galaxy.farm'}}">
-        <farm-game bind:statuschange="onGameStatusChange"></farm-game>
       </block>
 
     </scroll-view>

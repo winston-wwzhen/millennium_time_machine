@@ -133,21 +133,9 @@ Page({
   },
   
   onLinkTap: function(e) {
-    const url = e.currentTarget.dataset.url;
-    if (url === 'http://galaxy.farm') {
-      this.navigateInternal(url);
-    } else {
-      const path = e.currentTarget.dataset.path;
-      if (path) {
-        wx.navigateTo({ url: path });
-      }
-    }
-  },
-
-  // 接收游戏组件传来的状态更新
-  onGameStatusChange: function(e) {
-    if (e.detail && e.detail.text) {
-      this.setData({ statusText: e.detail.text });
+    const path = e.currentTarget.dataset.path;
+    if (path) {
+      wx.navigateTo({ url: path });
     }
   },
 
