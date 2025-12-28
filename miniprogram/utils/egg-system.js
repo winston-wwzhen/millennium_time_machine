@@ -25,7 +25,6 @@ const EGG_IDS = {
   HIDDEN_ICON: 'hidden_icon',         // 隐藏图标
   BG_SWITCH: 'bg_switch',             // 背景切换
   KONAMI_CODE: 'konami_code',         // 上帝模式
-  RECYCLE_BIN: 'recycle_bin',         // 回收站狂点
   MY_COMPUTER: 'my_computer',         // 电脑专家
   BROWSER_CLICK: 'browser_click',     // 网瘾少年
   TIME_SPECIAL: 'time_special',       // 特殊时刻
@@ -33,10 +32,14 @@ const EGG_IDS = {
   CHAT_LOVER: 'chat_lover',           // 聊天狂魔
   QCIO_SPACE_VISITOR: 'qcio_space_visitor', // 空间常客
   START_MENU_FAN: 'start_menu_fan',   // 开始菜单爱好者
-  RECYCLE_BIN_EMPTYER: 'recycle_bin_emptyer', // 回收站清理者
   GROUP_CHAT_PARTY: 'group_chat_party',       // 群聊狂欢
   MARS_TRANSLATOR: 'mars_translator',         // 火星文大师
   NETWORK_EXCHANGER: 'network_exchanger',     // 网费兑换者
+  // v3.6 新增浏览器工具彩蛋
+  STAR_EXPLORER: 'star_explorer',           // 星际探险家
+  CALCULATOR_MASTER: 'calculator_master',   // 计算器高手
+  CALENDAR_TIME_TRAVELER: 'calendar_time_traveler', // 时光旅行者
+  BROWSER_NAVIGATOR: 'browser_navigator',           // 浏览器领航员
 };
 
 // 彩蛋配置 - 时光币奖励（单位：分钟）
@@ -126,18 +129,6 @@ const EGG_CONFIG = {
       badge: '艺术家'
     }
   },
-  [EGG_IDS.RECYCLE_BIN]: {
-    id: EGG_IDS.RECYCLE_BIN,
-    name: '垃圾清理员',
-    description: '回收站被你点爆了...',
-    hint: '多点几次回收站试试',
-    rarity: 'common',
-    type: 'click',
-    reward: {
-      coins: 400,
-      badge: '清洁工'
-    }
-  },
   [EGG_IDS.MY_COMPUTER]: {
     id: EGG_IDS.MY_COMPUTER,
     name: '硬件大师',
@@ -177,8 +168,8 @@ const EGG_CONFIG = {
   [EGG_IDS.KONAMI_CODE]: {
     id: EGG_IDS.KONAMI_CODE,
     name: '传说中的秘籍',
-    description: '我的电脑↑↑我的文档↓↓网上邻居←→我的文档←→网上邻居→→小狮子→开始',
-    hint: '按顺序点击特定图标...',
+    description: 'C盘→关→C盘→关→D盘→关→USB→关→D盘→关→C盘→关→关窗→小狮子→开始',
+    hint: '在我的电脑窗口按特定序列操作...',
     rarity: 'legendary',
     type: 'sequence',
     reward: {
@@ -235,18 +226,6 @@ const EGG_CONFIG = {
       badge: '菜单控'
     }
   },
-  [EGG_IDS.RECYCLE_BIN_EMPTYER]: {
-    id: EGG_IDS.RECYCLE_BIN_EMPTYER,
-    name: '回收站清理者',
-    description: '你的回收站总是干干净净的...',
-    hint: '在回收站页面清空回收站5次',
-    rarity: 'rare',
-    type: 'action',
-    reward: {
-      coins: 1500,
-      badge: '清洁大师'
-    }
-  },
   [EGG_IDS.GROUP_CHAT_PARTY]: {
     id: EGG_IDS.GROUP_CHAT_PARTY,
     name: '群聊狂欢',
@@ -281,6 +260,55 @@ const EGG_CONFIG = {
     reward: {
       coins: 500,
       badge: '理财达人'
+    }
+  },
+  // v3.6 新增浏览器工具彩蛋
+  [EGG_IDS.STAR_EXPLORER]: {
+    id: EGG_IDS.STAR_EXPLORER,
+    name: '星际探险家',
+    description: '你在星际探索中展现了智慧...',
+    hint: '在星际探索通关任意难度',
+    rarity: 'rare',
+    type: 'action',
+    reward: {
+      coins: 1500,
+      badge: '扫雷高手'
+    }
+  },
+  [EGG_IDS.CALCULATOR_MASTER]: {
+    id: EGG_IDS.CALCULATOR_MASTER,
+    name: '计算器高手',
+    description: '你对数字很敏感...',
+    hint: '在计算器连续计算10次',
+    rarity: 'common',
+    type: 'action',
+    reward: {
+      coins: 800,
+      badge: '精算师'
+    }
+  },
+  [EGG_IDS.CALENDAR_TIME_TRAVELER]: {
+    id: EGG_IDS.CALENDAR_TIME_TRAVELER,
+    name: '时光旅行者',
+    description: '你回到了2006年的那一天...',
+    hint: '在万年历查看2006年6月6日',
+    rarity: 'rare',
+    type: 'action',
+    reward: {
+      coins: 1200,
+      badge: '时空旅人'
+    }
+  },
+  [EGG_IDS.BROWSER_NAVIGATOR]: {
+    id: EGG_IDS.BROWSER_NAVIGATOR,
+    name: '浏览器领航员',
+    description: '你精通浏览器的一切操作...',
+    hint: '在浏览器内使用前进、后退、刷新各3次',
+    rarity: 'rare',
+    type: 'action',
+    reward: {
+      coins: 1000,
+      badge: '导航大师'
     }
   }
 };

@@ -73,6 +73,7 @@ Page({
     calcDisplay: '0',
     calcExpression: '',
     calcLastResult: '',
+    calcCount: 0,           // 计算器使用次数（彩蛋计数）
 
     // --- 天气预报 ---
     weatherCity: '',
@@ -92,6 +93,17 @@ Page({
     calendarToday: '',
     calendarTodayLunar: '',
     calendarTodayTerm: '',
+    calendarEggAchieved: false,  // 时光旅行者彩蛋
+
+    // --- 彩蛋相关 ---
+    starEggAchieved: false,      // 星际探险家彩蛋
+    calcEggAchieved: false,      // 计算器高手彩蛋
+    navigatorEggAchieved: false, // 浏览器领航员彩蛋
+    navigatorCounts: {
+      forward: 0,
+      back: 0,
+      refresh: 0
+    }
   },
 
   onLoad: function () {
@@ -209,12 +221,38 @@ Page({
 
   onBrowserBack: function() {
     if (!this.data.canGoBack) return;
+
+    // 触发浏览器领航员彩蛋（计数）
+    if (!this.data.navigatorEggAchieved) {
+      const counts = { ...this.data.navigatorCounts };
+      counts.back++;
+      this.setData({ navigatorCounts: counts });
+      this.checkNavigatorEgg();
+    }
+
     this.restoreHistory(this.data.currentIndex - 1);
   },
 
   onBrowserForward: function() {
     if (!this.data.canGoForward) return;
+
+    // 触发浏览器领航员彩蛋（计数）
+    if (!this.data.navigatorEggAchieved) {
+      const counts = { ...this.data.navigatorCounts };
+      counts.forward++;
+      this.setData({ navigatorCounts: counts });
+      this.checkNavigatorEgg();
+    }
+
     this.restoreHistory(this.data.currentIndex + 1);
+  },
+
+  checkNavigatorEgg: function() {
+    const { forward, back, refresh } = this.data.navigatorCounts;
+    if (forward >= 3 && back >= 3 && refresh >= 3 && !this.data.navigatorEggAchieved) {
+      this.setData({ navigatorEggAchieved: true });
+      eggSystem.discover(EGG_IDS.BROWSER_NAVIGATOR);
+    }
   },
 
   restoreHistory: function(index) {
@@ -244,6 +282,14 @@ Page({
   },
 
   onRefresh: function() {
+    // 触发浏览器领航员彩蛋（计数）
+    if (!this.data.navigatorEggAchieved) {
+      const counts = { ...this.data.navigatorCounts };
+      counts.refresh++;
+      this.setData({ navigatorCounts: counts });
+      this.checkNavigatorEgg();
+    }
+
     // 触发旋转动画
     this.setData({ isRefreshing: true });
 
@@ -599,6 +645,13 @@ Page({
         starGameState: 'won',
         starBeacons: 0
       });
+
+      // 触发星际探险家彩蛋
+      if (!this.data.starEggAchieved) {
+        this.setData({ starEggAchieved: true });
+        eggSystem.discover(EGG_IDS.STAR_EXPLORER);
+      }
+
       wx.showToast({ title: '爱没有终点！', icon: 'none' });
     } else {
       grid.forEach(c => { if (c.isBlackHole) c.revealed = true; });
@@ -676,6 +729,17 @@ Page({
           calcExpression: '',
           calcLastResult: formatted
         });
+
+        // 触发计算器高手彩蛋（计数）
+        if (!this.data.calcEggAchieved) {
+          const newCount = this.data.calcCount + 1;
+          this.setData({ calcCount: newCount });
+
+          if (newCount >= 10) {
+            this.setData({ calcEggAchieved: true });
+            eggSystem.discover(EGG_IDS.CALCULATOR_MASTER);
+          }
+        }
       }
     } catch (err) {
       this.setData({
@@ -797,6 +861,12 @@ Page({
   generateCalendar: function() {
     const year = this.data.calendarYear;
     const month = this.data.calendarMonth;
+
+    // 触发时光旅行者彩蛋（查看2006年6月6日）
+    if (!this.data.calendarEggAchieved && year === 2006 && month === 6) {
+      this.setData({ calendarEggAchieved: true });
+      eggSystem.discover(EGG_IDS.CALENDAR_TIME_TRAVELER);
+    }
 
     const firstDay = new Date(year, month - 1, 1);
     const lastDay = new Date(year, month, 0);

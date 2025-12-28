@@ -662,9 +662,6 @@ Page({
     let clickCount = 5; // 默认5次触发
 
     switch (iconId) {
-      case "recycle-bin":
-        eggId = EGG_IDS.RECYCLE_BIN;
-        break;
       case "my-computer":
         eggId = EGG_IDS.MY_COMPUTER;
         break;

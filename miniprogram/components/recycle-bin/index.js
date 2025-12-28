@@ -229,29 +229,8 @@ Component({
         this.setData({ hasTrash: false });
         wx.hideLoading();
 
-        // 检查彩蛋
-        this.checkRecycleBinEgg();
-
         wx.showToast({ title: '回收站已清空', icon: 'success' });
       }, 800);
-    },
-
-    // 检查回收站清理者彩蛋（使用 API 客户端）
-    checkRecycleBinEgg: async function() {
-      if (this.data.eggAchieved) return;
-
-      try {
-        const result = await userApi.checkRecycleBinEgg();
-
-        if (result.success) {
-          if (result.shouldTrigger) {
-            this.setData({ eggAchieved: true });
-            await eggSystem.discover(EGG_IDS.RECYCLE_BIN_EMPTYER);
-          }
-        }
-      } catch (err) {
-        console.error('Check recycle bin egg error:', err);
-      }
     },
 
     // 显示帮助弹窗

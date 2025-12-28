@@ -86,7 +86,6 @@ Page({
   data: {
     hasTrash: true,  // 有垃圾文件
     emptyCount: 0,   // 清空次数
-    eggAchieved: false,
     showHelpDialog: false,
     trashFiles: [],  // 垃圾文件列表
 
@@ -104,10 +103,6 @@ Page({
   onLoad: function(options) {
     // 加载彩蛋系统状态
     eggSystem.load();
-    // 检查回收站清理者彩蛋是否已达成
-    this.setData({
-      eggAchieved: eggSystem.isDiscovered(EGG_IDS.RECYCLE_BIN_EMPTYER)
-    });
 
     // 生成初始随机垃圾文件
     this.generateTrash();
@@ -145,8 +140,8 @@ Page({
   },
 
   onShow: function() {
-    // 每次显示页面时恢复垃圾文件（除非已达成彩蛋）
-    if (!this.data.eggAchieved && !this.data.hasTrash) {
+    // 每次显示页面时恢复垃圾文件
+    if (!this.data.hasTrash) {
       this.generateTrash();
     }
   },
@@ -165,29 +160,8 @@ Page({
       this.setData({ hasTrash: false });
       wx.hideLoading();
 
-      // 检查彩蛋
-      this.checkRecycleBinEgg();
-
       wx.showToast({ title: '回收站已清空', icon: 'success' });
     }, 800);
-  },
-
-  // 检查回收站清理者彩蛋（使用 API 客户端）
-  checkRecycleBinEgg: async function() {
-    if (this.data.eggAchieved) return;
-
-    try {
-      const result = await userApi.checkRecycleBinEgg();
-
-      if (result.success) {
-        if (result.shouldTrigger) {
-          this.setData({ eggAchieved: true });
-          await eggSystem.discover(EGG_IDS.RECYCLE_BIN_EMPTYER);
-        }
-      }
-    } catch (err) {
-      console.error('Check recycle bin egg error:', err);
-    }
   },
 
   goBack: function() {
