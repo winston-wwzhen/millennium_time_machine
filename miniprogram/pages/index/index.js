@@ -130,6 +130,15 @@ Page({
     fullDateTime: "",
     lunarDate: "",
     calendarDays: [], // 日历网格数据
+    // 彩蛋发现弹窗
+    showEggDiscoveryDialog: false,
+    eggDiscoveryData: {
+      name: '',
+      description: '',
+      rarity: '',
+      rarityName: '',
+      rewardText: ''
+    },
 
     // 用户信息
     userInfo: {
@@ -211,6 +220,29 @@ Page({
     if (soundEnabled !== undefined) {
       this.setData({ soundEnabled });
     }
+
+    // 注册彩蛋发现回调
+    const { eggSystem } = require('../../utils/egg-system');
+    eggSystem.setEggDiscoveryCallback((config) => {
+      const rarityNames = {
+        common: '普通',
+        rare: '稀有',
+        epic: '史诗',
+        legendary: '传说'
+      };
+      const reward = config.reward;
+      const rewardText = reward.coins ? `+${reward.coins}时光币` : '';
+      this.setData({
+        showEggDiscoveryDialog: true,
+        eggDiscoveryData: {
+          name: config.name,
+          description: config.description,
+          rarity: config.rarity,
+          rarityName: rarityNames[config.rarity],
+          rewardText: rewardText
+        }
+      });
+    });
   },
 
   // 加载用户信息
@@ -756,6 +788,11 @@ Page({
   // 关闭关于弹窗
   hideAboutDialog: function () {
     this.setData({ showAboutDialog: false });
+  },
+
+  // 关闭彩蛋发现弹窗
+  hideEggDiscoveryDialog: function () {
+    this.setData({ showEggDiscoveryDialog: false });
   },
 
   // 显示彩蛋收集界面

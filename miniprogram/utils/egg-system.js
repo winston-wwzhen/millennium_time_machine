@@ -217,6 +217,12 @@ class EggSystem {
     };
     this.badges = [];           // 徽章列表
     this.loaded = false;        // 是否已从云端加载
+    this.discoveryCallback = null; // 彩蛋发现回调
+  }
+
+  // 设置彩蛋发现回调（用于自定义弹窗样式）
+  setEggDiscoveryCallback(callback) {
+    this.discoveryCallback = callback;
   }
 
   // 从云端加载彩蛋数据
@@ -310,7 +316,13 @@ class EggSystem {
 
   // 显示发现效果
   showDiscoveryEffect(config) {
-    // 显示发现弹窗
+    // 如果注册了自定义回调，使用回调显示
+    if (this.discoveryCallback) {
+      this.discoveryCallback(config);
+      return;
+    }
+
+    // 否则使用默认的 wx.showModal（保底方案）
     const rarityColors = {
       common: '#909399',
       rare: '#409EFF',

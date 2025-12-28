@@ -187,10 +187,6 @@
     <view class="context-menu-item" bindtap="showAbout">
       <text class="context-icon">📱</text> 关于(A)
     </view>
-    <view class="menu-line"></view>
-    <view class="context-menu-item" bindtap="showEasterEggs">
-      <text class="context-icon">🥚</text> 彩蛋收集(G)
-    </view>
   </view>
 
   <!-- Win98 错误弹窗 -->
@@ -404,13 +400,43 @@
           <view class="about-features">
             <text class="about-feature">• Windows 98 桌面风格</text>
             <text class="about-feature">• 100+ AI 聊天好友</text>
-            <text class="about-feature">• 12个隐藏彩蛋</text>
+            <text class="about-feature">• 14个隐藏彩蛋</text>
             <text class="about-feature">• 双代币系统</text>
             <text class="about-feature">• 经典小游戏</text>
           </view>
         </view>
         <view class="dialog-actions">
           <button class="win98-btn-std" bindtap="hideAboutDialog">确定</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 彩蛋发现弹窗 -->
+  <view class="win98-overlay" wx:if="{{showEggDiscoveryDialog}}" bindtap="hideEggDiscoveryDialog">
+    <view class="win98-window egg-discovery-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">🎉 发现彩蛋！</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="hideEggDiscoveryDialog">×</button>
+        </view>
+      </view>
+      <view class="win98-window-body">
+        <view class="egg-discovery-content">
+          <view class="egg-icon-wrapper">
+            <text class="egg-icon-emoji">🥚</text>
+          </view>
+          <view class="egg-discovery-info">
+            <text class="egg-name">{{eggDiscoveryData.name}}</text>
+            <text class="egg-description">"{{eggDiscoveryData.description}}"</text>
+            <view class="egg-rarity-badge rarity-{{eggDiscoveryData.rarity}}">
+              <text class="rarity-text">{{eggDiscoveryData.rarityName}}</text>
+            </view>
+            <text class="egg-reward">奖励: {{eggDiscoveryData.rewardText}}</text>
+          </view>
+        </view>
+        <view class="dialog-actions">
+          <button class="win98-btn-std" bindtap="hideEggDiscoveryDialog">太棒了！</button>
         </view>
       </view>
     </view>
