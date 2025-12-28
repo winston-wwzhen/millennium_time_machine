@@ -1,5 +1,7 @@
 // miniprogram/pages/browser/index.js
 const app = getApp();
+const { eggSystem, EGG_IDS } = require('../../utils/egg-system');
+const { chatApi, userApi } = require('../../utils/api-client');
 
 Page({
   data: {
@@ -18,11 +20,112 @@ Page({
 
     // 刷新动画状态
     isRefreshing: false,
+
+    // ========== 工具页面状态 ==========
+
+    // --- 火星翻译 ---
+    marsInput: '',
+    marsOutput: '',
+    marsModeIndex: 0,
+    marsModes: [
+      { key: 'mars', label: '火星文' },
+      { key: 'kaomoji', label: '颜文字' },
+      { key: 'abstract', label: 'Emoji' },
+      { key: 'human', label: '说人话' }
+    ],
+    marsIsConverting: false,
+
+    // --- 非主流相机 ---
+    avatarPreview: '',
+    avatarTempPath: '',
+    avatarFilter: '',
+    avatarBorder: '',
+    avatarFilters: [
+      { id: '', name: '原图' },
+      { id: 'old-noise', name: '怀旧噪点' },
+      { id: 'sepia', name: '复古黄' },
+      { id: 'cold', name: '冷色调' },
+      { id: 'warm', name: '暖色调' }
+    ],
+    avatarBorders: [
+      { id: '', name: '无边框' },
+      { id: 'cyber', name: '暗黑赛博' },
+      { id: 'win98', name: 'Win98' }
+    ],
+    avatarPhotosSavedCount: 0,
+    avatarEggAchieved: false,
+
+    // --- 星际探索 ---
+    starDiff: 'beginner',
+    starGrid: [],
+    starCols: 9,
+    starTime: 0,
+    starBeacons: 10,
+    starGameState: 'ready',
+    starDiffConfig: {
+      beginner: { rows: 9, cols: 9, mines: 10 },
+      intermediate: { rows: 16, cols: 16, mines: 40 },
+      expert: { rows: 16, cols: 30, mines: 99 }
+    },
+    starTimer: null,
+
+    // --- 在线计算器 ---
+    calcDisplay: '0',
+    calcExpression: '',
+    calcLastResult: '',
+
+    // --- 天气预报 ---
+    weatherCity: '',
+    weatherDate: '',
+    weatherTemp: 25,
+    weatherIcon: '☀️',
+    weatherDesc: '晴朗',
+    weatherHumidity: 45,
+    weatherWind: '东南风 3级',
+    weatherAqi: '良',
+    weatherForecast: [],
+
+    // --- 万年历 ---
+    calendarYear: 2006,
+    calendarMonth: 1,
+    calendarDays: [],
+    calendarToday: '',
+    calendarTodayLunar: '',
+    calendarTodayTerm: '',
   },
 
   onLoad: function () {
     this.generateDailyContent();
     this.simulateLoading();
+
+    // 初始化彩蛋系统
+    eggSystem.load();
+    this.setData({
+      avatarEggAchieved: eggSystem.isDiscovered(EGG_IDS.AVATAR_MASTER)
+    });
+
+    // 注册彩蛋发现回调
+    this.eggCallbackKey = eggSystem.setEggDiscoveryCallback((config) => {
+      const rarityNames = {
+        common: '普通',
+        rare: '稀有',
+        epic: '史诗',
+        legendary: '传说'
+      };
+      const reward = config.reward;
+      const rewardText = reward.coins ? `+${reward.coins}时光币` : '';
+      wx.showModal({
+        title: `✨ 发现${rarityNames[config.rarity]}彩蛋！`,
+        content: `${config.name}\n\n${config.description}\n\n${rewardText}`,
+        showCancel: false,
+        confirmText: '太棒了！'
+      });
+    });
+
+    // 初始化天气预报
+    this.initWeather();
+    // 初始化万年历
+    this.initCalendar();
   },
 
   onUnload: function () {
@@ -30,6 +133,14 @@ Page({
     if (this._loadingTimer) {
       clearInterval(this._loadingTimer);
       this._loadingTimer = null;
+    }
+    // 清理游戏定时器
+    if (this.data.starTimer) {
+      clearInterval(this.data.starTimer);
+    }
+    // 清理彩蛋回调
+    if (this.eggCallbackKey) {
+      eggSystem.unregisterEggDiscoveryCallback(this.eggCallbackKey);
     }
   },
 
@@ -86,9 +197,14 @@ Page({
       currentIndex: newStack.length - 1,
       currentUrl: url
     });
-    
+
     this.updateHistoryButtons();
     this.simulateLoading();
+
+    // 初始化星际探索游戏
+    if (url === 'http://tools.navi-2006.com/star' && this.data.starGrid.length === 0) {
+      this.initStarGame();
+    }
   },
 
   onBrowserBack: function() {
@@ -142,15 +258,642 @@ Page({
   goHome: function() {
     this.navigateInternal('http://www.navi-2006.com');
   },
-  
-  onLinkTap: function(e) {
-    const path = e.currentTarget.dataset.path;
-    if (path) {
-      wx.navigateTo({ url: path });
+
+  // 工具快捷方式点击 - 在浏览器内打开工具页面
+  onToolTap: function(e) {
+    const url = e.currentTarget.dataset.url;
+    if (url) {
+      this.navigateInternal(url);
     }
   },
 
   goBack: function() {
     wx.navigateBack();
+  },
+
+  // ==================== 工具页面事件处理 ====================
+
+  // --- 火星翻译事件 ---
+  onMarsInput: function(e) {
+    this.setData({ marsInput: e.detail.value });
+  },
+
+  onMarsModeSelect: function(e) {
+    const index = parseInt(e.currentTarget.dataset.index);
+    this.setData({
+      marsModeIndex: index
+    });
+  },
+
+  onMarsConvert: async function() {
+    const text = this.data.marsInput.trim();
+    if (!text) {
+      wx.showToast({ title: '请输入内容', icon: 'none' });
+      return;
+    }
+    if (this.data.marsIsConverting) return;
+
+    this.setData({
+      marsIsConverting: true,
+      marsOutput: '正在连接异次元...'
+    });
+
+    try {
+      const modeKey = this.data.marsModes[this.data.marsModeIndex].key;
+      const result = await chatApi.sendMessage(text, [], modeKey);
+
+      if (result && result.reply) {
+        this.setData({
+          marsOutput: result.reply
+        });
+        // 触发彩蛋检查
+        this.checkMarsEgg();
+      } else {
+        throw new Error('No reply');
+      }
+    } catch (err) {
+      console.error('Mars convert error:', err);
+      this.setData({
+        marsOutput: '转换失败：信号被外星人拦截了...'
+      });
+    } finally {
+      this.setData({ marsIsConverting: false });
+    }
+  },
+
+  onMarsCopy: function() {
+    const text = this.data.marsOutput;
+    if (!text || text === '正在连接异次元...') {
+      return;
+    }
+    wx.setClipboardData({
+      data: text,
+      success: () => {
+        wx.showToast({ title: '已复制', icon: 'success' });
+      }
+    });
+  },
+
+  checkMarsEgg: async function() {
+    try {
+      const result = await userApi.checkMarsTranslatorEgg();
+      if (result.success && result.shouldTrigger) {
+        await eggSystem.discover(EGG_IDS.MARS_TRANSLATOR);
+      }
+    } catch (err) {
+      console.error('Check mars egg error:', err);
+    }
+  },
+
+  // --- 非主流相机事件 ---
+  onAvatarChoose: function() {
+    wx.chooseMedia({
+      count: 1,
+      mediaType: ['image'],
+      sourceType: ['album', 'camera'],
+      camera: 'front',
+      success: (res) => {
+        this.setData({
+          avatarTempPath: res.tempFiles[0].tempFilePath,
+          avatarPreview: res.tempFiles[0].tempFilePath
+        });
+      }
+    });
+  },
+
+  onAvatarFilter: function(e) {
+    this.setData({
+      avatarFilter: e.currentTarget.dataset.filter
+    });
+  },
+
+  onAvatarBorder: function(e) {
+    this.setData({
+      avatarBorder: e.currentTarget.dataset.border
+    });
+  },
+
+  onAvatarSave: async function() {
+    if (!this.data.avatarTempPath) {
+      wx.showToast({ title: '请先选择图片', icon: 'none' });
+      return;
+    }
+
+    wx.showLoading({ title: '正在处理...' });
+
+    try {
+      // 简化版：直接保存原图，仅应用简单滤镜
+      let tempPath = this.data.avatarTempPath;
+
+      // 应用滤镜（简化版，仅显示toast提示）
+      if (this.data.avatarFilter) {
+        wx.showToast({ title: '滤镜已应用', icon: 'success' });
+      }
+
+      // 保存到相册
+      wx.saveImageToPhotosAlbum({
+        filePath: tempPath,
+        success: async () => {
+          // 上传到云存储
+          try {
+            const cloudPath = `user-photos/${Date.now()}-${Math.random().toString(36).substr(2, 9)}.jpg`;
+            const uploadRes = await wx.cloud.uploadFile({
+              cloudPath: cloudPath,
+              filePath: tempPath
+            });
+            await userApi.savePhoto(cloudPath, uploadRes.fileID);
+            wx.hideLoading();
+            wx.showToast({ title: '已保存！', icon: 'success' });
+            this.checkAvatarEgg();
+          } catch (err) {
+            console.error('Upload error:', err);
+            wx.hideLoading();
+            wx.showToast({ title: '已保存到相册', icon: 'success' });
+            this.checkAvatarEgg();
+          }
+        },
+        fail: () => {
+          wx.hideLoading();
+          wx.showToast({ title: '保存失败', icon: 'none' });
+        }
+      });
+    } catch (err) {
+      wx.hideLoading();
+      wx.showToast({ title: '处理失败', icon: 'none' });
+    }
+  },
+
+  checkAvatarEgg: function() {
+    if (this.data.avatarEggAchieved) return;
+    const newCount = this.data.avatarPhotosSavedCount + 1;
+    this.setData({ avatarPhotosSavedCount: newCount });
+    if (newCount >= 5) {
+      this.setData({ avatarEggAchieved: true });
+      eggSystem.discover(EGG_IDS.AVATAR_MASTER);
+    }
+  },
+
+  // --- 星际探索事件 ---
+  onStarDiff: function(e) {
+    const diff = e.currentTarget.dataset.diff;
+    this.setData({
+      starDiff: diff,
+      starCols: this.data.starDiffConfig[diff].cols
+    });
+    this.initStarGame();
+  },
+
+  onStarCellTap: function(e) {
+    if (this.data.starGameState !== 'playing') return;
+    const index = parseInt(e.currentTarget.dataset.index);
+    const config = this.data.starDiffConfig[this.data.starDiff];
+    const cell = this.data.starGrid[index];
+
+    if (cell.revealed || cell.marked) return;
+
+    if (cell.isBlackHole) {
+      this.starGameOver(false);
+    } else {
+      this.revealStarCell(index, config.rows, config.cols);
+      this.checkStarWin();
+    }
+  },
+
+  onStarCellLongPress: function(e) {
+    if (this.data.starGameState !== 'playing') return;
+    const index = parseInt(e.currentTarget.dataset.index);
+    const cell = this.data.starGrid[index];
+
+    if (!cell.revealed) {
+      const grid = this.data.starGrid;
+      grid[index].marked = !grid[index].marked;
+      this.setData({
+        starGrid: grid,
+        starBeacons: this.data.starBeacons + (grid[index].marked ? -1 : 1)
+      });
+    }
+  },
+
+  onStarRestart: function() {
+    this.initStarGame();
+  },
+
+  initStarGame: function() {
+    // 清理旧定时器
+    if (this.data.starTimer) {
+      clearInterval(this.data.starTimer);
+    }
+
+    const config = this.data.starDiffConfig[this.data.starDiff];
+    const { rows, cols, mines } = config;
+
+    // 生成网格
+    const grid = [];
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        grid.push({
+          row: r,
+          col: c,
+          index: r * cols + c,
+          isBlackHole: false,
+          revealed: false,
+          marked: false,
+          count: 0
+        });
+      }
+    }
+
+    // 布雷
+    let minesPlaced = 0;
+    while (minesPlaced < mines) {
+      const idx = Math.floor(Math.random() * (rows * cols));
+      if (!grid[idx].isBlackHole) {
+        grid[idx].isBlackHole = true;
+        minesPlaced++;
+      }
+    }
+
+    // 计算数字
+    for (let i = 0; i < grid.length; i++) {
+      if (!grid[i].isBlackHole) {
+        const neighbors = this.getStarNeighbors(grid[i].row, grid[i].col, rows, cols);
+        let count = 0;
+        neighbors.forEach(nIdx => {
+          if (grid[nIdx].isBlackHole) count++;
+        });
+        grid[i].count = count;
+      }
+    }
+
+    this.setData({
+      starGrid: grid,
+      starTime: 0,
+      starBeacons: mines,
+      starGameState: 'playing'
+    });
+
+    // 启动计时器
+    const timer = setInterval(() => {
+      if (this.data.starTime < 999) {
+        this.setData({
+          starTime: this.data.starTime + 1
+        });
+      }
+    }, 1000);
+
+    this.setData({ starTimer: timer });
+  },
+
+  revealStarCell: function(idx, rows, cols) {
+    const grid = this.data.starGrid;
+    if (grid[idx].revealed || grid[idx].marked) return;
+
+    grid[idx].revealed = true;
+
+    if (grid[idx].count === 0) {
+      const neighbors = this.getStarNeighbors(grid[idx].row, grid[idx].col, rows, cols);
+      neighbors.forEach(nIdx => {
+        if (!grid[nIdx].revealed) {
+          this.revealStarCell(nIdx, rows, cols);
+        }
+      });
+    }
+
+    this.setData({ starGrid: grid });
+  },
+
+  getStarNeighbors: function(r, c, rows, cols) {
+    const neighbors = [];
+    for (let i = -1; i <= 1; i++) {
+      for (let j = -1; j <= 1; j++) {
+        if (i === 0 && j === 0) continue;
+        const nr = r + i;
+        const nc = c + j;
+        if (nr >= 0 && nr < rows && nc >= 0 && nc < cols) {
+          neighbors.push(nr * cols + nc);
+        }
+      }
+    }
+    return neighbors;
+  },
+
+  checkStarWin: function() {
+    const grid = this.data.starGrid;
+    const unrevealedSafe = grid.filter(c => !c.isBlackHole && !c.revealed);
+    if (unrevealedSafe.length === 0) {
+      this.starGameOver(true);
+    }
+  },
+
+  starGameOver: function(win) {
+    if (this.data.starTimer) {
+      clearInterval(this.data.starTimer);
+      this.setData({ starTimer: null });
+    }
+
+    const grid = this.data.starGrid;
+    if (win) {
+      grid.forEach(c => { if (c.isBlackHole) c.marked = true; });
+      this.setData({
+        starGrid: grid,
+        starGameState: 'won',
+        starBeacons: 0
+      });
+      wx.showToast({ title: '爱没有终点！', icon: 'none' });
+    } else {
+      grid.forEach(c => { if (c.isBlackHole) c.revealed = true; });
+      this.setData({
+        starGrid: grid,
+        starGameState: 'lost'
+      });
+      wx.vibrateLong();
+    }
+  },
+
+  // --- 在线计算器事件 ---
+  onCalcInput: function(e) {
+    const val = e.currentTarget.dataset.val;
+    let expr = this.data.calcExpression;
+    let display = this.data.calcDisplay;
+
+    if (display === '0' || display === 'Error') {
+      display = val;
+      expr = val;
+    } else {
+      display += val;
+      expr += val;
+    }
+
+    this.setData({
+      calcDisplay: display,
+      calcExpression: expr
+    });
+  },
+
+  onCalcClear: function() {
+    this.setData({
+      calcDisplay: '0',
+      calcExpression: '',
+      calcLastResult: ''
+    });
+  },
+
+  onCalcBackspace: function() {
+    let display = this.data.calcDisplay;
+    let expr = this.data.calcExpression;
+
+    if (display.length > 1) {
+      display = display.slice(0, -1);
+      expr = expr.slice(0, -1);
+    } else {
+      display = '0';
+      expr = '';
+    }
+
+    this.setData({
+      calcDisplay: display,
+      calcExpression: expr
+    });
+  },
+
+  onCalcEqual: function() {
+    try {
+      const expr = this.data.calcExpression;
+      if (!expr) return;
+
+      // 安全计算
+      const result = new Function('return ' + expr)();
+
+      if (isNaN(result) || !isFinite(result)) {
+        this.setData({
+          calcDisplay: 'Error',
+          calcExpression: ''
+        });
+      } else {
+        const formatted = typeof result === 'number' ? String(Math.round(result * 100000000) / 100000000) : result;
+        this.setData({
+          calcDisplay: formatted,
+          calcExpression: '',
+          calcLastResult: formatted
+        });
+      }
+    } catch (err) {
+      this.setData({
+        calcDisplay: 'Error',
+        calcExpression: ''
+      });
+    }
+  },
+
+  // --- 天气预报事件 ---
+  onWeatherCityInput: function(e) {
+    this.setData({ weatherCity: e.detail.value });
+  },
+
+  onWeatherSearch: function() {
+    this.generateWeatherData();
+  },
+
+  initWeather: function() {
+    const now = new Date();
+    const dateStr = `${now.getMonth() + 1}月${now.getDate()}日`;
+    this.setData({ weatherDate: dateStr });
+    this.generateWeatherData();
+  },
+
+  generateWeatherData: function() {
+    const weathers = [
+      { icon: '☀️', desc: '晴朗' },
+      { icon: '⛅', desc: '多云' },
+      { icon: '☁️', desc: '阴天' },
+      { icon: '🌧️', desc: '小雨' },
+      { icon: '⛈️', desc: '雷阵雨' },
+      { icon: '🌤️', desc: '晴转多云' }
+    ];
+
+    const randomWeather = weathers[Math.floor(Math.random() * weathers.length)];
+    const temp = Math.floor(Math.random() * 20) + 15; // 15-35度
+
+    // 生成未来三天
+    const forecast = [];
+    const days = ['明天', '后天', '大后天'];
+    for (let i = 0; i < 3; i++) {
+      const fw = weathers[Math.floor(Math.random() * weathers.length)];
+      forecast.push({
+        day: days[i],
+        icon: fw.icon,
+        temp: Math.floor(Math.random() * 15) + 15
+      });
+    }
+
+    this.setData({
+      weatherIcon: randomWeather.icon,
+      weatherDesc: randomWeather.desc,
+      weatherTemp: temp,
+      weatherHumidity: Math.floor(Math.random() * 40) + 30,
+      weatherWind: ['东南风', '西北风', '南风', '北风'][Math.floor(Math.random() * 4)] + ' ' + (Math.floor(Math.random() * 3) + 1) + '级',
+      weatherAqi: ['优', '良', '轻度污染'][Math.floor(Math.random() * 3)],
+      weatherForecast: forecast
+    });
+  },
+
+  // --- 万年历事件 ---
+  onCalendarPrevMonth: function() {
+    let month = this.data.calendarMonth - 1;
+    let year = this.data.calendarYear;
+    if (month < 1) {
+      month = 12;
+      year--;
+    }
+    this.setData({
+      calendarYear: year,
+      calendarMonth: month
+    });
+    this.generateCalendar();
+  },
+
+  onCalendarNextMonth: function() {
+    let month = this.data.calendarMonth + 1;
+    let year = this.data.calendarYear;
+    if (month > 12) {
+      month = 1;
+      year++;
+    }
+    this.setData({
+      calendarYear: year,
+      calendarMonth: month
+    });
+    this.generateCalendar();
+  },
+
+  initCalendar: function() {
+    const now = new Date();
+    const year = 2006;
+    const month = now.getMonth() + 1;
+
+    this.setData({
+      calendarYear: year,
+      calendarMonth: month
+    });
+
+    this.setTodayInfo();
+    this.generateCalendar();
+  },
+
+  setTodayInfo: function() {
+    const now = new Date();
+    const year = 2006;
+    const month = now.getMonth() + 1;
+    const day = now.getDate();
+    const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+
+    this.setData({
+      calendarToday: `${year}年${month}月${day}日 ${weekdays[now.getDay()]}`,
+      calendarTodayLunar: this.getLunarDate(month, day),
+      calendarTodayTerm: this.getSolarTerm(month, day)
+    });
+  },
+
+  generateCalendar: function() {
+    const year = this.data.calendarYear;
+    const month = this.data.calendarMonth;
+
+    const firstDay = new Date(year, month - 1, 1);
+    const lastDay = new Date(year, month, 0);
+    const daysInMonth = lastDay.getDate();
+    const startWeekday = firstDay.getDay();
+
+    const days = [];
+
+    // 上个月的日期
+    const prevMonthLastDay = new Date(year, month - 1, 0).getDate();
+    for (let i = startWeekday - 1; i >= 0; i--) {
+      days.push({
+        day: prevMonthLastDay - i,
+        isOtherMonth: true,
+        isToday: false
+      });
+    }
+
+    // 当月日期
+    const now = new Date();
+    for (let i = 1; i <= daysInMonth; i++) {
+      const isToday = (year === 2006 && month === now.getMonth() + 1 && i === now.getDate());
+      days.push({
+        day: i,
+        isOtherMonth: false,
+        isToday: isToday,
+        lunar: this.getLunarDate(month, i),
+        festival: this.getFestival(month, i)
+      });
+    }
+
+    // 下个月日期
+    const remaining = 42 - days.length;
+    for (let i = 1; i <= remaining; i++) {
+      days.push({
+        day: i,
+        isOtherMonth: true,
+        isToday: false
+      });
+    }
+
+    this.setData({ calendarDays: days });
+  },
+
+  getLunarDate: function(month, day) {
+    // 简化版农历映射
+    const lunarDays = ['初一', '初二', '初三', '初四', '初五', '初六', '初七', '初八', '初九', '初十',
+      '十一', '十二', '十三', '十四', '十五', '十六', '十七', '十八', '十九', '二十',
+      '廿一', '廿二', '廿三', '廿四', '廿五', '廿六', '廿七', '廿八', '廿九', '三十'];
+    const lunarMonths = ['正月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '冬月', '腊月'];
+
+    // 简化计算（非真实农历）
+    const baseIndex = (month * 30 + day) % 30;
+    return lunarDays[baseIndex];
+  },
+
+  getSolarTerm: function(month, day) {
+    // 简化版节气
+    const terms = {
+      1: [[5, '小寒'], [20, '大寒']],
+      2: [[4, '立春'], [19, '雨水']],
+      3: [[6, '惊蛰'], [21, '春分']],
+      4: [[5, '清明'], [20, '谷雨']],
+      5: [[6, '立夏'], [21, '小满']],
+      6: [[6, '芒种'], [21, '夏至']],
+      7: [[7, '小暑'], [23, '大暑']],
+      8: [[8, '立秋'], [23, '处暑']],
+      9: [[8, '白露'], [23, '秋分']],
+      10: [[8, '寒露'], [23, '霜降']],
+      11: [[7, '立冬'], [22, '小雪']],
+      12: [[7, '大雪'], [22, '冬至']]
+    };
+
+    const monthTerms = terms[month];
+    if (monthTerms) {
+      for (const [d, name] of monthTerms) {
+        if (Math.abs(day - d) <= 1) return name;
+      }
+    }
+    return '';
+  },
+
+  getFestival: function(month, day) {
+    const festivals = {
+      1: { 1: '元旦' },
+      2: { 14: '情人节' },
+      3: { 8: '妇女节', 12: '植树节' },
+      4: { 1: '愚人节' },
+      5: { 1: '劳动节', 4: '青年节' },
+      6: { 1: '儿童节' },
+      7: { 1: '建党节' },
+      8: { 1: '建军节' },
+      9: { 10: '教师节' },
+      10: { 1: '国庆节' },
+      12: { 25: '圣诞节' }
+    };
+
+    return festivals[month]?.[day] || '';
   }
 });

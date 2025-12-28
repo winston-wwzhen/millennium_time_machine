@@ -69,27 +69,27 @@
 
           <!-- 快捷工具区 -->
           <view class="quick-tools">
-            <view class="tool-item" bindtap="onLinkTap" data-path="/pages/mars/index">
+            <view class="tool-item" bindtap="onToolTap" data-url="http://tools.navi-2006.com/mars">
               <text class="tool-icon">🪐</text>
               <text class="tool-name">火星翻译</text>
             </view>
-            <view class="tool-item" bindtap="onLinkTap" data-path="/pages/avatar/index">
+            <view class="tool-item" bindtap="onToolTap" data-url="http://tools.navi-2006.com/avatar">
               <text class="tool-icon">📸</text>
               <text class="tool-name">非主流相机</text>
             </view>
-            <view class="tool-item" bindtap="onLinkTap" data-path="/pages/star-explorer/index">
+            <view class="tool-item" bindtap="onToolTap" data-url="http://tools.navi-2006.com/star">
               <text class="tool-icon">🌟</text>
               <text class="tool-name">星际探索</text>
             </view>
-            <view class="tool-item">
+            <view class="tool-item" bindtap="onToolTap" data-url="http://tools.navi-2006.com/calculator">
               <text class="tool-icon">🧮</text>
               <text class="tool-name">在线计算器</text>
             </view>
-            <view class="tool-item">
+            <view class="tool-item" bindtap="onToolTap" data-url="http://tools.navi-2006.com/weather">
               <text class="tool-icon">🌤️</text>
               <text class="tool-name">天气预报</text>
             </view>
-            <view class="tool-item">
+            <view class="tool-item" bindtap="onToolTap" data-url="http://tools.navi-2006.com/calendar">
               <text class="tool-icon">📅</text>
               <text class="tool-name">万 年 历</text>
             </view>
@@ -205,6 +205,254 @@
             <text class="footer-notice">（本页面仅为怀旧风格展示，非真实网站）</text>
           </view>
 
+        </view>
+      </block>
+
+      <!-- ================= 工具页面: 火星翻译 ================= -->
+      <block wx:if="{{currentUrl === 'http://tools.navi-2006.com/mars'}}">
+        <view class="tool-page mars-page">
+          <view class="tool-header">
+            <text class="tool-title">🪐 火星文在线转换器 - 免费工具</text>
+            <text class="tool-subtitle">火星文 | 颜文字 | Emoji | 翻译器</text>
+          </view>
+
+          <view class="tool-body">
+            <view class="mode-selector">
+              <button class="mode-btn {{marsModeIndex===0?'active':''}}" bindtap="onMarsModeSelect" data-index="0">火星文</button>
+              <button class="mode-btn {{marsModeIndex===1?'active':''}}" bindtap="onMarsModeSelect" data-index="1">颜文字</button>
+              <button class="mode-btn {{marsModeIndex===2?'active':''}}" bindtap="onMarsModeSelect" data-index="2">Emoji</button>
+              <button class="mode-btn {{marsModeIndex===3?'active':''}}" bindtap="onMarsModeSelect" data-index="3">说人话</button>
+            </view>
+
+            <textarea class="input-area" placeholder="请输入要转换的文字..." value="{{marsInput}}" bindinput="onMarsInput"/>
+            <button class="convert-btn" bindtap="onMarsConvert" disabled="{{marsIsConverting}}">
+              {{marsIsConverting ? '转换中...' : '开始转换'}}
+            </button>
+            <textarea class="output-area" disabled value="{{marsOutput}}"/>
+            <button class="copy-btn" bindtap="onMarsCopy">复制结果</button>
+          </view>
+
+          <view class="tool-footer">
+            <text>【使用说明】本工具采用AI智能转换，支持多种火星文风格</text>
+            <text>推荐使用：QQ空间签名、个性签名、非主流网名</text>
+          </view>
+        </view>
+      </block>
+
+      <!-- ================= 工具页面: 非主流相机 ================= -->
+      <block wx:if="{{currentUrl === 'http://tools.navi-2006.com/avatar'}}">
+        <view class="tool-page avatar-page">
+          <view class="tool-header">
+            <text class="tool-title">📸 非主流相机 - 在线版</text>
+          </view>
+
+          <view class="tool-body">
+            <view class="preview-container">
+              <image wx:if="{{avatarPreview}}" class="preview-image" src="{{avatarPreview}}" mode="aspectFit"/>
+              <view wx:else class="preview-placeholder">暂无图片</view>
+              <button class="choose-btn" bindtap="onAvatarChoose">选择图片</button>
+            </view>
+
+            <view class="filter-selector">
+              <text class="section-title">选择滤镜：</text>
+              <view class="filter-list">
+                <button class="filter-btn {{avatarFilter===''?'active':''}}" bindtap="onAvatarFilter" data-filter="">原图</button>
+                <button class="filter-btn {{avatarFilter==='old-noise'?'active':''}}" bindtap="onAvatarFilter" data-filter="old-noise">怀旧噪点</button>
+                <button class="filter-btn {{avatarFilter==='sepia'?'active':''}}" bindtap="onAvatarFilter" data-filter="sepia">复古黄</button>
+                <button class="filter-btn {{avatarFilter==='cold'?'active':''}}" bindtap="onAvatarFilter" data-filter="cold">冷色调</button>
+                <button class="filter-btn {{avatarFilter==='warm'?'active':''}}" bindtap="onAvatarFilter" data-filter="warm">暖色调</button>
+              </view>
+            </view>
+
+            <view class="border-selector">
+              <text class="section-title">选择边框：</text>
+              <view class="border-list">
+                <button class="border-btn {{avatarBorder===''?'active':''}}" bindtap="onAvatarBorder" data-border="">无边框</button>
+                <button class="border-btn {{avatarBorder==='cyber'?'active':''}}" bindtap="onAvatarBorder" data-border="cyber">暗黑赛博</button>
+                <button class="border-btn {{avatarBorder==='win98'?'active':''}}" bindtap="onAvatarBorder" data-border="win98">Win98</button>
+              </view>
+            </view>
+
+            <button class="save-btn" bindtap="onAvatarSave">保存到相册</button>
+          </view>
+
+          <view class="tool-footer">
+            <text>【使用说明】选择图片后应用滤镜和边框效果，保存即可</text>
+          </view>
+        </view>
+      </block>
+
+      <!-- ================= 工具页面: 星际探索 ================= -->
+      <block wx:if="{{currentUrl === 'http://tools.navi-2006.com/star'}}">
+        <view class="tool-page star-page">
+          <view class="tool-header">
+            <text class="tool-title">🌟 星际探索 - 在线扫雷</text>
+            <text class="game-status">用时: {{starTime}}秒 | 剩余: {{starBeacons}}</text>
+          </view>
+
+          <view class="tool-body">
+            <view class="difficulty-selector">
+              <button class="diff-btn {{starDiff==='beginner'?'active':''}}" bindtap="onStarDiff" data-diff="beginner">入门</button>
+              <button class="diff-btn {{starDiff==='intermediate'?'active':''}}" bindtap="onStarDiff" data-diff="intermediate">进阶</button>
+              <button class="diff-btn {{starDiff==='expert'?'active':''}}" bindtap="onStarDiff" data-diff="expert">极限</button>
+            </view>
+
+            <view class="game-grid" style="grid-template-columns: repeat({{starCols}}, 1fr)">
+              <view
+                wx:for="{{starGrid}}"
+                wx:key="index"
+                class="cell {{item.revealed?'revealed':''}} {{item.marked?'marked':''}} {{item.isBlackHole&&item.revealed?'blackhole':''}}"
+                bindtap="onStarCellTap"
+                bindlongpress="onStarCellLongPress"
+                data-index="{{index}}">
+                <text wx:if="{{item.revealed && item.isBlackHole}}">💀</text>
+                <text wx:elif="{{item.revealed && item.count>0}}">{{item.count}}</text>
+                <text wx:elif="{{item.marked}}">🚩</text>
+              </view>
+            </view>
+
+            <button class="restart-btn" bindtap="onStarRestart">重新开始</button>
+          </view>
+        </view>
+      </block>
+
+      <!-- ================= 工具页面: 在线计算器 ================= -->
+      <block wx:if="{{currentUrl === 'http://tools.navi-2006.com/calculator'}}">
+        <view class="tool-page calculator-page">
+          <view class="tool-header">
+            <text class="tool-title">🧮 在线计算器 - 免费工具</text>
+          </view>
+
+          <view class="calculator-body">
+            <view class="calc-display">
+              <text class="calc-screen">{{calcDisplay}}</text>
+            </view>
+
+            <view class="calc-keys">
+              <button class="calc-btn clear" bindtap="onCalcClear">C</button>
+              <button class="calc-btn" bindtap="onCalcInput" data-val="/">/</button>
+              <button class="calc-btn" bindtap="onCalcInput" data-val="*">×</button>
+              <button class="calc-btn" bindtap="onCalcBackspace">←</button>
+
+              <button class="calc-btn" bindtap="onCalcInput" data-val="7">7</button>
+              <button class="calc-btn" bindtap="onCalcInput" data-val="8">8</button>
+              <button class="calc-btn" bindtap="onCalcInput" data-val="9">9</button>
+              <button class="calc-btn" bindtap="onCalcInput" data-val="-">-</button>
+
+              <button class="calc-btn" bindtap="onCalcInput" data-val="4">4</button>
+              <button class="calc-btn" bindtap="onCalcInput" data-val="5">5</button>
+              <button class="calc-btn" bindtap="onCalcInput" data-val="6">6</button>
+              <button class="calc-btn" bindtap="onCalcInput" data-val="+">+</button>
+
+              <button class="calc-btn" bindtap="onCalcInput" data-val="1">1</button>
+              <button class="calc-btn" bindtap="onCalcInput" data-val="2">2</button>
+              <button class="calc-btn" bindtap="onCalcInput" data-val="3">3</button>
+              <button class="calc-btn equals" bindtap="onCalcEqual">=</button>
+
+              <button class="calc-btn zero" bindtap="onCalcInput" data-val="0">0</button>
+              <button class="calc-btn" bindtap="onCalcInput" data-val=".">.</button>
+            </view>
+          </view>
+        </view>
+      </block>
+
+      <!-- ================= 工具页面: 天气预报 ================= -->
+      <block wx:if="{{currentUrl === 'http://tools.navi-2006.com/weather'}}">
+        <view class="tool-page weather-page">
+          <view class="tool-header">
+            <text class="tool-title">🌤️ 天气预报 - 千禧气象台</text>
+          </view>
+
+          <view class="weather-body">
+            <view class="weather-search">
+              <input class="city-input" placeholder="请输入城市名称..." value="{{weatherCity}}" bindinput="onWeatherCityInput"/>
+              <button class="search-btn" bindtap="onWeatherSearch">查询</button>
+            </view>
+
+            <view class="today-weather">
+              <text class="city-name">{{weatherCity || '北京'}}</text>
+              <text class="weather-date">{{weatherDate}}</text>
+              <view class="weather-main">
+                <text class="weather-icon">{{weatherIcon}}</text>
+                <text class="weather-temp">{{weatherTemp}}°C</text>
+              </view>
+              <text class="weather-desc">{{weatherDesc}}</text>
+            </view>
+
+            <view class="weather-details">
+              <view class="detail-item">
+                <text class="detail-label">湿度：</text>
+                <text class="detail-value">{{weatherHumidity}}%</text>
+              </view>
+              <view class="detail-item">
+                <text class="detail-label">风力：</text>
+                <text class="detail-value">{{weatherWind}}</text>
+              </view>
+              <view class="detail-item">
+                <text class="detail-label">空气质量：</text>
+                <text class="detail-value">{{weatherAqi}}</text>
+              </view>
+            </view>
+
+            <view class="forecast">
+              <text class="forecast-title">未来三天预报</text>
+              <view class="forecast-list">
+                <view class="forecast-item" wx:for="{{weatherForecast}}" wx:key="day">
+                  <text class="forecast-day">{{item.day}}</text>
+                  <text class="forecast-icon">{{item.icon}}</text>
+                  <text class="forecast-temp">{{item.temp}}°C</text>
+                </view>
+              </view>
+            </view>
+          </view>
+
+          <view class="tool-footer">
+            <text>【说明】数据仅供参考，以实际天气为准</text>
+          </view>
+        </view>
+      </block>
+
+      <!-- ================= 工具页面: 万年历 ================= -->
+      <block wx:if="{{currentUrl === 'http://tools.navi-2006.com/calendar'}}">
+        <view class="tool-page calendar-page">
+          <view class="tool-header">
+            <text class="tool-title">📅 万年历 - 2006年</text>
+          </view>
+
+          <view class="calendar-body">
+            <view class="month-selector">
+              <button class="month-nav" bindtap="onCalendarPrevMonth">◀ 上月</button>
+              <text class="current-month">{{calendarYear}}年 {{calendarMonth}}月</text>
+              <button class="month-nav" bindtap="onCalendarNextMonth">下月 ▶</button>
+            </view>
+
+            <view class="weekdays">
+              <text class="weekday">日</text>
+              <text class="weekday">一</text>
+              <text class="weekday">二</text>
+              <text class="weekday">三</text>
+              <text class="weekday">四</text>
+              <text class="weekday">五</text>
+              <text class="weekday">六</text>
+            </view>
+
+            <view class="calendar-grid">
+              <view
+                class="calendar-day {{item.isToday?'today':''}} {{item.isOtherMonth?'other-month':''}}"
+                wx:for="{{calendarDays}}"
+                wx:key="index">
+                <text class="day-number">{{item.day}}</text>
+                <text class="lunar-day" wx:if="{{item.lunar && !item.isOtherMonth}}">{{item.lunar}}</text>
+                <text class="festival" wx:if="{{item.festival}}">{{item.festival}}</text>
+              </view>
+            </view>
+
+            <view class="today-info">
+              <text class="info-title">今天是：{{calendarToday}}</text>
+              <text class="info-lunar">农历：{{calendarTodayLunar}}</text>
+              <text class="info-term" wx:if="{{calendarTodayTerm}}">节气：{{calendarTodayTerm}}</text>
+            </view>
+          </view>
         </view>
       </block>
 
