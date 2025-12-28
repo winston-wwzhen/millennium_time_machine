@@ -267,6 +267,21 @@ async function getQcioData(openid) {
 - ✅ 引入 `userApi`
 - ✅ `onSaveImage()`: 使用 `userApi.savePhoto()`
 
+**pages/recycle-bin/index.js 优化：**
+- ✅ 引入 `userApi`
+- ✅ `checkRecycleBinEgg()`: 使用 `userApi.checkRecycleBinEgg()`
+
+**components/recycle-bin/index.js 优化：**
+- ✅ 引入 `userApi`
+- ✅ `checkRecycleBinEgg()`: 使用 `userApi.checkRecycleBinEgg()`
+
+**pages/ifthen/start.js 优化：**
+- ✅ 引入 `userApi`, `gameApi`
+- ✅ `onLoad()`: 使用 `gameApi.ifthen('recordShareVisit')`
+- ✅ `loadUserPreferences()`: 使用 `userApi.getIfthenPreferences()`
+- ✅ `saveUserPreferences()`: 使用 `userApi.setIfthenPreferences()`
+- ✅ `loadUserName()`: 使用 `userApi.getBalance()`
+
 **api-client.js 新增/更新方法：**
 - ✅ `userApi.updateProfile()`
 - ✅ `userApi.checkQcioEgg()`
@@ -274,6 +289,9 @@ async function getQcioData(openid) {
 - ✅ `userApi.checkChatEgg()`
 - ✅ `userApi.checkGroupChatEgg()`
 - ✅ `userApi.checkMarsTranslatorEgg()`
+- ✅ `userApi.checkRecycleBinEgg()`
+- ✅ `userApi.getIfthenPreferences()`
+- ✅ `userApi.setIfthenPreferences()`
 - ✅ `userApi.savePhoto()`
 - ✅ `qcioApi.register()`
 - ✅ `qcioApi.getLevelInfo()`
@@ -298,6 +316,7 @@ async function getQcioData(openid) {
 - ✅ commit `2363201`: 应用公共工具模块优化QCIO聊天页面
 - ✅ commit `5bb2a7b`: 应用公共工具模块优化单人聊天页面
 - ✅ commit `69b6d27`: 应用公共工具模块优化群聊、访问、翻译和头像页面
+- ✅ commit `bf72438`: 应用公共工具模块优化回收站和如果当时页面
 
 ---
 
