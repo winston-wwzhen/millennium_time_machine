@@ -139,7 +139,7 @@
         <text class="menu-text">帮助</text>
       </view>
       <view class="menu-line"></view>
-      <view class="menu-item shutdown-item">
+      <view class="menu-item shutdown-item" bindtap="onShutdown">
         <text class="menu-icon">🔌</text>
         <text class="menu-text">关机...</text>
       </view>

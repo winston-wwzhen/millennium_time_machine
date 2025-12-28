@@ -804,6 +804,38 @@ Page({
     this.setData({ showAboutDialog: false });
   },
 
+  // 关机
+  onShutdown: function () {
+    this.hideContextMenu();
+
+    // 显示确认弹窗
+    wx.showModal({
+      title: '关机',
+      content: '确定要关闭千禧时光机吗？',
+      confirmText: '确定',
+      cancelText: '取消',
+      success: (res) => {
+        if (res.confirm) {
+          // 用户点击确定，执行关机
+          wx.exitMiniProgram({
+            success: () => {
+              console.log('小程序已关闭');
+            },
+            fail: (err) => {
+              console.log('关闭小程序失败:', err);
+              // 开发者工具中会失败，给提示
+              wx.showToast({
+                title: '关机功能仅真机有效',
+                icon: 'none',
+                duration: 2000
+              });
+            }
+          });
+        }
+      }
+    });
+  },
+
   // 关闭彩蛋发现弹窗
   hideEggDiscoveryDialog: function () {
     this.setData({ showEggDiscoveryDialog: false });
