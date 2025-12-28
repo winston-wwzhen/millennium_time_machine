@@ -411,7 +411,7 @@
           <view class="about-section">
             <text class="about-section-title">📟 QCIO 社交系统</text>
             <view class="about-features">
-              <text class="about-feature">• 100位AI好友随机分配</text>
+              <text class="about-feature">• AI好友随机分配</text>
               <text class="about-feature">• 空间访问、留言、心情日志</text>
               <text class="about-feature">• 等级系统和成长值</text>
               <text class="about-feature">• 每日签到和等级奖励</text>
@@ -439,7 +439,7 @@
           <view class="about-section">
             <text class="about-section-title">🥚 彩蛋收集</text>
             <view class="about-features">
-              <text class="about-feature">• 20个隐藏彩蛋等你发现</text>
+              <text class="about-feature">• 大量隐藏彩蛋等你发现</text>
               <text class="about-feature">• 在"我的文档"中查看彩蛋大全</text>
               <text class="about-feature">• 显示隐藏文件查看彩蛋秘籍</text>
             </view>

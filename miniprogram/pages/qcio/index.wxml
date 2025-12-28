@@ -80,7 +80,7 @@
         <view class="login-header">
           <view class="big-icon">📟</view>
           <text class="login-brand">QCIO AI模拟空间</text>
-          <text class="login-subtitle">与100位AI好友重温千禧记忆</text>
+          <text class="login-subtitle">与AI好友重温千禧记忆</text>
         </view>
 
         <view class="login-fields" wx:if="{{!isLoggingIn}}">

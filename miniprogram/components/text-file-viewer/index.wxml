@@ -161,7 +161,7 @@
 
           <text class="preview-line"></text>
           <text class="preview-title">───────────────────────────────────────</text>
-          <text class="preview-line">   总计: 20个彩蛋 | 已发现: {{discovered}}个</text>
+          <text class="preview-line">   已发现: {{discovered}}个彩蛋</text>
           <text class="preview-title">───────────────────────────────────────</text>
           <text class="preview-line"></text>
         </view>

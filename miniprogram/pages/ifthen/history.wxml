@@ -17,7 +17,7 @@
           <view class="stat-box">
             <view class="stat-label">已解锁结局</view>
             <view class="stat-value">{{stats.totalEndings}}</view>
-            <view class="stat-total">/ 88</view>
+            <view class="stat-total">个</view>
           </view>
           <view class="stat-box">
             <view class="stat-label">完成度</view>
@@ -124,7 +124,7 @@
 
     <!-- 状态栏 -->
     <view class="status-bar">
-      <text>Ready - {{stats.totalEndings}}/88 Endings Unlocked</text>
+      <text>Ready - {{stats.totalEndings}} Endings Unlocked</text>
     </view>
   </view>
 </view>
