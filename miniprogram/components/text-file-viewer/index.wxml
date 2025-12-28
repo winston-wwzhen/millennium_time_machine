@@ -72,9 +72,32 @@
             <text class="secret-egg-method">   → 连续点击桌面上的浏览器图标多次</text>
           </view>
 
+          <!-- 彩蛋8 -->
+          <view class="secret-egg-item">
+            <text class="secret-egg-name">📸 非主流达人 (800💎)</text>
+            <text class="secret-egg-method">   → 在非主流相机连续保存5张照片</text>
+          </view>
+
           <text class="preview-line"></text>
           <text class="preview-title">───────────────────────────────────────</text>
-          <text class="preview-line">   持续探索发现更多稀有和史诗彩蛋...</text>
+          <text class="preview-section">【稀有彩蛋达成方案】</text>
+          <text class="preview-title">───────────────────────────────────────</text>
+
+          <!-- 稀有彩蛋1 -->
+          <view class="secret-egg-item">
+            <text class="secret-egg-name">🔵 蓝屏噩梦 (2000💎)</text>
+            <text class="secret-egg-method">   → 点击桌面左上角区域触发蓝屏</text>
+          </view>
+
+          <!-- 稀有彩蛋2 -->
+          <view class="secret-egg-item">
+            <text class="secret-egg-name">💬 聊天狂魔 (2500💎)</text>
+            <text class="secret-egg-method">   → 累计发送100条聊天消息</text>
+          </view>
+
+          <text class="preview-line"></text>
+          <text class="preview-title">───────────────────────────────────────</text>
+          <text class="preview-line">   持续探索发现更多史诗和传说彩蛋...</text>
           <text class="preview-title">───────────────────────────────────────</text>
           <text class="preview-line"></text>
         </view>
@@ -143,7 +166,7 @@
 
           <text class="preview-line"></text>
           <text class="preview-title">───────────────────────────────────────</text>
-          <text class="preview-line">   总计: 12个彩蛋 | 已发现: {{discovered}}个</text>
+          <text class="preview-line">   总计: 14个彩蛋 | 已发现: {{discovered}}个</text>
           <text class="preview-title">───────────────────────────────────────</text>
           <text class="preview-line"></text>
         </view>

@@ -29,6 +29,8 @@ const EGG_IDS = {
   MY_COMPUTER: 'my_computer',         // 电脑专家
   BROWSER_CLICK: 'browser_click',     // 网瘾少年
   TIME_SPECIAL: 'time_special',       // 特殊时刻
+  AVATAR_MASTER: 'avatar_master',     // 非主流达人
+  CHAT_LOVER: 'chat_lover',           // 聊天狂魔
 };
 
 // 彩蛋配置 - 时光币奖励（单位：分钟）
@@ -177,6 +179,30 @@ const EGG_CONFIG = {
       coins: 10000,
       badge: '上帝之手',
       unlock: 'god_mode'
+    }
+  },
+  [EGG_IDS.AVATAR_MASTER]: {
+    id: EGG_IDS.AVATAR_MASTER,
+    name: '非主流达人',
+    description: '你真的很爱拍非主流照片...',
+    hint: '在非主流相机连续保存5张照片',
+    rarity: 'common',
+    type: 'action',
+    reward: {
+      coins: 800,
+      badge: '非主流达人'
+    }
+  },
+  [EGG_IDS.CHAT_LOVER]: {
+    id: EGG_IDS.CHAT_LOVER,
+    name: '聊天狂魔',
+    description: '你真的是话痨本痨...',
+    hint: '累计发送100条聊天消息',
+    rarity: 'rare',
+    type: 'action',
+    reward: {
+      coins: 2500,
+      badge: '话痨'
     }
   }
 };

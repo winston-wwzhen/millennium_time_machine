@@ -82,10 +82,12 @@ Component({
         { id: EGG_IDS.RECYCLE_BIN, ...allConfigs[EGG_IDS.RECYCLE_BIN], discovered: discoveredIds.has(EGG_IDS.RECYCLE_BIN) },
         { id: EGG_IDS.MY_COMPUTER, ...allConfigs[EGG_IDS.MY_COMPUTER], discovered: discoveredIds.has(EGG_IDS.MY_COMPUTER) },
         { id: EGG_IDS.BROWSER_CLICK, ...allConfigs[EGG_IDS.BROWSER_CLICK], discovered: discoveredIds.has(EGG_IDS.BROWSER_CLICK) },
+        { id: EGG_IDS.AVATAR_MASTER, ...allConfigs[EGG_IDS.AVATAR_MASTER], discovered: discoveredIds.has(EGG_IDS.AVATAR_MASTER) },
         // 稀有彩蛋
         { id: EGG_IDS.BLUE_SCREEN, ...allConfigs[EGG_IDS.BLUE_SCREEN], discovered: discoveredIds.has(EGG_IDS.BLUE_SCREEN) },
         { id: EGG_IDS.HIDDEN_ICON, ...allConfigs[EGG_IDS.HIDDEN_ICON], discovered: discoveredIds.has(EGG_IDS.HIDDEN_ICON) },
         { id: EGG_IDS.TIME_SPECIAL, ...allConfigs[EGG_IDS.TIME_SPECIAL], discovered: discoveredIds.has(EGG_IDS.TIME_SPECIAL) },
+        { id: EGG_IDS.CHAT_LOVER, ...allConfigs[EGG_IDS.CHAT_LOVER], discovered: discoveredIds.has(EGG_IDS.CHAT_LOVER) },
         // 史诗彩蛋
         { id: EGG_IDS.TIME_MIDNIGHT, ...allConfigs[EGG_IDS.TIME_MIDNIGHT], discovered: discoveredIds.has(EGG_IDS.TIME_MIDNIGHT) },
         // 传说彩蛋

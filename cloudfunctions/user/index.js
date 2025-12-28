@@ -350,6 +350,56 @@ exports.main = async (event, context) => {
     }
   }
 
+  // 🥚 检查聊天彩蛋（累计发送消息计数）
+  if (type === 'checkChatEgg') {
+    try {
+      const userRes = await db.collection('users').where({
+        _openid: openid
+      }).field({
+        badges: true,
+        'eggStats.chatMessageCount': true
+      }).get();
+
+      if (userRes.data.length === 0) {
+        return { success: false, errMsg: '用户不存在' };
+      }
+
+      const badges = userRes.data[0].badges || [];
+      const currentCount = userRes.data[0].eggStats?.chatMessageCount || 0;
+
+      // 检查是否已经达成过聊天狂魔彩蛋
+      const hasChatLover = badges.some(b => b.eggId === 'chat_lover');
+      if (hasChatLover) {
+        return { success: true, shouldTrigger: false, alreadyAchieved: true, count: currentCount };
+      }
+
+      // 增加计数
+      const newCount = currentCount + 1;
+
+      // 更新计数
+      await db.collection('users').where({
+        _openid: openid
+      }).update({
+        data: {
+          'eggStats.chatMessageCount': newCount
+        }
+      });
+
+      // 检查是否达到阈值（100条）
+      const shouldTrigger = newCount >= 100;
+
+      return {
+        success: true,
+        shouldTrigger: shouldTrigger,
+        count: newCount,
+        alreadyAchieved: false
+      };
+    } catch (e) {
+      console.error(e);
+      return { success: false, errMsg: e.message };
+    }
+  }
+
   // 🥚 发现新彩蛋
   if (type === 'discoverEgg') {
     try {

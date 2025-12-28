@@ -1,5 +1,6 @@
 const { preventDuplicateBehavior } = require('../../utils/prevent-duplicate');
 const { isNetworkError, setNetworkDisconnected, showDisconnectDialog } = require('../../utils/network');
+const { eggSystem, EGG_IDS } = require('../../utils/egg-system');
 
 Page({
   behaviors: [preventDuplicateBehavior],
@@ -20,7 +21,9 @@ Page({
     // 自定义弹窗显示状态
     showEmojiModal: false,
     maxLength: 50, // 最大输入长度
-    inputLength: 0 // 当前输入长度
+    inputLength: 0, // 当前输入长度
+    // 彩蛋达成状态
+    chatLoverAchieved: false
   },
 
   // 配置常量
@@ -28,6 +31,13 @@ Page({
   lastSendTime: 0, // 上次发送时间
 
   onLoad(options) {
+    // 加载彩蛋系统
+    eggSystem.load();
+    // 检查聊天狂魔彩蛋是否已达成
+    this.setData({
+      chatLoverAchieved: eggSystem.isDiscovered(EGG_IDS.CHAT_LOVER)
+    });
+
     // 获取联系人信息（从 QCIO 页面跳转过来时）
     if (options.name) {
       this.setData({
@@ -244,6 +254,8 @@ Page({
 
         if (res.result && res.result.success) {
           this.replyFromAI(res.result.reply);
+          // 彩蛋：聊天狂魔
+          this.checkChatEgg();
         } else {
           // 错误处理
           console.warn('AI Error:', res.result.errMsg);
@@ -304,6 +316,29 @@ Page({
     } catch (err) {
       console.error('Save chat history error:', err);
       // 静默失败，不影响用户体验
+    }
+  },
+
+  // ==================== 彩蛋检查 ====================
+  // 检查聊天狂魔彩蛋（累计发送100条消息）
+  async checkChatEgg() {
+    if (this.data.chatLoverAchieved) return;
+
+    try {
+      const res = await wx.cloud.callFunction({
+        name: 'user',
+        data: { type: 'checkChatEgg' }
+      });
+
+      if (res.result.success) {
+        // 如果云函数返回shouldTrigger为true，说明达到了100条消息
+        if (res.result.shouldTrigger) {
+          this.setData({ chatLoverAchieved: true });
+          eggSystem.discover(EGG_IDS.CHAT_LOVER);
+        }
+      }
+    } catch (err) {
+      console.error('Check chat egg error:', err);
     }
   }
 });

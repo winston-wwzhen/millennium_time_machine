@@ -1,3 +1,5 @@
+const { eggSystem, EGG_IDS } = require('../../utils/egg-system');
+
 Page({
   data: {
     // 图片相关
@@ -5,6 +7,10 @@ Page({
     selectedBorderId: 0,
     currentBorder: '',
     currentFilter: '',
+    // 彩蛋计数
+    photosSavedCount: 0,
+    // 彩蛋达成状态
+    avatarEggAchieved: false,
 
     // 菜单状态
     openMenu: null,
@@ -77,6 +83,12 @@ Page({
 
   onLoad() {
     this.updateDateStampText();
+    // 加载彩蛋系统状态
+    eggSystem.load();
+    // 检查非主流达人彩蛋是否已达成
+    this.setData({
+      avatarEggAchieved: eggSystem.isDiscovered(EGG_IDS.AVATAR_MASTER)
+    });
   },
 
   // ==================== 菜单操作 ====================
@@ -873,6 +885,9 @@ Page({
                       title: '已保存到相册和云盘!',
                       icon: 'success'
                     });
+
+                    // 彩蛋：非主流达人
+                    this.checkAvatarEgg();
                   } catch (err) {
                     console.error('上传云存储失败:', err);
                     // 云存储失败不影响相册保存
@@ -881,6 +896,9 @@ Page({
                       title: '已保存到相册!',
                       icon: 'success'
                     });
+
+                    // 彩蛋：非主流达人
+                    this.checkAvatarEgg();
                   }
                 },
                 fail: () => {
@@ -940,6 +958,21 @@ Page({
 
   clamp(value) {
     return Math.max(0, Math.min(255, value));
+  },
+
+  // ==================== 彩蛋检查 ====================
+  // 检查非主流达人彩蛋（连续保存5张照片）
+  checkAvatarEgg: function() {
+    if (this.data.avatarEggAchieved) return;
+
+    const newCount = this.data.photosSavedCount + 1;
+    this.setData({ photosSavedCount: newCount });
+
+    // 连续保存5张照片触发彩蛋
+    if (newCount >= 5) {
+      this.setData({ avatarEggAchieved: true });
+      eggSystem.discover(EGG_IDS.AVATAR_MASTER);
+    }
   },
 
   // 返回
