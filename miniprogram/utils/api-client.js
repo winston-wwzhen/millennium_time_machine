@@ -214,6 +214,21 @@ const userApi = {
       type: 'savePhoto',
       photoData: { cloudPath, fileID }
     });
+  },
+
+  /**
+   * 记录分享并奖励
+   * @param {string} shareType - 分享类型
+   * @param {string} itemId - 项目ID（可选）
+   * @param {string} currency - 币种（可选）
+   */
+  recordShare(shareType, itemId = '', currency = '') {
+    return callCloudFunction('user', {
+      type: 'recordShare',
+      shareType,
+      itemId,
+      currency
+    });
   }
 };
 
@@ -466,6 +481,103 @@ const qcioApi = {
       visitorName,
       visitorAvatar,
       ownerQcioId
+    });
+  },
+
+  // ==================== 农场相关 API ====================
+
+  /**
+   * 获取农场资料
+   */
+  getFarmProfile() {
+    return callCloudFunction('qcio', { action: 'getFarmProfile' });
+  },
+
+  /**
+   * 初始化农场
+   * @param {string} qcioId - QCIO 号码
+   */
+  initFarm(qcioId) {
+    return callCloudFunction('qcio', {
+      action: 'initFarm',
+      qcioId
+    });
+  },
+
+  /**
+   * 获取农场土地数据
+   */
+  getFarmPlots() {
+    return callCloudFunction('qcio', { action: 'getFarmPlots' });
+  },
+
+  /**
+   * 种植作物
+   * @param {number} plotIndex - 土地索引
+   * @param {string} cropType - 作物类型
+   * @param {string} cropId - 作物ID
+   */
+  plantCrop(plotIndex, cropType, cropId) {
+    return callCloudFunction('qcio', {
+      action: 'plantCrop',
+      plotIndex,
+      cropType,
+      cropId
+    });
+  },
+
+  /**
+   * 购买种子
+   * @param {string} cropType - 作物类型
+   * @param {string} cropId - 作物ID
+   * @param {number} quantity - 数量
+   */
+  buySeed(cropType, cropId, quantity = 1) {
+    return callCloudFunction('qcio', {
+      action: 'buySeed',
+      cropType,
+      cropId,
+      quantity
+    });
+  },
+
+  /**
+   * 收获作物
+   * @param {number} plotIndex - 土地索引
+   */
+  harvestCrop(plotIndex) {
+    return callCloudFunction('qcio', {
+      action: 'harvestCrop',
+      plotIndex
+    });
+  },
+
+  /**
+   * 购买装饰
+   * @param {string} decorationId - 装饰ID
+   */
+  buyDecoration(decorationId) {
+    return callCloudFunction('qcio', {
+      action: 'buyDecoration',
+      decorationId
+    });
+  },
+
+  /**
+   * 获取农场日志
+   */
+  getFarmLogs() {
+    return callCloudFunction('qcio', { action: 'getFarmLogs' });
+  },
+
+  /**
+   * 添加农场日志
+   * @param {object} logData - 日志数据
+   */
+  addFarmLog(logData) {
+    return callCloudFunction('qcio', {
+      action: 'addFarmLog',
+      logData
     });
   }
 };

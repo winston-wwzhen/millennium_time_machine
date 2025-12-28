@@ -3,6 +3,7 @@
  * Win98 风格
  */
 const app = getApp();
+const { qcioApi } = require('../../../utils/api-client');
 
 Page({
   data: {
@@ -174,35 +175,26 @@ Page({
   },
 
   /**
-   * 初始化农场
+   * 初始化农场（使用 API 客户端）
    */
   async initFarm() {
     wx.showLoading({ title: '加载中...' });
 
     try {
       // 获取农场数据
-      const profileRes = await wx.cloud.callFunction({
-        name: 'qcio',
-        data: { action: 'getFarmProfile' }
-      });
+      const profileResult = await qcioApi.getFarmProfile();
 
-      if (profileRes.result.success) {
-        const profile = profileRes.result.data;
+      if (profileResult && profileResult.success) {
+        const profile = profileResult.data;
 
         if (!profile) {
           // 需要初始化
-          const initRes = await wx.cloud.callFunction({
-            name: 'qcio',
-            data: {
-              action: 'initFarm',
-              qcio_id: this.data.qcioId
-            }
-          });
+          const initResult = await qcioApi.initFarm(this.data.qcioId);
 
-          if (initRes.result.success) {
+          if (initResult && initResult.success) {
             this.setData({
-              farmProfile: initRes.result.data,
-              unlockedPlots: initRes.result.data.plotCount || 6
+              farmProfile: initResult.data,
+              unlockedPlots: initResult.data.plotCount || 6
             });
           }
         } else {
@@ -235,19 +227,16 @@ Page({
   },
 
   /**
-   * 刷新数据
+   * 刷新数据（使用 API 客户端）
    */
   async refreshData() {
     try {
       // 获取农场数据
-      const profileRes = await wx.cloud.callFunction({
-        name: 'qcio',
-        data: { action: 'getFarmProfile' }
-      });
+      const profileResult = await qcioApi.getFarmProfile();
 
-      if (profileRes.result.success) {
+      if (profileResult && profileResult.success) {
         this.setData({
-          farmProfile: profileRes.result.data
+          farmProfile: profileResult.data
         });
       }
 
@@ -263,21 +252,18 @@ Page({
   },
 
   /**
-   * 加载土地数据
+   * 加载土地数据（使用 API 客户端）
    */
   async loadPlots() {
     try {
-      const res = await wx.cloud.callFunction({
-        name: 'qcio',
-        data: { action: 'getFarmPlots' }
-      });
+      const result = await qcioApi.getFarmPlots();
 
-      console.log('loadPlots response:', res);
+      console.log('loadPlots response:', result);
 
-      if (res.result.success) {
-        console.log('Plots data:', res.result.data);
+      if (result && result.success) {
+        console.log('Plots data:', result.data);
         this.setData({
-          plots: res.result.data
+          plots: result.data
         });
         console.log('Plots after setData:', this.data.plots);
       }
@@ -287,18 +273,15 @@ Page({
   },
 
   /**
-   * 加载钱包数据
+   * 加载钱包数据（使用 API 客户端）
    */
   async loadWallet() {
     try {
-      const res = await wx.cloud.callFunction({
-        name: 'qcio',
-        data: { action: 'getWallet' }
-      });
+      const result = await qcioApi.getWalletInfo();
 
-      if (res.result.success) {
+      if (result && result.success) {
         this.setData({
-          coins: res.result.data.coins || 0
+          coins: result.data.coins || 0
         });
       }
     } catch (err) {
@@ -396,7 +379,7 @@ Page({
   },
 
   /**
-   * 种植作物
+   * 种植作物（使用 API 客户端）
    */
   async plantCrop(cropType, cropId, plotIndex = null) {
     const selectedPlotIndex = plotIndex !== null ? plotIndex : this.data.selectedPlotIndex;
@@ -408,21 +391,13 @@ Page({
     wx.showLoading({ title: '种植中...' });
 
     try {
-      const res = await wx.cloud.callFunction({
-        name: 'qcio',
-        data: {
-          action: 'plantCrop',
-          plotIndex: selectedPlotIndex,
-          cropType: cropType,
-          cropId: cropId
-        }
-      });
+      const result = await qcioApi.plantCrop(selectedPlotIndex, cropType, cropId);
 
-      console.log('plantCrop response:', res);
+      console.log('plantCrop response:', result);
 
       wx.hideLoading();
 
-      if (res.result.success) {
+      if (result && result.success) {
         console.log('Plant successful, calling loadPlots...');
 
         // 刷新土地数据
@@ -436,9 +411,9 @@ Page({
 
         return true;
       } else {
-        console.error('Plant failed:', res.result.message);
+        console.error('Plant failed:', result?.message);
         wx.showToast({
-          title: res.result.message || '种植失败',
+          title: result?.message || '种植失败',
           icon: 'none'
         });
         return false;
@@ -455,7 +430,7 @@ Page({
   },
 
   /**
-   * 购买种子
+   * 购买种子（使用 API 客户端）
    */
   async buySeed(e) {
     const { cropType, cropId } = e.currentTarget.dataset;
@@ -467,21 +442,13 @@ Page({
     wx.showLoading({ title: '购买中...' });
 
     try {
-      const res = await wx.cloud.callFunction({
-        name: 'qcio',
-        data: {
-          action: 'buySeed',
-          cropType: cropType,
-          cropId: cropId,
-          quantity: 1
-        }
-      });
+      const result = await qcioApi.buySeed(cropType, cropId, 1);
 
-      console.log('buySeed response:', res);
+      console.log('buySeed response:', result);
 
       wx.hideLoading();
 
-      if (res.result.success) {
+      if (result && result.success) {
         // 刷新钱包
         await this.loadWallet();
 
@@ -498,7 +465,7 @@ Page({
         }
       } else {
         wx.showToast({
-          title: res.result.message || '购买失败',
+          title: result?.message || '购买失败',
           icon: 'none'
         });
       }
@@ -513,24 +480,18 @@ Page({
   },
 
   /**
-   * 收获作物
+   * 收获作物（使用 API 客户端）
    */
   async harvestCrop(plotIndex) {
     wx.showLoading({ title: '收获中...' });
 
     try {
-      const res = await wx.cloud.callFunction({
-        name: 'qcio',
-        data: {
-          action: 'harvestCrop',
-          plotIndex: plotIndex
-        }
-      });
+      const result = await qcioApi.harvestCrop(plotIndex);
 
       wx.hideLoading();
 
-      if (res.result.success) {
-        const { cropName, sellPrice, expGain, quality, icon } = res.result.data;
+      if (result && result.success) {
+        const { cropName, sellPrice, expGain, quality, icon } = result.data;
 
         // 设置收获结果数据
         this.setData({
@@ -549,7 +510,7 @@ Page({
         await this.refreshData();
       } else {
         wx.showToast({
-          title: res.result.message || '收获失败',
+          title: result?.message || '收获失败',
           icon: 'none'
         });
       }
@@ -604,7 +565,7 @@ Page({
   },
 
   /**
-   * 购买装饰
+   * 购买装饰（使用 API 客户端）
    */
   async buyDecoration(e) {
     const { id } = e.currentTarget.dataset;
@@ -612,17 +573,11 @@ Page({
     wx.showLoading({ title: '购买中...' });
 
     try {
-      const res = await wx.cloud.callFunction({
-        name: 'qcio',
-        data: {
-          action: 'buyDecoration',
-          decorationId: id
-        }
-      });
+      const result = await qcioApi.buyDecoration(id);
 
       wx.hideLoading();
 
-      if (res.result.success) {
+      if (result && result.success) {
         wx.showToast({
           title: '购买成功',
           icon: 'success'
@@ -632,7 +587,7 @@ Page({
         await this.loadWallet();
       } else {
         wx.showToast({
-          title: res.result.message || '购买失败',
+          title: result?.message || '购买失败',
           icon: 'none'
         });
       }
@@ -668,18 +623,15 @@ Page({
   },
 
   /**
-   * 加载农场日志
+   * 加载农场日志（使用 API 客户端）
    */
   async loadFarmLogs() {
     try {
-      const res = await wx.cloud.callFunction({
-        name: 'qcio',
-        data: { action: 'getFarmLogs' }
-      });
+      const result = await qcioApi.getFarmLogs();
 
-      if (res.result.success) {
+      if (result && result.success) {
         // 格式化日志数据
-        const logs = res.result.data.map(log => {
+        const logs = result.data.map(log => {
           const date = new Date(log.createTime);
           const timeStr = `${date.getMonth() + 1}/${date.getDate()} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
 
@@ -733,7 +685,7 @@ Page({
   },
 
   /**
-   * 添加农场日志
+   * 添加农场日志（使用 API 客户端）
    */
   addFarmLog(action, detail) {
     // 这里可以添加本地临时日志
@@ -779,17 +731,11 @@ Page({
     });
 
     // 同步到云端
-    wx.cloud.callFunction({
-      name: 'qcio',
-      data: {
-        action: 'addFarmLog',
-        log: {
-          action,
-          actionName,
-          detail,
-          createTime: now
-        }
-      }
+    qcioApi.addFarmLog({
+      action,
+      actionName,
+      detail,
+      createTime: now
     }).catch(err => {
       console.error('Add farm log error:', err);
     });

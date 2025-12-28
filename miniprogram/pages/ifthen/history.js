@@ -1,5 +1,6 @@
 // 导入结局数据
 const endingsData = require('../../data/ifthen-endings.js');
+const { userApi, gameApi } = require('../../utils/api-client');
 
 Page({
   data: {
@@ -50,17 +51,12 @@ Page({
     });
   },
 
-  // 加载统计数据
+  // 加载统计数据（使用 API 客户端）
   loadStats: function() {
-    wx.cloud.callFunction({
-      name: 'ifthen',
-      data: {
-        action: 'getEndingStats'
-      }
-    }).then(res => {
-      if (res.result.success) {
+    gameApi.ifthen('getEndingStats').then(result => {
+      if (result && result.success) {
         this.setData({
-          stats: res.result.stats
+          stats: result.stats
         });
 
         // 构建已获得结局集合
@@ -71,19 +67,12 @@ Page({
     });
   },
 
-  // 加载已获得的结局列表
+  // 加载已获得的结局列表（使用 API 客户端）
   loadUnlockedEndings: function() {
-    wx.cloud.callFunction({
-      name: 'ifthen',
-      data: {
-        action: 'getEndingHistory',
-        limit: 1000,
-        page: 1
-      }
-    }).then(res => {
-      if (res.result.success) {
+    gameApi.ifthen('getEndingHistory', { limit: 1000, page: 1 }).then(result => {
+      if (result && result.success) {
         const unlockedSet = new Set();
-        res.result.list.forEach(record => {
+        result.list.forEach(record => {
           unlockedSet.add(record.endingId);
         });
 
@@ -96,7 +85,7 @@ Page({
     });
   },
 
-  // 加载历史记录
+  // 加载历史记录（使用 API 客户端）
   loadHistory: function() {
     if (this.data.loading || !this.data.hasMore) {
       return;
@@ -106,16 +95,12 @@ Page({
       loading: true
     });
 
-    wx.cloud.callFunction({
-      name: 'ifthen',
-      data: {
-        action: 'getEndingHistory',
-        limit: this.data.limit,
-        page: this.data.page
-      }
-    }).then(res => {
-      if (res.result.success) {
-        const newList = res.result.list.map(record => {
+    gameApi.ifthen('getEndingHistory', {
+      limit: this.data.limit,
+      page: this.data.page
+    }).then(result => {
+      if (result && result.success) {
+        const newList = result.list.map(record => {
           // 从结局数据中查找详细信息
           const ending = endingsData.find(e => e.id === record.endingId);
           return {
@@ -533,21 +518,13 @@ Page({
     });
   },
 
-  // 记录分享并奖励时光币
+  // 记录分享并奖励时光币（使用 API 客户端）
   recordShareAndReward: function() {
     const { selectedEnding } = this.data;
 
-    wx.cloud.callFunction({
-      name: 'user',
-      data: {
-        type: 'recordShare',
-        shareType: 'ending',
-        itemId: selectedEnding.id,
-        currency: 'timecoin'  // 如果当时分享奖励时光币
-      }
-    }).then(res => {
-      if (res.result.success) {
-        const { reward, firstTimeShare, shareId } = res.result;
+    userApi.recordShare('ending', selectedEnding.id, 'timecoin').then(result => {
+      if (result && result.success) {
+        const { reward, firstTimeShare, shareId } = result;
 
         if (firstTimeShare) {
           wx.showModal({

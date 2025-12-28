@@ -6,6 +6,7 @@
 const { preventDuplicateBehavior } = require('../../../utils/prevent-duplicate');
 const { isNetworkError, setNetworkDisconnected, showDisconnectDialog } = require('../../../utils/network');
 const { addPostLogExperience } = require('../../../utils/experience');
+const { qcioApi, chatApi } = require('../../../utils/api-client');
 
 Component({
   behaviors: [preventDuplicateBehavior],
@@ -57,23 +58,20 @@ Component({
       this.setData({ keywords: e.detail.value });
     },
 
-    // 加载日志发布状态
+    // 加载日志发布状态（使用 API 客户端）
     async loadLogStatus() {
       try {
-        const res = await wx.cloud.callFunction({
-          name: 'qcio',
-          data: { action: 'getMoodLogStatus' }
-        });
+        const result = await qcioApi.getMoodLogStatus();
 
-        if (res.result && res.result.success) {
-          this.setData({ logStatus: res.result.data });
+        if (result && result.success) {
+          this.setData({ logStatus: result.data });
         }
       } catch (err) {
         console.error('Load log status error:', err);
       }
     },
 
-    // 生成日志
+    // 生成日志（使用 API 客户端）
     generateLog() {
       // 使用防重复点击包装
       this._runWithLock('generateLog', async () => {
@@ -101,17 +99,11 @@ Component({
           // 构建提示词
           const prompt = `心情：${selectedMood.name}\n关键词：${keywords}`;
 
-          // 调用 chat 云函数
-          const res = await wx.cloud.callFunction({
-            name: 'chat',
-            data: {
-              userMessage: prompt,
-              mode: 'mood_log'
-            }
-          });
+          // 调用 chat 云函数（使用 API 客户端）
+          const result = await chatApi.sendMessage(prompt, [], 'mood_log');
 
-          if (res.result && res.result.success) {
-            const content = res.result.reply;
+          if (result && result.success) {
+            const content = result.reply;
 
             // 保存到数据库
             const saveRes = await this.saveLog(selectedMood, keywords, content);
@@ -143,7 +135,7 @@ Component({
               throw new Error(saveRes?.message || '保存日志失败');
             }
           } else {
-            throw new Error(res.result?.message || 'AI生成失败');
+            throw new Error(result?.message || 'AI生成失败');
           }
         } catch (err) {
           console.error('Generate log error:', err);
@@ -168,48 +160,37 @@ Component({
       }, 3000); // 3秒防重复点击（因为涉及AI生成）
     },
 
-    // 保存日志到数据库
+    // 保存日志到数据库（使用 API 客户端）
     async saveLog(mood, keywords, content) {
       try {
-        const res = await wx.cloud.callFunction({
-          name: 'qcio',
-          data: {
-            action: 'saveMoodLog',
-            data: {
-              mood_type: mood.id,
-              mood_name: mood.name,
-              keywords: keywords,
-              content: content
-            }
-          }
+        const result = await qcioApi.saveMoodLog({
+          mood_type: mood.id,
+          mood_name: mood.name,
+          keywords: keywords,
+          content: content
         });
 
-        return res.result;
+        return result;
       } catch (err) {
         console.error('Save log error:', err);
         return { success: false };
       }
     },
 
-    // 加载历史日志
+    // 加载历史日志（使用 API 客户端）
     async loadLogs() {
       try {
-        const res = await wx.cloud.callFunction({
-          name: 'qcio',
-          data: {
-            action: 'getMoodLogs'
-          }
-        });
+        const result = await qcioApi.getMoodLogs();
 
-        if (res.result && res.result.success) {
-          this.setData({ logs: res.result.data || [] });
+        if (result && result.success) {
+          this.setData({ logs: result.data || [] });
         }
       } catch (err) {
         console.error('Load logs error:', err);
       }
     },
 
-    // 删除日志
+    // 删除日志（使用 API 客户端）
     deleteLog(e) {
       // 使用防重复点击包装
       this._runWithLock('deleteLog', async () => {
@@ -230,13 +211,7 @@ Component({
         try {
           wx.showLoading({ title: '删除中...', mask: true });
 
-          await wx.cloud.callFunction({
-            name: 'qcio',
-            data: {
-              action: 'deleteMoodLog',
-              logId: id
-            }
-          });
+          await qcioApi.deleteMoodLog(id);
 
           // 重新加载日志列表和状态
           await this.loadLogs();
