@@ -222,17 +222,34 @@ async function getQcioData(openid) {
 - ✅ `loadGrowthInfo()`: 使用 `qcioApi.getLevelInfo`
 - ✅ `confirmLogout()`: 使用 `qcioApi.logout`
 
+**components/network-neighborhood/index.js 优化：**
+- ✅ 引入 `userApi`, `userBalanceCache`
+- ✅ `loadBalance()`: 使用缓存优先策略
+- ✅ `loadTransactionHistory()`: 使用 `userApi.getTransactionHistory()`
+- ✅ `confirmExchange()`: 使用 `userApi.exchangeNetFee()` 并更新缓存
+
+**pages/qcio-chat/index.js 优化：**
+- ✅ 引入 `userApi`, `qcioApi`, `chatApi`
+- ✅ `loadChatHistory()`: 使用 `qcioApi.getChatHistory()`
+- ✅ `saveChatHistory()`: 使用 `qcioApi.saveChatHistory()`
+- ✅ `sendMessage()`: 使用 `userApi.deductNetFee()` 和 `chatApi.sendMessage()`
+
 **api-client.js 新增方法：**
 - ✅ `userApi.updateProfile()`
 - ✅ `userApi.checkQcioEgg()`
+- ✅ `userApi.getTransactionHistory()`
 - ✅ `qcioApi.register()`
 - ✅ `qcioApi.getLevelInfo()`
 - ✅ `qcioApi.logout()`
 - ✅ `qcioApi.getAIContacts()`
 - ✅ `qcioApi.recordVisit()`
+- ✅ `qcioApi.getChatHistory()`
+- ✅ `qcioApi.saveChatHistory()`
 
 **提交记录：**
 - ✅ commit `0ff49be`: 应用公共工具模块优化首页和QCIO页面
+- ✅ commit `af2867e`: 应用公共工具模块优化网管系统组件
+- ✅ commit `2363201`: 应用公共工具模块优化QCIO聊天页面
 
 ---
 
