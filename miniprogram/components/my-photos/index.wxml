@@ -4,8 +4,6 @@
     <view class="win98-title-bar">
       <view class="win98-title-text">我的图片</view>
       <view class="win98-title-controls">
-        <button class="win98-btn-minimize">_</button>
-        <button class="win98-btn-maximize">□</button>
         <button class="win98-btn-close" bindtap="onClose">×</button>
       </view>
     </view>

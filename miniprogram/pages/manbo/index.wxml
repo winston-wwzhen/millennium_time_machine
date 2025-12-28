@@ -8,8 +8,6 @@
         <text class="app-name">慢播 QvodPlayer 3.0</text>
       </view>
       <view class="title-controls">
-        <button class="win98-btn-minimize">_</button>
-        <button class="win98-btn-maximize">□</button>
         <button class="win98-btn-close" bindtap="onClose">×</button>
       </view>
     </view>

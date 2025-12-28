@@ -130,11 +130,11 @@
         <text class="menu-icon">💻</text>
         <text class="menu-text">我的电脑</text>
       </view>
-      <view class="menu-item">
+      <view class="menu-item" bindtap="onIconTap" data-path="/pages/about/index">
         <text class="menu-icon">⚙️</text>
         <text class="menu-text">设置</text>
       </view>
-      <view class="menu-item" bindtap="onIconTap" data-path="/pages/about/index">
+      <view class="menu-item" bindtap="showAbout">
         <text class="menu-icon">❓</text>
         <text class="menu-text">帮助</text>
       </view>
@@ -387,24 +387,74 @@
   <view class="win98-overlay" wx:if="{{showAboutDialog}}" bindtap="hideAboutDialog">
     <view class="win98-window about-dialog" catchtap="stopPropagation">
       <view class="win98-title-bar">
-        <view class="win98-title-text">📱 关于千禧时光机</view>
+        <view class="win98-title-text">❓ 千禧时光机 - 帮助</view>
         <view class="win98-title-controls">
           <button class="win98-btn-close" bindtap="hideAboutDialog">×</button>
         </view>
       </view>
       <view class="win98-window-body">
-        <view class="about-content">
+        <scroll-view class="about-content" scroll-y>
           <text class="about-title">千禧时光机 v1.0</text>
-          <text class="about-text">一款怀旧风格的微信小程序，</text>
-          <text class="about-text">带你回到2005年的QQ时代。</text>
-          <view class="about-features">
-            <text class="about-feature">• Windows 98 桌面风格</text>
-            <text class="about-feature">• 100+ AI 聊天好友</text>
-            <text class="about-feature">• 14个隐藏彩蛋</text>
-            <text class="about-feature">• 双代币系统</text>
-            <text class="about-feature">• 经典小游戏</text>
+          <text class="about-text">一款怀旧风格的微信小程序，带你回到2005年的QQ时代。</text>
+
+          <view class="about-section">
+            <text class="about-section-title">🖥️ 桌面功能</text>
+            <view class="about-features">
+              <text class="about-feature">• 双击桌面图标打开程序</text>
+              <text class="about-feature">• 右键点击桌面打开菜单（刷新、系统信息等）</text>
+              <text class="about-feature">• 拖动小狮子助手到任意位置</text>
+              <text class="about-feature">• 点击/长按小狮子触发彩蛋</text>
+              <text class="about-feature">• 点击任务栏时间查看日历</text>
+            </view>
           </view>
-        </view>
+
+          <view class="about-section">
+            <text class="about-section-title">📟 QCIO 社交系统</text>
+            <view class="about-features">
+              <text class="about-feature">• 100位AI好友随机分配</text>
+              <text class="about-feature">• 空间访问、留言、心情日志</text>
+              <text class="about-feature">• 等级系统和成长值</text>
+              <text class="about-feature">• 每日签到和等级奖励</text>
+            </view>
+          </view>
+
+          <view class="about-section">
+            <text class="about-section-title">💰 双代币系统</text>
+            <view class="about-features">
+              <text class="about-feature">• 💎 时光币：发现彩蛋获得</text>
+              <text class="about-feature">• 🌐 网费：AI功能消耗</text>
+              <text class="about-feature">• 在网管系统兑换网费</text>
+            </view>
+          </view>
+
+          <view class="about-section">
+            <text class="about-section-title">🎮 游戏功能</text>
+            <view class="about-features">
+              <text class="about-feature">• 火星文翻译器</text>
+              <text class="about-feature">• 非主流相机</text>
+              <text class="about-feature">• 农场系统（种植收获）</text>
+            </view>
+          </view>
+
+          <view class="about-section">
+            <text class="about-section-title">🥚 彩蛋收集</text>
+            <view class="about-features">
+              <text class="about-feature">• 20个隐藏彩蛋等你发现</text>
+              <text class="about-feature">• 在"我的文档"中查看彩蛋大全</text>
+              <text class="about-feature">• 显示隐藏文件查看彩蛋秘籍</text>
+            </view>
+          </view>
+
+          <view class="about-section">
+            <text class="about-section-title">⚙️ 其他功能</text>
+            <view class="about-features">
+              <text class="about-feature">• 我的电脑：浏览虚拟文件</text>
+              <text class="about-feature">• 我的文档：彩蛋秘籍</text>
+              <text class="about-feature">• 网管系统：代币管理</text>
+              <text class="about-feature">• 设置：蓝屏彩蛋</text>
+            </view>
+          </view>
+        </scroll-view>
         <view class="dialog-actions">
           <button class="win98-btn-std" bindtap="hideAboutDialog">确定</button>
         </view>
