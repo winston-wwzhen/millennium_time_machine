@@ -5,6 +5,8 @@
 const { preventDuplicateBehavior } = require('../../utils/prevent-duplicate');
 const { isNetworkError, setNetworkDisconnected, showDisconnectDialog } = require('../../utils/network');
 const { eggSystem, EGG_IDS } = require('../../utils/egg-system');
+const { userApi, qcioApi } = require('../../utils/api-client');
+const { qcioContactsCache, qcioProfileCache } = require('../../utils/cache-manager');
 
 Page({
   behaviors: [preventDuplicateBehavior],
@@ -128,7 +130,7 @@ Page({
   },
 
   /**
-   * 检查QCIO空间访问彩蛋（累计访问计数）
+   * 检查QCIO空间访问彩蛋（累计访问计数）- 使用 API 客户端
    */
   checkQcioEgg: async function() {
     // 先加载彩蛋系统数据
@@ -142,13 +144,10 @@ Page({
 
     // 调用云函数检查/更新计数
     try {
-      const res = await wx.cloud.callFunction({
-        name: 'user',
-        data: { type: 'checkQcioEgg' }
-      });
+      const result = await userApi.checkQcioEgg();
 
-      if (res.result && res.result.success) {
-        const { shouldTrigger, alreadyAchieved } = res.result;
+      if (result && result.success) {
+        const { shouldTrigger, alreadyAchieved } = result;
 
         if (alreadyAchieved) {
           this.setData({ qcioVisitorEggAchieved: true });
@@ -164,19 +163,26 @@ Page({
   },
 
   /**
-   * 从云端加载 AI 好友列表
+   * 从云端加载 AI 好友列表（使用 API 客户端和缓存）
    */
-  loadAIContacts: function() {
-    wx.cloud.callFunction({
-      name: 'qcio',
-      data: { action: 'getAIContacts' }
-    }).then(res => {
-      if (res.result && res.result.success) {
-        this.setData({
-          contactGroups: res.result.data
-        });
+  loadAIContacts: async function() {
+    // 尝试从缓存获取
+    const cachedContacts = qcioContactsCache.get();
+    if (cachedContacts) {
+      this.setData({ contactGroups: cachedContacts });
+      return;
+    }
+
+    // 缓存未命中，调用API
+    try {
+      const result = await qcioApi.getAIContacts();
+      if (result && result.success) {
+        const contactGroups = result.data;
+        // 缓存联系人列表
+        qcioContactsCache.set(contactGroups);
+        this.setData({ contactGroups });
       }
-    }).catch(err => {
+    } catch (err) {
       console.error('Load AI Contacts Error:', err);
       // 如果云端加载失败，使用默认数据
       this.setData({
@@ -201,54 +207,44 @@ Page({
           }
         ]
       });
-    });
+    }
   },
 
   /**
-   * 处理通过分享链接访问（踩一踩）
+   * 处理通过分享链接访问（踩一踩）- 使用 API 客户端
    */
-  handleVisitFromShare: function(ownerQcioId) {
-    wx.cloud.callFunction({
-      name: 'qcio',
-      data: {
-        action: 'init'
-      }
-    }).then(res => {
-      if (res.result && res.result.success) {
-        const myProfile = res.result.data;
+  handleVisitFromShare: async function(ownerQcioId) {
+    try {
+      const initResult = await qcioApi.init();
+      if (initResult && initResult.success) {
+        const myProfile = initResult.data;
 
         // 如果访问的是自己的空间，不需要记录
         if (myProfile.qcio_id !== ownerQcioId) {
           // 记录访问
-          wx.cloud.callFunction({
-            name: 'qcio',
-            data: {
-              action: 'recordVisit',
-              visitorId: myProfile.qcio_id,
-              visitorName: myProfile.nickname,
-              ownerQcioId: ownerQcioId
-            }
-          }).then(() => {
-              wx.showToast({ title: '踩了一脚！', icon: 'success' });
-            }).catch(err => {
-              console.error('Record visit error:', err);
-            });
+          const recordResult = await qcioApi.recordVisit(
+            myProfile.qcio_id,
+            myProfile.nickname,
+            ownerQcioId
+          );
+          if (recordResult && recordResult.success) {
+            wx.showToast({ title: '踩了一脚！', icon: 'success' });
+          }
         }
       }
-    });
+    } catch (err) {
+      console.error('Handle visit from share error:', err);
+    }
   },
 
   /**
-   * 从云端初始化账号并判断登录态
+   * 从云端初始化账号并判断登录态（使用 API 客户端）
    */
-  initAccountFromCloud: function() {
+  initAccountFromCloud: async function() {
     wx.showLoading({ title: '搜索基站信号...', mask: true });
 
-    wx.cloud.callFunction({
-      name: 'qcio',
-      data: { action: 'init' }
-    }).then(res => {
-      const result = res.result;
+    try {
+      const result = await qcioApi.init();
       if (result && result.success) {
         const profile = result.data;
 
@@ -270,6 +266,9 @@ Page({
           });
         } else {
           // 已注册，判断登录状态
+          // 缓存用户资料
+          qcioProfileCache.set(profile);
+
           this.setData({
             userProfile: profile,
             isLoggedIn: !!profile.isOnline,
@@ -281,15 +280,13 @@ Page({
           // 加载成长值信息
           this.loadGrowthInfo();
         }
-      } else {
-        throw new Error(result ? result.message : '初始化失败');
       }
-    }).catch(err => {
+    } catch (err) {
       console.error('QCIO Init Cloud Error:', err);
       wx.showToast({ title: '由于网络故障拨号失败', icon: 'none' });
-    }).finally(() => {
+    } finally {
       wx.hideLoading();
-    });
+    }
   },
 
   /**
@@ -406,55 +403,45 @@ Page({
   },
 
   /**
-   * 提交注册
+   * 提交注册（使用 API 客户端）
    */
-  submitRegister: function() {
-    this._runWithLock('submitRegister', () => {
+  submitRegister: async function() {
+    this._runWithLock('submitRegister', async () => {
       const { qcio_id, nickname, avatar } = this.data.registerForm;
 
       this.setData({ isRegistering: true });
       wx.showLoading({ title: '正在注册...', mask: true });
 
-      return wx.cloud.callFunction({
-        name: 'qcio',
-        data: {
-          action: 'register',
-          qcio_id: qcio_id,
-          nickname: nickname.trim(),
-          avatar: avatar
-        }
-      }).then(res => {
-        if (res.result && res.result.success) {
+      try {
+        const registerResult = await qcioApi.register(
+          qcio_id,
+          nickname.trim(),
+          avatar
+        );
+
+        if (registerResult && registerResult.success) {
           // 注册成功，设置默认签名
           const defaultSignature = '承諾、絠什嚒用？還bùsんì洅見。';
 
           // 先设置签名，然后跳转到登录界面
-          return wx.cloud.callFunction({
-            name: 'qcio',
-            data: {
-              action: 'updateProfile',
-              data: { signature: defaultSignature }
-            }
-          }).then(() => {
-            // 清除注册状态，显示登录界面
-            this.setData({
-              needsRegister: false,
-              userProfile: res.result.data
-            });
-            // 加载钱包数据
-            this.loadWalletData();
-            wx.showToast({ title: '注册成功！请登录', icon: 'success' });
+          await qcioApi.updateProfile({ signature: defaultSignature });
+
+          // 清除注册状态，显示登录界面
+          this.setData({
+            needsRegister: false,
+            userProfile: registerResult.data
           });
-        } else {
-          throw new Error(res.result ? res.result.message : '注册失败');
+          // 加载钱包数据
+          this.loadWalletData();
+          wx.showToast({ title: '注册成功！请登录', icon: 'success' });
         }
-      }).catch(err => {
+      } catch (err) {
         console.error('Register Error:', err);
         wx.showToast({ title: err.message || '注册失败', icon: 'none' });
-      }).finally(() => {
+      } finally {
         this.setData({ isRegistering: false });
         wx.hideLoading();
-      });
+      }
     }, 3000); // 3秒防重复点击（注册涉及数据库操作）
   },
 
@@ -493,21 +480,17 @@ Page({
   },
 
   /**
-   * 从云函数加载完整成长值信息
+   * 从云函数加载完整成长值信息（使用 API 客户端）
    */
-  loadGrowthInfo: function() {
-    wx.cloud.callFunction({
-      name: 'qcio',
-      data: { action: 'getLevelInfo' }
-    }).then(res => {
-      if (res.result && res.result.success) {
-        this.setData({
-          growthInfo: res.result.data
-        });
+  loadGrowthInfo: async function() {
+    try {
+      const result = await qcioApi.getLevelInfo();
+      if (result && result.success) {
+        this.setData({ growthInfo: result.data });
       }
-    }).catch(err => {
+    } catch (err) {
       console.error('Load Growth Info Error:', err);
-    });
+    }
   },
 
   /**
@@ -576,17 +559,15 @@ Page({
   },
 
   /**
-   * 确认注销
+   * 确认注销（使用 API 客户端）
    */
-  confirmLogout: function() {
+  confirmLogout: async function() {
     this.setData({ showLogoutDialog: false });
     wx.showLoading({ title: '正在断开连接...', mask: true });
 
-    wx.cloud.callFunction({
-      name: 'qcio',
-      data: { action: 'logout' }
-    }).then(res => {
-      if (res.result && res.result.success) {
+    try {
+      const result = await qcioApi.logout();
+      if (result && result.success) {
         this.setData({
           isLoggedIn: false,
           loginProgress: 0,
@@ -595,12 +576,12 @@ Page({
         });
         wx.showToast({ title: '已安全下线', icon: 'success' });
       }
-    }).catch(err => {
+    } catch (err) {
       console.error('Logout Sync Error:', err);
       wx.showToast({ title: '操作超时', icon: 'none' });
-    }).finally(() => {
+    } finally {
       wx.hideLoading();
-    });
+    }
   },
 
   /**

@@ -1,5 +1,8 @@
 // miniprogram/pages/index/index.js
 const { eggSystem, EGG_IDS } = require("../../utils/egg-system");
+const { userApi } = require("../../utils/api-client");
+const { userBalanceCache, userInfoCache } = require("../../utils/cache-manager");
+const { pageErrorHandler } = require("../../utils/error-handler");
 
 Page({
   data: {
@@ -252,19 +255,41 @@ Page({
     });
   },
 
-  // 加载用户信息
+  // 加载用户信息（使用缓存）
   loadUserInfo: async function () {
-    try {
-      const res = await wx.cloud.callFunction({
-        name: "user",
-        data: { type: "getBalance" },
+    // 先尝试从缓存获取
+    const cachedUserInfo = userInfoCache.get();
+    const cachedBalance = userBalanceCache.get();
+
+    if (cachedUserInfo && cachedBalance) {
+      this.setData({
+        "userInfo.nickname": cachedUserInfo.avatarName || "用户",
+        "userInfo.avatar": cachedUserInfo.avatar || "👤",
+        userNetFee: cachedBalance.netFee || 0,
+        userCoins: cachedBalance.coins || 0,
       });
-      if (res.result && res.result.success) {
+      return;
+    }
+
+    // 缓存未命中，调用API
+    try {
+      const balanceResult = await userApi.getBalance();
+      if (balanceResult && balanceResult.success) {
+        // 缓存数据
+        userInfoCache.set({
+          avatarName: balanceResult.avatarName,
+          avatar: balanceResult.avatar
+        });
+        userBalanceCache.set({
+          netFee: balanceResult.netFee,
+          coins: balanceResult.coins
+        });
+
         this.setData({
-          "userInfo.nickname": res.result.avatarName || "用户",
-          "userInfo.avatar": res.result.avatar || "👤",
-          userNetFee: res.result.netFee || 0,
-          userCoins: res.result.coins || 0,
+          "userInfo.nickname": balanceResult.avatarName || "用户",
+          "userInfo.avatar": balanceResult.avatar || "👤",
+          userNetFee: balanceResult.netFee || 0,
+          userCoins: balanceResult.coins || 0,
         });
       }
     } catch (e) {
@@ -306,7 +331,7 @@ Page({
     this.setData({ showUserEditDialog: false });
   },
 
-  // 保存用户信息
+  // 保存用户信息（使用 API 客户端）
   saveUserInfo: async function () {
     const nickname = this.data.editNickname.trim();
     const avatar = this.data.editAvatar;
@@ -324,29 +349,27 @@ Page({
     wx.showLoading({ title: "保存中...", mask: true });
 
     try {
-      const res = await wx.cloud.callFunction({
-        name: "user",
-        data: {
-          type: "updateProfile",
-          data: { nickname, avatar },
-        },
-      });
+      const result = await userApi.updateProfile({ nickname, avatar });
 
-      if (res.result && res.result.success) {
+      if (result && result.success) {
+        // 更新缓存
+        userInfoCache.set({
+          avatarName: result.avatarName,
+          avatar: result.avatar
+        });
+
         this.setData({
-          "userInfo.nickname": res.result.avatarName,
-          "userInfo.avatar": res.result.avatar,
+          "userInfo.nickname": result.avatarName,
+          "userInfo.avatar": result.avatar,
           showUserEditDialog: false,
         });
         // 记录用户信息修改日志
         this.addLog('edit', '用户信息', `昵称: ${nickname}`);
         wx.showToast({ title: "保存成功", icon: "success" });
-      } else {
-        throw new Error(res.result?.errMsg || "保存失败");
       }
     } catch (e) {
       console.error("保存用户信息失败:", e);
-      wx.showToast({ title: "保存失败", icon: "none" });
+      // wx.showToast 已由 callCloudFunction 处理
     } finally {
       wx.hideLoading();
     }
@@ -848,7 +871,7 @@ Page({
     this.setData({ showEggDiscoveryDialog: false });
   },
 
-  // 显示彩蛋收集界面
+  // 显示彩蛋收集界面（使用 API 客户端和缓存）
   showEasterEggs: async function () {
     this.hideContextMenu();
 
@@ -857,20 +880,25 @@ Page({
     const badges = eggSystem.getBadges();
     const stats = eggSystem.getStats();
 
-    // 从云端获取双代币余额
+    // 优先从缓存获取余额，缓存未命中则调用API
     let coins = 0;
     let netFee = 0;
-    try {
-      const res = await wx.cloud.callFunction({
-        name: "user",
-        data: { type: "getBalance" },
-      });
-      if (res.result.success) {
-        coins = res.result.coins || 0;
-        netFee = res.result.netFee || 0;
+    const cachedBalance = userBalanceCache.get();
+    if (cachedBalance) {
+      coins = cachedBalance.coins || 0;
+      netFee = cachedBalance.netFee || 0;
+    } else {
+      try {
+        const result = await userApi.getBalance();
+        if (result && result.success) {
+          coins = result.coins || 0;
+          netFee = result.netFee || 0;
+          // 更新缓存
+          userBalanceCache.set({ coins, netFee });
+        }
+      } catch (e) {
+        console.error("获取余额失败:", e);
       }
-    } catch (e) {
-      console.error("获取余额失败:", e);
     }
 
     // 按稀有度分组

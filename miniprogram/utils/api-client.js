@@ -125,6 +125,24 @@ const userApi = {
       type: 'discoverEgg',
       eggId
     });
+  },
+
+  /**
+   * 更新用户资料
+   * @param {object} data - 更新的数据
+   */
+  updateProfile(data) {
+    return callCloudFunction('user', {
+      type: 'updateProfile',
+      data
+    });
+  },
+
+  /**
+   * 检查 QCIO 空间访问彩蛋
+   */
+  checkQcioEgg() {
+    return callCloudFunction('user', { type: 'checkQcioEgg' });
   }
 };
 
@@ -137,6 +155,28 @@ const qcioApi = {
    */
   init() {
     return callCloudFunction('qcio', { action: 'init' });
+  },
+
+  /**
+   * 注册 QCIO 账号
+   * @param {string} qcio_id - QCIO 号码
+   * @param {string} nickname - 昵称
+   * @param {string} avatar - 头像
+   */
+  register(qcio_id, nickname, avatar) {
+    return callCloudFunction('qcio', {
+      action: 'register',
+      qcio_id,
+      nickname,
+      avatar
+    });
+  },
+
+  /**
+   * 获取等级信息
+   */
+  getLevelInfo() {
+    return callCloudFunction('qcio', { action: 'getLevelInfo' });
   },
 
   /**
@@ -194,6 +234,13 @@ const qcioApi = {
   },
 
   /**
+   * 注销登录
+   */
+  logout() {
+    return callCloudFunction('qcio', { action: 'logout' });
+  },
+
+  /**
    * 获取钱包信息
    */
   getWalletInfo() {
@@ -208,6 +255,28 @@ const qcioApi = {
     return callCloudFunction('qcio', {
       action: 'getTransactionHistory',
       limit
+    });
+  },
+
+  /**
+   * 获取 AI 联系人列表
+   */
+  getAIContacts() {
+    return callCloudFunction('qcio', { action: 'getAIContacts' });
+  },
+
+  /**
+   * 记录访问（踩一踩）
+   * @param {string} visitorId - 访问者ID
+   * @param {string} visitorName - 访问者昵称
+   * @param {string} ownerQcioId - 被访问空间ID
+   */
+  recordVisit(visitorId, visitorName, ownerQcioId) {
+    return callCloudFunction('qcio', {
+      action: 'recordVisit',
+      visitorId,
+      visitorName,
+      ownerQcioId
     });
   }
 };
