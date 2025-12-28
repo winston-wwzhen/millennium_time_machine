@@ -282,6 +282,34 @@ async function getQcioData(openid) {
 - ✅ `saveUserPreferences()`: 使用 `userApi.setIfthenPreferences()`
 - ✅ `loadUserName()`: 使用 `userApi.getBalance()`
 
+**pages/ifthen/history.js 优化：**
+- ✅ 引入 `userApi`, `gameApi`
+- ✅ `loadStats()`: 使用 `gameApi.ifthen()`
+- ✅ `loadUnlockedEndings()`: 使用 `gameApi.ifthen()`
+- ✅ `loadHistory()`: 使用 `gameApi.ifthen()`
+- ✅ `recordShareAndReward()`: 使用 `userApi.recordShare()`
+
+**pages/qcio/farm/index.js 优化：**
+- ✅ 引入 `qcioApi`
+- ✅ `initFarm()`: 使用 `qcioApi.getFarmProfile()` 和 `qcioApi.initFarm()`
+- ✅ `refreshData()`: 使用 `qcioApi.getFarmProfile()`
+- ✅ `loadPlots()`: 使用 `qcioApi.getFarmPlots()`
+- ✅ `loadWallet()`: 使用 `qcioApi.getWalletInfo()`
+- ✅ `plantCrop()`: 使用 `qcioApi.plantCrop()`
+- ✅ `buySeed()`: 使用 `qcioApi.buySeed()`
+- ✅ `harvestCrop()`: 使用 `qcioApi.harvestCrop()`
+- ✅ `buyDecoration()`: 使用 `qcioApi.buyDecoration()`
+- ✅ `loadFarmLogs()`: 使用 `qcioApi.getFarmLogs()`
+- ✅ `addFarmLog()`: 使用 `qcioApi.addFarmLog()`
+
+**pages/qcio/components/mood-log.js 优化：**
+- ✅ 引入 `qcioApi`, `chatApi`
+- ✅ `loadLogStatus()`: 使用 `qcioApi.getMoodLogStatus()`
+- ✅ `generateLog()`: 使用 `chatApi.sendMessage()`
+- ✅ `saveLog()`: 使用 `qcioApi.saveMoodLog()`
+- ✅ `loadLogs()`: 使用 `qcioApi.getMoodLogs()`
+- ✅ `deleteLog()`: 使用 `qcioApi.deleteMoodLog()`
+
 **api-client.js 新增/更新方法：**
 - ✅ `userApi.updateProfile()`
 - ✅ `userApi.checkQcioEgg()`
@@ -293,6 +321,7 @@ async function getQcioData(openid) {
 - ✅ `userApi.getIfthenPreferences()`
 - ✅ `userApi.setIfthenPreferences()`
 - ✅ `userApi.savePhoto()`
+- ✅ `userApi.recordShare()` - 记录分享并奖励
 - ✅ `qcioApi.register()`
 - ✅ `qcioApi.getLevelInfo()`
 - ✅ `qcioApi.logout()`
@@ -308,6 +337,15 @@ async function getQcioData(openid) {
 - ✅ `qcioApi.getRecentVisitorsByQcioId()`
 - ✅ `qcioApi.checkIfSteppedToday()`
 - ✅ `qcioApi.recordVisit()` (4参数版本，带 visitorAvatar)
+- ✅ `qcioApi.getFarmProfile()` - 获取农场资料
+- ✅ `qcioApi.initFarm()` - 初始化农场
+- ✅ `qcioApi.getFarmPlots()` - 获取土地数据
+- ✅ `qcioApi.plantCrop()` - 种植作物
+- ✅ `qcioApi.buySeed()` - 购买种子
+- ✅ `qcioApi.harvestCrop()` - 收获作物
+- ✅ `qcioApi.buyDecoration()` - 购买装饰
+- ✅ `qcioApi.getFarmLogs()` - 获取农场日志
+- ✅ `qcioApi.addFarmLog()` - 添加农场日志
 - ✅ `chatApi.sendMessage()` 更新（添加 contactName 参数）
 
 **提交记录：**
@@ -316,7 +354,8 @@ async function getQcioData(openid) {
 - ✅ commit `2363201`: 应用公共工具模块优化QCIO聊天页面
 - ✅ commit `5bb2a7b`: 应用公共工具模块优化单人聊天页面
 - ✅ commit `69b6d27`: 应用公共工具模块优化群聊、访问、翻译和头像页面
-- ✅ commit `bf72438`: 应用公共工具模块优化回收站和如果当时页面
+- ✅ commit `bf72438`: 应用公共工具模块优化回收站和如果当时开始页面
+- ✅ commit `28cf584`: 应用公共API客户端优化历史、农场和心情日志模块
 
 ---
 
