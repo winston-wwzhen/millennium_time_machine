@@ -289,6 +289,29 @@ const qcioApi = {
       visitorName,
       ownerQcioId
     });
+  },
+
+  /**
+   * 获取聊天历史
+   * @param {string} contactName - 联系人名称
+   */
+  getChatHistory(contactName) {
+    return callCloudFunction('qcio', {
+      action: 'getChatHistory',
+      contactName
+    });
+  },
+
+  /**
+   * 保存聊天历史
+   * @param {string} contactName - 联系人名称
+   * @param {Array} messages - 消息列表
+   */
+  saveChatHistory(contactName, messages) {
+    return callCloudFunction('qcio', {
+      action: 'saveChatHistory',
+      data: { contactName, messages }
+    });
   }
 };
 

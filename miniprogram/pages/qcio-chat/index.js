@@ -4,6 +4,7 @@
  */
 const { addChatExperience } = require('../../utils/experience');
 const { isNetworkConnected } = require('../../utils/network');
+const { userApi, qcioApi, chatApi } = require('../../utils/api-client');
 
 Page({
   data: {
@@ -58,19 +59,13 @@ Page({
     this.saveChatHistory();
   },
 
-  // 加载聊天历史
+  // 加载聊天历史（使用 API 客户端）
   async loadChatHistory() {
     try {
-      const res = await wx.cloud.callFunction({
-        name: 'qcio',
-        data: {
-          action: 'getChatHistory',
-          contactName: this.data.contactName
-        }
-      });
+      const result = await qcioApi.getChatHistory(this.data.contactName);
 
-      if (res.result && res.result.success) {
-        const history = res.result.data || [];
+      if (result && result.success) {
+        const history = result.data || [];
         this.setData({
           messages: history
         });
@@ -81,21 +76,12 @@ Page({
     }
   },
 
-  // 保存聊天历史
+  // 保存聊天历史（使用 API 客户端）
   async saveChatHistory() {
     if (this.data.messages.length === 0) return;
 
     try {
-      await wx.cloud.callFunction({
-        name: 'qcio',
-        data: {
-          action: 'saveChatHistory',
-          data: {
-            contactName: this.data.contactName,
-            messages: this.data.messages
-          }
-        }
-      });
+      await qcioApi.saveChatHistory(this.data.contactName, this.data.messages);
     } catch (err) {
       console.error('Save chat history error:', err);
     }
@@ -106,7 +92,7 @@ Page({
     this.setData({ inputText: e.detail.value });
   },
 
-  // 发送消息
+  // 发送消息（使用 API 客户端）
   async sendMessage() {
     const text = this.data.inputText.trim();
     if (!text || this.data.isSending) return;
@@ -132,19 +118,13 @@ Page({
 
     // 2️⃣ 扣除网费（每次聊天消耗10分钟网费）
     try {
-      const deductRes = await wx.cloud.callFunction({
-        name: 'user',
-        data: {
-          action: 'deductNetFee',
-          amount: 10 // 每次聊天消耗10分钟网费
-        }
-      });
+      const deductResult = await userApi.deductNetFee(10);
 
-      if (!deductRes.result || !deductRes.result.success) {
+      if (!deductResult || !deductResult.success) {
         // 网费不足
         wx.showModal({
           title: '网费不足',
-          content: deductRes.result?.message || '您的网费不足，请通过桌面"网管系统"充值',
+          content: deductResult?.message || '您的网费不足，请通过桌面"网管系统"充值',
           confirmText: '去充值',
           cancelText: '取消',
           confirmColor: '#000080',
@@ -187,19 +167,12 @@ Page({
         content: m.content
       }));
 
-      const res = await wx.cloud.callFunction({
-        name: 'chat',
-        data: {
-          userMessage: text,
-          history: history,
-          mode: this.data.chatMode
-        }
-      });
+      const result = await chatApi.sendMessage(text, history, this.data.chatMode);
 
       let reply = '（网线好像断了，对方没回应...）';
 
-      if (res.result && res.result.success) {
-        reply = res.result.reply;
+      if (result && result.success) {
+        reply = result.reply;
       }
 
       // 添加 AI 回复
