@@ -1,4 +1,6 @@
 // miniprogram/app.js
+const { userApi } = require('./utils/api-client');
+
 App({
   onLaunch: function () {
     if (!wx.cloud) {
@@ -32,32 +34,26 @@ App({
    */
   initUserData: async function() {
     try {
-      const res = await wx.cloud.callFunction({
-        name: 'user',
-        data: {
-          type: 'login',
-          userData: { username: 'Admin' }
-        }
-      });
+      const result = await userApi.login();
 
-      if (res.result.success) {
+      if (result && result.success) {
         console.log('用户数据初始化成功:', {
-          isNew: res.result.isNew,
-          avatarName: res.result.avatarName,
-          coins: res.result.coins,
-          netFee: res.result.netFee,
-          dailyDeducted: res.result.dailyDeducted
+          isNew: result.isNew,
+          avatarName: result.avatarName,
+          coins: result.coins,
+          netFee: result.netFee,
+          dailyDeducted: result.dailyDeducted
         });
 
         // 保存用户头像名称到 globalData
-        if (res.result.avatarName) {
-          this.globalData.avatarName = res.result.avatarName;
+        if (result.avatarName) {
+          this.globalData.avatarName = result.avatarName;
         }
 
         // 如果是新用户，显示欢迎提示
-        if (res.result.isNew) {
+        if (result.isNew) {
           wx.showToast({
-            title: `欢迎！你是${res.result.avatarName}`,
+            title: `欢迎！你是${result.avatarName}`,
             icon: 'success',
             duration: 2000
           });
