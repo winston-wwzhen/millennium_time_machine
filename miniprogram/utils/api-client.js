@@ -579,6 +579,52 @@ const qcioApi = {
       action: 'addFarmLog',
       logData
     });
+  },
+
+  /**
+   * 获取群聊列表
+   */
+  getGroupList() {
+    return callCloudFunction('qcio', { action: 'getGroupList' });
+  },
+
+  /**
+   * 获取每日任务状态
+   */
+  getDailyTasks() {
+    return callCloudFunction('qcio', { action: 'getDailyTasks' });
+  },
+
+  /**
+   * 每日签到
+   */
+  dailyCheckin() {
+    return callCloudFunction('qcio', { action: 'dailyCheckin' });
+  },
+
+  /**
+   * 获取访问统计（当前用户）
+   */
+  getVisitStats() {
+    return callCloudFunction('qcio', { action: 'getVisitStats' });
+  },
+
+  /**
+   * 获取留言板
+   */
+  getGuestbook() {
+    return callCloudFunction('qcio', { action: 'getGuestbook' });
+  },
+
+  /**
+   * 删除留言
+   * @param {string} messageId - 留言ID
+   */
+  deleteGuestbookMessage(messageId) {
+    return callCloudFunction('qcio', {
+      action: 'deleteGuestbookMessage',
+      messageId
+    });
   }
 };
 

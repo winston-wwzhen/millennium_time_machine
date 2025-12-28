@@ -4,6 +4,7 @@
  */
 const { preventDuplicateBehavior } = require('../../../utils/prevent-duplicate');
 const { addDailyCheckinExperience } = require('../../../utils/experience');
+const { qcioApi } = require('../../../utils/api-client');
 
 Component({
   behaviors: [preventDuplicateBehavior],
@@ -37,16 +38,13 @@ Component({
   },
 
   methods: {
-    // 加载签到数据（从云端）
+    // 加载签到数据（使用 API 客户端）
     loadCheckInData() {
       this.setData({ isLoading: true });
 
-      wx.cloud.callFunction({
-        name: 'qcio',
-        data: { action: 'getDailyTasks' }
-      }).then(res => {
-        if (res.result && res.result.success) {
-          const tasks = res.result.data;
+      qcioApi.getDailyTasks().then(result => {
+        if (result && result.success) {
+          const tasks = result.data;
           this.setData({
             checkInData: {
               consecutiveDays: tasks.checkinStreak || 0,
@@ -64,7 +62,7 @@ Component({
       });
     },
 
-    // 执行签到（云端）
+    // 执行签到（使用 API 客户端）
     checkIn() {
       // 使用防重复点击包装
       this._runWithLock('checkIn', () => {
@@ -73,12 +71,9 @@ Component({
         this.setData({ isCheckingIn: true });
         wx.showLoading({ title: '签到中...', mask: true });
 
-        return wx.cloud.callFunction({
-          name: 'qcio',
-          data: { action: 'dailyCheckin' }
-        }).then(res => {
-          if (res.result && res.result.success) {
-            const data = res.result.data;
+        return qcioApi.dailyCheckin().then(result => {
+          if (result && result.success) {
+            const data = result.data;
 
             this.setData({
               checkInData: {
@@ -116,7 +111,7 @@ Component({
               });
             }, 100);
           } else {
-            throw new Error(res.result ? res.result.message : '签到失败');
+            throw new Error(result ? result.message : '签到失败');
           }
         }).catch(err => {
           console.error('Check-in Error:', err);

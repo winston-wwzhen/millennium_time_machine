@@ -3,6 +3,7 @@
  * 从数据库加载留言，支持删除功能
  */
 const { preventDuplicateBehavior } = require('../../../utils/prevent-duplicate');
+const { qcioApi } = require('../../../utils/api-client');
 
 Component({
   behaviors: [preventDuplicateBehavior],
@@ -26,18 +27,15 @@ Component({
   },
 
   methods: {
-    // 加载留言列表
+    // 加载留言列表（使用 API 客户端）
     async loadMessages() {
       this.setData({ loading: true });
 
       try {
-        const res = await wx.cloud.callFunction({
-          name: 'qcio',
-          data: { action: 'getGuestbook' }
-        });
+        const result = await qcioApi.getGuestbook();
 
-        if (res.result && res.result.success) {
-          const messages = res.result.data || [];
+        if (result && result.success) {
+          const messages = result.data || [];
 
           // 如果没有留言，显示预设的欢迎消息
           if (messages.length === 0) {
@@ -97,7 +95,7 @@ Component({
       }, 1000);
     },
 
-    // 删除留言
+    // 删除留言（使用 API 客户端）
     deleteMessage(e) {
       // 使用防重复点击包装
       this._runWithLock('deleteMessage', async () => {
@@ -124,13 +122,7 @@ Component({
         try {
           wx.showLoading({ title: '删除中...', mask: true });
 
-          await wx.cloud.callFunction({
-            name: 'qcio',
-            data: {
-              action: 'deleteGuestbookMessage',
-              messageId: id
-            }
-          });
+          await qcioApi.deleteGuestbookMessage(id);
 
           // 重新加载留言列表
           await this.loadMessages();

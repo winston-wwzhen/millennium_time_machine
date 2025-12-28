@@ -2,6 +2,8 @@
  * QCIO 群聊列表组件
  * 显示 QCIO 风格的群聊会话列表
  */
+const { qcioApi } = require('../../../utils/api-client');
+
 Component({
   properties: {
     userProfile: {
@@ -22,20 +24,15 @@ Component({
   },
 
   methods: {
-    // 从数据库加载群聊列表
+    // 从数据库加载群聊列表（使用 API 客户端）
     async loadGroupList() {
       try {
-        const res = await wx.cloud.callFunction({
-          name: 'qcio',
-          data: {
-            action: 'getGroupList'
-          }
-        });
+        const result = await qcioApi.getGroupList();
 
-        if (res.result && res.result.success) {
-          this.setData({ groupList: res.result.data });
+        if (result && result.success) {
+          this.setData({ groupList: result.data });
         } else {
-          console.error('Load group list failed:', res.result);
+          console.error('Load group list failed:', result);
           this.setData({ groupList: [] });
         }
       } catch (err) {

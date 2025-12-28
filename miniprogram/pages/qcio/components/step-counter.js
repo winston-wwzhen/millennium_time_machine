@@ -2,6 +2,8 @@
  * QCIO 空间 - 踩一踩组件
  * 显示访问统计，支持分享邀请好友来踩
  */
+const { qcioApi } = require('../../../utils/api-client');
+
 Component({
   properties: {
     qcioId: {
@@ -34,18 +36,13 @@ Component({
   },
 
   methods: {
-    // 加载访问统计
+    // 加载访问统计（使用 API 客户端）
     async loadVisitStats() {
       try {
-        const res = await wx.cloud.callFunction({
-          name: 'qcio',
-          data: {
-            action: 'getVisitStats'
-          }
-        });
+        const result = await qcioApi.getVisitStats();
 
-        if (res.result && res.result.success) {
-          const stats = res.result.data || {};
+        if (result && result.success) {
+          const stats = result.data || {};
           this.setData({
             totalVisits: stats.totalVisits || 0,
             todayVisits: stats.todayVisits || 0,
