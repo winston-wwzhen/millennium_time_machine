@@ -2,6 +2,7 @@
 const eventsData = require('../../data/ifthen-events.js');
 const endingsData = require('../../data/ifthen-endings.js');
 const narrativesData = require('../../data/ifthen-narratives.js');
+const { userApi, gameApi } = require('../../utils/api-client');
 
 // 游戏引擎 - 事件处理和结局计算
 const gameEngine = {
@@ -449,19 +450,14 @@ Page({
     }, 500);
   },
 
-  // 加载用户信息
+  // 加载用户信息（使用 API 客户端）
   loadUserInfo: async function() {
     try {
-      const res = await wx.cloud.callFunction({
-        name: 'user',
-        data: {
-          type: 'getBalance'
-        }
-      });
+      const result = await userApi.getBalance();
 
-      if (res.result && res.result.success) {
+      if (result && result.success) {
         this.userData = {
-          avatarName: res.result.avatarName || 'Admin'
+          avatarName: result.avatarName || 'Admin'
         };
         console.log('用户信息加载成功:', this.userData);
       } else {
@@ -917,29 +913,25 @@ Page({
     });
   },
 
-  // 保存结局到数据库
+  // 保存结局到数据库（使用 API 客户端）
   saveEndingToDatabase: function(ending) {
-    wx.cloud.callFunction({
-      name: 'ifthen',
-      data: {
-        action: 'saveEnding',
-        endingId: ending.id,
-        birthYear: this.data.birthYear,
-        gender: this.data.gender,
-        avatarName: (this.userData && this.userData.avatarName) || 'Admin', // 用户头像名称
-        finalAttributes: {
-          ...gameEngine.userState.attributes
-        },
-        playTime: new Date().getTime(),
-        // 游戏相关信息
-        playDuration: Math.floor((Date.now() - this.gameStartTime) / 1000), // 游戏时长（秒）
-        currentYear: gameEngine.userState.currentYear,
-        finalAge: gameEngine.userState.age
-      }
-    }).then(res => {
-      console.log('结局保存成功:', res.result);
+    gameApi.ifthen('saveEnding', {
+      endingId: ending.id,
+      birthYear: this.data.birthYear,
+      gender: this.data.gender,
+      avatarName: (this.userData && this.userData.avatarName) || 'Admin', // 用户头像名称
+      finalAttributes: {
+        ...gameEngine.userState.attributes
+      },
+      playTime: new Date().getTime(),
+      // 游戏相关信息
+      playDuration: Math.floor((Date.now() - this.gameStartTime) / 1000), // 游戏时长（秒）
+      currentYear: gameEngine.userState.currentYear,
+      finalAge: gameEngine.userState.age
+    }).then(result => {
+      console.log('结局保存成功:', result);
 
-      if (res.result.success && res.result.isFirstTime) {
+      if (result && result.success && result.isFirstTime) {
         // 首次获得结局，显示提示
         wx.showToast({
           title: '🎉 解锁新结局！',
@@ -987,23 +979,19 @@ Page({
     }
   },
 
-  // 分享结局
+  // 分享结局（使用 API 客户端）
   shareEnding: function() {
     const ending = this.data.ending;
 
     // 记录分享行为
-    wx.cloud.callFunction({
-      name: 'ifthen',
-      data: {
-        action: 'recordShare',
-        endingId: ending.id,
-        shareType: 'ending'
-      }
-    }).then(res => {
-      if (res.result.success) {
-        if (res.result.isFirstShare) {
+    gameApi.ifthen('recordShare', {
+      endingId: ending.id,
+      shareType: 'ending'
+    }).then(result => {
+      if (result && result.success) {
+        if (result.isFirstShare) {
           wx.showToast({
-            title: `+${res.result.reward}Q点`,
+            title: `+${result.reward}Q点`,
             icon: 'success',
             duration: 2000
           });

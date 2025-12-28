@@ -1,4 +1,6 @@
 // 我的图片组件
+const { userApi } = require('../../utils/api-client');
+
 Component({
   properties: {
     show: {
@@ -34,17 +36,11 @@ Component({
       this.setData({ loading: true });
 
       try {
-        const res = await wx.cloud.callFunction({
-          name: 'user-photos',
-          data: {
-            type: 'getPhotos',
-            limit: 100
-          }
-        });
+        const result = await userApi.getPhotos(100);
 
-        if (res.result.success) {
+        if (result && result.success) {
           // 格式化日期
-          const photos = res.result.photos.map(photo => {
+          const photos = result.photos.map(photo => {
             const date = new Date(photo.createTime);
             const dateStr = `${date.getMonth() + 1}/${date.getDate()}`;
             return {

@@ -217,6 +217,28 @@ const userApi = {
   },
 
   /**
+   * 获取照片列表
+   * @param {number} limit - 数量限制
+   */
+  getPhotos(limit = 100) {
+    return callCloudFunction('user-photos', {
+      type: 'getPhotos',
+      limit
+    });
+  },
+
+  /**
+   * 获取用户活动日志
+   * @param {number} limit - 数量限制
+   */
+  getLogs(limit = 100) {
+    return callCloudFunction('user', {
+      type: 'getLogs',
+      limit
+    });
+  },
+
+  /**
    * 记录分享并奖励
    * @param {string} shareType - 分享类型
    * @param {string} itemId - 项目ID（可选）
@@ -241,6 +263,40 @@ const qcioApi = {
    */
   init() {
     return callCloudFunction('qcio', { action: 'init' });
+  },
+
+  /**
+   * QCIO 登录
+   */
+  login() {
+    return callCloudFunction('qcio', { action: 'login' });
+  },
+
+  /**
+   * 获取钱包信息
+   */
+  getWallet() {
+    return callCloudFunction('qcio', { action: 'getWallet' });
+  },
+
+  /**
+   * 领取每日奖励
+   */
+  claimDailyReward() {
+    return callCloudFunction('qcio', { action: 'claimDailyReward' });
+  },
+
+  /**
+   * 添加经验值
+   * @param {string} source - 经验来源
+   * @param {number} amount - 经验数量
+   */
+  addExperience(source, amount) {
+    return callCloudFunction('qcio', {
+      action: 'addExperience',
+      source,
+      amount
+    });
   },
 
   /**
@@ -649,6 +705,17 @@ const chatApi = {
       data.contactName = contactName;
     }
     return callCloudFunction('chat', data);
+  },
+
+  /**
+   * 火星文翻译
+   * @param {string} content - 要翻译的内容
+   */
+  marsTranslate(content) {
+    return callCloudFunction('chat', {
+      mode: 'mars',
+      content
+    });
   },
 
   /**

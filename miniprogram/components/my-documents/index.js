@@ -1,4 +1,6 @@
 // components/my-documents/index.js
+const { userApi } = require('../../utils/api-client');
+
 Component({
   properties: {
     show: {
@@ -76,14 +78,11 @@ Component({
 
     onAvatarTap: async function() {
       try {
-        // 从云数据库获取用户头像
-        const res = await wx.cloud.callFunction({
-          name: 'user',
-          data: { type: 'getBalance' }
-        });
+        // 从云数据库获取用户头像（使用 API 客户端）
+        const result = await userApi.getBalance();
 
-        if (res.result.success) {
-          const avatar = res.result.avatar || '👤';
+        if (result && result.success) {
+          const avatar = result.avatar || '👤';
 
           // 判断是否为图片URL（以http开头）
           const isImageUrl = avatar.startsWith('http') || avatar.startsWith('cloud://');

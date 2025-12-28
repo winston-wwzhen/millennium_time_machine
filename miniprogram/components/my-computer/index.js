@@ -1,5 +1,6 @@
 // 我的电脑组件
 const { eggSystem, EGG_IDS } = require("../../utils/egg-system");
+const { addLog } = require("../../utils/logger");
 
 Component({
   properties: {
@@ -27,7 +28,7 @@ Component({
   observers: {
     'show': function(newVal) {
       if (newVal) {
-        this.addLog('open', '我的电脑');
+        addLog('open', '我的电脑');
         // 打开窗口时重置 Konami 序列
         this.resetKonamiSequence();
       }
@@ -52,21 +53,6 @@ Component({
   },
 
   methods: {
-    // 添加操作日志
-    addLog: function(action, target, details) {
-      wx.cloud.callFunction({
-        name: 'user',
-        data: {
-          type: 'addLog',
-          action: action,
-          target: target,
-          details: details || ''
-        }
-      }).catch(err => {
-        console.error('添加日志失败:', err);
-      });
-    },
-
     // 关闭窗口
     onClose: function() {
       // 检查 Konami 序列：等待关闭窗口（第二次关闭）

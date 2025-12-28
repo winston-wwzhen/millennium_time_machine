@@ -1,3 +1,6 @@
+// 火星文翻译器页面
+const { chatApi } = require('../../utils/api-client');
+
 Page({
   data: {
     inputText: '',
@@ -12,10 +15,10 @@ Page({
     });
   },
 
-  // ✨ 核心：点击“转译”
+  // ✨ 核心：点击"转译"
   async onTranslate() {
     const text = this.data.inputText.trim();
-    
+
     if (!text) {
       wx.showToast({ title: '写点心事吧...', icon: 'none' });
       return;
@@ -23,26 +26,20 @@ Page({
 
     if (this.data.isLoading) return;
 
-    this.setData({ 
+    this.setData({
       isLoading: true,
-      resultText: '正在连接葬爱家族服务器...' 
+      resultText: '正在连接葬爱家族服务器...'
     });
 
     try {
-      // 调用云函数，模式设为 'emo'
-      const res = await wx.cloud.callFunction({
-        name: 'chat',
-        data: {
-          mode: 'emo', // 👈 指定使用伤感模式
-          userMessage: text
-        }
-      });
+      // 调用聊天 API，模式设为 'emo'
+      const result = await chatApi.sendMessage(text, [], 'emo');
 
-      if (res.result && res.result.success) {
-        this.setData({ 
-          resultText: res.result.reply 
+      if (result && result.success) {
+        this.setData({
+          resultText: result.reply
         });
-        
+
         // 自动震动反馈
         wx.vibrateShort();
       } else {

@@ -1,5 +1,6 @@
 // 日记查看器组件
 const app = getApp();
+const { userApi } = require('../../utils/api-client');
 
 Component({
   properties: {
@@ -43,15 +44,9 @@ Component({
     },
 
     loadLogs: function() {
-      wx.cloud.callFunction({
-        name: 'user',
-        data: {
-          type: 'getLogs',
-          limit: 100
-        }
-      }).then(res => {
-        if (res.result.success) {
-          const formattedLogs = this.formatLogs(res.result.logs);
+      userApi.getLogs(100).then(result => {
+        if (result && result.success) {
+          const formattedLogs = this.formatLogs(result.logs);
           this.setData({ logs: formattedLogs });
         }
       }).catch(err => {

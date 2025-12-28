@@ -5,7 +5,7 @@
 const { preventDuplicateBehavior } = require('../../utils/prevent-duplicate');
 const { isNetworkError, setNetworkDisconnected, showDisconnectDialog } = require('../../utils/network');
 const { eggSystem, EGG_IDS } = require('../../utils/egg-system');
-const { userApi, qcioApi } = require('../../utils/api-client');
+const { userApi, qcioApi, chatApi } = require('../../utils/api-client');
 const { qcioContactsCache, qcioProfileCache } = require('../../utils/cache-manager');
 
 Page({
@@ -511,11 +511,8 @@ Page({
 
           wx.showLoading({ title: '正在获取好友列表...', mask: true });
 
-          return wx.cloud.callFunction({
-            name: 'qcio',
-            data: { action: 'login' }
-          }).then(res => {
-            if (res.result && res.result.success) {
+          return qcioApi.login().then(result => {
+            if (result && result.success) {
               wx.vibrateShort();
               this.setData({
                 isLoggedIn: true,
@@ -632,11 +629,8 @@ Page({
     this._runWithLock('translateAndSave', () => {
       wx.showLoading({ title: '正在通过时空网关...', mask: true });
 
-      return wx.cloud.callFunction({
-        name: 'chat',
-        data: { mode: 'mars', content: content }
-      }).then(res => {
-        const marsText = res.result && res.result.content ? res.result.content : content;
+      return chatApi.marsTranslate(content).then(result => {
+        const marsText = result && result.content ? result.content : content;
         return this.saveProfileChanges({ signature: marsText });
       }).catch(err => {
         // 检查是否是网络错误（429、超时等）
@@ -662,23 +656,17 @@ Page({
     this._runWithLock('saveProfileChanges', () => {
       wx.showLoading({ title: '数据同步中...', mask: true });
 
-      return wx.cloud.callFunction({
-        name: 'qcio',
-        data: {
-          action: 'updateProfile',
-          data: data
-        }
-      }).then(res => {
-        if (res.result && res.result.success) {
+      return qcioApi.updateProfile(data).then(result => {
+        if (result && result.success) {
           this.setData({
-            userProfile: res.result.data
+            userProfile: result.data
           });
-          this.calculateGrowthIcons(res.result.data.level);
+          this.calculateGrowthIcons(result.data.level);
           wx.showToast({ title: '同步成功', icon: 'success' });
         } else {
           // 检查是否是内容安全检测失败
-          if (res.result && res.result.error === 'CONTENT_UNSAFE') {
-            wx.showToast({ title: res.result.message || '内容违规，请修改', icon: 'none', duration: 2000 });
+          if (result && result.error === 'CONTENT_UNSAFE') {
+            wx.showToast({ title: result.message || '内容违规，请修改', icon: 'none', duration: 2000 });
           } else {
             wx.showToast({ title: '保存失败', icon: 'none' });
           }
@@ -795,13 +783,10 @@ Page({
    * 从云端加载钱包数据
    */
   loadWalletData: function() {
-    wx.cloud.callFunction({
-      name: 'qcio',
-      data: { action: 'getWallet' }
-    }).then(res => {
-      if (res.result && res.result.success) {
+    qcioApi.getWallet().then(result => {
+      if (result && result.success) {
         this.setData({
-          wallet: res.result.data || { coins: 0, qpoints: 0, isVip: false }
+          wallet: result.data || { coins: 0, qpoints: 0, isVip: false }
         });
       }
     }).catch(err => {
@@ -868,12 +853,9 @@ Page({
     this._runWithLock('onClaimDailyReward', () => {
       wx.showLoading({ title: '领取中...', mask: true });
 
-      return wx.cloud.callFunction({
-        name: 'qcio',
-        data: { action: 'claimDailyReward' }
-      }).then(res => {
-        if (res.result && res.result.success) {
-          const { coins, qpoints } = res.result;
+      return qcioApi.claimDailyReward().then(result => {
+        if (result && result.success) {
+          const { coins, qpoints } = result;
 
           // 显示奖励领取成功提示
           let rewardMsg = '领取成功！';
@@ -887,7 +869,7 @@ Page({
           // 更新等级信息（标记已领取）
           this.loadGrowthInfo();
         } else {
-          throw new Error(res.result ? res.result.message : '领取失败');
+          throw new Error(result ? result.message : '领取失败');
         }
       }).catch(err => {
         console.error('Claim Daily Reward Error:', err);
@@ -902,16 +884,9 @@ Page({
    * 获取经验（内部方法，供各功能调用）
    */
   addExperience: function(source, amount) {
-    wx.cloud.callFunction({
-      name: 'qcio',
-      data: {
-        action: 'addExperience',
-        source: source,
-        amount: amount
-      }
-    }).then(res => {
-      if (res.result && res.result.success) {
-        const { level_up, new_level, experience } = res.result;
+    qcioApi.addExperience(source, amount).then(result => {
+      if (result && result.success) {
+        const { level_up, new_level, experience } = result;
 
         // 如果升级了，显示升级特效
         if (level_up) {
@@ -1030,16 +1005,10 @@ Page({
     // 调用云函数更新头像
     wx.showLoading({ title: '更新中...', mask: true });
 
-    wx.cloud.callFunction({
-      name: 'qcio',
-      data: {
-        action: 'updateProfile',
-        data: { avatar: newAvatar }
-      }
-    }).then(res => {
-      if (res.result && res.result.success) {
+    qcioApi.updateProfile({ avatar: newAvatar }).then(result => {
+      if (result && result.success) {
         this.setData({
-          userProfile: res.result.data
+          userProfile: result.data
         });
         wx.showToast({ title: '头像已更新', icon: 'success' });
       } else {
