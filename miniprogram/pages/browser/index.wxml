@@ -14,7 +14,7 @@
   <view class="toolbar">
     <view class="tool-btn {{!canGoBack ? 'disabled' : ''}}" bindtap="onBrowserBack">⬅</view>
     <view class="tool-btn {{!canGoForward ? 'disabled' : ''}}" bindtap="onBrowserForward">➡</view>
-    <view class="tool-btn" bindtap="onRefresh">🔄</view>
+    <view class="tool-btn {{isRefreshing ? 'refreshing' : ''}}" bindtap="onRefresh">🔄</view>
     <view class="tool-btn" bindtap="goHome">🏠</view>
     <view class="tool-separator"></view>
     <view class="address-input-wrapper">
@@ -37,13 +37,13 @@
     <scroll-view scroll-y="true" class="web-content" wx:if="{{!isLoading}}">
 
       <!-- ================= SCENE: 2006风格门户网站 ================= -->
-      <block wx:if="{{currentUrl === 'http://www.hao2006.com'}}">
+      <block wx:if="{{currentUrl === 'http://www.navi-2006.com'}}">
         <view class="portal-2006">
 
           <!-- 顶部通栏跑马灯 -->
           <view class="top-banner">
             <view class="marquee-text">
-              <text>★ 欢迎访问千禧导航！推荐使用 IE 6.0 浏览器 ★</text>
+              <text>★ 欢迎访问千禧导航！推荐使用 网页浏览器 ★</text>
             </view>
           </view>
 
@@ -51,117 +51,56 @@
           <view class="search-section">
             <view class="site-logo">
               <text class="logo-main">千禧导航</text>
-              <text class="logo-sub">www.hao2006.com</text>
+              <text class="logo-sub">www.navi-2006.com</text>
             </view>
 
             <view class="search-box">
               <view class="search-tabs">
                 <text class="search-tab active">网页</text>
-                <text class="search-tab">MP3</text>
+                <text class="search-tab">音乐</text>
                 <text class="search-tab">图片</text>
               </view>
               <view class="search-input-row">
                 <input class="search-input" placeholder="请输入关键词..." />
-                <button class="search-btn">百度一下</button>
+                <button class="search-btn">搜索一下</button>
               </view>
             </view>
           </view>
 
-          <!-- 快捷导航 -->
-          <view class="quick-links">
-            <view class="quick-link-item">
-              <text class="quick-icon">📧</text>
-              <text class="quick-text">网易邮箱</text>
+          <!-- 快捷工具区 -->
+          <view class="quick-tools">
+            <view class="tool-item" bindtap="onLinkTap" data-path="/pages/mars/index">
+              <text class="tool-icon">🪐</text>
+              <text class="tool-name">火星翻译</text>
             </view>
-            <view class="quick-link-item">
-              <text class="quick-icon">💬</text>
-              <text class="quick-text">腾讯QQ</text>
+            <view class="tool-item" bindtap="onLinkTap" data-path="/pages/avatar/index">
+              <text class="tool-icon">📸</text>
+              <text class="tool-name">非主流相机</text>
             </view>
-            <view class="quick-link-item">
-              <text class="quick-icon">🎮</text>
-              <text class="quick-text">小游戏</text>
+            <view class="tool-item" bindtap="onLinkTap" data-path="/pages/star-explorer/index">
+              <text class="tool-icon">🌟</text>
+              <text class="tool-name">星际探索</text>
             </view>
-            <view class="quick-link-item">
-              <text class="quick-icon">🎵</text>
-              <text class="quick-text">MP3下载</text>
+            <view class="tool-item">
+              <text class="tool-icon">🧮</text>
+              <text class="tool-name">在线计算器</text>
             </view>
-            <view class="quick-link-item">
-              <text class="quick-icon">📺</text>
-              <text class="quick-text">在线视频</text>
+            <view class="tool-item">
+              <text class="tool-icon">🌤️</text>
+              <text class="tool-name">天气预报</text>
             </view>
-            <view class="quick-link-item">
-              <text class="quick-icon">🛒</text>
-              <text class="quick-text">淘宝网</text>
+            <view class="tool-item">
+              <text class="tool-icon">📅</text>
+              <text class="tool-name">万 年 历</text>
             </view>
           </view>
 
-          <!-- 主要内容区 - 三栏布局 -->
+          <!-- 主要内容区 - 单栏布局 -->
           <view class="main-content">
 
-            <!-- 左栏：分类导航 -->
-            <view class="left-col">
-              <view class="nav-section">
-                <view class="section-header blue-header">
-                  <text class="section-title">📁 常用网站</text>
-                </view>
-                <view class="nav-grid">
-                  <view class="nav-item"><text class="nav-link">新浪</text></view>
-                  <view class="nav-item"><text class="nav-link">搜狐</text></view>
-                  <view class="nav-item"><text class="nav-link">网易</text></view>
-                  <view class="nav-item"><text class="nav-link">腾讯</text></view>
-                  <view class="nav-item"><text class="nav-link">百度</text></view>
-                  <view class="nav-item"><text class="nav-link">雅虎</text></view>
-                </view>
-              </view>
-
-              <view class="nav-section">
-                <view class="section-header red-header">
-                  <text class="section-title">💻 游戏娱乐</text>
-                </view>
-                <view class="nav-grid">
-                  <view class="nav-item">
-                    <text class="nav-link highlight">传奇</text>
-                    <text class="new-tag">HOT</text>
-                  </view>
-                  <view class="nav-item"><text class="nav-link highlight">奇迹</text></view>
-                  <view class="nav-item"><text class="nav-link">梦幻西游</text></view>
-                  <view class="nav-item"><text class="nav-link">劲舞团</text></view>
-                  <view class="nav-item"><text class="nav-link">泡泡堂</text></view>
-                  <view class="nav-item"><text class="nav-link">跑跑卡丁车</text></view>
-                </view>
-              </view>
-
-              <view class="nav-section">
-                <view class="section-header green-header">
-                  <text class="section-title">🎵 音乐视频</text>
-                </view>
-                <view class="nav-grid">
-                  <view class="nav-item"><text class="nav-link">百度MP3</text></view>
-                  <view class="nav-item"><text class="nav-link">一听音乐</text></view>
-                  <view class="nav-item"><text class="nav-link">优酷视频</text></view>
-                  <view class="nav-item"><text class="nav-link">土豆网</text></view>
-                  <view class="nav-item"><text class="nav-link">酷狗音乐</text></view>
-                  <view class="nav-item"><text class="nav-link">迅雷看看</text></view>
-                </view>
-              </view>
-
-              <view class="nav-section">
-                <view class="section-header orange-header">
-                  <text class="section-title">💼 社区论坛</text>
-                </view>
-                <view class="nav-grid">
-                  <view class="nav-item"><text class="nav-link highlight">天涯社区</text></view>
-                  <view class="nav-item"><text class="nav-link">猫扑大杂烩</text></view>
-                  <view class="nav-item"><text class="nav-link">校内网</text></view>
-                  <view class="nav-item"><text class="nav-link">贴吧</text></view>
-                  <view class="nav-item"><text class="nav-link">豆瓣</text></view>
-                  <view class="nav-item"><text class="nav-link">新浪论坛</text></view>
-                </view>
-              </view>
-            </view>
-
-            <!-- 中栏：新闻资讯 -->
-            <view class="center-col">
+            <!-- 新闻资讯、工具和推荐 -->
+            <view class="content-col">
+              <!-- 新闻头条 -->
               <view class="news-section">
                 <view class="section-header blue-header">
                   <text class="section-title">📰 新闻头条</text>
@@ -169,16 +108,17 @@
                 </view>
                 <view class="news-list">
                   <view class="news-item main-news">
-                    <text class="news-title highlight">Windows Vista 正式发布</text>
+                    <text class="news-title highlight">新一代操作系统正式发布</text>
                     <text class="news-time">2006-11-30</text>
                   </view>
-                  <view class="news-item"><text class="news-title">■ 网络游戏实名制今起实施</text></view>
-                  <view class="news-item"><text class="news-title">■ 淘宝网击败eBay易趣</text></view>
-                  <view class="news-item"><text class="news-title">■ QQ同时在线人数突破2000万</text></view>
-                  <view class="news-item"><text class="news-title">■ 劲舞团引发社会争议</text></view>
+                  <view class="news-item"><text class="news-title">■ 网络游戏管理新规今起实施</text></view>
+                  <view class="news-item"><text class="news-title">■ 网上购物平台发展迅猛</text></view>
+                  <view class="news-item"><text class="news-title">■ 在线聊天软件用户数创新高</text></view>
+                  <view class="news-item"><text class="news-title">■ 音乐游戏引发青少年关注</text></view>
                 </view>
               </view>
 
+              <!-- 娱乐八卦 -->
               <view class="news-section">
                 <view class="section-header red-header">
                   <text class="section-title">🌟 娱乐八卦</text>
@@ -186,58 +126,12 @@
                 </view>
                 <view class="news-list">
                   <view class="news-item">
-                    <text class="news-title highlight">[图] 超女总决赛今晚举行</text>
+                    <text class="news-title highlight">[图] 选秀大赛总决赛今晚举行</text>
                   </view>
-                  <view class="news-item"><text class="news-title">■ 周杰伦新专辑《依然范特西》</text></view>
-                  <view class="news-item"><text class="news-title">■ 《武林外传》持续热播</text></view>
-                  <view class="news-item"><text class="news-title">■ 刘亦菲清纯照片曝光</text></view>
-                  <view class="news-item"><text class="news-title">■ 非主流造型大赛报名中</text></view>
-                </view>
-              </view>
-
-              <!-- 2006特色工具区 -->
-              <view class="tools-section">
-                <view class="section-header green-header">
-                  <text class="section-title">🔧 实用工具</text>
-                </view>
-                <view class="tools-grid">
-                  <view class="tool-item" bindtap="onLinkTap" data-path="/pages/mars/index">
-                    <text class="tool-icon">🪐</text>
-                    <text class="tool-name">火星翻译</text>
-                  </view>
-                  <view class="tool-item" bindtap="onLinkTap" data-path="/pages/avatar/index">
-                    <text class="tool-icon">📸</text>
-                    <text class="tool-name">非主流相机</text>
-                  </view>
-                  <view class="tool-item" bindtap="onLinkTap" data-path="/pages/star-explorer/index">
-                    <text class="tool-icon">🌟</text>
-                    <text class="tool-name">星际探索</text>
-                  </view>
-                  <view class="tool-item">
-                    <text class="tool-icon">🧮</text>
-                    <text class="tool-name">在线计算器</text>
-                  </view>
-                  <view class="tool-item">
-                    <text class="tool-icon">🌤️</text>
-                    <text class="tool-name">天气预报</text>
-                  </view>
-                  <view class="tool-item">
-                    <text class="tool-icon">📅</text>
-                    <text class="tool-name">万 年 历</text>
-                  </view>
-                </view>
-              </view>
-            </view>
-
-            <!-- 右栏：广告和推荐 -->
-            <view class="right-col">
-              <!-- 广告位 -->
-              <view class="ad-banner">
-                <view class="ad-content">
-                  <text class="ad-title">【广告】</text>
-                  <text class="ad-text">传奇世界</text>
-                  <text class="ad-desc">万人在线·激情PK</text>
-                  <text class="ad-btn">立即注册</text>
+                  <view class="news-item"><text class="news-title">■ 流行歌手发布新专辑</text></view>
+                  <view class="news-item"><text class="news-title">■ 古装情景喜剧持续热播</text></view>
+                  <view class="news-item"><text class="news-title">■ 新晋女星清纯照曝光</text></view>
+                  <view class="news-item"><text class="news-title">■ 个性造型大赛报名中</text></view>
                 </view>
               </view>
 
@@ -248,23 +142,15 @@
                 <view class="hot-list">
                   <view class="hot-item">
                     <text class="hot-rank hot-top1">1</text>
-                    <text class="hot-name">QQ空间代码</text>
+                    <text class="hot-name">个人空间代码</text>
                   </view>
                   <view class="hot-item">
                     <text class="hot-rank hot-top2">2</text>
-                    <text class="hot-name">非主流头像</text>
+                    <text class="hot-name">个性头像</text>
                   </view>
                   <view class="hot-item">
                     <text class="hot-rank hot-top3">3</text>
-                    <text class="hot-name">劲舞团外挂</text>
-                  </view>
-                  <view class="hot-item">
-                    <text class="hot-rank">4</text>
-                    <text class="hot-name">免费QQ秀</text>
-                  </view>
-                  <view class="hot-item">
-                    <text class="hot-rank">5</text>
-                    <text class="hot-name">手机铃声</text>
+                    <text class="hot-name">游戏攻略</text>
                   </view>
                 </view>
               </view>
@@ -280,7 +166,7 @@
                   </view>
                   <view class="comment-item">
                     <text class="comment-user">寂寞网管：</text>
-                    <text class="comment-text">有一起玩传奇的吗？</text>
+                    <text class="comment-text">有一起玩网游的吗？</text>
                   </view>
                   <view class="comment-item">
                     <text class="comment-user">忧郁王子：</text>
@@ -298,7 +184,7 @@
 
               <!-- 收藏本站 -->
               <view class="bookmark-box">
-                <text class="bookmark-text">📌 按 Ctrl+D 收藏本站</text>
+                <text class="bookmark-text">📌 欢迎收藏本站</text>
               </view>
             </view>
           </view>
@@ -314,8 +200,9 @@
               <text class="footer-divider">|</text>
               <text class="footer-link">联系方式</text>
             </view>
-            <text class="footer-copyright">Copyright © 2006 www.hao2006.com All Rights Reserved.</text>
+            <text class="footer-copyright">Copyright © 2006 www.navi-2006.com All Rights Reserved.</text>
             <text class="footer-icp">京ICP备06000000号</text>
+            <text class="footer-notice">（本页面仅为怀旧风格展示，非真实网站）</text>
           </view>
 
         </view>

@@ -121,6 +121,20 @@ page {
 .tool-btn:active { border-style: inset; }
 .tool-btn.disabled { color: #808080; border-style: solid; border-color: #c0c0c0; }
 
+/* 刷新按钮旋转动画 */
+.tool-btn.refreshing {
+  animation: rotate-refresh 0.6s ease-in-out;
+}
+
+@keyframes rotate-refresh {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 .tool-separator { width: 1px; height: 20px; background: #808080; border-right: 1px solid #fff; }
 
 .address-input-wrapper {
@@ -307,6 +321,42 @@ page {
   text-decoration: underline;
 }
 
+/* 快捷工具区 */
+.quick-tools {
+  display: flex;
+  justify-content: space-around;
+  background: #fff;
+  padding: 8px 10px;
+  border-bottom: 1px solid #ccc;
+  flex-wrap: nowrap;
+}
+
+.quick-tools .tool-item {
+  width: auto;
+  min-width: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5px 8px;
+  cursor: pointer;
+  flex: 1;
+}
+
+.quick-tools .tool-item:active {
+  background: #ffffcc;
+}
+
+.quick-tools .tool-icon {
+  font-size: 20px;
+  margin-bottom: 2px;
+}
+
+.quick-tools .tool-name {
+  font-size: 10px;
+  color: #333;
+  text-align: center;
+}
+
 /* 快捷导航 */
 .quick-links {
   display: flex;
@@ -338,36 +388,18 @@ page {
   color: #333;
 }
 
-/* 主内容区 - 三栏布局 */
+/* 主内容区 - 单栏布局 */
 .main-content {
-  display: flex;
-  gap: 8px;
   padding: 8px;
   background: #e8e8e8;
 }
 
-.left-col, .center-col, .right-col {
+.content-col {
   background: #fff;
   border: 1px solid #999;
 }
 
-.left-col {
-  flex: 2;
-}
-
-.center-col {
-  flex: 3;
-}
-
-.right-col {
-  flex: 1.5;
-}
-
-/* 分类导航 */
-.nav-section {
-  margin-bottom: 10px;
-}
-
+/* 新闻区 */
 .section-header {
   background: linear-gradient(180deg, #4a90d9 0%, #2d5c8a 100%);
   padding: 6px 10px;
@@ -407,51 +439,6 @@ page {
   cursor: pointer;
 }
 
-.nav-grid {
-  display: flex;
-  flex-wrap: wrap;
-  padding: 8px;
-  gap: 6px;
-}
-
-.nav-item {
-  position: relative;
-  width: 23%;
-  padding: 4px 6px;
-  background: #f5f5f5;
-  border: 1px solid #ddd;
-  text-align: center;
-  cursor: pointer;
-}
-
-.nav-item:active {
-  background: #ffffcc;
-}
-
-.nav-link {
-  font-size: 12px;
-  color: #0066cc;
-  display: block;
-}
-
-.nav-link.highlight {
-  color: #f60;
-  font-weight: bold;
-}
-
-.new-tag {
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  background: #f00;
-  color: #fff;
-  font-size: 9px;
-  padding: 1px 3px;
-  border-radius: 2px;
-  animation: blink 1s infinite;
-}
-
-/* 新闻区 */
 .news-section {
   margin-bottom: 10px;
 }
@@ -707,4 +694,12 @@ page {
   display: block;
   font-size: 10px;
   color: #666;
+}
+
+.footer-notice {
+  display: block;
+  font-size: 9px;
+  color: #888;
+  margin-top: 3px;
+  font-style: italic;
 }

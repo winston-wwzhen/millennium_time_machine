@@ -4,17 +4,20 @@ const app = getApp();
 Page({
   data: {
     // --- 浏览器状态 ---
-    currentUrl: 'http://www.hao2006.com',
+    currentUrl: 'http://www.navi-2006.com',
     isLoading: true,
     progress: 0,
     statusText: '正在连接服务器...',
-    historyStack: ['http://www.hao2006.com'],
+    historyStack: ['http://www.navi-2006.com'],
     currentIndex: 0,
     canGoBack: false,
     canGoForward: false,
 
     // 每日彩蛋
     dailyQuote: '',
+
+    // 刷新动画状态
+    isRefreshing: false,
   },
 
   onLoad: function () {
@@ -125,11 +128,19 @@ Page({
   },
 
   onRefresh: function() {
+    // 触发旋转动画
+    this.setData({ isRefreshing: true });
+
+    // 600ms 后移除动画状态（与 CSS 动画时长一致）
+    setTimeout(() => {
+      this.setData({ isRefreshing: false });
+    }, 600);
+
     this.simulateLoading();
   },
 
   goHome: function() {
-    this.navigateInternal('http://www.hao2006.com');
+    this.navigateInternal('http://www.navi-2006.com');
   },
   
   onLinkTap: function(e) {
