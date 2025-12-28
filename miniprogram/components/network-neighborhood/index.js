@@ -2,6 +2,8 @@
  * 网管系统组件 - Win98 风格的网络连接管理窗口
  */
 const { eggSystem, EGG_IDS } = require("../../utils/egg-system");
+const { userApi } = require("../../utils/api-client");
+const { userBalanceCache } = require("../../utils/cache-manager");
 
 Component({
   properties: {
@@ -161,23 +163,45 @@ Component({
       }
     },
 
-    // 加载双代币余额和用户信息
+    // 加载双代币余额和用户信息（使用 API 客户端和缓存）
     loadBalance: async function() {
       try {
-        const res = await wx.cloud.callFunction({
-          name: 'user',
-          data: { type: 'getBalance' }
-        });
-
-        if (res.result.success) {
-          const netFee = res.result.netFee || 0;
+        // 优先从缓存获取
+        const cachedBalance = userBalanceCache.get();
+        if (cachedBalance) {
+          const netFee = cachedBalance.netFee || 0;
           this.setData({
-            coins: res.result.coins || 0,
+            coins: cachedBalance.coins || 0,
             netFee: netFee,
             netFeeDays: Math.floor(netFee / 1440),
             netFeeMinutes: netFee % 1440,
-            avatarName: res.result.avatarName || 'Admin',
-            avatar: res.result.avatar || '👤'
+            avatarName: cachedBalance.avatarName || 'Admin',
+            avatar: cachedBalance.avatar || '👤'
+          });
+          return;
+        }
+
+        // 缓存未命中，调用API
+        const result = await userApi.getBalance();
+        if (result && result.success) {
+          const netFee = result.netFee || 0;
+          const balanceData = {
+            coins: result.coins || 0,
+            netFee: netFee,
+            avatarName: result.avatarName || 'Admin',
+            avatar: result.avatar || '👤'
+          };
+
+          // 更新缓存
+          userBalanceCache.set(balanceData);
+
+          this.setData({
+            coins: balanceData.coins,
+            netFee: balanceData.netFee,
+            netFeeDays: Math.floor(netFee / 1440),
+            netFeeMinutes: netFee % 1440,
+            avatarName: balanceData.avatarName,
+            avatar: balanceData.avatar
           });
         }
       } catch (e) {
@@ -185,21 +209,15 @@ Component({
       }
     },
 
-    // 加载交易记录
+    // 加载交易记录（使用 API 客户端）
     loadTransactionHistory: async function() {
       try {
         this.setData({ transactionLoading: true });
-        const res = await wx.cloud.callFunction({
-          name: 'user',
-          data: {
-            type: 'getTransactionHistory',
-            limit: 50
-          }
-        });
+        const result = await userApi.getTransactionHistory(50);
 
-        if (res.result.success) {
+        if (result && result.success) {
           this.setData({
-            transactionRecords: this.formatTransactionRecords(res.result.records || []),
+            transactionRecords: this.formatTransactionRecords(result.records || []),
             transactionLoading: false
           });
         } else {
@@ -300,7 +318,7 @@ Component({
       });
     },
 
-    // 确认兑换
+    // 确认兑换（使用 API 客户端）
     confirmExchange: async function() {
       const index = this.data.selectedExchangeIndex;
       if (index < 0) {
@@ -325,26 +343,28 @@ Component({
       try {
         wx.showLoading({ title: '兑换中...' });
 
-        const res = await wx.cloud.callFunction({
-          name: 'user',
-          data: {
-            type: 'exchangeNetFee',
-            amount: option.minutes
-          }
-        });
+        const result = await userApi.exchangeNetFee(option.minutes);
 
         wx.hideLoading();
 
-        if (res.result.success) {
-          const newNetFee = res.result.newNetFee;
+        if (result && result.success) {
+          const newNetFee = result.newNetFee;
           const newDays = Math.floor(newNetFee / 1440);
           const newMinutes = newNetFee % 1440;
+
+          // 更新缓存
+          userBalanceCache.set({
+            coins: result.remainingCoins,
+            netFee: newNetFee,
+            avatarName: this.data.avatarName,
+            avatar: this.data.avatar
+          });
 
           // 记录网费兑换日志
           this.addLog('exchange', '网费兑换', `${option.label} (-${option.coins}时光币)`);
 
           this.setData({
-            coins: res.result.remainingCoins,
+            coins: result.remainingCoins,
             netFee: newNetFee,
             netFeeDays: newDays,
             netFeeMinutes: newMinutes,
@@ -359,19 +379,11 @@ Component({
 
           // 彩蛋：首次兑换
           this.checkNetworkExchangerEgg();
-        } else {
-          wx.showToast({
-            title: res.result.errMsg || '兑换失败',
-            icon: 'none'
-          });
         }
       } catch (e) {
         wx.hideLoading();
         console.error('兑换失败:', e);
-        wx.showToast({
-          title: '兑换失败，请重试',
-          icon: 'none'
-        });
+        // wx.showToast 已由 callCloudFunction 处理
       }
     },
 

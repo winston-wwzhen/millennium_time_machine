@@ -143,6 +143,17 @@ const userApi = {
    */
   checkQcioEgg() {
     return callCloudFunction('user', { type: 'checkQcioEgg' });
+  },
+
+  /**
+   * 获取交易记录
+   * @param {number} limit - 记录数量
+   */
+  getTransactionHistory(limit = 50) {
+    return callCloudFunction('user', {
+      type: 'getTransactionHistory',
+      limit
+    });
   }
 };
 
