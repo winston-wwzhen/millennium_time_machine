@@ -1,9 +1,11 @@
 /**
  * API 客户端 - 统一云函数调用封装
  * 减少重复代码，统一错误处理，简化云函数调用
+ * 支持自动缓存，提升性能
  */
 
 const { isNetworkError } = require('./network');
+const { CacheKeys, withCache, getCache, setCache } = require('./cache-manager');
 
 /**
  * 云函数调用封装
@@ -88,42 +90,66 @@ const userApi = {
   },
 
   /**
-   * 获取用户余额
+   * 获取用户余额（带缓存）
    */
   getBalance() {
-    return callCloudFunction('user', { type: 'getBalance' });
+    return withCache(
+      CacheKeys.USER_BALANCE,
+      () => callCloudFunction('user', { type: 'getBalance' })
+    );
   },
 
   /**
-   * 兑换网费
+   * 兑换网费（清除余额缓存）
    * @param {number} amount - 兑换金额（分钟）
    */
   exchangeNetFee(amount) {
     return callCloudFunction('user', {
       type: 'exchangeNetFee',
       amount
+    }).then(result => {
+      // 兑换成功后清除余额缓存
+      if (result && result.success) {
+        const { removeCache } = require('./cache-manager');
+        removeCache(CacheKeys.USER_BALANCE);
+      }
+      return result;
     });
   },
 
   /**
-   * 扣除网费
+   * 扣除网费（清除余额缓存）
    * @param {number} amount - 扣除金额（分钟）
    */
   deductNetFee(amount) {
     return callCloudFunction('user', {
       action: 'deductNetFee',
       amount
+    }).then(result => {
+      // 扣除成功后清除余额缓存
+      if (result && result.success) {
+        const { removeCache } = require('./cache-manager');
+        removeCache(CacheKeys.USER_BALANCE);
+      }
+      return result;
     });
   },
 
   /**
-   * 发现彩蛋
+   * 发现彩蛋（清除余额缓存）
    * @param {string} eggId - 彩蛋ID
    */
   discoverEgg(eggId) {
     return callCloudFunction('user', {
       type: 'discoverEgg',
       eggId
+    }).then(result => {
+      // 发现彩蛋获得奖励后清除余额缓存
+      if (result && result.success) {
+        const { removeCache } = require('./cache-manager');
+        removeCache(CacheKeys.USER_BALANCE);
+      }
+      return result;
     });
   },
 
@@ -280,14 +306,22 @@ const qcioApi = {
   },
 
   /**
-   * 领取每日奖励
+   * 领取每日奖励（清除钱包缓存）
    */
   claimDailyReward() {
-    return callCloudFunction('qcio', { action: 'claimDailyReward' });
+    return callCloudFunction('qcio', { action: 'claimDailyReward' }).then(result => {
+      // 领取成功后清除钱包缓存
+      if (result && result.success) {
+        const { removeCache } = require('./cache-manager');
+        removeCache(CacheKeys.QCIO_WALLET);
+        removeCache(CacheKeys.QCIO_LEVEL_INFO);
+      }
+      return result;
+    });
   },
 
   /**
-   * 添加经验值
+   * 添加经验值（清除等级缓存）
    * @param {string} source - 经验来源
    * @param {number} amount - 经验数量
    */
@@ -296,6 +330,13 @@ const qcioApi = {
       action: 'addExperience',
       source,
       amount
+    }).then(result => {
+      // 添加经验成功后清除等级缓存
+      if (result && result.success) {
+        const { removeCache } = require('./cache-manager');
+        removeCache(CacheKeys.QCIO_LEVEL_INFO);
+      }
+      return result;
     });
   },
 
@@ -315,20 +356,31 @@ const qcioApi = {
   },
 
   /**
-   * 获取等级信息
+   * 获取等级信息（带缓存）
    */
   getLevelInfo() {
-    return callCloudFunction('qcio', { action: 'getLevelInfo' });
+    return withCache(
+      CacheKeys.QCIO_LEVEL_INFO,
+      () => callCloudFunction('qcio', { action: 'getLevelInfo' })
+    );
   },
 
   /**
-   * 更新用户资料
+   * 更新用户资料（清除缓存）
    * @param {object} data - 更新的数据
    */
   updateProfile(data) {
     return callCloudFunction('qcio', {
       action: 'updateProfile',
       data
+    }).then(result => {
+      // 更新成功后清除相关缓存
+      if (result && result.success) {
+        const { removeCache } = require('./cache-manager');
+        removeCache(CacheKeys.QCIO_PROFILE);
+        removeCache(CacheKeys.QCIO_LEVEL_INFO);
+      }
+      return result;
     });
   },
 
@@ -383,10 +435,13 @@ const qcioApi = {
   },
 
   /**
-   * 获取钱包信息
+   * 获取钱包信息（带缓存）
    */
   getWalletInfo() {
-    return callCloudFunction('qcio', { action: 'getWalletInfo' });
+    return withCache(
+      CacheKeys.QCIO_WALLET,
+      () => callCloudFunction('qcio', { action: 'getWalletInfo' })
+    );
   },
 
   /**
@@ -401,10 +456,13 @@ const qcioApi = {
   },
 
   /**
-   * 获取 AI 联系人列表
+   * 获取 AI 联系人列表（带缓存）
    */
   getAIContacts() {
-    return callCloudFunction('qcio', { action: 'getAIContacts' });
+    return withCache(
+      CacheKeys.AI_CONTACTS,
+      () => callCloudFunction('qcio', { action: 'getAIContacts' })
+    );
   },
 
   /**
@@ -652,10 +710,17 @@ const qcioApi = {
   },
 
   /**
-   * 每日签到
+   * 每日签到（清除钱包缓存）
    */
   dailyCheckin() {
-    return callCloudFunction('qcio', { action: 'dailyCheckin' });
+    return callCloudFunction('qcio', { action: 'dailyCheckin' }).then(result => {
+      // 签到成功后清除钱包缓存
+      if (result && result.success) {
+        const { removeCache } = require('./cache-manager');
+        removeCache(CacheKeys.QCIO_WALLET);
+      }
+      return result;
+    });
   },
 
   /**

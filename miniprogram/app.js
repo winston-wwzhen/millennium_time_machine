@@ -1,5 +1,6 @@
 // miniprogram/app.js
 const { userApi } = require('./utils/api-client');
+const { preloadCommonData } = require('./utils/cache-manager');
 
 App({
   onLaunch: function () {
@@ -21,11 +22,26 @@ App({
       lastOnlineDate: null,
     };
 
+    // 预加载常用数据（异步，不阻塞启动）
+    this.preloadData();
+
     // 初始化用户数据（创建 users 集合记录）
     this.initUserData();
 
     // 启动在线计时
     this.startOnlineTimer();
+  },
+
+  /**
+   * 预加载常用数据
+   * 提升首屏加载速度
+   */
+  preloadData: async function() {
+    try {
+      await preloadCommonData();
+    } catch (err) {
+      console.error('预加载数据失败:', err);
+    }
   },
 
   /**

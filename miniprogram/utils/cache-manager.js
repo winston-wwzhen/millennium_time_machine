@@ -11,6 +11,8 @@ const CacheKeys = {
   USER_BALANCE: 'cache_user_balance',
   QCIO_CONTACTS: 'cache_qcio_contacts',
   QCIO_PROFILE: 'cache_qcio_profile',
+  QCIO_WALLET: 'cache_qcio_wallet',
+  QCIO_LEVEL_INFO: 'cache_qcio_level_info',
   AI_CONTACTS: 'cache_ai_contacts',
   SYSTEM_CONFIG: 'cache_system_config'
 };
