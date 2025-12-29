@@ -1220,18 +1220,8 @@ Page({
     );
 
     if (shouldTrigger) {
-      const result = await eggSystem.discover(EGG_IDS.TASKBAR_SURPRISE);
-      const isNewDiscovery = result?.isNew || false;
-
-      // 显示怀旧文字
-      wx.showModal({
-        title: "🎉 发现彩蛋！",
-        content: isNewDiscovery
-          ? '任务栏惊喜：\n\n"Windows正在检测你的硬件..."\n\n那个年代的等待记忆...'
-          : '"Windows正在检测你的硬件..."',
-        showCancel: false,
-        confirmText: "回忆满满",
-      });
+      // 触发彩蛋，自动调用已注册的 Win98 风格弹窗回调
+      await eggSystem.discover(EGG_IDS.TASKBAR_SURPRISE);
     }
   },
 

@@ -465,3 +465,396 @@ const COLLECTIONS = [
   'new_table',
 ];
 ```
+
+---
+
+## Easter Egg System Implementation Guide
+
+### ⚠️ Critical Rule: Use Win98 Style Dialogs
+
+**ALL easter egg discovery modals MUST use Win98 style, NOT WeChat native modals.**
+
+❌ **WRONG** - Do NOT use:
+```javascript
+// NEVER use wx.showModal for easter eggs!
+wx.showModal({
+  title: "🎉 发现彩蛋！",
+  content: "彩蛋内容",
+  showCancel: false,
+  confirmText: "确定"
+});
+```
+
+✅ **CORRECT** - Always use:
+```javascript
+// Register callback and use setData
+this.eggCallbackKey = eggSystem.setEggDiscoveryCallback((config) => {
+  const rarityNames = {
+    common: '普通',
+    rare: '稀有',
+    epic: '史诗',
+    legendary: '传说'
+  };
+  const reward = config.reward;
+  const rewardText = reward.coins ? `+${reward.coins}时光币` : '';
+  this.setData({
+    showEggDiscoveryDialog: true,
+    eggDiscoveryData: {
+      name: config.name,
+      description: config.description,
+      rarity: config.rarity,
+      rarityName: rarityNames[config.rarity],
+      rewardText: rewardText
+    }
+  });
+});
+```
+
+### Standard Implementation Pattern
+
+**1. Add data fields to page/component:**
+```javascript
+data: {
+  // Easter egg discovery dialog
+  showEggDiscoveryDialog: false,
+  eggDiscoveryData: {
+    name: '',
+    description: '',
+    rarity: '',
+    rarityName: '',
+    rewardText: ''
+  }
+}
+```
+
+**2. Register callback in onLoad:**
+```javascript
+onLoad: function() {
+  eggSystem.load();
+
+  this.eggCallbackKey = eggSystem.setEggDiscoveryCallback((config) => {
+    const rarityNames = {
+      common: '普通',
+      rare: '稀有',
+      epic: '史诗',
+      legendary: '传说'
+    };
+    const reward = config.reward;
+    const rewardText = reward.coins ? `+${reward.coins}时光币` : '';
+    this.setData({
+      showEggDiscoveryDialog: true,
+      eggDiscoveryData: {
+        name: config.name,
+        description: config.description,
+        rarity: config.rarity,
+        rarityName: rarityNames[config.rarity],
+        rewardText: rewardText
+      }
+    });
+  });
+}
+```
+
+**3. Add WXML structure (at end of page):**
+```xml
+<!-- Easter Egg Discovery Dialog -->
+<view class="win98-overlay" wx:if="{{showEggDiscoveryDialog}}" bindtap="hideEggDiscoveryDialog">
+  <view class="win98-window egg-discovery-dialog" catchtap="stopPropagation">
+    <view class="win98-title-bar">
+      <view class="win98-title-text">🎉 发现彩蛋！</view>
+      <view class="win98-title-controls">
+        <button class="win98-btn-close" bindtap="hideEggDiscoveryDialog">×</button>
+      </view>
+    </view>
+    <view class="win98-window-body">
+      <view class="egg-discovery-content">
+        <view class="egg-icon-wrapper">
+          <text class="egg-icon-emoji">🥚</text>
+        </view>
+        <view class="egg-discovery-info">
+          <text class="egg-name">{{eggDiscoveryData.name}}</text>
+          <text class="egg-description">"{{eggDiscoveryData.description}}"</text>
+          <view class="egg-rarity-badge rarity-{{eggDiscoveryData.rarity}}">
+            <text class="rarity-text">{{eggDiscoveryData.rarityName}}</text>
+          </view>
+          <text class="egg-reward">奖励: {{eggDiscoveryData.rewardText}}</text>
+        </view>
+      </view>
+      <view class="dialog-actions">
+        <button class="win98-btn-std" bindtap="hideEggDiscoveryDialog">太棒了！</button>
+      </view>
+    </view>
+  </view>
+</view>
+```
+
+**4. Add helper methods:**
+```javascript
+// Close easter egg discovery dialog
+hideEggDiscoveryDialog: function() {
+  this.setData({ showEggDiscoveryDialog: false });
+},
+
+// Stop event propagation
+stopPropagation: function() {
+  // Empty function, only for stopping event propagation
+},
+
+// Cleanup on unload
+onUnload: function() {
+  if (this.eggCallbackKey) {
+    eggSystem.unregisterEggDiscoveryCallback(this.eggCallbackKey);
+  }
+}
+```
+
+**5. Add WXSS styles (copy from existing pages):**
+```css
+/* Win98 Overlay */
+.win98-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 20000;
+}
+
+.win98-window.egg-discovery-dialog {
+  width: 320px;
+}
+
+.win98-title-bar {
+  background: linear-gradient(90deg, #000080, #1084d0);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 3px 2px 6px;
+  height: 20px;
+}
+
+.win98-title-text {
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  font-family: 'SimSun', 'Courier New', monospace;
+}
+
+.win98-title-controls {
+  display: flex;
+  gap: 2px;
+}
+
+.win98-title-controls button {
+  all: unset;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 16px;
+  height: 14px;
+  background: #c0c0c0;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  font-size: 10px;
+  color: #000;
+  padding: 0;
+  margin: 0;
+}
+
+.win98-btn-close::after {
+  content: "×";
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.win98-window-body {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  background: #c0c0c0;
+}
+
+.egg-discovery-content {
+  padding: 20px 16px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.egg-icon-wrapper {
+  flex-shrink: 0;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
+  border-radius: 50%;
+  border: 3px solid #daa520;
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.5),
+              0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.egg-icon-emoji {
+  font-size: 36px;
+}
+
+.egg-discovery-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.egg-name {
+  font-size: 16px;
+  font-weight: bold;
+  color: #000080;
+  font-family: 'SimSun', serif;
+}
+
+.egg-description {
+  font-size: 12px;
+  color: #333;
+  font-family: 'SimSun', serif;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.egg-rarity-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  align-self: flex-start;
+  border: 2px solid;
+}
+
+.egg-rarity-badge.rarity-common {
+  background: #909399;
+  border-color: #606266;
+}
+
+.egg-rarity-badge.rarity-rare {
+  background: #409EFF;
+  border-color: #1e7dd4;
+}
+
+.egg-rarity-badge.rarity-epic {
+  background: #A855F7;
+  border-color: #7c3aed;
+}
+
+.egg-rarity-badge.rarity-legendary {
+  background: linear-gradient(135deg, #F59E0B 0%, #fbbf24 50%, #F59E0B 100%);
+  border-color: #d97706;
+  animation: legendaryGlow 1.5s ease-in-out infinite;
+}
+
+@keyframes legendaryGlow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(245, 158, 11, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.8), 0 0 25px rgba(245, 158, 11, 0.6);
+  }
+}
+
+.rarity-text {
+  font-size: 11px;
+  font-weight: bold;
+  color: #fff;
+  font-family: 'SimSun', serif;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.egg-reward {
+  font-size: 13px;
+  font-weight: bold;
+  color: #228b22;
+  font-family: 'SimSun', serif;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: center;
+  padding: 8px 16px 12px;
+  background: #c0c0c0;
+}
+
+.win98-btn-std {
+  font-size: 12px;
+  color: #000;
+  height: 24px;
+  padding: 0 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #c0c0c0;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  font-family: 'SimSun', serif;
+}
+
+.win98-btn-std:active {
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
+}
+```
+
+### Pages with Win98 Egg Dialogs
+
+| Page/Component | Egg Types |
+|----------------|-----------|
+| [pages/index/index.js](miniprogram/pages/index/index.js) | Lion dance, Blue screen, Time-based, Icon clicks, Konami code |
+| [pages/browser/index.js](miniprogram/pages/browser/index.js) | Star explorer, Calculator, Calendar, Mars translator, Navigator |
+| [pages/avatar/index.js](miniprogram/pages/avatar/index.js) | Avatar master |
+| [pages/recycle-bin/index.js](miniprogram/pages/recycle-bin/index.js) | Recycle bin emptier |
+| [pages/qcio/index.js](miniprogram/pages/qcio/index.js) | QCIO space visitor |
+| [pages/chat/index.js](miniprogram/pages/chat/index.js) | Chat lover |
+| [pages/group-chat/index.js](miniprogram/pages/group-chat/index.js) | Group chat party |
+| [pages/mars/index.js](miniprogram/pages/mars/index.js) | Mars translator |
+| [components/network-neighborhood/index.js](miniprogram/components/network-neighborhood/index.js) | Network exchanger |
+| [components/recycle-bin/index.js](miniprogram/components/recycle-bin/index.js) | Recycle bin emptier |
+
+### Badge System
+
+Each easter egg awards a **badge** that is permanently stored in the cloud database:
+
+```javascript
+// Database structure (users collection)
+{
+  badges: [
+    {
+      name: '舞者',           // Badge name
+      eggId: 'lion_dance',    // Egg ID
+      discoveredAt: Date      // Discovery timestamp
+    }
+  ]
+}
+```
+
+**View badges**: `eggSystem.getBadges()` returns all earned badges
+**Storage**: `users.badges` field, synced across devices
+
+### Common Mistakes
+
+1. **Using wx.showModal** - Always use Win98 dialog pattern
+2. **Forgetting cleanup** - Always unregister callback in onUnload
+3. **Missing stopPropagation** - Needed to prevent dialog close when clicking dialog content
+4. **Incomplete styles** - Copy ALL CSS including @keyframes for legendary glow
+
+### Reference Files
+
+- [egg-system.js](miniprogram/utils/egg-system.js) - Egg system core
+- [browser/index.js](miniprogram/pages/browser/index.js) - Complete example with Win98 dialog
+- [browser/index.wxml](miniprogram/pages/browser/index.wxml) - Dialog HTML structure
+- [browser/index.wxss](miniprogram/pages/browser/index.wxss) - Dialog styles

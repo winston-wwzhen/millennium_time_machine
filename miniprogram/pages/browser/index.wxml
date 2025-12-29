@@ -464,4 +464,34 @@
       <view class="status-progress-bar" style="width: {{progress}}%"></view>
     </view>
   </view>
+
+  <!-- 彩蛋发现弹窗 -->
+  <view class="win98-overlay" wx:if="{{showEggDiscoveryDialog}}" bindtap="hideEggDiscoveryDialog">
+    <view class="win98-window egg-discovery-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">🎉 发现彩蛋！</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="hideEggDiscoveryDialog">×</button>
+        </view>
+      </view>
+      <view class="win98-window-body">
+        <view class="egg-discovery-content">
+          <view class="egg-icon-wrapper">
+            <text class="egg-icon-emoji">🥚</text>
+          </view>
+          <view class="egg-discovery-info">
+            <text class="egg-name">{{eggDiscoveryData.name}}</text>
+            <text class="egg-description">"{{eggDiscoveryData.description}}"</text>
+            <view class="egg-rarity-badge rarity-{{eggDiscoveryData.rarity}}">
+              <text class="rarity-text">{{eggDiscoveryData.rarityName}}</text>
+            </view>
+            <text class="egg-reward">奖励: {{eggDiscoveryData.rewardText}}</text>
+          </view>
+        </view>
+        <view class="dialog-actions">
+          <button class="win98-btn-std" bindtap="hideEggDiscoveryDialog">太棒了！</button>
+        </view>
+      </view>
+    </view>
+  </view>
 </view>

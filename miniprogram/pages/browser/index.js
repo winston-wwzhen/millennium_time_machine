@@ -103,6 +103,15 @@ Page({
       forward: 0,
       back: 0,
       refresh: 0
+    },
+    // 彩蛋发现弹窗
+    showEggDiscoveryDialog: false,
+    eggDiscoveryData: {
+      name: '',
+      description: '',
+      rarity: '',
+      rarityName: '',
+      rewardText: ''
     }
   },
 
@@ -116,7 +125,7 @@ Page({
       avatarEggAchieved: eggSystem.isDiscovered(EGG_IDS.AVATAR_MASTER)
     });
 
-    // 注册彩蛋发现回调
+    // 注册彩蛋发现回调（使用 Win98 风格弹窗）
     this.eggCallbackKey = eggSystem.setEggDiscoveryCallback((config) => {
       const rarityNames = {
         common: '普通',
@@ -126,11 +135,15 @@ Page({
       };
       const reward = config.reward;
       const rewardText = reward.coins ? `+${reward.coins}时光币` : '';
-      wx.showModal({
-        title: `✨ 发现${rarityNames[config.rarity]}彩蛋！`,
-        content: `${config.name}\n\n${config.description}\n\n${rewardText}`,
-        showCancel: false,
-        confirmText: '太棒了！'
+      this.setData({
+        showEggDiscoveryDialog: true,
+        eggDiscoveryData: {
+          name: config.name,
+          description: config.description,
+          rarity: config.rarity,
+          rarityName: rarityNames[config.rarity],
+          rewardText: rewardText
+        }
       });
     });
 
@@ -965,5 +978,15 @@ Page({
     };
 
     return festivals[month]?.[day] || '';
+  },
+
+  // 关闭彩蛋发现弹窗
+  hideEggDiscoveryDialog: function() {
+    this.setData({ showEggDiscoveryDialog: false });
+  },
+
+  // 阻止事件冒泡
+  stopPropagation: function() {
+    // 空函数，仅用于阻止事件冒泡
   }
 });
