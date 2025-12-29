@@ -31,7 +31,7 @@ bash uploadCloudFunction.sh [envId]
 
 ### Database Initialization
 
-**Total Collections: 25**
+**Total Collections: 32**
 
 Use the `init-db` cloud function to automatically create all collections:
 
@@ -43,10 +43,12 @@ wx.cloud.callFunction({
 ```
 
 **Collections**:
-- User System: `users`, `user_transactions`, `user_activity_logs`, `user_photos`
-- QCIO Social: `qcio_users`, `qcio_wallet`, `qcio_daily_tasks`, `qcio_achievements`, `qcio_mood_logs`, `qcio_guestbook`, `qcio_experience_logs`, `qcio_user_level_rewards`, `qcio_visit_stats`, `qcio_space_logs`
+- User System: `users`, `user_transactions`, `user_activity_logs`, `user_photos`, `user_shares`, `user_share_visits`
+- QCIO Social: `qcio_users`, `qcio_wallet`, `qcio_transactions`, `qcio_daily_tasks`, `qcio_achievements`, `qcio_user_achievements`, `qcio_mood_logs`, `qcio_guestbook`, `qcio_experience_logs`, `qcio_user_level_rewards`, `qcio_visit_stats`
+- QCIO Farm: `qcio_farm_profiles`, `qcio_farm_plots`, `qcio_farm_inventory`, `qcio_farm_logs`
+- VIP System: `qcio_vip_codes`, `qcio_vip_records`
 - AI & Groups: `qcio_ai_contacts`, `qcio_groups`, `qcio_chat_history`, `qcio_group_chat_history`
-- Games: `mood_garden`, `ifthen_games`, `ifthen_endings`, `ifthen_shares`, `ifthen_play_history`, `ifthen_share_visits`
+- Games: `mood_garden`, `ifthen_endings`, `ifthen_shares`, `ifthen_play_history`, `ifthen_share_visits`
 
 For testing, use `clear-db` to reset all data:
 ```javascript
@@ -92,7 +94,7 @@ cloudfunctions/       # Backend
 │       └── guestbook.js    # Guestbook/留言板
 ├── user/             # User login, QCIO account management
 ├── mood_logic/       # Mood farm game logic
-├── init-db/          # Database initialization (25 collections)
+├── init-db/          # Database initialization (32 collections)
 └── clear-db/         # Database clearing for testing
 
 db-init/              # Database initialization data
@@ -108,7 +110,7 @@ db-init/              # Database initialization data
 | `qcio` | All QCIO social features (visit, wallet, tasks, guestbook) |
 | `user` | User login, 5-digit QCIO account (10000-99999), random friend assignment, dual currency system, easter eggs |
 | `mood_logic` | Mood farm game logic |
-| `init-db` | Initialize all 25 database collections with AI data |
+| `init-db` | Initialize all 32 database collections with AI data |
 | `clear-db` | Clear all data for testing (requires confirm=true) |
 
 ### Dual Currency System
@@ -404,7 +406,7 @@ const OPENID = wxContext.OPENID;
 | `cloudfunctions/qcio/modules/safety.js` | Content safety check for QCIO features |
 | `cloudfunctions/qcio/config.json` | QCIO cloud function API permissions |
 | `cloudfunctions/user/index.js` | User login, dual currency, easter eggs, transaction history |
-| `cloudfunctions/init-db/index.js` | Database initialization (25 collections) |
+| `cloudfunctions/init-db/index.js` | Database initialization (32 collections) |
 | `cloudfunctions/clear-db/index.js` | Database clearing for testing |
 
 ## Documentation
@@ -441,7 +443,7 @@ All database tables must be registered in:
 1. `cloudfunctions/init-db/index.js` - Add to `COLLECTIONS` array with description and indexes
 2. `cloudfunctions/clear-db/index.js` - Add to `COLLECTIONS` array
 
-Current table count: **25 collections**
+Current table count: **32 collections**
 
 Steps to add a new table:
 1. Add collection name and description to `COLLECTIONS` array in `init-db/index.js`
