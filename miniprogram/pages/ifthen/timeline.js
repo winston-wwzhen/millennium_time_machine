@@ -967,11 +967,21 @@ Page({
 
     this.setData({ isNavigating: true });
 
-    wx.redirectTo({
-      url: '/pages/ifthen/start',
+    // 如果结局弹窗开着，先关闭它
+    if (this.data.showEnding) {
+      this.setData({ showEnding: false });
+    }
+
+    // 使用 navigateBack 返回到之前的 start 页面，而不是创建新的
+    wx.navigateBack({
       fail: () => {
-        // 如果跳转失败，重置标志
-        this.setData({ isNavigating: false });
+        // 如果无法返回（比如页面栈只有当前页面），则重定向
+        wx.redirectTo({
+          url: '/pages/ifthen/start',
+          fail: () => {
+            this.setData({ isNavigating: false });
+          }
+        });
       }
     });
   },
@@ -1039,12 +1049,11 @@ Page({
       fail: () => {
         // 如果无法返回，跳转到开始页面
         wx.redirectTo({
-          url: '/pages/ifthen/start'
+          url: '/pages/ifthen/start',
+          fail: () => {
+            this.setData({ isNavigating: false });
+          }
         });
-      },
-      complete: () => {
-        // 重置标志
-        this.setData({ isNavigating: false });
       }
     });
   },
