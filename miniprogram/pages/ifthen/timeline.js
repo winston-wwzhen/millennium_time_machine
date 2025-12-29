@@ -356,6 +356,7 @@ Page({
     // 结局信息
     ending: null,
     showEnding: false,
+    isFirstTimeEnding: false, // 是否首次获得此结局
 
     // 动画控制
     eventCardVisible: false,
@@ -912,19 +913,28 @@ Page({
   endGame: function() {
     const ending = gameEngine.calculateEnding();
 
-    // 保存结局到数据库
-    this.saveEndingToDatabase(ending);
-
-    this.setData({
-      ending,
-      showEnding: true,
-      gameEnded: true
+    // 先保存结局到数据库，等待结果后再显示
+    this.saveEndingToDatabase(ending).then(isFirstTime => {
+      this.setData({
+        ending,
+        showEnding: true,
+        gameEnded: true,
+        isFirstTimeEnding: isFirstTime
+      });
+    }).catch(() => {
+      // 即使保存失败也显示结局
+      this.setData({
+        ending,
+        showEnding: true,
+        gameEnded: true,
+        isFirstTimeEnding: false
+      });
     });
   },
 
   // 保存结局到数据库（使用 API 客户端）
   saveEndingToDatabase: function(ending) {
-    gameApi.ifthen('saveEnding', {
+    return gameApi.ifthen('saveEnding', {
       endingId: ending.id,
       birthYear: this.data.birthYear,
       gender: this.data.gender,
@@ -939,18 +949,12 @@ Page({
       finalAge: gameEngine.userState.age
     }).then(result => {
       console.log('结局保存成功:', result);
-
-      if (result && result.success && result.isFirstTime) {
-        // 首次获得结局，显示提示
-        wx.showToast({
-          title: '🎉 解锁新结局！',
-          icon: 'success',
-          duration: 2000
-        });
-      }
+      // 返回是否首次获得
+      return result && result.success && result.isFirstTime;
     }).catch(err => {
       console.error('结局保存失败:', err);
-      // 静默失败，不影响用户体验
+      // 静默失败，返回false表示非首次
+      return false;
     });
   },
 
