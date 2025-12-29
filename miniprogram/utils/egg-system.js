@@ -35,6 +35,7 @@ const EGG_IDS = {
   GROUP_CHAT_PARTY: 'group_chat_party',       // 群聊狂欢
   MARS_TRANSLATOR: 'mars_translator',         // 火星文大师
   NETWORK_EXCHANGER: 'network_exchanger',     // 网费兑换者
+  RECYCLE_BIN_EMPTYER: 'recycle_bin_emptyer', // 回收站清理者
   // v3.6 新增浏览器工具彩蛋
   STAR_EXPLORER: 'star_explorer',           // 星际探险家
   CALCULATOR_MASTER: 'calculator_master',   // 计算器高手
@@ -260,6 +261,18 @@ const EGG_CONFIG = {
     reward: {
       coins: 500,
       badge: '理财达人'
+    }
+  },
+  [EGG_IDS.RECYCLE_BIN_EMPTYER]: {
+    id: EGG_IDS.RECYCLE_BIN_EMPTYER,
+    name: '回收站清理者',
+    description: '你真的很爱清理回收站...',
+    hint: '在回收站页面清空回收站5次',
+    rarity: 'rare',
+    type: 'action',
+    reward: {
+      coins: 1500,
+      badge: '清洁工'
     }
   },
   // v3.6 新增浏览器工具彩蛋

@@ -225,11 +225,22 @@ Component({
       wx.showLoading({ title: '正在清空...', mask: true });
 
       // 模拟清空操作
-      setTimeout(() => {
+      setTimeout(async () => {
         this.setData({ hasTrash: false });
         wx.hideLoading();
 
         wx.showToast({ title: '回收站已清空', icon: 'success' });
+
+        // 检查回收站清理者彩蛋
+        try {
+          const result = await userApi.checkRecycleBinEgg();
+          if (result.shouldTrigger && !this.data.eggAchieved) {
+            await eggSystem.discover(EGG_IDS.RECYCLE_BIN_EMPTYER);
+            this.setData({ eggAchieved: true });
+          }
+        } catch (e) {
+          console.error('检查回收站彩蛋失败:', e);
+        }
       }, 800);
     },
 
