@@ -1106,5 +1106,231 @@ exports.main = async (event, context) => {
     }
   }
 
+  // 💿 磁盘清理 - 每次清理都减少磁盘容量，但只有每天第一次获得时光币
+  if (type === 'diskCleanup') {
+    try {
+      const userRes = await db.collection('users').where({
+        _openid: openid
+      }).field({
+        coins: true,
+        lastDiskCleanupDate: true,
+        diskUsagePercent: true
+      }).get();
+
+      if (userRes.data.length === 0) {
+        return { success: false, errMsg: '用户不存在' };
+      }
+
+      const user = userRes.data[0];
+      const now = new Date();
+      const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+      const lastCleanupDate = user.lastDiskCleanupDate || '';
+
+      // 检查今天是否已经清理过（用于奖励判断）
+      const alreadyCleanedToday = lastCleanupDate === todayStr;
+
+      // 计算新的磁盘容量：每次清理减少20-30%，但不低于60%
+      const currentDiskUsage = user.diskUsagePercent || 99;
+      const cleanupReduction = Math.floor(Math.random() * 11) + 20; // 20-30
+      const newDiskUsage = Math.max(60, currentDiskUsage - cleanupReduction);
+
+      // 检查是否需要减少磁盘容量
+      const needsDiskReduction = newDiskUsage < currentDiskUsage;
+
+      // 准备返回数据
+      const result = {
+        success: true,
+        hasReward: false,
+        diskUsage: {
+          before: currentDiskUsage,
+          after: newDiskUsage
+        }
+      };
+
+      // 如果今天还没清理过，给予奖励
+      if (!alreadyCleanedToday) {
+        // 计算奖励：45-80随机时光币
+        const tempFileReward = Math.floor(Math.random() * 21) + 30; // 30-50
+        const cacheFileReward = Math.floor(Math.random() * 11) + 10; // 10-20
+        const oldLogReward = Math.floor(Math.random() * 6) + 5; // 5-10
+        const totalReward = tempFileReward + cacheFileReward + oldLogReward;
+
+        // 更新用户数据（奖励 + 磁盘容量 + 日期）
+        await db.collection('users').where({
+          _openid: openid
+        }).update({
+          data: {
+            coins: _.inc(totalReward),
+            lastDiskCleanupDate: todayStr,
+            diskUsagePercent: newDiskUsage,
+            'eggStats.totalEarned': _.inc(totalReward),
+            lastUpdateTime: db.serverDate()
+          }
+        });
+
+        // 记录交易
+        await db.collection('user_transactions').add({
+          data: {
+            _openid: openid,
+            type: 'egg_reward',
+            description: '磁盘清理奖励',
+            coinsEarned: totalReward,
+            balanceAfter: (user.coins || 0) + totalReward,
+            metadata: {
+              tempFiles: tempFileReward,
+              cacheFiles: cacheFileReward,
+              oldLogs: oldLogReward,
+              diskUsageBefore: currentDiskUsage,
+              diskUsageAfter: newDiskUsage
+            },
+            createTime: db.serverDate()
+          }
+        });
+
+        result.hasReward = true;
+        result.reward = totalReward;
+        result.details = {
+          tempFiles: tempFileReward,
+          cacheFiles: cacheFileReward,
+          oldLogs: oldLogReward
+        };
+      } else {
+        // 今天已经清理过，只减少磁盘容量，不给奖励
+        if (needsDiskReduction) {
+          await db.collection('users').where({
+            _openid: openid
+          }).update({
+            data: {
+              diskUsagePercent: newDiskUsage,
+              lastUpdateTime: db.serverDate()
+            }
+          });
+        } else {
+          // 磁盘容量已经是60%，无需减少
+          result.diskUsage.after = currentDiskUsage;
+          result.message = '磁盘容量已达到最低值(60%)，无法继续清理';
+        }
+      }
+
+      return result;
+    } catch (e) {
+      console.error(e);
+      return { success: false, errMsg: e.message };
+    }
+  }
+
+  // 📊 获取系统信息（用于系统属性弹窗）
+  if (type === 'getSystemInfo') {
+    try {
+      const userRes = await db.collection('users').where({
+        _openid: openid
+      }).field({
+        avatarName: true,
+        avatar: true,
+        coins: true,
+        netFee: true,
+        badges: true,
+        eggStats: true,
+        diskUsagePercent: true,
+        lastDiskUpdateDate: true
+      }).get();
+
+      if (userRes.data.length === 0) {
+        return { success: false, errMsg: '用户不存在' };
+      }
+
+      const user = userRes.data[0];
+
+      // 处理动态磁盘容量：每天增加10%
+      const now = new Date();
+      const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+      const lastUpdateDate = user.lastDiskUpdateDate || '';
+      let diskUsagePercent = user.diskUsagePercent !== undefined ? user.diskUsagePercent : 99;
+      let diskNeedsUpdate = false;
+
+      // 如果是第一次或日期不同，增加10%
+      if (lastUpdateDate !== todayStr) {
+        diskUsagePercent = Math.min(99, diskUsagePercent + 10);
+        diskNeedsUpdate = true;
+
+        // 更新数据库中的磁盘容量和日期
+        await db.collection('users').where({
+          _openid: openid
+        }).update({
+          data: {
+            diskUsagePercent: diskUsagePercent,
+            lastDiskUpdateDate: todayStr
+          }
+        });
+      }
+
+      // 获取QCIO账户信息
+      let qcioAccount = null;
+      let qcioLevel = 0;
+      let qcioGold = 0;
+
+      try {
+        const qcioRes = await db.collection('qcio_users').where({
+          _openid: openid
+        }).field({
+          qcio_id: true,
+          level: true,
+          gold: true
+        }).get();
+
+        if (qcioRes.data.length > 0) {
+          qcioAccount = qcioRes.data[0].qcio_id || null;
+          qcioLevel = qcioRes.data[0].level || 0;
+          qcioGold = qcioRes.data[0].gold || 0;
+        }
+      } catch (qcioErr) {
+        console.error('获取QCIO信息失败:', qcioErr);
+      }
+
+      // 计算网费天数
+      const netFeeMinutes = user.netFee || 0;
+      const netFeeDays = Math.floor(netFeeMinutes / 1440);
+
+      // 彩蛋进度
+      const totalDiscovered = user.eggStats?.totalDiscovered || 0;
+      const totalEggs = 32; // 总彩蛋数
+
+      // 计算星星显示
+      const starCount = Math.floor(qcioLevel / 5);
+      const starsDisplay = '⭐'.repeat(starCount);
+
+      return {
+        success: true,
+        systemInfo: {
+          // 系统硬件信息（固定）
+          cpu: 'Intel Pentium III 800MHz',
+          memory: '128MB PC100 SDRAM',
+          hardDrive: '20GB (C: 8GB / D: 12GB)',
+          graphics: 'NVIDIA Riva TNT2 32MB',
+          monitor: 'Philips 107S 17" CRT',
+          cdrom: 'CD-ROM 48X',
+          sound: 'Creative Sound Blaster Live',
+          network: 'Realtek RTL8029 10M',
+          floppy: '3.5英寸 1.44MB'
+        },
+        userInfo: {
+          avatarName: user.avatarName || '千禧网友',
+          qcioAccount: qcioAccount,
+          level: qcioLevel,
+          starsDisplay: starsDisplay,
+          qpoints: qcioGold,
+          netFeeDays: netFeeDays,
+          coins: user.coins || 0,
+          badges: user.badges || [],
+          eggProgress: `${totalDiscovered}/${totalEggs}`
+        },
+        diskUsage: diskUsagePercent
+      };
+    } catch (e) {
+      console.error(e);
+      return { success: false, errMsg: e.message };
+    }
+  }
+
   return { success: false, errMsg: 'Unknown type' };
 };

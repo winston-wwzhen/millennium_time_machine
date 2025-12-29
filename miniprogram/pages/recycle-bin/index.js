@@ -157,7 +157,6 @@ Page({
 
     // 模拟清空操作
     setTimeout(async () => {
-      this.setData({ hasTrash: false });
       wx.hideLoading();
 
       wx.showToast({ title: '回收站已清空', icon: 'success' });
@@ -172,6 +171,11 @@ Page({
       } catch (e) {
         console.error('检查回收站彩蛋失败:', e);
       }
+
+      // 清空后延迟1秒重新生成垃圾文件，方便用户继续清理
+      setTimeout(() => {
+        this.generateTrash();
+      }, 1000);
     }, 800);
   },
 

@@ -41,6 +41,17 @@ const EGG_IDS = {
   CALCULATOR_MASTER: 'calculator_master',   // 计算器高手
   CALENDAR_TIME_TRAVELER: 'calendar_time_traveler', // 时光旅行者
   BROWSER_NAVIGATOR: 'browser_navigator',           // 浏览器领航员
+  // 我的电脑功能新增彩蛋
+  HIDDEN_FILE_EGG_BOOK: 'hidden_file_egg_book',           // 彩蛋秘册-第一册
+  HIDDEN_FILE_SYSTEM_DIARY: 'hidden_file_system_diary',   // 系统日记.txt
+  HIDDEN_FILE_CODER_NOTE: 'hidden_file_coder_note',       // 程序员的遗言.txt
+  HIDDEN_FILE_DEV_EGG: 'hidden_file_dev_egg',             // 开发者彩蛋.txt
+  HIDDEN_FILE_FORGOTTEN: 'hidden_file_forgotten',         // 遗忘了的文件.rar
+  HIDDEN_FILE_YOUTH: 'hidden_file_youth',                 // 青春回忆.txt
+  HIDDEN_FILE_SUMMER: 'hidden_file_summer',               // 那个夏天的回忆.txt
+  DISK_CLEANUP_MASTER: 'disk_cleanup_master',             // 磁盘清理大师
+  DEVICE_MANAGER_EXPERT: 'device_manager_expert',         // 设备管理专家
+  FILE_EXPLORER_MASTER: 'file_explorer_master',           // 文件浏览器大师
 };
 
 // 彩蛋配置 - 时光币奖励（单位：分钟）
@@ -322,6 +333,127 @@ const EGG_CONFIG = {
     reward: {
       coins: 1000,
       badge: '导航大师'
+    }
+  },
+  // 我的电脑功能新增彩蛋
+  [EGG_IDS.HIDDEN_FILE_EGG_BOOK]: {
+    id: EGG_IDS.HIDDEN_FILE_EGG_BOOK,
+    name: '彩蛋收藏家',
+    description: '你发现了彩蛋秘册...',
+    hint: '在我的电脑C盘根目录寻找',
+    rarity: 'common',
+    type: 'action',
+    reward: {
+      coins: 0,
+      badge: '收藏家'
+    }
+  },
+  [EGG_IDS.HIDDEN_FILE_SYSTEM_DIARY]: {
+    id: EGG_IDS.HIDDEN_FILE_SYSTEM_DIARY,
+    name: '系统日记',
+    description: '系统的内心独白...',
+    hint: '在我的电脑C:\Windows目录寻找',
+    rarity: 'epic',
+    type: 'action',
+    reward: {
+      coins: 500,
+      badge: '系统知音'
+    }
+  },
+  [EGG_IDS.HIDDEN_FILE_CODER_NOTE]: {
+    id: EGG_IDS.HIDDEN_FILE_CODER_NOTE,
+    name: '程序员的遗言',
+    description: '开发者留下的秘密...',
+    hint: '在我的电脑C:\Windows\System32目录寻找',
+    rarity: 'common',
+    type: 'action',
+    reward: {
+      coins: 1000,
+      badge: '寻宝者'
+    }
+  },
+  [EGG_IDS.HIDDEN_FILE_DEV_EGG]: {
+    id: EGG_IDS.HIDDEN_FILE_DEV_EGG,
+    name: '开发者彩蛋',
+    description: '感谢发现这个彩蛋！',
+    hint: '在我的电脑C:\Program Files\千禧时光机目录寻找',
+    rarity: 'common',
+    type: 'action',
+    reward: {
+      coins: 800,
+      badge: '探索者'
+    }
+  },
+  [EGG_IDS.HIDDEN_FILE_FORGOTTEN]: {
+    id: EGG_IDS.HIDDEN_FILE_FORGOTTEN,
+    name: '被遗忘的文件',
+    description: '你居然还记得这个文件！',
+    hint: '在我的电脑D:\下载目录寻找',
+    rarity: 'common',
+    type: 'action',
+    reward: {
+      coins: 400,
+      badge: '记忆力好'
+    }
+  },
+  [EGG_IDS.HIDDEN_FILE_YOUTH]: {
+    id: EGG_IDS.HIDDEN_FILE_YOUTH,
+    name: '青春回忆',
+    description: '那些年我们回不去的青春...',
+    hint: '在我的电脑D:\资料目录寻找',
+    rarity: 'common',
+    type: 'action',
+    reward: {
+      coins: 600,
+      badge: '怀旧者'
+    }
+  },
+  [EGG_IDS.HIDDEN_FILE_SUMMER]: {
+    id: EGG_IDS.HIDDEN_FILE_SUMMER,
+    name: '那年夏天',
+    description: '那个夏天的回忆...',
+    hint: '在我的电脑USB\学习资料目录寻找',
+    rarity: 'common',
+    type: 'action',
+    reward: {
+      coins: 700,
+      badge: '回忆者'
+    }
+  },
+  [EGG_IDS.DISK_CLEANUP_MASTER]: {
+    id: EGG_IDS.DISK_CLEANUP_MASTER,
+    name: '磁盘清理大师',
+    description: '你很爱清理系统！',
+    hint: '使用磁盘清理功能10次',
+    rarity: 'rare',
+    type: 'action',
+    reward: {
+      coins: 1200,
+      badge: '清洁达人'
+    }
+  },
+  [EGG_IDS.DEVICE_MANAGER_EXPERT]: {
+    id: EGG_IDS.DEVICE_MANAGER_EXPERT,
+    name: '设备管理专家',
+    description: '你精通所有硬件设备！',
+    hint: '在设备管理器查看所有设备详情',
+    rarity: 'rare',
+    type: 'action',
+    reward: {
+      coins: 1000,
+      badge: '硬件专家'
+    }
+  },
+  [EGG_IDS.FILE_EXPLORER_MASTER]: {
+    id: EGG_IDS.FILE_EXPLORER_MASTER,
+    name: '文件浏览器大师',
+    description: '你探索了所有驱动器！',
+    hint: '浏览所有驱动器中的文件夹',
+    rarity: 'rare',
+    type: 'action',
+    reward: {
+      coins: 800,
+      badge: '文件大师'
     }
   }
 };

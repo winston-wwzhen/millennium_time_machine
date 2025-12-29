@@ -253,6 +253,24 @@ const userApi = {
       itemId,
       currency
     });
+  },
+
+  /**
+   * 磁盘清理
+   */
+  diskCleanup() {
+    return callCloudFunction('user', {
+      type: 'diskCleanup'
+    });
+  },
+
+  /**
+   * 获取系统信息
+   */
+  getSystemInfo() {
+    return callCloudFunction('user', {
+      type: 'getSystemInfo'
+    });
   }
 };
 
@@ -411,13 +429,10 @@ const qcioApi = {
   },
 
   /**
-   * 获取钱包信息（带缓存）
+   * 获取钱包信息（不使用缓存，确保实时性）
    */
   getWalletInfo() {
-    return withCache(
-      CacheKeys.QCIO_WALLET,
-      () => callCloudFunction('qcio', { action: 'getWalletInfo' })
-    );
+    return callCloudFunction('qcio', { action: 'getWalletInfo' });
   },
 
   /**

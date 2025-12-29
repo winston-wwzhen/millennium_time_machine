@@ -122,9 +122,6 @@
   <view class="event-window">
     <view class="event-title-bar">
       <view class="event-title-text">事件 - {{currentYear}}年</view>
-      <view class="event-title-controls">
-        <button class="event-btn-close" bindtap="closeEvent">×</button>
-      </view>
     </view>
 
     <view class="event-window-body">

@@ -1,5 +1,7 @@
 /* 我的电脑 - Win98 风格窗口组件 */
 
+/* ==================== 基础样式 ==================== */
+
 /* 遮罩层 */
 .my-computer-overlay {
   position: fixed;
@@ -35,7 +37,7 @@
   display: flex;
   flex-direction: column;
   width: 85%;
-  max-width: 600px;
+  max-width: 650px;
   max-height: 80vh;
 }
 
@@ -108,6 +110,63 @@
   color: white;
 }
 
+/* 文件菜单下拉 */
+.menu-dropdown-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.menu-dropdown-trigger {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 2px 8px;
+  min-width: 60px;
+}
+
+.menu-arrow {
+  font-size: 8px;
+  margin-left: 2px;
+}
+
+.menu-dropdown-content {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #f0f0f0;
+  border: 1px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  min-width: 110px;
+  padding: 2px 0;
+}
+
+.menu-dropdown-item {
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  font-size: 11px;
+  cursor: pointer;
+  font-family: 'SimSun', sans-serif;
+  white-space: nowrap;
+  border-bottom: 1px dotted #c0c0c0;
+}
+
+.menu-dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.menu-dropdown-item:active {
+  background: #000080;
+  color: white;
+}
+
+.menu-item-icon {
+  margin-right: 8px;
+  font-size: 12px;
+}
+
 /* 窗口主体 */
 .win98-window-body {
   flex: 1;
@@ -116,28 +175,92 @@
   padding: 4px;
   overflow-y: auto;
   overflow-x: hidden;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-/* 驱动器网格 */
+/* 标准按钮 */
+.win98-btn-std {
+  font-size: 12px;
+  color: #000;
+  height: 22px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #c0c0c0;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  cursor: pointer;
+}
+
+.win98-btn-std:active {
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
+}
+
+/* 状态栏 */
+.status-bar {
+  border-top: 1px solid #808080;
+  padding: 2px 8px;
+  font-size: 11px;
+  background: #c0c0c0;
+  flex-shrink: 0;
+}
+
+/* ==================== 弹窗通用样式 ==================== */
+
+.win98-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2100;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 6px;
+  background: #c0c0c0;
+  border-top: 1px solid #808080;
+}
+
+/* ==================== 驱动器网格 ==================== */
+
 .drives-grid {
   display: flex;
   flex-direction: column;
   gap: 0;
   padding: 16px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* C盘 - 独占第一行 */
 .drive-item.drive-c {
-  width: 90%;
+  width: 100%;
+  max-width: 100%;
   flex-direction: row;
   justify-content: flex-start;
   padding: 16px 16px 8px 48px;
-  cursor: pointer;
+  box-sizing: border-box;
 }
 
 .drive-item.drive-c .drive-icon {
   margin-right: 16px;
   margin-bottom: 0;
+  cursor: pointer;
 }
 
 .drive-item.drive-c .drive-info {
@@ -168,11 +291,14 @@
   width: calc(50% - 8px);
   min-width: 120px;
   padding: 8px;
+}
+
+.drive-item .drive-icon {
   cursor: pointer;
 }
 
-.drive-item:active {
-  background: #000080;
+.drive-item .drive-icon:active {
+  opacity: 0.7;
 }
 
 .drive-icon {
@@ -201,13 +327,14 @@
 
 /* 容量条 */
 .capacity-bar {
-  width: 200px;
-  max-width: 50%;
+  width: 100%;
+  max-width: 200px;
   height: 12px;
   background: #ffffff;
   border: 1px solid;
   border-color: #808080 #ffffff #ffffff #808080;
   margin: 4px 0;
+  box-sizing: border-box;
 }
 
 .capacity-used {
@@ -217,68 +344,49 @@
 
 .capacity-text {
   font-size: 9px;
-  color: #cc0000;
+  color: #333;
   font-weight: bold;
   text-align: center;
 }
 
-/* 系统信息 */
-.system-info {
-  margin-top: auto;
-  padding: 16px;
-  background: #ffffe0;
-  border-top: 1px solid #808080;
+/* ==================== 系统信息面板 ==================== */
+
+.system-info-panel {
+  margin-top: 16px;
+  padding: 12px;
+  background: #e0e0e0;
+  border: 1px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  box-sizing: border-box;
+  width: 100%;
 }
 
-.info-title {
-  font-size: 12px;
-  font-weight: bold;
-  color: #000080;
-  margin-bottom: 8px;
-}
-
-.info-row {
+.system-info-row {
   display: flex;
   font-size: 11px;
   margin-bottom: 4px;
+  font-family: 'SimSun', serif;
 }
 
-.info-label {
-  width: 80px;
+.system-info-row:last-child {
+  margin-bottom: 0;
+}
+
+.system-info-label {
+  width: 70px;
   color: #000;
+  flex-shrink: 0;
 }
 
-.info-value {
+.system-info-value {
   flex: 1;
   color: #333;
 }
 
-/* 状态栏 */
-.status-bar {
-  border-top: 1px solid #808080;
-  padding: 2px 8px;
-  font-size: 11px;
-  background: #c0c0c0;
-  flex-shrink: 0;
-}
-
-/* 驱动器弹窗样式 */
-.win98-dialog-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.4);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2100;
-}
+/* ==================== 驱动器弹窗 ==================== */
 
 .drive-dialog {
-  width: 260px;
-  height: auto;
+  width: 280px;
   max-width: 85%;
 }
 
@@ -288,7 +396,7 @@
 }
 
 .drive-dialog-content {
-  padding: 10px 12px;
+  padding: 12px 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -296,52 +404,20 @@
 }
 
 .drive-dialog-icon {
-  font-size: 32px;
-  margin-bottom: 6px;
-  line-height: 1;
+  font-size: 40px;
+  margin-bottom: 8px;
 }
 
 .drive-dialog-message {
   font-size: 11px;
   color: #000;
   white-space: pre-line;
-  line-height: 1.5;
+  line-height: 1.6;
   font-family: 'SimSun', serif;
-  margin: 0;
 }
 
-.dialog-actions {
-  display: flex;
-  justify-content: center;
-  padding: 6px;
-  background: #c0c0c0;
-  border-top: 1px solid #808080;
-}
+/* ==================== 帮助弹窗 ==================== */
 
-.win98-btn-std {
-  font-size: 12px;
-  color: #000;
-  height: 22px;
-  padding: 0 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #c0c0c0;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #808080;
-  border-bottom: 1px solid #808080;
-  cursor: pointer;
-}
-
-.win98-btn-std:active {
-  border-top: 1px solid #808080;
-  border-left: 1px solid #808080;
-  border-right: 1px solid #ffffff;
-  border-bottom: 1px solid #ffffff;
-}
-
-/* 帮助弹窗样式 */
 .help-dialog {
   width: 380px;
   max-width: 90%;
@@ -401,4 +477,624 @@
   color: #333;
   line-height: 1.5;
   font-family: 'SimSun', serif;
+}
+
+/* ==================== 系统属性弹窗 ==================== */
+
+.system-properties-dialog {
+  width: 400px;
+  max-width: 93%;
+  max-height: 75vh;
+}
+
+.system-properties-dialog .win98-window-body {
+  padding: 0;
+  flex: unset;
+}
+
+.system-properties-content {
+  max-height: 450px;
+  padding: 12px 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.sp-section {
+  margin-bottom: 16px;
+  padding: 10px 12px;
+  background: #f5f5f5;
+  border: 1px solid #808080;
+  box-sizing: border-box;
+  width: 92%;
+}
+
+.sp-header {
+  font-size: 14px;
+  font-weight: bold;
+  color: #000080;
+  margin-bottom: 8px;
+  font-family: 'SimSun', serif;
+  word-break: break-all;
+  overflow-wrap: break-word;
+}
+
+.sp-info {
+  display: flex;
+  font-size: 11px;
+  margin-bottom: 4px;
+}
+
+.sp-label {
+  color: #000;
+  margin-right: 4px;
+}
+
+.sp-value {
+  color: #333;
+}
+
+.sp-section-title {
+  font-size: 12px;
+  font-weight: bold;
+  color: #000080;
+  margin-bottom: 8px;
+  font-family: 'SimSun', serif;
+  word-break: break-all;
+  overflow-wrap: break-word;
+}
+
+.sp-info-row {
+  display: flex;
+  font-size: 11px;
+  margin-bottom: 4px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.sp-info-label {
+  width: 80px;
+  color: #000;
+  flex-shrink: 0;
+}
+
+.sp-info-value {
+  flex: 1;
+  color: #333;
+  word-break: break-all;
+  overflow-wrap: break-word;
+}
+
+/* ==================== 磁盘清理弹窗 ==================== */
+
+.disk-cleanup-dialog {
+  width: 320px;
+  max-width: 90%;
+}
+
+.disk-cleanup-dialog .win98-window-body {
+  padding: 0;
+  flex: unset;
+}
+
+.disk-cleanup-content {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.disk-cleanup-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.disk-cleanup-message {
+  font-size: 12px;
+  color: #000;
+  text-align: center;
+  line-height: 1.6;
+  margin-bottom: 8px;
+  font-family: 'SimSun', serif;
+}
+
+.disk-cleanup-today {
+  font-size: 11px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.disk-cleanup-status {
+  font-size: 12px;
+  color: #000;
+  margin-bottom: 12px;
+  font-family: 'SimSun', serif;
+}
+
+.progress-bar {
+  width: 200px;
+  height: 16px;
+  background: #ffffff;
+  border: 1px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  margin-bottom: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(180deg, #00ff00, #00aa00);
+  transition: width 0.2s ease;
+}
+
+.disk-cleanup-progress-text {
+  font-size: 11px;
+  color: #000;
+  font-family: 'SimSun', serif;
+}
+
+.disk-cleanup-result-title {
+  font-size: 12px;
+  font-weight: bold;
+  color: #000;
+  margin-bottom: 12px;
+  width: 100%;
+  text-align: left;
+}
+
+.cleanup-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 6px 0;
+  border-bottom: 1px dotted #808080;
+}
+
+.cleanup-icon {
+  font-size: 16px;
+  margin-right: 8px;
+}
+
+.cleanup-name {
+  flex: 1;
+  font-size: 11px;
+  color: #000;
+}
+
+.cleanup-size {
+  font-size: 11px;
+  color: #000080;
+  font-weight: bold;
+}
+
+.cleanup-divider {
+  width: 100%;
+  height: 1px;
+  background: #808080;
+  margin: 8px 0;
+}
+
+.cleanup-total {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 4px 0;
+  font-weight: bold;
+}
+
+.cleanup-total-label {
+  font-size: 11px;
+  color: #000;
+}
+
+.cleanup-total-size {
+  font-size: 11px;
+  color: #000080;
+}
+
+.cleanup-reward {
+  width: 100%;
+  padding: 8px;
+  background: #ffffcc;
+  border: 1px solid #808080;
+  margin-top: 8px;
+  text-align: center;
+}
+
+.cleanup-reward-text {
+  font-size: 11px;
+  color: #000;
+}
+
+.cleanup-reward-amount {
+  font-size: 14px;
+  color: #cc0000;
+  font-weight: bold;
+}
+
+.disk-cleanup-error {
+  font-size: 12px;
+  color: #cc0000;
+  text-align: center;
+  padding: 20px;
+}
+
+/* 无奖励提示样式 */
+.disk-cleanup-no-reward {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.disk-cleanup-no-reward .disk-cleanup-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.disk-cleanup-no-reward .disk-cleanup-message {
+  font-size: 12px;
+  color: #000;
+  text-align: center;
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+
+.disk-cleanup-hint {
+  font-size: 11px;
+  color: #666;
+  text-align: center;
+  font-family: 'SimSun', serif;
+}
+
+/* ==================== 设备管理器弹窗 ==================== */
+
+.device-manager-dialog {
+  width: 400px;
+  max-width: 93%;
+  max-height: 75vh;
+}
+
+.device-manager-dialog .win98-window-body {
+  padding: 0;
+  flex: unset;
+}
+
+.device-manager-content {
+  max-height: 450px;
+  padding: 12px 16px;
+}
+
+.device-list {
+  padding: 8px 0;
+}
+
+.device-item {
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  cursor: pointer;
+  border-bottom: 1px dotted #c0c0c0;
+}
+
+.device-item:last-child {
+  border-bottom: none;
+}
+
+.device-item:active {
+  background: #000080;
+}
+
+.device-item:active .device-name {
+  color: white;
+}
+
+.device-icon {
+  font-size: 16px;
+  margin-right: 8px;
+}
+
+.device-name {
+  font-size: 11px;
+  color: #000;
+  font-family: 'SimSun', serif;
+}
+
+/* ==================== 设备详情弹窗 ==================== */
+
+.device-detail-dialog {
+  width: 400px;
+  max-width: 93%;
+  max-height: 75vh;
+}
+
+.device-detail-dialog .win98-window-body {
+  padding: 0;
+  flex: unset;
+}
+
+.device-detail-content {
+  max-height: 450px;
+  padding: 12px 16px;
+}
+
+.device-detail-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 0;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #808080;
+}
+
+.device-detail-icon {
+  font-size: 48px;
+  margin-bottom: 8px;
+}
+
+.device-detail-status {
+  font-size: 11px;
+  color: #00aa00;
+  font-family: 'SimSun', serif;
+}
+
+.device-detail-remark-text {
+  font-size: 11px;
+  color: #333;
+  line-height: 1.6;
+  font-family: 'SimSun', serif;
+  font-style: italic;
+  display: block;
+}
+
+/* ==================== 文件浏览器弹窗 ==================== */
+
+.file-explorer-dialog {
+  width: 90%;
+  max-width: 450px;
+  max-height: 75vh;
+}
+
+.file-explorer-dialog .win98-window-body {
+  padding: 0;
+  flex: unset;
+}
+
+/* 文件浏览器工具栏 */
+.file-explorer-toolbar {
+  display: flex;
+  align-items: center;
+  padding: 4px 8px;
+  background: #e0e0e0;
+  border-bottom: 1px solid #808080;
+  gap: 8px;
+}
+
+.toolbar-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: #c0c0c0;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.toolbar-btn:active {
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
+}
+
+.toolbar-btn-icon {
+  font-size: 14px;
+}
+
+.toolbar-btn-text {
+  font-size: 11px;
+  color: #000;
+  font-family: 'SimSun', sans-serif;
+}
+
+.file-explorer-address {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  padding: 4px 8px;
+  background: #ffffff;
+  border: 1px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  min-width: 0;
+}
+
+.address-label {
+  font-size: 11px;
+  color: #666;
+  margin-right: 4px;
+  flex-shrink: 0;
+}
+
+.address-path {
+  font-size: 11px;
+  color: #000;
+  font-family: 'SimSun', serif;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 面包屑导航 */
+.file-explorer-breadcrumb {
+  padding: 6px 12px;
+  background: #e0e0e0;
+  border-bottom: 1px solid #808080;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.breadcrumb-item {
+  font-size: 11px;
+  color: #000080;
+  cursor: pointer;
+}
+
+.breadcrumb-item:active {
+  color: #ff0000;
+}
+
+.breadcrumb-separator {
+  font-size: 11px;
+  color: #666;
+}
+
+/* 文件列表内容 */
+.file-explorer-content {
+  max-height: 400px;
+  padding: 16px;
+}
+
+.file-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.file-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 80px;
+  padding: 8px;
+}
+
+.file-item:active {
+  background: #000080;
+}
+
+.file-item.disabled {
+  opacity: 0.6;
+}
+
+.file-item.disabled .file-name {
+  color: #999;
+}
+
+.file-icon {
+  font-size: 40px;
+  margin-bottom: 4px;
+}
+
+.file-name {
+  font-size: 11px;
+  color: #000;
+  text-align: center;
+  word-break: break-all;
+  font-family: 'SimSun', serif;
+}
+
+.file-rarity {
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.file-count {
+  display: block;
+  text-align: center;
+  font-size: 10px;
+  color: #666;
+  margin-top: 8px;
+  font-family: 'SimSun', serif;
+}
+
+/* ==================== 彩蛋发现弹窗 ==================== */
+
+.egg-discovery-dialog {
+  width: 300px;
+  max-width: 85%;
+}
+
+.egg-discovery-dialog.legendary {
+  width: 340px;
+}
+
+.egg-discovery-dialog .win98-window-body {
+  padding: 0;
+  flex: unset;
+}
+
+.egg-discovery-content {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.egg-discovery-icon {
+  font-size: 56px;
+  margin-bottom: 12px;
+}
+
+.egg-discovery-name {
+  font-size: 14px;
+  font-weight: bold;
+  color: #000080;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.egg-discovery-description {
+  font-size: 11px;
+  color: #333;
+  text-align: center;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.egg-discovery-rarity {
+  font-size: 12px;
+  font-weight: bold;
+  padding: 4px 12px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.egg-discovery-rarity.common {
+  color: #666;
+  background: #e0e0e0;
+}
+
+.egg-discovery-rarity.rare {
+  color: #0066cc;
+  background: #cce5ff;
+}
+
+.egg-discovery-rarity.epic {
+  color: #9900cc;
+  background: #e5ccff;
+}
+
+.egg-discovery-rarity.legendary {
+  color: #cc6600;
+  background: #ffe5cc;
+  animation: legendary-glow 1s ease-in-out infinite alternate;
+}
+
+@keyframes legendary-glow {
+  from {
+    box-shadow: 0 0 5px #ffcc00;
+  }
+  to {
+    box-shadow: 0 0 20px #ffcc00, 0 0 30px #ff9900;
+  }
+}
+
+.egg-discovery-reward {
+  font-size: 14px;
+  font-weight: bold;
+  color: #cc0000;
+  text-align: center;
 }

@@ -27,7 +27,7 @@
           <text class="preview-title">═══════════════════════════════════════</text>
 
           <text class="preview-line"></text>
-          <text class="preview-section">【普通彩蛋达成方案】(10/10)</text>
+          <text class="preview-section">【普通彩蛋达成方案】(6/10)</text>
 
           <!-- 彩蛋1 -->
           <view class="secret-egg-item">
@@ -65,47 +65,22 @@
             <text class="secret-egg-method">   → 连续点击桌面上的我的电脑图标多次</text>
           </view>
 
-          <!-- 彩蛋7 -->
-          <view class="secret-egg-item">
-            <text class="secret-egg-name">🌐 网瘾少年 (400💎)</text>
-            <text class="secret-egg-method">   → 连续点击桌面上的浏览器图标多次</text>
-          </view>
-
-          <!-- 彩蛋8 -->
-          <view class="secret-egg-item">
-            <text class="secret-egg-name">📸 非主流达人 (800💎)</text>
-            <text class="secret-egg-method">   → 在非主流相机连续保存5张照片</text>
-          </view>
-
-          <!-- 彩蛋9 -->
-          <view class="secret-egg-item">
-            <text class="secret-egg-name">🚀 开始菜单爱好者 (500💎)</text>
-            <text class="secret-egg-method">   → 累计打开开始菜单20次</text>
-          </view>
-
-          <!-- 彩蛋10 -->
-          <view class="secret-egg-item">
-            <text class="secret-egg-name">👣 踩空间达人 (600💎)</text>
-            <text class="secret-egg-method">   → 累计访问QCIO空间10次</text>
-          </view>
-
           <text class="preview-line"></text>
           <text class="preview-title">───────────────────────────────────────</text>
-          <text class="preview-line">   更多稀有、史诗、传说彩蛋...</text>
-          <text class="preview-line">   请探索《彩蛋秘籍-第二册》</text>
+          <text class="preview-line">   祝你发现所有彩蛋！</text>
           <text class="preview-title">───────────────────────────────────────</text>
           <text class="preview-line"></text>
         </view>
 
         <!-- 彩蛋秘籍第二册内容 -->
-        <view wx:if="{{fileName === '彩蛋秘籍-第二册.txt'}}">
+        <view wx:elif="{{fileName === '彩蛋秘籍-第二册.txt'}}">
           <text class="preview-title">═══════════════════════════════════════</text>
           <text class="preview-title">          千禧时光机 - 彩蛋秘籍</text>
           <text class="preview-title">               【第二册】</text>
           <text class="preview-title">═══════════════════════════════════════</text>
 
           <text class="preview-line"></text>
-          <text class="preview-section">【第一册外普通彩蛋达成方案】(2/2)</text>
+          <text class="preview-section">【普通彩蛋达成方案】(6/10)</text>
 
           <!-- 火星翻译大师 -->
           <view class="secret-egg-item">
@@ -119,66 +94,33 @@
             <text class="secret-egg-method">   → 首次在网管系统兑换网费</text>
           </view>
 
-          <text class="preview-line"></text>
-          <text class="preview-section">【稀有彩蛋达成方案】(6/6)</text>
-
-          <!-- 蓝屏 -->
+          <!-- 网瘾少年 -->
           <view class="secret-egg-item">
-            <text class="secret-egg-name">💠 那个年代的噩梦 (2000💎)</text>
-            <text class="secret-egg-method">   → 桌面好像藏着一个秘密...</text>
+            <text class="secret-egg-name">🌐 网瘾少年 (400💎)</text>
+            <text class="secret-egg-method">   → 连续点击桌面上的浏览器图标多次</text>
           </view>
 
-          <!-- 隐藏图标 -->
+          <!-- 非主流达人 -->
           <view class="secret-egg-item">
-            <text class="secret-egg-name">🔍 消失的角落 (2000💎)</text>
-            <text class="secret-egg-method">   → 桌面右下角点击试试？</text>
+            <text class="secret-egg-name">📸 非主流达人 (800💎)</text>
+            <text class="secret-egg-method">   → 在非主流相机连续保存5张照片</text>
           </view>
 
-          <!-- 特殊时刻 -->
+          <!-- 开始菜单爱好者 -->
           <view class="secret-egg-item">
-            <text class="secret-egg-name">⏰ 特殊时刻 (1500💎)</text>
-            <text class="secret-egg-method">   → 在特殊时间看看...</text>
+            <text class="secret-egg-name">🚀 开始菜单爱好者 (500💎)</text>
+            <text class="secret-egg-method">   → 累计打开开始菜单20次</text>
           </view>
 
-          <!-- 聊天狂魔 -->
+          <!-- 踩空间达人 -->
           <view class="secret-egg-item">
-            <text class="secret-egg-name">💬 聊天狂魔 (2500💎)</text>
-            <text class="secret-egg-method">   → 累计发送100条聊天消息</text>
-          </view>
-
-          <!-- 回收站清理者 -->
-          <view class="secret-egg-item">
-            <text class="secret-egg-name">🗑️ 回收站清理者 (1500💎)</text>
-            <text class="secret-egg-method">   → 在回收站页面清空回收站5次</text>
-          </view>
-
-          <!-- 群聊狂欢 -->
-          <view class="secret-egg-item">
-            <text class="secret-egg-name">👥 群聊狂欢 (2000💎)</text>
-            <text class="secret-egg-method">   → 在群聊累计发送50条消息</text>
-          </view>
-
-          <text class="preview-line"></text>
-          <text class="preview-section">【史诗彩蛋达成方案】(1/1)</text>
-
-          <!-- 午夜秘密 -->
-          <view class="secret-egg-item">
-            <text class="secret-egg-name">🌙 深夜党专属 (5000💎)</text>
-            <text class="secret-egg-method">   → 凌晨0点，有惊喜</text>
-          </view>
-
-          <text class="preview-line"></text>
-          <text class="preview-section">【传说彩蛋达成方案】(1/1)</text>
-
-          <!-- 传说中的秘籍 -->
-          <view class="secret-egg-item">
-            <text class="secret-egg-name">⭐ 传说中的秘籍 (10000💎)</text>
-            <text class="secret-egg-method">   → 我的电脑↑↑我的文档↓↓网上邻居←→我的文档←→网上邻居→→小狮子→开始</text>
+            <text class="secret-egg-name">👣 踩空间达人 (600💎)</text>
+            <text class="secret-egg-method">   → 累计访问QCIO空间10次</text>
           </view>
 
           <text class="preview-line"></text>
           <text class="preview-title">───────────────────────────────────────</text>
-          <text class="preview-line">   祝你发现所有彩蛋！</text>
+          <text class="preview-line">   更多彩蛋等待探索...</text>
           <text class="preview-title">───────────────────────────────────────</text>
           <text class="preview-line"></text>
         </view>
@@ -247,7 +189,7 @@
 
           <text class="preview-line"></text>
           <text class="preview-title">───────────────────────────────────────</text>
-          <text class="preview-line">   已发现: {{discovered}}个彩蛋</text>
+          <text class="preview-line">   已发现: {{discovered}}/{{total}} 个彩蛋</text>
           <text class="preview-title">───────────────────────────────────────</text>
           <text class="preview-line"></text>
         </view>

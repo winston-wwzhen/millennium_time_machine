@@ -10,25 +10,45 @@
 
     <!-- 菜单栏 -->
     <view class="menu-bar">
-      <text class="menu-item">文件(F)</text>
+      <view class="menu-dropdown-wrapper">
+        <view class="menu-dropdown-trigger" catchtap="onFileMenuTap">
+          <text class="menu-item">文件(F)</text>
+          <text class="menu-arrow">▼</text>
+        </view>
+        <!-- 文件菜单下拉 -->
+        <view class="menu-dropdown-content" wx:if="{{showFileMenu}}" catchtap="onFileMenuTap">
+          <view class="menu-dropdown-item" catchtap="onShowSystemProperties">
+            <text class="menu-item-icon">🖥️</text>
+            <text>系统属性</text>
+          </view>
+          <view class="menu-dropdown-item" catchtap="onShowDiskCleanup">
+            <text class="menu-item-icon">💿</text>
+            <text>磁盘清理</text>
+          </view>
+          <view class="menu-dropdown-item" catchtap="onShowDeviceManager">
+            <text class="menu-item-icon">🔧</text>
+            <text>设备管理器</text>
+          </view>
+        </view>
+      </view>
       <text class="menu-item">编辑(E)</text>
       <text class="menu-item">查看(V)</text>
       <text class="menu-item" bindtap="onShowHelp">帮助(H)</text>
     </view>
 
-    <view class="win98-window-body">
+    <view class="win98-window-body" bindtap="onWindowBodyTap">
       <!-- 驱动器列表 -->
       <view class="drives-grid">
         <!-- C盘 - 独占第一行 -->
-        <view class="drive-item drive-c" bindtap="onDriveTap" data-drive="C">
-          <view class="drive-icon">💾</view>
+        <view class="drive-item drive-c">
+          <view class="drive-icon" bindtap="onDriveTap" data-drive="C">💾</view>
           <view class="drive-info">
             <text class="drive-label">(C:)</text>
             <text class="drive-size">本地磁盘</text>
             <view class="capacity-bar">
-              <view class="capacity-used" style="width: 99%"></view>
+              <view class="capacity-used" style="width: {{diskUsagePercent}}%"></view>
             </view>
-            <text class="capacity-text">99% 已用 - 空间不足!</text>
+            <text class="capacity-text">{{diskUsageText}}</text>
           </view>
         </view>
 
@@ -37,37 +57,36 @@
 
         <!-- 第二行驱动器容器 -->
         <view class="drives-row-secondary">
-          <view class="drive-item" bindtap="onDriveTap" data-drive="D">
-          <view class="drive-icon">💿</view>
-          <text class="drive-label">(D:)</text>
-          <text class="drive-size">光盘驱动器</text>
-        </view>
-        <view class="drive-item" bindtap="onDriveTap" data-drive="USB">
-          <view class="drive-icon">📱</view>
-          <text class="drive-label">可移动</text>
-          <text class="drive-size">USB设备</text>
-        </view>
+          <view class="drive-item">
+            <view class="drive-icon" bindtap="onDriveTap" data-drive="D">💿</view>
+            <text class="drive-label">(D:)</text>
+            <text class="drive-size">本地磁盘</text>
+          </view>
+          <view class="drive-item">
+            <view class="drive-icon" bindtap="onDriveTap" data-drive="USB">📱</view>
+            <text class="drive-label">可移动</text>
+            <text class="drive-size">USB设备</text>
+          </view>
         </view>
       </view>
 
-      <!-- 系统信息 -->
-      <view class="system-info">
-        <text class="info-title">系统信息</text>
-        <view class="info-row">
-          <text class="info-label">操作系统:</text>
-          <text class="info-value">Millennium OS 2000</text>
+      <!-- 系统信息区域 -->
+      <view class="system-info-panel">
+        <view class="system-info-row">
+          <text class="system-info-label">处理器：</text>
+          <text class="system-info-value">Intel Pentium III 800MHz</text>
         </view>
-        <view class="info-row">
-          <text class="info-label">处理器:</text>
-          <text class="info-value">英特尔 奔腾 III</text>
+        <view class="system-info-row">
+          <text class="system-info-label">内存：</text>
+          <text class="system-info-value">128 MB RAM</text>
         </view>
-        <view class="info-row">
-          <text class="info-label">内存:</text>
-          <text class="info-value">128 MB 内存</text>
+        <view class="system-info-row">
+          <text class="system-info-label">系统：</text>
+          <text class="system-info-value">Microsoft Windows 98 第二版</text>
         </view>
-        <view class="info-row">
-          <text class="info-label">分辨率:</text>
-          <text class="info-value">800 x 600</text>
+        <view class="system-info-row" wx:if="{{userInfo}}">
+          <text class="system-info-label">用户：</text>
+          <text class="system-info-value">{{userInfo.avatarName}}</text>
         </view>
       </view>
     </view>
@@ -116,31 +135,368 @@
           <view class="help-section">
             <text class="help-section-title">💾 驱动器说明</text>
             <view class="help-features">
-              <text class="help-feature">• (C:) 本地磁盘 - 主硬盘，存储系统文件</text>
-              <text class="help-feature">• (D:) 光盘驱动器 - 用于播放CD/DVD</text>
-              <text class="help-feature">• 可移动磁盘 - USB闪存设备</text>
+              <text class="help-feature">• 点击驱动器打开文件浏览器</text>
+              <text class="help-feature">• C盘：系统文件夹和程序</text>
+              <text class="help-feature">• D盘：下载、软件、游戏、资料</text>
+              <text class="help-feature">• USB：可移动存储设备</text>
             </view>
           </view>
 
           <view class="help-section">
-            <text class="help-section-title">⚙️ 系统信息</text>
+            <text class="help-section-title">⚙️ 系统功能</text>
             <view class="help-features">
-              <text class="help-feature">• 查看当前操作系统版本</text>
-              <text class="help-feature">• 查看处理器和内存配置</text>
-              <text class="help-feature">• 查看屏幕分辨率设置</text>
+              <text class="help-feature">• 系统属性：查看硬件和账号信息</text>
+              <text class="help-feature">• 磁盘清理：每日清理获得时光币</text>
+              <text class="help-feature">• 设备管理器：查看虚拟硬件设备</text>
             </view>
           </view>
 
           <view class="help-section">
             <text class="help-section-title">🎮 彩蛋提示</text>
             <view class="help-features">
-              <text class="help-feature">• 连续点击驱动器可能发现隐藏彩蛋</text>
-              <text class="help-feature">• 尝试不同的操作顺序...</text>
+              <text class="help-feature">• 文件夹中藏有秘密彩蛋文件</text>
+              <text class="help-feature">• 探索所有文件夹发现彩蛋</text>
+              <text class="help-feature">• 在设备管理器查看所有设备</text>
             </view>
           </view>
         </scroll-view>
         <view class="dialog-actions">
           <button class="win98-btn-std" bindtap="onCloseHelpDialog">确定</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 系统属性弹窗 -->
+  <view class="win98-dialog-overlay" wx:if="{{showSystemProperties}}" catchtap="onCloseSystemProperties">
+    <view class="win98-window system-properties-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">🖥️ 系统属性</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="onCloseSystemProperties">×</button>
+        </view>
+      </view>
+      <view class="win98-window-body">
+        <scroll-view class="system-properties-content" scroll-y>
+          <!-- 系统信息区域 -->
+          <view class="sp-section">
+            <view class="sp-header">Microsoft Windows 98 第二版</view>
+            <view class="sp-info">
+              <text class="sp-label">注册给：</text>
+              <text class="sp-value">千禧网友</text>
+            </view>
+            <view class="sp-info">
+              <text class="sp-label">计算机：</text>
+              <text class="sp-value">Pentium(R) III CPU 800 MHz / 128 MB RAM</text>
+            </view>
+          </view>
+
+          <!-- 硬件信息 -->
+          <view class="sp-section">
+            <view class="sp-section-title">💻 硬件信息</view>
+            <view class="sp-info-row" wx:if="{{systemInfo}}">
+              <text class="sp-info-label">处理器：</text>
+              <text class="sp-info-value">{{systemInfo.cpu}}</text>
+            </view>
+            <view class="sp-info-row" wx:if="{{systemInfo}}">
+              <text class="sp-info-label">内存：</text>
+              <text class="sp-info-value">{{systemInfo.memory}}</text>
+            </view>
+            <view class="sp-info-row" wx:if="{{systemInfo}}">
+              <text class="sp-info-label">硬盘：</text>
+              <text class="sp-info-value">{{systemInfo.hardDrive}}</text>
+            </view>
+            <view class="sp-info-row" wx:if="{{systemInfo}}">
+              <text class="sp-info-label">显卡：</text>
+              <text class="sp-info-value">{{systemInfo.graphics}}</text>
+            </view>
+            <view class="sp-info-row" wx:if="{{systemInfo}}">
+              <text class="sp-info-label">声卡：</text>
+              <text class="sp-info-value">{{systemInfo.sound}}</text>
+            </view>
+            <view class="sp-info-row" wx:if="{{systemInfo}}">
+              <text class="sp-info-label">网卡：</text>
+              <text class="sp-info-value">{{systemInfo.network}}</text>
+            </view>
+          </view>
+
+          <!-- 千禧时光机账号信息 -->
+          <view class="sp-section">
+            <view class="sp-section-title">🎮 千禧时光机账号信息</view>
+            <view class="sp-info-row" wx:if="{{userInfo}}">
+              <text class="sp-info-label">QCIO 账号：</text>
+              <text class="sp-info-value">{{userInfo.qcioAccount || '未注册'}}</text>
+            </view>
+            <view class="sp-info-row" wx:if="{{userInfo}}">
+              <text class="sp-info-label">等级：</text>
+              <text class="sp-info-value">LV.{{userInfo.level}} {{userInfo.starsDisplay || ''}}</text>
+            </view>
+            <view class="sp-info-row" wx:if="{{userInfo}}">
+              <text class="sp-info-label">Q点：</text>
+              <text class="sp-info-value">{{userInfo.qpoints}} Q点</text>
+            </view>
+            <view class="sp-info-row" wx:if="{{userInfo}}">
+              <text class="sp-info-label">网费：</text>
+              <text class="sp-info-value">{{userInfo.netFeeDays}} 天</text>
+            </view>
+            <view class="sp-info-row" wx:if="{{userInfo}}">
+              <text class="sp-info-label">时光币：</text>
+              <text class="sp-info-value">{{userInfo.coins}} 💎</text>
+            </view>
+            <view class="sp-info-row" wx:if="{{userInfo}}">
+              <text class="sp-info-label">彩蛋发现：</text>
+              <text class="sp-info-value">{{userInfo.eggProgress}}</text>
+            </view>
+          </view>
+        </scroll-view>
+        <view class="dialog-actions">
+          <button class="win98-btn-std" bindtap="onCloseSystemProperties">确定</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 磁盘清理确认弹窗 -->
+  <view class="win98-dialog-overlay" wx:if="{{showDiskCleanupConfirm}}" catchtap="closeDiskCleanupDialogs">
+    <view class="win98-window disk-cleanup-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">💿 磁盘清理</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="closeDiskCleanupDialogs">×</button>
+        </view>
+      </view>
+      <view class="win98-window-body">
+        <view class="disk-cleanup-content">
+          <view class="disk-cleanup-icon">💿</view>
+          <text class="disk-cleanup-message">即将扫描磁盘，清理临时文件释放空间...</text>
+          <text class="disk-cleanup-today">今天已清理：{{diskCleanupTodayCount}}/1 次</text>
+        </view>
+        <view class="dialog-actions">
+          <button class="win98-btn-std" bindtap="closeDiskCleanupDialogs">取消</button>
+          <button class="win98-btn-std" bindtap="onStartDiskCleanup">开始扫描</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 磁盘清理扫描弹窗 -->
+  <view class="win98-dialog-overlay" wx:if="{{showDiskCleanupScanning}}" catchtap="closeDiskCleanupDialogs">
+    <view class="win98-window disk-cleanup-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">正在扫描磁盘...</view>
+      </view>
+      <view class="win98-window-body">
+        <view class="disk-cleanup-content">
+          <text class="disk-cleanup-status">正在扫描 {{fileExplorerCurrentDrive || 'C'}}盘...</text>
+          <view class="progress-bar">
+            <view class="progress-fill" style="width: {{diskCleanupProgress}}%"></view>
+          </view>
+          <text class="disk-cleanup-progress-text">{{diskCleanupProgress}}%</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 磁盘清理结果弹窗 -->
+  <view class="win98-dialog-overlay" wx:if="{{showDiskCleanupResult}}" catchtap="closeDiskCleanupDialogs">
+    <view class="win98-window disk-cleanup-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">{{diskCleanupResult && diskCleanupResult.success ? '磁盘清理完成' : '磁盘清理'}}</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="closeDiskCleanupDialogs">×</button>
+        </view>
+      </view>
+      <view class="win98-window-body">
+        <view class="disk-cleanup-content" wx:if="{{diskCleanupResult && diskCleanupResult.success}}">
+          <!-- 有奖励：显示详细清理内容 -->
+          <view wx:if="{{diskCleanupResult.hasReward}}">
+            <text class="disk-cleanup-result-title">清理内容：</text>
+            <view class="cleanup-item">
+              <text class="cleanup-icon">💾</text>
+              <text class="cleanup-name">临时文件</text>
+              <text class="cleanup-size">{{diskCleanupResult.tempFiles}}MB</text>
+            </view>
+            <view class="cleanup-item">
+              <text class="cleanup-icon">🗑️</text>
+              <text class="cleanup-name">缓存文件</text>
+              <text class="cleanup-size">{{diskCleanupResult.cacheFiles}}MB</text>
+            </view>
+            <view class="cleanup-item">
+              <text class="cleanup-icon">📄</text>
+              <text class="cleanup-name">旧日志</text>
+              <text class="cleanup-size">{{diskCleanupResult.oldLogs}}MB</text>
+            </view>
+            <view class="cleanup-divider"></view>
+            <view class="cleanup-total">
+              <text class="cleanup-total-label">总计：</text>
+              <text class="cleanup-total-size">{{diskCleanupResult.tempFiles + diskCleanupResult.cacheFiles + diskCleanupResult.oldLogs}}MB</text>
+            </view>
+            <view class="cleanup-reward" wx:if="{{diskCleanupResult.diskUsageBefore !== undefined}}">
+              <text class="cleanup-reward-text">磁盘容量：</text>
+              <text class="cleanup-reward-amount">{{diskCleanupResult.diskUsageBefore}}% → {{diskCleanupResult.diskUsageAfter}}%</text>
+            </view>
+            <view class="cleanup-reward">
+              <text class="cleanup-reward-text">获得奖励：</text>
+              <text class="cleanup-reward-amount">💎 +{{diskCleanupResult.tempFiles + diskCleanupResult.cacheFiles + diskCleanupResult.oldLogs}} 时光币</text>
+            </view>
+          </view>
+          <!-- 无奖励：显示提示信息 -->
+          <view wx:else class="disk-cleanup-no-reward">
+            <text class="disk-cleanup-icon">✅</text>
+            <text class="disk-cleanup-message">{{diskCleanupResult.message || '磁盘清理完成'}}</text>
+            <text class="disk-cleanup-hint">每天只有第一次清理获得奖励</text>
+          </view>
+        </view>
+        <view class="disk-cleanup-content" wx:else>
+          <text class="disk-cleanup-error">{{diskCleanupResult ? diskCleanupResult.message : '清理失败'}}</text>
+        </view>
+        <view class="dialog-actions">
+          <button class="win98-btn-std" bindtap="closeDiskCleanupDialogs">确定</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 设备管理器弹窗 -->
+  <view class="win98-dialog-overlay" wx:if="{{showDeviceManager}}" catchtap="onCloseDeviceManager">
+    <view class="win98-window device-manager-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">🔧 设备管理器</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="onCloseDeviceManager">×</button>
+        </view>
+      </view>
+      <view class="win98-window-body">
+        <scroll-view class="device-manager-content" scroll-y>
+          <view class="sp-section">
+            <view class="sp-header">💻 千禧时光机电脑</view>
+            <view class="device-list">
+              <view class="device-item" wx:for="{{devices}}" wx:key="id" bindtap="onShowDeviceDetail" data-device-id="{{item.id}}">
+                <text class="device-icon">{{item.icon}}</text>
+                <text class="device-name">{{item.name}}</text>
+              </view>
+            </view>
+          </view>
+        </scroll-view>
+        <view class="dialog-actions">
+          <button class="win98-btn-std" bindtap="onCloseDeviceManager">关闭</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 设备详情弹窗 -->
+  <view class="win98-dialog-overlay" wx:if="{{showDeviceDetail}}" catchtap="onCloseDeviceDetail">
+    <view class="win98-window device-detail-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">{{selectedDevice.name}} 属性</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="onCloseDeviceDetail">×</button>
+        </view>
+      </view>
+      <view class="win98-window-body">
+        <view class="device-detail-content">
+          <!-- 设备图标和状态 -->
+          <view class="device-detail-header">
+            <text class="device-detail-icon">{{selectedDevice.icon}}</text>
+            <text class="device-detail-status">✅ 运行正常</text>
+          </view>
+
+          <!-- 设备信息区域 -->
+          <view class="sp-section">
+            <view class="sp-section-title">设备信息</view>
+            <view class="sp-info-row">
+              <text class="sp-info-label">设备名称：</text>
+              <text class="sp-info-value">{{selectedDevice.name}}</text>
+            </view>
+            <view class="sp-info-row">
+              <text class="sp-info-label">设备类型：</text>
+              <text class="sp-info-value">{{selectedDevice.typeText}}</text>
+            </view>
+            <view class="sp-info-row">
+              <text class="sp-info-label">状态：</text>
+              <text class="sp-info-value" style="color: #00aa00;">运行正常</text>
+            </view>
+          </view>
+
+          <!-- 描述和备注 -->
+          <view class="sp-section">
+            <view class="sp-section-title">详细信息</view>
+            <view class="sp-info-row">
+              <text class="sp-info-label">描述：</text>
+              <text class="sp-info-value">{{selectedDevice.description}}</text>
+            </view>
+          </view>
+
+          <!-- 备注区域 -->
+          <view class="sp-section" style="background: #ffffcc;">
+            <view class="sp-section-title">💬 备注</view>
+            <text class="device-detail-remark-text">"{{selectedDevice.remark}}"</text>
+          </view>
+        </view>
+        <view class="dialog-actions">
+          <button class="win98-btn-std" bindtap="onCloseDeviceDetail">确定</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 文件浏览器弹窗 -->
+  <view class="win98-dialog-overlay" wx:if="{{showFileExplorer}}" catchtap="onCloseFileExplorer">
+    <view class="win98-window file-explorer-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">{{fileExplorerPath}}</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="onCloseFileExplorer">×</button>
+        </view>
+      </view>
+      <view class="win98-window-body">
+        <!-- 工具栏 -->
+        <view class="file-explorer-toolbar">
+          <view class="toolbar-btn" bindtap="onGoBack" wx:if="{{fileExplorerBreadcrumbs.length > 1}}">
+            <text class="toolbar-btn-icon">⬆️</text>
+            <text class="toolbar-btn-text">向上</text>
+          </view>
+          <view class="file-explorer-address">
+            <text class="address-label">地址：</text>
+            <text class="address-path">{{fileExplorerPath}}</text>
+          </view>
+        </view>
+
+        <!-- 文件列表 -->
+        <scroll-view class="file-explorer-content" scroll-y>
+          <view class="file-list">
+            <view class="file-item {{item.disabled ? 'disabled' : ''}}" wx:for="{{fileExplorerItems}}" wx:key="name" bindtap="onFileItemTap" data-item="{{item}}">
+              <text class="file-icon">{{item.icon}}</text>
+              <text class="file-name">{{item.name}}</text>
+              <text class="file-rarity" wx:if="{{item.rarity}}">{{item.rarity === 'common' ? '⭐' : item.rarity === 'rare' ? '💎' : item.rarity === 'epic' ? '🌟' : '👑'}}</text>
+            </view>
+          </view>
+          <text class="file-count">共 {{fileExplorerItems.length}} 个对象</text>
+        </scroll-view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 彩蛋发现弹窗 -->
+  <view class="win98-dialog-overlay" wx:if="{{showEggDiscovery}}" catchtap="hideEggDiscovery">
+    <view class="win98-window egg-discovery-dialog {{eggDiscoveryData.rarity}}" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">🎉 发现彩蛋！</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="hideEggDiscovery">×</button>
+        </view>
+      </view>
+      <view class="win98-window-body">
+        <view class="egg-discovery-content">
+          <view class="egg-discovery-icon">🥚</view>
+          <text class="egg-discovery-name">{{eggDiscoveryData.name}}</text>
+          <text class="egg-discovery-description">{{eggDiscoveryData.description}}</text>
+          <text class="egg-discovery-rarity {{eggDiscoveryData.rarity}}">稀有度：{{eggDiscoveryData.rarityName}}</text>
+          <text class="egg-discovery-reward" wx:if="{{eggDiscoveryData.rewardText}}">奖励：{{eggDiscoveryData.rewardText}}</text>
+        </view>
+        <view class="dialog-actions">
+          <button class="win98-btn-std" bindtap="hideEggDiscovery">确定</button>
         </view>
       </view>
     </view>
