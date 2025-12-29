@@ -403,6 +403,10 @@ Page({
         // 刷新土地数据
         await this.loadPlots();
 
+        // 记录农场日志
+        const cropConfig = [...this.data.traditionalCrops, ...this.data.moodCrops].find(c => c.id === cropId);
+        this.addFarmLog('plant', `种植了${cropConfig?.name || cropId}`);
+
         // 关闭商店
         this.setData({
           showShopModal: false,
@@ -508,6 +512,10 @@ Page({
 
         // 刷新数据
         await this.refreshData();
+
+        // 记录农场日志
+        const qualityText = quality >= 3 ? '精品' : quality >= 2 ? '优质' : '普通';
+        this.addFarmLog('harvest', `收获了${cropName} (${qualityText})，获得${sellPrice}金币`);
       } else {
         wx.showToast({
           title: result?.message || '收获失败',

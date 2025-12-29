@@ -3,7 +3,6 @@
  */
 const { eggSystem, EGG_IDS } = require("../../utils/egg-system");
 const { userApi } = require("../../utils/api-client");
-const { userBalanceCache } = require("../../utils/cache-manager");
 
 Component({
   properties: {
@@ -79,6 +78,9 @@ Component({
     'show': function(newVal) {
       if (newVal) {
         this.addLog('open', '网管系统');
+        // 每次打开网管系统时，刷新余额和交易记录数据
+        this.loadBalance();
+        this.loadTransactionHistory();
       }
     },
     'zIndex': function(newVal) {
@@ -171,45 +173,19 @@ Component({
       }
     },
 
-    // 加载双代币余额和用户信息（使用 API 客户端和缓存）
+    // 加载双代币余额和用户信息（直接从API获取，不使用缓存）
     loadBalance: async function() {
       try {
-        // 优先从缓存获取
-        const cachedBalance = userBalanceCache.get();
-        if (cachedBalance) {
-          const netFee = cachedBalance.netFee || 0;
-          this.setData({
-            coins: cachedBalance.coins || 0,
-            netFee: netFee,
-            netFeeDays: Math.floor(netFee / 1440),
-            netFeeMinutes: netFee % 1440,
-            avatarName: cachedBalance.avatarName || 'Admin',
-            avatar: cachedBalance.avatar || '👤'
-          });
-          return;
-        }
-
-        // 缓存未命中，调用API
         const result = await userApi.getBalance();
         if (result && result.success) {
           const netFee = result.netFee || 0;
-          const balanceData = {
+          this.setData({
             coins: result.coins || 0,
             netFee: netFee,
-            avatarName: result.avatarName || 'Admin',
-            avatar: result.avatar || '👤'
-          };
-
-          // 更新缓存
-          userBalanceCache.set(balanceData);
-
-          this.setData({
-            coins: balanceData.coins,
-            netFee: balanceData.netFee,
             netFeeDays: Math.floor(netFee / 1440),
             netFeeMinutes: netFee % 1440,
-            avatarName: balanceData.avatarName,
-            avatar: balanceData.avatar
+            avatarName: result.avatarName || 'Admin',
+            avatar: result.avatar || '👤'
           });
         }
       } catch (e) {
@@ -387,14 +363,6 @@ Component({
           const newNetFee = result.newNetFee;
           const newDays = Math.floor(newNetFee / 1440);
           const newMinutes = newNetFee % 1440;
-
-          // 更新缓存
-          userBalanceCache.set({
-            coins: result.remainingCoins,
-            netFee: newNetFee,
-            avatarName: this.data.avatarName,
-            avatar: this.data.avatar
-          });
 
           // 记录网费兑换日志
           this.addLog('exchange', '网费兑换', `${option.label} (-${option.coins}时光币)`);

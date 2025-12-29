@@ -90,66 +90,42 @@ const userApi = {
   },
 
   /**
-   * 获取用户余额（带缓存）
+   * 获取用户余额（不使用缓存，确保实时性）
    */
   getBalance() {
-    return withCache(
-      CacheKeys.USER_BALANCE,
-      () => callCloudFunction('user', { type: 'getBalance' })
-    );
+    return callCloudFunction('user', { type: 'getBalance' });
   },
 
   /**
-   * 兑换网费（清除余额缓存）
+   * 兑换网费
    * @param {number} amount - 兑换金额（分钟）
    */
   exchangeNetFee(amount) {
     return callCloudFunction('user', {
       type: 'exchangeNetFee',
       amount
-    }).then(result => {
-      // 兑换成功后清除余额缓存
-      if (result && result.success) {
-        const { removeCache } = require('./cache-manager');
-        removeCache(CacheKeys.USER_BALANCE);
-      }
-      return result;
     });
   },
 
   /**
-   * 扣除网费（清除余额缓存）
+   * 扣除网费
    * @param {number} amount - 扣除金额（分钟）
    */
   deductNetFee(amount) {
     return callCloudFunction('user', {
-      action: 'deductNetFee',
+      type: 'deductNetFee',
       amount
-    }).then(result => {
-      // 扣除成功后清除余额缓存
-      if (result && result.success) {
-        const { removeCache } = require('./cache-manager');
-        removeCache(CacheKeys.USER_BALANCE);
-      }
-      return result;
     });
   },
 
   /**
-   * 发现彩蛋（清除余额缓存）
+   * 发现彩蛋
    * @param {string} eggId - 彩蛋ID
    */
   discoverEgg(eggId) {
     return callCloudFunction('user', {
       type: 'discoverEgg',
       eggId
-    }).then(result => {
-      // 发现彩蛋获得奖励后清除余额缓存
-      if (result && result.success) {
-        const { removeCache } = require('./cache-manager');
-        removeCache(CacheKeys.USER_BALANCE);
-      }
-      return result;
     });
   },
 
@@ -161,13 +137,6 @@ const userApi = {
     return callCloudFunction('user', {
       type: 'updateProfile',
       data
-    }).then(result => {
-      // 更新成功后清除余额缓存，确保其他组件能获取到最新数据
-      if (result && result.success) {
-        const { userBalanceCache } = require('./cache-manager');
-        userBalanceCache.clear();
-      }
-      return result;
     });
   },
 
@@ -698,7 +667,7 @@ const qcioApi = {
   addFarmLog(logData) {
     return callCloudFunction('qcio', {
       action: 'addFarmLog',
-      logData
+      log: logData
     });
   },
 

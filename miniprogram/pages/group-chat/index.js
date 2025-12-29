@@ -198,6 +198,34 @@ Page({
         return;
       }
 
+      // 0️⃣ 扣除网费（每次聊天消耗10分钟网费）
+      try {
+        const deductResult = await userApi.deductNetFee(10);
+
+        if (!deductResult || !deductResult.success) {
+          // 网费不足
+          wx.showModal({
+            title: '网费不足',
+            content: deductResult?.message || '您的网费不足，请通过桌面"网管系统"充值',
+            confirmText: '去充值',
+            cancelText: '取消',
+            confirmColor: '#000080',
+            success: (res) => {
+              if (res.confirm) {
+                wx.switchTab({
+                  url: '/pages/index/index'
+                });
+              }
+            }
+          });
+          return;
+        }
+      } catch (err) {
+        console.error('Deduct net fee error:', err);
+        wx.showToast({ title: '网费扣除失败', icon: 'none' });
+        return;
+      }
+
       // 1. 先把我的消息显示在界面上
       const newMsg = { type: 'me', content: text };
       const newList = this.data.chatList.concat(newMsg);

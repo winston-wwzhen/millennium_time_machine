@@ -45,6 +45,10 @@ const {
 exports.main = async (event, context) => {
   const { OPENID } = cloud.getWXContext();
 
+  // 调试日志：打印接收到的 action
+  console.log('[QCIO] Received action:', event.action);
+  console.log('[QCIO] Full event:', JSON.stringify(event));
+
   switch (event.action) {
     case 'init':
       // 初始化或获取账号信息（包含在线状态）
@@ -145,10 +149,18 @@ exports.main = async (event, context) => {
     case 'getWallet':
       return await getWallet(OPENID, db);
 
+    case 'getWalletInfo':
+      // 获取钱包信息（别名，与 getWallet 相同）
+      return await getWallet(OPENID, db);
+
     case 'addTransaction':
       return await addTransaction(OPENID, event.data, db, _);
 
     case 'dailyCheckin':
+      return await dailyCheckin(OPENID, db, _);
+
+    case 'checkIn':
+      // 每日签到（别名，与 dailyCheckin 相同）
       return await dailyCheckin(OPENID, db, _);
 
     case 'getDailyTasks':

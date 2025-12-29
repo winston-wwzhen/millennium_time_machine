@@ -1,7 +1,6 @@
 // miniprogram/pages/index/index.js
 const { eggSystem, EGG_IDS } = require("../../utils/egg-system");
 const { userApi } = require("../../utils/api-client");
-const { userBalanceCache, userInfoCache } = require("../../utils/cache-manager");
 const { pageErrorHandler } = require("../../utils/error-handler");
 
 Page({
@@ -263,38 +262,11 @@ Page({
     }
   },
 
-  // 加载用户信息（使用缓存，支持强制刷新）
-  loadUserInfo: async function (forceRefresh = false) {
-    // 先尝试从缓存获取（除非强制刷新）
-    if (!forceRefresh) {
-      const cachedUserInfo = userInfoCache.get();
-      const cachedBalance = userBalanceCache.get();
-
-      if (cachedUserInfo && cachedBalance) {
-        this.setData({
-          "userInfo.nickname": cachedUserInfo.avatarName || "用户",
-          "userInfo.avatar": cachedUserInfo.avatar || "👤",
-          userNetFee: cachedBalance.netFee || 0,
-          userCoins: cachedBalance.coins || 0,
-        });
-        return;
-      }
-    }
-
-    // 缓存未命中或强制刷新时，调用API
+  // 加载用户信息（每次都从服务器获取最新数据）
+  loadUserInfo: async function () {
     try {
       const balanceResult = await userApi.getBalance();
       if (balanceResult && balanceResult.success) {
-        // 缓存数据
-        userInfoCache.set({
-          avatarName: balanceResult.avatarName,
-          avatar: balanceResult.avatar
-        });
-        userBalanceCache.set({
-          netFee: balanceResult.netFee,
-          coins: balanceResult.coins
-        });
-
         this.setData({
           "userInfo.nickname": balanceResult.avatarName || "用户",
           "userInfo.avatar": balanceResult.avatar || "👤",
@@ -362,12 +334,6 @@ Page({
       const result = await userApi.updateProfile({ nickname, avatar });
 
       if (result && result.success) {
-        // 更新缓存
-        userInfoCache.set({
-          avatarName: result.avatarName,
-          avatar: result.avatar
-        });
-
         this.setData({
           "userInfo.nickname": result.avatarName,
           "userInfo.avatar": result.avatar,
@@ -421,8 +387,8 @@ Page({
     // 每次显示也检查时间彩蛋
     this.checkTimeEggs();
 
-    // 强制刷新用户余额，确保网管插件显示最新数据
-    this.loadUserInfo(true);
+    // 刷新用户余额，确保网管插件显示最新数据
+    this.loadUserInfo();
 
     // 如果网管系统打开，确保插件也显示
     if (this.data.showNetworkSystem) {
@@ -890,25 +856,17 @@ Page({
     const badges = eggSystem.getBadges();
     const stats = eggSystem.getStats();
 
-    // 优先从缓存获取余额，缓存未命中则调用API
+    // 直接从API获取余额（不使用缓存）
     let coins = 0;
     let netFee = 0;
-    const cachedBalance = userBalanceCache.get();
-    if (cachedBalance) {
-      coins = cachedBalance.coins || 0;
-      netFee = cachedBalance.netFee || 0;
-    } else {
-      try {
-        const result = await userApi.getBalance();
-        if (result && result.success) {
-          coins = result.coins || 0;
-          netFee = result.netFee || 0;
-          // 更新缓存
-          userBalanceCache.set({ coins, netFee });
-        }
-      } catch (e) {
-        console.error("获取余额失败:", e);
+    try {
+      const result = await userApi.getBalance();
+      if (result && result.success) {
+        coins = result.coins || 0;
+        netFee = result.netFee || 0;
       }
+    } catch (e) {
+      console.error("获取余额失败:", e);
     }
 
     // 按稀有度分组
