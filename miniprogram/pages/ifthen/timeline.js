@@ -271,10 +271,19 @@ const gameEngine = {
 
     // 筛选符合年龄和性别的叙事片段
     const matchedNarratives = narrativesData.filter(narrative => {
-      if (narrative.ageRange) {
-        const [minAge, maxAge] = narrative.ageRange;
-        if (age < minAge || age > maxAge) return false;
+      // 排除年份特定的叙事（年份特定叙事应该由 getYearNarrative 处理）
+      if (narrative.year) {
+        return false;
       }
+
+      // 必须有年龄范围
+      if (!narrative.ageRange) {
+        return false;
+      }
+
+      const [minAge, maxAge] = narrative.ageRange;
+      if (age < minAge || age > maxAge) return false;
+
       if (narrative.gender && narrative.gender !== gender) {
         return false;
       }

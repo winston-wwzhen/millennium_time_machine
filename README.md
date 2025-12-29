@@ -378,6 +378,7 @@ old_story/
 │   └── server.js        # Express 服务器
 ├── docs/                # 文档
 │   ├── README.md        # 项目说明
+│   ├── EGG_LIST.md      # 彩蛋列表（23个彩蛋完整触发指南）
 │   ├── FUNCTIONS.md     # 功能说明
 │   └── GAMEPLAY.md      # 玩法说明
 └── cloudfunctions/      # 云函数
