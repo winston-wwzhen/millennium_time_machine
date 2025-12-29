@@ -40,6 +40,13 @@ Page({
     }
   },
 
+  onShow: function() {
+    // 页面显示时重置loading状态，避免从其他页面返回时按钮还在转圈
+    if (this.data.isLoading) {
+      this.setData({ isLoading: false });
+    }
+  },
+
   // 加载用户上次选择的参数（使用 API 客户端）
   loadUserPreferences: function() {
     userApi.getIfthenPreferences().then(result => {
