@@ -16,7 +16,7 @@
           <text class="title-main">千禧时光机</text>
           <text class="title-sub">Millennium Time Machine</text>
           <text class="title-intro">穿越回2006年，体验那个年代的互联网记忆</text>
-          <text class="title-intro-sub">AI驱动的怀旧时光机，重温千禧时代的点点滴滴</text>
+          <text class="title-features">AI模拟2006-2026年历史事件 | 探索不同选择下的人生轨迹</text>
           <text class="title-user">欢迎，{{avatarName}}</text>
         </view>
       </view>
@@ -76,15 +76,6 @@
             <text class="gender-text">女性</text>
           </view>
         </view>
-      </view>
-
-      <!-- 工具说明 -->
-      <view class="info-section">
-        <text class="info-title">✨ 功能特色</text>
-        <text class="info-desc">• AI模拟2006-2026年历史事件</text>
-        <text class="info-desc">• 重温千禧时代的互联网记忆</text>
-        <text class="info-desc">• 探索不同选择下的人生轨迹</text>
-        <text class="info-note">✨ 怀旧工具 • AI驱动 • 免费体验</text>
       </view>
     </view>
 

@@ -25,7 +25,9 @@ page {
   flex-direction: column;
   width: 98%;
   max-width: 700px;
-  height: 96%;
+  height: auto;
+  min-height: 400px;
+  max-height: 85vh;
 }
 
 /* 标题栏 */
@@ -87,7 +89,7 @@ page {
 .game-header {
   display: flex;
   align-items: flex-start;
-  padding: 12px 14px;
+  padding: 10px 12px;
   background: #ffffff;
   border: 1px solid;
   border-color: #808080 #ffffff #ffffff #808080;
@@ -95,8 +97,8 @@ page {
 }
 
 .game-icon {
-  font-size: 32px;
-  margin-right: 12px;
+  font-size: 28px;
+  margin-right: 10px;
   flex-shrink: 0;
 }
 
@@ -104,80 +106,40 @@ page {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
 }
 
 .title-main {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: bold;
   color: #000080;
 }
 
 .title-sub {
-  font-size: 10px;
+  font-size: 9px;
   color: #000080;
   font-style: italic;
 }
 
 .title-intro {
-  font-size: 11px;
+  font-size: 10px;
   color: #000080;
   font-weight: bold;
-  margin-top: 2px;
+  margin-top: 1px;
 }
 
-.title-intro-sub {
-  font-size: 10px;
+.title-features {
+  font-size: 9px;
   color: #666;
   font-style: italic;
 }
 
 .title-user {
-  font-size: 11px;
-  color: #000080;
-  margin-top: 4px;
-  padding-top: 4px;
-  border-top: 1px dashed #c0c0c0;
-}
-
-/* 工具说明区域 */
-.info-section {
-  padding: 14px 12px;
-  background: #ffffff;
-  border: 1px solid;
-  border-color: #808080 #ffffff #ffffff #808080;
-  margin-bottom: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.info-title {
-  font-size: 14px;
-  font-weight: bold;
-  color: #000080;
-  text-align: center;
-}
-
-.info-desc {
-  font-size: 12px;
-  color: #000080;
-  text-align: center;
-  font-style: italic;
-  line-height: 1.5;
-}
-
-.info-detail {
-  font-size: 11px;
-  color: #666;
-  text-align: center;
-  line-height: 1.5;
-}
-
-.info-note {
   font-size: 10px;
-  color: #808080;
-  text-align: center;
+  color: #000080;
+  margin-top: 3px;
+  padding-top: 3px;
+  border-top: 1px dashed #c0c0c0;
 }
 
 /* 设置区域 */
