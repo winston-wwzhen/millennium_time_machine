@@ -161,6 +161,13 @@ const userApi = {
     return callCloudFunction('user', {
       type: 'updateProfile',
       data
+    }).then(result => {
+      // 更新成功后清除余额缓存，确保其他组件能获取到最新数据
+      if (result && result.success) {
+        const { userBalanceCache } = require('./cache-manager');
+        userBalanceCache.clear();
+      }
+      return result;
     });
   },
 
