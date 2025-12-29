@@ -21,14 +21,23 @@ const COLLECTIONS = [
   // QCIO社交系统
   { name: 'qcio_users', description: 'QCIO用户资料' },
   { name: 'qcio_wallet', description: 'QCIO钱包' },
+  { name: 'qcio_transactions', description: 'QCIO钱包交易记录' },
   { name: 'qcio_daily_tasks', description: 'QCIO每日任务状态' },
-  { name: 'qcio_achievements', description: 'QCIO成就系统' },
+  { name: 'qcio_achievements', description: 'QCIO成就系统配置' },
+  { name: 'qcio_user_achievements', description: '用户成就记录' },
   { name: 'qcio_mood_logs', description: '心情日志' },
   { name: 'qcio_guestbook', description: '留言板' },
   { name: 'qcio_experience_logs', description: '经验获取日志' },
   { name: 'qcio_user_level_rewards', description: '等级奖励记录' },
   { name: 'qcio_visit_stats', description: '访问统计' },
-  { name: 'qcio_space_logs', description: '空间日志' },
+  // 农场系统
+  { name: 'qcio_farm_profiles', description: '农场档案（等级、经验、土地数）' },
+  { name: 'qcio_farm_plots', description: '农场土地状态（24块地）' },
+  { name: 'qcio_farm_inventory', description: '农场仓库（种子、作物、装饰）' },
+  { name: 'qcio_farm_logs', description: '农场操作日志' },
+  // VIP系统
+  { name: 'qcio_vip_codes', description: 'VIP兑换码' },
+  { name: 'qcio_vip_records', description: 'VIP兑换记录' },
 
   // AI联系人和群组
   { name: 'qcio_ai_contacts', description: 'AI联系人' },
@@ -40,7 +49,6 @@ const COLLECTIONS = [
   { name: 'mood_garden', description: '心情农场游戏数据' },
 
   // 如果当时游戏
-  { name: 'ifthen_games', description: '如果当时游戏记录' },
   { name: 'ifthen_endings', description: '如果当时结局统计' },
   { name: 'ifthen_shares', description: '如果当时分享记录' },
   { name: 'ifthen_play_history', description: '如果当时游玩历史记录' },
@@ -106,12 +114,20 @@ async function createIndexes(collectionName) {
   const indexes = {
     qcio_users: ['_openid', 'qcio_id', 'nickname'],
     qcio_wallet: ['_openid'],
+    qcio_transactions: ['_openid', 'createTime'],
     qcio_experience_logs: ['qcio_id', 'action', 'timestamp'],
     qcio_visit_stats: ['owner_qcio_id'],
     qcio_chat_history: ['user_qcio_id', 'contact_name'],
     qcio_group_chat_history: ['group_id'],
     qcio_mood_logs: ['_openid', 'createdAt'],
     qcio_guestbook: ['owner_qcio_id', 'visitor_qcio_id'],
+    qcio_farm_profiles: ['_openid', 'qcio_id'],
+    qcio_farm_plots: ['_openid', 'plot_index'],
+    qcio_farm_inventory: ['_openid', 'itemType', 'itemId'],
+    qcio_farm_logs: ['_openid', 'logTime'],
+    qcio_vip_codes: ['code', 'isActive'],
+    qcio_vip_records: ['_openid', 'redeemTime'],
+    qcio_user_achievements: ['_openid', 'achievementId'],
     ifthen_shares: ['shareId'],
     user_transactions: ['_openid', 'createdAt'],
     user_activity_logs: ['_openid', 'action', 'createdAt'],

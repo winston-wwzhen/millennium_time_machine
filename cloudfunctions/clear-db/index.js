@@ -22,14 +22,23 @@ const COLLECTIONS = [
   // QCIO社交系统
   'qcio_users',
   'qcio_wallet',
+  'qcio_transactions',
   'qcio_daily_tasks',
   'qcio_achievements',
+  'qcio_user_achievements',
   'qcio_mood_logs',
   'qcio_guestbook',
   'qcio_experience_logs',
   'qcio_user_level_rewards',
   'qcio_visit_stats',
-  'qcio_space_logs',
+  // 农场系统
+  'qcio_farm_profiles',
+  'qcio_farm_plots',
+  'qcio_farm_inventory',
+  'qcio_farm_logs',
+  // VIP系统
+  'qcio_vip_codes',
+  'qcio_vip_records',
 
   // AI联系人和群组
   'qcio_ai_contacts',
@@ -41,7 +50,6 @@ const COLLECTIONS = [
   'mood_garden',
 
   // 如果当时游戏
-  'ifthen_games',
   'ifthen_endings',
   'ifthen_shares',
   'ifthen_play_history',
