@@ -90,7 +90,7 @@
 
         <view class="balance-actions">
           <button class="exchange-btn" bindtap="showExchange">兑换网费</button>
-          <button class="history-btn" bindtap="showTransactionRecords">扣费记录</button>
+          <button class="history-btn" bindtap="showTransactionRecords">流水记录</button>
         </view>
       </view>
 
@@ -186,7 +186,7 @@
   <view class="exchange-overlay" wx:if="{{showTransactionDialog}}" catchtap="hideTransactionDialog">
     <view class="win98-window transaction-dialog" catchtap="stopPropagation">
       <view class="win98-title-bar">
-        <view class="win98-title-text">📜 扣费记录</view>
+        <view class="win98-title-text">📜 流水记录</view>
         <view class="win98-title-controls">
           <button class="win98-btn-close" bindtap="hideTransactionDialog">×</button>
         </view>

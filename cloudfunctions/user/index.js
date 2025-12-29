@@ -230,6 +230,7 @@ exports.main = async (event, context) => {
       }
 
       const currentCoins = res.data[0].coins || 0;
+      const currentNetFee = res.data[0].netFee || 0;
 
       // 兑换比例：1000 时光币 = 1 天网费（1440分钟）
       // 即 1 时光币 = 1.44 分钟网费
@@ -258,15 +259,29 @@ exports.main = async (event, context) => {
         }
       });
 
-      // 记录兑换交易
+      // 记录网费增加交易
       await db.collection('user_transactions').add({
         data: {
           _openid: openid,
           type: 'exchange',
+          currency: 'netfee',
           description: `时光币兑换网费 ${Math.ceil(amount / 1440)}天`,
           amount: netFeeToAdd,
           coinsUsed: coinsNeeded,
-          balanceAfter: (res.data[0].netFee || 0) + netFeeToAdd,
+          balanceAfter: currentNetFee + netFeeToAdd,
+          createTime: db.serverDate()
+        }
+      });
+
+      // 记录时光币消耗交易
+      await db.collection('user_transactions').add({
+        data: {
+          _openid: openid,
+          type: 'exchange',
+          currency: 'coins',
+          description: `兑换网费消耗时光币`,
+          coinsUsed: coinsNeeded,
+          balanceAfter: currentCoins - coinsNeeded,
           createTime: db.serverDate()
         }
       });
@@ -276,7 +291,7 @@ exports.main = async (event, context) => {
         exchanged: amount,
         coinsDeducted: coinsNeeded,
         remainingCoins: currentCoins - coinsNeeded,
-        newNetFee: (res.data[0].netFee || 0) + netFeeToAdd
+        newNetFee: currentNetFee + netFeeToAdd
       };
     } catch (e) {
       console.error(e);
@@ -631,7 +646,7 @@ exports.main = async (event, context) => {
       // 检查是否已经发现过（通过badge字段）
       const userRes = await db.collection('users').where({
         _openid: openid
-      }).field({ badges: true }).get();
+      }).field({ badges: true, coins: true }).get();
 
       if (userRes.data.length === 0) {
         return { success: false, errMsg: '用户不存在' };
@@ -648,6 +663,7 @@ exports.main = async (event, context) => {
 
       // 获取时光币奖励
       const coinsReward = reward.coins || 0;
+      const currentCoins = userRes.data[0].coins || 0;
 
       // 原子操作：添加徽章 + 增加时光币 + 更新统计
       const updateData = {
@@ -675,6 +691,24 @@ exports.main = async (event, context) => {
 
       if (updateRes.stats.updated === 0) {
         return { success: false, errMsg: '更新失败' };
+      }
+
+      // 添加时光币交易记录
+      if (coinsReward > 0) {
+        await db.collection('user_transactions').add({
+          data: {
+            _openid: openid,
+            type: 'egg_reward',
+            description: `发现彩蛋：${badgeName || eggId}`,
+            coinsEarned: coinsReward,
+            balanceAfter: currentCoins + coinsReward,
+            metadata: {
+              eggId: eggId,
+              badgeName: badgeName
+            },
+            createTime: db.serverDate()
+          }
+        });
       }
 
       return { success: true, isNew: true, reward: reward };

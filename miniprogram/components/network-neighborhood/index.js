@@ -246,38 +246,66 @@ Component({
 
         let typeLabel = '';
         let typeColor = '';
+        let amountDisplay = '';
+        const currency = record.currency || (record.coinsEarned !== undefined || record.coinsUsed !== undefined ? 'coins' : 'netfee');
+
+        // 根据货币类型和交易类型确定显示
         switch (record.type) {
           case 'daily_deduct':
             typeLabel = '每日扣费';
             typeColor = '#cc0000';
+            amountDisplay = `${record.amount}分钟`;
             break;
           case 'exchange':
-            typeLabel = '兑换充值';
-            typeColor = '#00aa00';
+            if (currency === 'netfee') {
+              typeLabel = '兑换网费';
+              typeColor = '#00aa00';
+              amountDisplay = `+${record.amount}分钟`;
+            } else {
+              typeLabel = '消耗时光币';
+              typeColor = '#cc6600';
+              amountDisplay = `-${record.coinsUsed}时光币`;
+            }
             break;
           case 'usage':
             typeLabel = '使用扣费';
             typeColor = '#cc6600';
+            amountDisplay = `${record.amount}分钟`;
+            break;
+          case 'egg_reward':
+            typeLabel = '彩蛋奖励';
+            typeColor = '#ffd700';
+            amountDisplay = `+${record.coinsEarned}时光币`;
             break;
           default:
             typeLabel = '其他';
             typeColor = '#666';
+            if (record.coinsUsed) {
+              amountDisplay = `-${record.coinsUsed}时光币`;
+            } else if (record.coinsEarned) {
+              amountDisplay = `+${record.coinsEarned}时光币`;
+            } else if (record.amount !== undefined) {
+              amountDisplay = `${record.amount}分钟`;
+            } else {
+              amountDisplay = '-';
+            }
         }
 
         return {
           ...record,
+          currency,
           dateStr,
           timeStr,
           typeLabel,
           typeColor,
-          amountDisplay: record.amount >= 0 ? `+${record.amount}分钟` : `${record.amount}分钟`
+          amountDisplay
         };
       });
     },
 
     // 显示交易记录对话框
     showTransactionRecords: function() {
-      this.addLog('view', '扣费记录');
+      this.addLog('view', '流水记录');
       this.setData({ showTransactionDialog: true });
       this.loadTransactionHistory();
     },
