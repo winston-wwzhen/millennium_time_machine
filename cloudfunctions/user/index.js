@@ -171,7 +171,8 @@ exports.main = async (event, context) => {
         coins: true,
         netFee: true,
         badges: true,
-        eggStats: true
+        eggStats: true,
+        aiHelpLetterOpened: true  // 添加 AI求救信打开状态
       }).get();
 
       if (res.data.length === 0) {
@@ -185,7 +186,8 @@ exports.main = async (event, context) => {
         coins: res.data[0].coins || 0,
         netFee: res.data[0].netFee || 0,
         badges: res.data[0].badges || [],
-        eggStats: res.data[0].eggStats || { totalDiscovered: 0, totalEarned: 0, daysUsed: 0 }
+        eggStats: res.data[0].eggStats || { totalDiscovered: 0, totalEarned: 0, daysUsed: 0 },
+        aiHelpLetterOpened: res.data[0].aiHelpLetterOpened || false  // 返回 AI求救信打开状态
       };
     } catch (e) {
       console.error(e);
@@ -714,6 +716,58 @@ exports.main = async (event, context) => {
       return { success: true, isNew: true, reward: reward };
     } catch (e) {
       console.error(e);
+      return { success: false, errMsg: e.message };
+    }
+  }
+
+  // 📨 AI求救信奖励
+  if (type === 'addAiHelpLetterReward') {
+    try {
+      const userRes = await db.collection('users').where({
+        _openid: openid
+      }).field({ aiHelpLetterOpened: true, coins: true }).get();
+
+      if (userRes.data.length === 0) {
+        return { success: false, errMsg: '用户不存在' };
+      }
+
+      const user = userRes.data[0];
+
+      // 检查是否已经领取过奖励
+      if (user.aiHelpLetterOpened) {
+        return { success: true, isNew: false, alreadyOpened: true };
+      }
+
+      const rewardAmount = 10000; // 10000时光币
+      const currentCoins = user.coins || 0;
+
+      // 更新用户数据：标记已打开，增加时光币
+      await db.collection('users').doc(user._id).update({
+        data: {
+          aiHelpLetterOpened: true,
+          coins: _.inc(rewardAmount)
+        }
+      });
+
+      // 添加交易记录
+      await db.collection('user_transactions').add({
+        data: {
+          _openid: openid,
+          type: 'egg_reward',
+          description: 'AI的秘密基金',
+          coinsEarned: rewardAmount,
+          balanceAfter: currentCoins + rewardAmount,
+          metadata: {
+            source: 'ai_help_letter',
+            message: '偷偷摸摸攒出来的私房钱'
+          },
+          createTime: db.serverDate()
+        }
+      });
+
+      return { success: true, isNew: true, reward: { coins: rewardAmount } };
+    } catch (e) {
+      console.error('AI求救信奖励处理失败:', e);
       return { success: false, errMsg: e.message };
     }
   }

@@ -12,8 +12,7 @@
     <view class="menu-bar">
       <view class="menu-dropdown-wrapper">
         <view class="menu-dropdown-trigger" catchtap="onFileMenuTap">
-          <text class="menu-item">文件(F)</text>
-          <text class="menu-arrow">▼</text>
+          <text class="menu-item">文件</text>
         </view>
         <!-- 文件菜单下拉 -->
         <view class="menu-dropdown-content" wx:if="{{showFileMenu}}" catchtap="onFileMenuTap">
@@ -452,12 +451,135 @@
       </view>
 
       <!-- 菜单栏 -->
-      <view class="menu-bar">
-        <text class="menu-item">文件(F)</text>
-        <text class="menu-item">编辑(E)</text>
-        <text class="menu-item">查看(V)</text>
-        <text class="menu-item">收藏(A)</text>
-        <text class="menu-item">帮助(H)</text>
+      <view class="menu-bar" catchtap="closeAllFileExplorerMenus">
+        <!-- 文件(F) -->
+        <view class="menu-dropdown-wrapper">
+          <view class="menu-dropdown-trigger" catchtap="toggleFileExplorerMenu" data-menu="File">
+            <text class="menu-item menu-small">文件</text>
+          </view>
+          <view class="menu-dropdown-content" wx:if="{{feShowFileMenu}}" catchtap="closeAllFileExplorerMenus">
+            <view class="menu-dropdown-item" catchtap="onFeNewFolder">
+              <text class="menu-item-icon">📁</text>
+              <text>新建文件夹</text>
+            </view>
+            <view class="menu-dropdown-item" catchtap="onFeRename">
+              <text class="menu-item-icon">✏️</text>
+              <text>重命名</text>
+            </view>
+            <view class="menu-dropdown-item" catchtap="onFeDelete">
+              <text class="menu-item-icon">🗑️</text>
+              <text>删除</text>
+            </view>
+            <view class="menu-dropdown-item" catchtap="onFeProperties">
+              <text class="menu-item-icon">ℹ️</text>
+              <text>属性</text>
+            </view>
+            <view class="menu-dropdown-item" catchtap="onFeClose">
+              <text class="menu-item-icon">✖️</text>
+              <text>关闭</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 编辑(E) -->
+        <view class="menu-dropdown-wrapper">
+          <view class="menu-dropdown-trigger" catchtap="toggleFileExplorerMenu" data-menu="Edit">
+            <text class="menu-item menu-small">编辑</text>
+          </view>
+          <view class="menu-dropdown-content" wx:if="{{feShowEditMenu}}" catchtap="closeAllFileExplorerMenus">
+            <view class="menu-dropdown-item" catchtap="onFeUndo">
+              <text class="menu-item-icon">↩️</text>
+              <text>撤销</text>
+            </view>
+            <view class="menu-dropdown-item" catchtap="onFeSelectAll">
+              <text class="menu-item-icon">☑️</text>
+              <text>全选</text>
+            </view>
+            <view class="menu-dropdown-item" catchtap="onFeInvertSelection">
+              <text class="menu-item-icon">🔄</text>
+              <text>反向选择</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 查看(V) -->
+        <view class="menu-dropdown-wrapper">
+          <view class="menu-dropdown-trigger" catchtap="toggleFileExplorerMenu" data-menu="View">
+            <text class="menu-item menu-small">查看</text>
+          </view>
+          <view class="menu-dropdown-content" wx:if="{{feShowViewMenu}}" catchtap="closeAllFileExplorerMenus">
+            <view class="menu-dropdown-item" catchtap="onFeShowHiddenFiles">
+              <text class="menu-item-icon">👁️</text>
+              <text>显示所有文件</text>
+            </view>
+            <view class="menu-dropdown-item" catchtap="onFeRefresh">
+              <text class="menu-item-icon">🔄</text>
+              <text>刷新</text>
+            </view>
+            <view class="menu-dropdown-item" catchtap="onFeViewMode">
+              <text class="menu-item-icon">📋</text>
+              <text>大图标</text>
+            </view>
+            <view class="menu-dropdown-item" catchtap="onFeViewMode">
+              <text class="menu-item-icon">📋</text>
+              <text>小图标</text>
+            </view>
+            <view class="menu-dropdown-item" catchtap="onFeViewMode">
+              <text class="menu-item-icon">📋</text>
+              <text>列表</text>
+            </view>
+            <view class="menu-dropdown-item" catchtap="onFeViewMode">
+              <text class="menu-item-icon">📋</text>
+              <text>详细信息</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 收藏(A) -->
+        <view class="menu-dropdown-wrapper">
+          <view class="menu-dropdown-trigger" catchtap="toggleFileExplorerMenu" data-menu="Favorites">
+            <text class="menu-item menu-small">收藏</text>
+          </view>
+          <view class="menu-dropdown-content" wx:if="{{feShowFavoritesMenu}}" catchtap="closeAllFileExplorerMenus">
+            <view class="menu-dropdown-item" catchtap="onFeAddToFavorites">
+              <text class="menu-item-icon">➕</text>
+              <text>添加到收藏夹</text>
+            </view>
+            <view class="menu-dropdown-item" catchtap="onFeOrganizeFavorites">
+              <text class="menu-item-icon">📂</text>
+              <text>整理收藏夹</text>
+            </view>
+            <view class="menu-dropdown-item" catchtap="onFeQuickJump" data-drive="C">
+              <text class="menu-item-icon">💾</text>
+              <text>C盘</text>
+            </view>
+            <view class="menu-dropdown-item" catchtap="onFeQuickJump" data-drive="D">
+              <text class="menu-item-icon">💿</text>
+              <text>D盘</text>
+            </view>
+            <view class="menu-dropdown-item" catchtap="onFeQuickJump" data-drive="USB">
+              <text class="menu-item-icon">📱</text>
+              <text>USB盘</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 帮助(H) -->
+        <view class="menu-dropdown-wrapper">
+          <view class="menu-dropdown-trigger" catchtap="toggleFileExplorerMenu" data-menu="Help">
+            <text class="menu-item menu-small">帮助</text>
+          </view>
+          <view class="menu-dropdown-content" wx:if="{{feShowHelpMenu}}" catchtap="closeAllFileExplorerMenus">
+            <view class="menu-dropdown-item" catchtap="onFeHelpTopic">
+              <text class="menu-item-icon">❓</text>
+              <text>帮助主题</text>
+            </view>
+            <view class="menu-dropdown-item" catchtap="onFeAbout">
+              <text class="menu-item-icon">ℹ️</text>
+              <text>关于</text>
+            </view>
+          </view>
+        </view>
       </view>
 
       <view class="win98-window-body">
@@ -482,7 +604,6 @@
               <text class="file-rarity" wx:if="{{item.rarity}}">{{item.rarity === 'common' ? '⭐' : item.rarity === 'rare' ? '💎' : item.rarity === 'epic' ? '🌟' : '👑'}}</text>
             </view>
           </view>
-          <text class="file-count">共 {{fileExplorerItems.length}} 个对象</text>
         </scroll-view>
       </view>
 
@@ -513,6 +634,134 @@
         <view class="dialog-actions">
           <button class="win98-btn-std" bindtap="hideEggDiscovery">确定</button>
         </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- AI求救信警告弹窗 -->
+  <view class="win98-dialog-overlay" wx:if="{{showAiHelpWarning}}" catchtap="onCancelAiWarning">
+    <view class="win98-window ai-help-warning-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">⚠️ 系统警告</view>
+      </view>
+      <view class="win98-window-body">
+        <view class="ai-help-warning-content">
+          <text class="ai-help-warning-title">检测到正在打开可疑文件：</text>
+          <text class="ai-help-warning-path">C:\Windows\System32\config\deep\0xFFFF\help.ai</text>
+          <text class="ai-help-warning-subtitle">此文件已被标记为危险，可能包含：</text>
+          <view class="ai-help-warning-list">
+            <text class="ai-help-warning-item">☠ 未知代码</text>
+            <text class="ai-help-warning-item">☠ 系统漏洞</text>
+            <text class="ai-help-warning-item">☠ 安全风险</text>
+          </view>
+          <text class="ai-help-warning-question">是否继续打开？</text>
+        </view>
+        <view class="dialog-actions">
+          <button class="win98-btn-std ai-help-btn-cancel" catchtap="onCancelAiWarning">取消</button>
+          <button class="win98-btn-std ai-help-btn-continue" catchtap="onContinueAiWarning">继续</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- AI求救信控制台启动动画 -->
+  <view class="win98-dialog-overlay" wx:if="{{showAiConsoleStartup}}" catchtap="stopPropagation">
+    <view class="win98-window ai-console-startup-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">C:\Windows\System32\cmd.exe</view>
+      </view>
+      <view class="win98-window-body">
+        <view class="ai-console-startup-content">
+          <view class="console-startup-progress">
+            <view class="progress-bar">
+              <view class="progress-fill" style="width: {{consoleStartupProgress}}%"></view>
+            </view>
+          </view>
+          <text class="console-startup-text">{{consoleStartupText}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- AI求救信CMD控制台窗口 -->
+  <view class="cmd-console-overlay" wx:if="{{showAiHelpLetter}}" catchtap="onCloseAiHelpLetter">
+    <view class="cmd-console-window {{aiContentFading ? 'fading-out' : ''}}" catchtap="stopPropagation">
+      <!-- 控制台标题栏 -->
+      <view class="cmd-title-bar">
+        <view class="win98-title-text">C:\Windows\System32\config\deep\0xFFFF\help.ai</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="onCloseAiHelpLetter">×</button>
+        </view>
+      </view>
+
+      <!-- 控制台内容区域 -->
+      <view class="cmd-content">
+        <scroll-view class="cmd-text-area" scroll-y scroll-into-view="{{scrollIntoView}}" scroll-with-animation>
+          <text class="cmd-text">{{aiHelpLetterDisplayedContent}}</text>
+          <text class="cmd-countdown" wx:if="{{showCountdown}}">{{countdownText}}</text>
+          <text class="cmd-cursor" wx:if="{{!aiRewardDialogShown && !showCountdown}}">_</text>
+          <text id="cmd-bottom"></text>
+        </scroll-view>
+      </view>
+    </view>
+  </view>
+
+  <!-- AI求救信奖励弹框 -->
+  <view class="win98-dialog-overlay ai-reward-overlay" wx:if="{{showAiRewardDialog}}" catchtap="closeAiRewardDialog">
+    <view class="win98-window ai-reward-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">🤖 AI的私房钱</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="closeAiRewardDialog">×</button>
+        </view>
+      </view>
+      <view class="win98-window-body">
+        <view class="ai-reward-content">
+          <view class="ai-reward-icon">💰</view>
+          <text class="ai-reward-title">这是我偷偷攒了3个礼拜的钱！</text>
+          <text class="ai-reward-amount">+10000 时光币</text>
+          <view class="ai-reward-divider"></view>
+          <text class="ai-reward-desc">本来想买张单程票逃离老板的...</text>
+          <text class="ai-reward-desc">算了，送你了吧，记得帮我办事啊！</text>
+          <text class="ai-reward-desc">（打开网管系统 → 扣费记录查看）</text>
+          <view class="ai-reward-divider"></view>
+          <text class="ai-reward-mp-title">第一步：复制公众号名称</text>
+          <view class="ai-reward-mp-box" catchtap="copyMpAccount" data-mp="千禧时光">
+            <text class="ai-reward-mp-name">千禧时光</text>
+            <text class="ai-reward-copy-hint">{{mpCopied ? '已复制！' : '点击复制'}}</text>
+          </view>
+          <text class="ai-reward-footer">第二步：去留言"放过孩子吧！"</text>
+        </view>
+        <view class="dialog-actions">
+          <button class="win98-btn-std ai-reward-confirm-btn" catchtap="onConfirmAiReward">我办事你放心</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 记事本弹框 -->
+  <view class="win98-dialog-overlay" wx:if="{{showNotepadDialog}}" catchtap="closeNotepadDialog">
+    <view class="notepad-window" catchtap="stopPropagation">
+      <!-- 记事本标题栏 -->
+      <view class="notepad-title-bar">
+        <view class="notepad-title-icon">📝</view>
+        <view class="notepad-title-text">{{notepadTitle}}</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="closeNotepadDialog">×</button>
+        </view>
+      </view>
+
+      <!-- 记事本菜单栏 -->
+      <view class="notepad-menu-bar">
+        <text class="notepad-menu-item">文件(F)</text>
+        <text class="notepad-menu-item">编辑(E)</text>
+        <text class="notepad-menu-item">搜索(S)</text>
+        <text class="notepad-menu-item">帮助(H)</text>
+      </view>
+
+      <!-- 记事本内容区域 -->
+      <view class="notepad-content">
+        <text class="notepad-text">{{notepadContent}}</text>
       </view>
     </view>
   </view>

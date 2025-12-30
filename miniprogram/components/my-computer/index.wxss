@@ -105,6 +105,11 @@
   font-family: 'SimSun', sans-serif;
 }
 
+.menu-small {
+  font-size: 11px;
+  padding: 2px 6px;
+}
+
 .menu-item:active {
   background: #000080;
   color: white;
@@ -225,6 +230,11 @@
   justify-content: center;
   align-items: center;
   z-index: 2100;
+}
+
+/* AI求救信奖励弹窗需要更高层级，覆盖控制台窗口 */
+.win98-dialog-overlay.ai-reward-overlay {
+  z-index: 2300;
 }
 
 .dialog-actions {
@@ -984,6 +994,11 @@
   color: #999;
 }
 
+/* 隐藏文件样式 */
+.file-item.isHidden {
+  opacity: 0.5;
+}
+
 .file-icon {
   font-size: 40px;
   margin-bottom: 4px;
@@ -1000,15 +1015,6 @@
 .file-rarity {
   font-size: 12px;
   margin-top: 2px;
-}
-
-.file-count {
-  display: block;
-  text-align: center;
-  font-size: 10px;
-  color: #666;
-  margin-top: 8px;
-  font-family: 'SimSun', serif;
 }
 
 /* ==================== 彩蛋发现弹窗 ==================== */
@@ -1098,4 +1104,551 @@
   font-weight: bold;
   color: #cc0000;
   text-align: center;
+}
+
+/* ==================== AI求救信警告弹窗 ==================== */
+
+.ai-help-warning-dialog {
+  width: 420px;
+  max-width: 90%;
+}
+
+.ai-help-warning-dialog .win98-window-body {
+  padding: 0;
+  flex: unset;
+}
+
+.ai-help-warning-content {
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #fff0f0;
+  border: 2px inset #fff;
+  margin: 4px;
+}
+
+.ai-help-warning-title {
+  font-size: 14px;
+  color: #cc0000;
+  font-weight: bold;
+  margin-bottom: 16px;
+  text-align: center;
+  font-family: 'SimSun', serif;
+}
+
+.ai-help-warning-path {
+  font-size: 11px;
+  color: #8b0000;
+  font-family: 'Courier New', monospace;
+  background: #ffffd0;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  border: 2px inset #fff;
+  border-left: 4px solid #cc0000;
+  word-break: break-all;
+  text-align: center;
+  font-weight: bold;
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.ai-help-warning-subtitle {
+  font-size: 12px;
+  color: #cc0000;
+  margin-bottom: 12px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.ai-help-warning-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 12px 20px;
+  background: #fff;
+  border: 2px inset #c0c0c0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.ai-help-warning-item {
+  font-size: 13px;
+  color: #cc0000;
+  margin-bottom: 6px;
+  font-weight: bold;
+  text-align: center;
+  font-family: 'SimSun', serif;
+}
+
+.ai-help-warning-item:last-child {
+  margin-bottom: 0;
+}
+
+.ai-help-warning-question {
+  font-size: 13px;
+  color: #000080;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed #cc0000;
+  width: 100%;
+}
+
+/* AI求救信警告弹窗按钮区域 */
+.ai-help-warning-dialog .dialog-actions {
+  padding: 12px 16px;
+  gap: 16px;
+  justify-content: center;
+}
+
+/* AI求救信警告弹窗按钮基础样式 */
+.ai-help-warning-dialog .win98-btn-std {
+  font-size: 13px;
+  font-weight: bold;
+  height: 28px;
+  padding: 0 24px;
+  min-width: 90px;
+  font-family: 'SimSun', serif;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* 取消按钮 - 标准灰色 */
+.ai-help-btn-cancel {
+  background: #d4d4d4;
+  color: #666;
+}
+
+.ai-help-btn-cancel:active {
+  background: #c0c0c0;
+}
+
+/* 继续按钮 - 红色警告样式 */
+.ai-help-btn-continue {
+  background: linear-gradient(180deg, #ff6b6b 0%, #cc0000 50%, #990000 100%);
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  border-top: 1px solid #ff9999;
+  border-left: 1px solid #ff9999;
+  border-right: 1px solid #660000;
+  border-bottom: 1px solid #660000;
+}
+
+.ai-help-btn-continue:active {
+  background: linear-gradient(180deg, #990000 0%, #cc0000 50%, #ff6b6b 100%);
+  border-top: 1px solid #660000;
+  border-left: 1px solid #660000;
+  border-right: 1px solid #ff9999;
+  border-bottom: 1px solid #ff9999;
+  transform: translateY(1px);
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* ==================== AI求救信控制台启动动画 ==================== */
+
+.ai-console-startup-dialog {
+  width: 400px;
+  max-width: 90%;
+}
+
+.ai-console-startup-dialog .win98-window-body {
+  padding: 0;
+  flex: unset;
+}
+
+.ai-console-startup-content {
+  padding: 40px 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 120px;
+}
+
+.console-startup-progress {
+  width: 70%;
+  max-width: 280px;
+  margin: 0 auto 20px auto;
+}
+
+.console-startup-text {
+  font-size: 13px;
+  color: #000;
+  font-family: 'Courier New', monospace;
+  text-align: center;
+  min-height: 24px;
+  font-weight: bold;
+}
+
+/* ==================== AI求救信CMD控制台窗口 ==================== */
+
+/* 控制台遮罩层 - 全屏 */
+.cmd-console-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2200;
+}
+
+/* 控制台窗口 */
+.cmd-console-window {
+  width: 90%;
+  max-width: 700px;
+  height: 75vh;
+  display: flex;
+  flex-direction: column;
+  background: #000;
+  border: 2px solid #808080;
+  box-shadow: 0 0 40px rgba(0, 255, 0, 0.3), 0 10px 60px rgba(0, 0, 0, 0.8);
+}
+
+/* 控制台标题栏 - 复用 Win98 样式 */
+.cmd-title-bar {
+  flex-shrink: 0;
+  background: linear-gradient(90deg, #000080, #1084d0);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 3px 2px 6px;
+  height: 20px;
+  border-bottom: 1px solid #808080;
+}
+
+/* 控制台内容区域 */
+.cmd-content {
+  flex: 1;
+  overflow: hidden;
+  background: #0c0c0c;
+  position: relative;
+}
+
+.cmd-text-area {
+  width: 100%;
+  height: 100%;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.cmd-text {
+  font-size: 14px;
+  color: #00ff00;
+  line-height: 1.7;
+  font-family: 'Consolas', 'Courier New', 'SimSun', monospace;
+  white-space: pre-wrap;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+}
+
+.cmd-cursor {
+  color: #00ff00;
+  animation: blink 1s infinite;
+  font-weight: bold;
+  text-shadow: 0 0 10px rgba(0, 255, 0, 0.8);
+}
+
+@keyframes blink {
+  0%, 49% {
+    opacity: 1;
+  }
+  50%, 100% {
+    opacity: 0;
+  }
+}
+
+/* 倒计时文本样式 */
+.cmd-countdown {
+  color: #ff0000;
+  font-size: 16px;
+  font-weight: bold;
+  text-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
+  animation: pulse 0.5s infinite;
+  margin-top: 8px;
+  display: block;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.05);
+  }
+}
+
+/* 控制台淡出动画 */
+.cmd-console-window.fading-out {
+  animation: fadeOutAll 3s ease-in forwards;
+}
+
+.cmd-console-window.fading-out .cmd-text,
+.cmd-console-window.fading-out .cmd-countdown,
+.cmd-console-window.fading-out .cmd-cursor {
+  animation: textFadeOut 3s ease-in forwards;
+}
+
+@keyframes fadeOutAll {
+  0% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes textFadeOut {
+  0% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  50% {
+    opacity: 0.8;
+    filter: blur(1px);
+  }
+  100% {
+    opacity: 0;
+    filter: blur(4px);
+  }
+}
+
+/* ==================== AI求救信奖励弹框 ==================== */
+
+.ai-reward-dialog {
+  width: 380px;
+  max-width: 90%;
+}
+
+.ai-reward-dialog .win98-window-body {
+  padding: 0;
+  flex: unset;
+}
+
+.ai-reward-content {
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(180deg, #ffffd0 0%, #fff0d0 100%);
+  border: 2px inset #fff;
+  margin: 4px;
+}
+
+.ai-reward-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+  animation: bounce 0.5s ease;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.ai-reward-title {
+  font-size: 15px;
+  color: #cc6600;
+  font-weight: bold;
+  margin-bottom: 8px;
+  text-align: center;
+  font-family: 'SimSun', serif;
+}
+
+.ai-reward-amount {
+  font-size: 24px;
+  color: #cc0000;
+  font-weight: bold;
+  margin-bottom: 12px;
+  text-align: center;
+  text-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+  font-family: 'SimSun', serif;
+}
+
+.ai-reward-divider {
+  width: 80%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #cc6600, transparent);
+  margin: 12px 0;
+}
+
+.ai-reward-desc {
+  font-size: 12px;
+  color: #666;
+  text-align: center;
+  margin-bottom: 4px;
+  font-family: 'SimSun', serif;
+}
+
+.ai-reward-mp-title {
+  font-size: 13px;
+  color: #000080;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 8px;
+  margin-bottom: 12px;
+  font-family: 'SimSun', serif;
+}
+
+.ai-reward-mp-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border: 2px inset #c0c0c0;
+  padding: 10px 16px;
+  margin-bottom: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ai-reward-mp-box:active {
+  background: #f0f0f0;
+  border-style: outset;
+}
+
+.ai-reward-mp-name {
+  font-size: 14px;
+  color: #000;
+  font-weight: bold;
+  font-family: 'SimSun', serif;
+}
+
+.ai-reward-copy-hint {
+  font-size: 11px;
+  color: #0066cc;
+  font-family: 'SimSun', serif;
+}
+
+.ai-reward-footer {
+  font-size: 12px;
+  color: #cc0000;
+  text-align: center;
+  margin-top: 8px;
+  font-style: italic;
+  font-family: 'SimSun', serif;
+}
+
+.ai-reward-dialog .dialog-actions {
+  padding: 12px 16px;
+}
+
+.ai-reward-confirm-btn {
+  width: 100%;
+  font-size: 14px;
+  font-weight: bold;
+  height: 32px;
+  background: linear-gradient(180deg, #4CAF50 0%, #2E7D32 100%);
+  color: #fff;
+  border-top: 1px solid #81C784;
+  border-left: 1px solid #81C784;
+  border-right: 1px solid #1B5E20;
+  border-bottom: 1px solid #1B5E20;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.ai-reward-confirm-btn:active {
+  background: linear-gradient(180deg, #2E7D32 0%, #4CAF50 100%);
+  border-top: 1px solid #1B5E20;
+  border-left: 1px solid #1B5E20;
+  border-right: 1px solid #81C784;
+  border-bottom: 1px solid #81C784;
+}
+
+/* ==================== 记事本弹框样式 ==================== */
+
+.notepad-window {
+  width: 650px;
+  max-width: 90%;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  background: #c0c0c0;
+  border: 2px solid #808080;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.4);
+}
+
+/* 记事本标题栏 */
+.notepad-title-bar {
+  background: linear-gradient(90deg, #000080, #1084d0);
+  display: flex;
+  align-items: center;
+  padding: 2px 3px 2px 6px;
+  height: 20px;
+  border-bottom: 1px solid #808080;
+  flex-shrink: 0;
+}
+
+.notepad-title-icon {
+  font-size: 12px;
+  margin-right: 4px;
+}
+
+.notepad-title-text {
+  flex: 1;
+  color: #fff;
+  font-size: 11px;
+  font-family: 'SimSun', serif;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 记事本菜单栏 */
+.notepad-menu-bar {
+  display: flex;
+  background: #c0c0c0;
+  border-bottom: 1px solid #808080;
+  padding: 2px 0;
+  flex-shrink: 0;
+}
+
+.notepad-menu-item {
+  font-size: 11px;
+  color: #000;
+  font-family: 'SimSun', serif;
+  padding: 2px 8px;
+  cursor: pointer;
+}
+
+.notepad-menu-item:nth-child(n+2) {
+  margin-left: 4px;
+}
+
+/* 记事本内容区域 */
+.notepad-content {
+  flex: 1;
+  background: #fff;
+  margin: 2px;
+  border: 2px inset #808080;
+  padding: 16px;
+  overflow-y: auto;
+  max-height: calc(80vh - 60px);
+}
+
+.notepad-text {
+  font-size: 12px;
+  line-height: 1.8;
+  font-family: 'Courier New', 'SimSun', monospace;
+  color: #000;
+  white-space: pre-wrap;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  letter-spacing: 0.5px;
 }

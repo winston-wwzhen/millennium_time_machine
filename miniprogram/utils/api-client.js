@@ -271,6 +271,15 @@ const userApi = {
     return callCloudFunction('user', {
       type: 'getSystemInfo'
     });
+  },
+
+  /**
+   * AI求救信奖励（首次打开 +10000 时光币）
+   */
+  addAiHelpLetterReward() {
+    return callCloudFunction('user', {
+      type: 'addAiHelpLetterReward'
+    });
   }
 };
 
