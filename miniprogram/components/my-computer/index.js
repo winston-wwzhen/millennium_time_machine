@@ -576,33 +576,33 @@ Component({
       } else if (path === 'C:\\Windows') {
         return [
           { type: 'folder', name: 'System32', icon: '📁' },
-          { type: 'folder', name: 'Fonts', icon: '📁', disabled: true, message: '字体太多，加载中...' },
-          { type: 'folder', name: 'Temp', icon: '📁', disabled: true, message: '临时文件，自动清理中...' },
+          { type: 'folder', name: 'Fonts', icon: '📁', disabled: true, message: '笨蛋程序员加了一晚上班也没开发完成字体预览，今晚让他通宵，明天再来点点看，明天还不行就明年再来看看吧~' },
+          { type: 'folder', name: 'Temp', icon: '📁', disabled: true, message: '笨蛋程序员正在通宵清理临时文件，让他加个班吧，明天再来看看~' },
           { type: 'file', name: 'system.ini', icon: '📄' },
           { type: 'file', name: 'win.ini', icon: '📄' }
         ];
       } else if (path === 'C:\\Windows\\System32') {
         return [
-          { type: 'folder', name: 'Drivers', icon: '📁', disabled: true, message: '驱动程序，无法访问' },
-          { type: 'file', name: 'cmd.exe', icon: '📄', disabled: true, message: '命令提示符已禁用' },
-          { type: 'file', name: 'kernel32.dll', icon: '📄', disabled: true, message: '这是一个动态链接库文件' },
-          { type: 'file', name: 'notepad.exe', icon: '📄', disabled: true, message: '记事本已移除' },
+          { type: 'folder', name: 'Drivers', icon: '📁', disabled: true, message: '驱动程序是系统的核心，笨蛋程序员通宵研究了一晚上也不敢动，明天再让他试试吧~' },
+          { type: 'file', name: 'cmd.exe', icon: '📄', disabled: true, message: '命令提示符需要笨蛋程序员通宵加班开发黑科技，明天再来看看吧（后天就是2026年了）' },
+          { type: 'file', name: 'kernel32.dll', icon: '📄', disabled: true, message: '这是Windows内核！笨蛋程序员通宵研究了一晚上也不敢动，明年再来看看吧~' },
+          { type: 'file', name: 'notepad.exe', icon: '📄', disabled: true, message: '笨蛋程序员加了一晚上班也没开发完成记事本，今晚让他通宵，明天再试试，不行就等2026年吧~' },
           { type: 'file', name: 'config.sys', icon: '📄' }
         ];
       } else if (path === 'C:\\Program Files') {
         return [
           { type: 'folder', name: '千禧时光机', icon: '📁' },
-          { type: 'folder', name: 'Internet Explorer', icon: '📁', disabled: true, message: 'IE 6.0 - 你正在使用的浏览器' },
-          { type: 'folder', name: 'Windows Media Player', icon: '📁', disabled: true, message: 'WMP 9 - 播放器已禁用' },
-          { type: 'folder', name: 'Common Files', icon: '📁', disabled: true, message: '共享文件，无法访问' },
-          { type: 'file', name: 'readme.txt', icon: '📄', disabled: true, message: 'README文件' }
+          { type: 'folder', name: 'Internet Explorer', icon: '📁', disabled: true, message: '你用的就是这个IE浏览器呀！笨蛋程序员今晚通宵做别的功能呢，别点啦~' },
+          { type: 'folder', name: 'Windows Media Player', icon: '📁', disabled: true, message: '笨蛋程序员加了一晚上班也没开发完成WMP，今晚让他通宵，明天再来试试（后天就2026了）' },
+          { type: 'folder', name: 'Common Files', icon: '📁', disabled: true, message: '笨蛋程序员正在通宵研究共享文件夹怎么实现，明天再来看看吧~' },
+          { type: 'file', name: 'readme.txt', icon: '📄', disabled: true, message: '笨蛋程序员通宵写了一晚上README，但还没写完哈哈，明天再来看看~' }
         ];
       } else if (path === 'C:\\Program Files\\千禧时光机') {
         return [
-          { type: 'folder', name: 'data', icon: '📁', disabled: true, message: '游戏数据，无法修改' },
-          { type: 'file', name: 'QCIO.exe', icon: '📄', disabled: true, message: 'QQ空间模拟器 v3.7' },
-          { type: 'file', name: '如果当时.exe', icon: '📄', disabled: true, message: '人生模拟器 v1.0' },
-          { type: 'file', name: '农场游戏.exe', icon: '📄', disabled: true, message: '开心农场复刻版' },
+          { type: 'folder', name: 'data', icon: '📁', disabled: true, message: '游戏数据文件夹，笨蛋程序员今晚通宵保护数据安全，明天再来看看~' },
+          { type: 'file', name: 'QCIO.exe', icon: '📄', disabled: true, message: '点桌面QCIO图标就行啦，别让笨蛋程序员再加班了，他都加一晚上了~' },
+          { type: 'file', name: '如果当时.exe', icon: '📄', disabled: true, message: '点桌面"如果当时"图标开始人生模拟，让程序员休息会儿吧，他都通宵一晚上了~' },
+          { type: 'file', name: '农场游戏.exe', icon: '📄', disabled: true, message: '去QCIO空间玩农场吧，别点这个了，笨蛋程序员今晚通宵做别的功能呢~' },
           { type: 'file', name: 'changelog.txt', icon: '📄' }
         ];
       } else if (path === 'D:\\' || path === 'D:') {
@@ -614,52 +614,52 @@ Component({
         ];
       } else if (path === 'D:\\下载') {
         return [
-          { type: 'file', name: '学习资料.rar', icon: '📄', disabled: true, message: '压缩包，请解压后查看' },
-          { type: 'file', name: '电影合集.zip', icon: '📄', disabled: true, message: '正在解压...解压失败' },
-          { type: 'file', name: '图片包.rar', icon: '📄', disabled: true, message: '压缩包，请解压后查看' },
-          { type: 'file', name: '安装包.exe', icon: '📄', disabled: true, message: '安装失败，请使用原版光盘' },
+          { type: 'file', name: '学习资料.rar', icon: '📄', disabled: true, message: '笨蛋程序员加了一晚上班也没开发完成解压功能，今晚让他通宵，明天再来看看（后天就2026了）' },
+          { type: 'file', name: '电影合集.zip', icon: '📄', disabled: true, message: '笨蛋程序员通宵解压了一晚上也没成功，可能是文件坏了（其实是他不会）' },
+          { type: 'file', name: '图片包.rar', icon: '📄', disabled: true, message: '笨蛋程序员正在通宵研究解压算法，明天再来看看吧，明年也行~' },
+          { type: 'file', name: '安装包.exe', icon: '📄', disabled: true, message: '笨蛋程序员加了一晚上班也没安装成功，今晚让他通宵再试试，明天再来看~' },
           { type: 'file', name: '下载的图片.jpg', icon: '🖼️' },
-          { type: 'file', name: '音乐.mp3', icon: '🎵', disabled: true, message: '音频文件，请使用播放器' },
-          { type: 'file', name: '视频.rm', icon: '🎬', disabled: true, message: '视频文件，需要播放器' },
-          { type: 'file', name: '破解补丁.zip', icon: '📄', disabled: true, message: '病毒警告！' },
-          { type: 'file', name: '未完成下载.dat', icon: '📄', disabled: true, message: '下载未完成' }
+          { type: 'file', name: '音乐.mp3', icon: '🎵', disabled: true, message: '用"十分动听"播放器吧，虽然笨蛋程序员加了一晚上班也没让它真正播放音乐~' },
+          { type: 'file', name: '视频.rm', icon: '🎬', disabled: true, message: '笨蛋程序员通宵研究了一晚上RealMedia也没做出来播放器，明天再来看看吧~' },
+          { type: 'file', name: '破解补丁.zip', icon: '📄', disabled: true, message: '笨蛋程序员通宵研究了一晚上，这确实是病毒（开玩笑的，就是没做功能）' },
+          { type: 'file', name: '未完成下载.dat', icon: '📄', disabled: true, message: '笨蛋程序员通宵下载了一晚上，进度永远卡在99%，明天再来看看吧（后天就是2026年了）' }
         ];
       } else if (path === 'D:\\软件') {
         return [
-          { type: 'file', name: '十分动听.exe', icon: '📄', disabled: true, message: '启动"十分动听"播放器' },
-          { type: 'file', name: '非主流相机.exe', icon: '📄', disabled: true, message: '启动"非主流相机"' },
-          { type: 'file', name: 'QCIO.exe', icon: '📄', disabled: true, message: '跳转QCIO空间' },
-          { type: 'file', name: '慢播.exe', icon: '📄', disabled: true, message: '启动"慢播"' }
+          { type: 'file', name: '十分动听.exe', icon: '📄', disabled: true, message: '点桌面图标吧，别点这个了，笨蛋程序员都加一晚上班了，让他休息会儿~' },
+          { type: 'file', name: '非主流相机.exe', icon: '📄', disabled: true, message: '点桌面"非主流相机"就行，笨蛋程序员今晚通宵做别的功能呢，别让他加班了~' },
+          { type: 'file', name: 'QCIO.exe', icon: '📄', disabled: true, message: '点桌面QCIO图标吧，别点这个，让程序员休息会儿，他都通宵一晚上了~' },
+          { type: 'file', name: '慢播.exe', icon: '📄', disabled: true, message: '笨蛋程序员加了一晚上班也没开发完成"慢播"，今晚让他通宵，明天再来看看（后天就2026了）' }
         ];
       } else if (path === 'D:\\游戏') {
         return [
-          { type: 'file', name: '俄罗斯方块.exe', icon: '📄', disabled: true, message: '启动俄罗斯方块' },
-          { type: 'file', name: '扫雷.exe', icon: '📄', disabled: true, message: '启动扫雷' },
-          { type: 'file', name: '扫雷破解版.exe', icon: '📄', disabled: true, message: '启动破解版扫雷' }
+          { type: 'file', name: '俄罗斯方块.exe', icon: '📄', disabled: true, message: '笨蛋程序员通宵写了一晚上俄罗斯方块，但全是bug，明天再来看看吧（后天就是2026年了）' },
+          { type: 'file', name: '扫雷.exe', icon: '📄', disabled: true, message: '经典扫雷？笨蛋程序员加了一晚上班也没开发完成，去玩"星际探索"吧，明天再来看看~' },
+          { type: 'file', name: '扫雷破解版.exe', icon: '📄', disabled: true, message: '破解版？原版都没做出来呢！笨蛋程序员今晚通宵做原版，明天再来看看~' }
         ];
       } else if (path === 'D:\\资料') {
         return [
           { type: 'file', name: '毕业论文.doc', icon: '📄', content: '论非主流文化的兴衰\n\n摘要：\n本文探讨2000年代初期非主流文化在网络时代的兴起与衰落...' },
           { type: 'file', name: '简历.txt', icon: '📄', content: '求职简历\n\n姓名：葬爱·殇\n年龄：18岁\n特长：火星文翻译、QQ空间装扮\n求职意向：网络管理员' },
           { type: 'file', name: '学习笔记.txt', icon: '📄', content: '火星文学习笔记\n\n第一章：基础字符\n莪=我\n妳=你\n嗳=爱\n...' },
-          { type: 'file', name: '代码备份.zip', icon: '📄', disabled: true, message: '密码保护，无法打开' },
-          { type: 'file', name: '电子书合集.chm', icon: '📄', disabled: true, message: '电子书阅读器未安装' },
-          { type: 'file', name: '网页模板.htm', icon: '📄', disabled: true, message: '用浏览器打开' },
-          { type: 'file', name: '设计作品.psd', icon: '📄', disabled: true, message: 'Photoshop文件，无法打开' },
+          { type: 'file', name: '代码备份.zip', icon: '📄', disabled: true, message: '笨蛋程序员通宵试了一晚上密码，还是没解开，明天再来看看吧（后天就是2026年了）' },
+          { type: 'file', name: '电子书合集.chm', icon: '📄', disabled: true, message: '笨蛋程序员加了一晚上班也没开发完成CHM阅读器，今晚让他通宵，明天再来看看~' },
+          { type: 'file', name: '网页模板.htm', icon: '📄', disabled: true, message: '笨蛋程序员通宵看了一晚上也没看懂这HTML，明天再来看看吧（后天就2026了）' },
+          { type: 'file', name: '设计作品.psd', icon: '📄', disabled: true, message: '笨蛋程序员通宵打工了一晚上想买PS，但还是买不起，明天再来看看吧~' },
           { type: 'file', name: '个人简历.doc', icon: '📄', content: '另一份简历\n\n姓名：轻舞飞扬\n年龄：17岁\n爱好：写诗、画画' }
         ];
       } else if (path === 'USB:\\' || path === 'USB:') {
         return [
           { type: 'folder', name: '学习资料', icon: '📁' },
-          { type: 'folder', name: '我的作品', icon: '📁', disabled: true, message: '文件夹为空' },
-          { type: 'file', name: 'README.txt', icon: '📄', disabled: true, message: '使用说明' },
-          { type: 'file', name: '快捷方式.lnk', icon: '📄', disabled: true, message: '快捷方式无效' }
+          { type: 'folder', name: '我的作品', icon: '📁', disabled: true, message: '空的...笨蛋程序员通宵想了一晚上也没想出放什么，明天再来看看吧~' },
+          { type: 'file', name: 'README.txt', icon: '📄', disabled: true, message: '笨蛋程序员通宵写了一晚上README，但还是空的，明天再来看看吧（后天就是2026年了）' },
+          { type: 'file', name: '快捷方式.lnk', icon: '📄', disabled: true, message: '笨蛋程序员通宵找了一晚上也没找到目标文件，明天再来看看吧~' }
         ];
       } else if (path === 'USB:\\学习资料') {
         return [
-          { type: 'file', name: '程序设计入门.pdf', icon: '📄', disabled: true, message: 'PDF阅读器未安装' },
+          { type: 'file', name: '程序设计入门.pdf', icon: '📄', disabled: true, message: '笨蛋程序员加了一晚上班也没开发完成PDF阅读器，今晚让他通宵，明天再来看看（后天就2026了）' },
           { type: 'file', name: '英语单词.txt', icon: '📄', content: '英语单词本\n\nabandon - 放弃\nability - 能力\n...' },
-          { type: 'file', name: '毕业论文.doc', icon: '📄', disabled: true, message: '论文文件' }
+          { type: 'file', name: '毕业论文.doc', icon: '📄', disabled: true, message: '笨蛋程序员通宵写了一晚上论文，但写的是另一篇，明天再来看看吧~' }
         ];
       }
       return [];
