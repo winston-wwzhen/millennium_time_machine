@@ -3,11 +3,18 @@ Page({
   data: {
     // 播放状态
     playing: false,
+    isLoading: false, // loading状态
+    loadingClickCount: 0, // loading时点击次数
     currentTime: 0,
     duration: 234, // 默认3:54
     progress: 0,
     volume: 75,
     mode: 'loop', // loop, random, single
+
+    // Win98风格提示弹窗
+    showWin98Dialog: false,
+    win98DialogTitle: '',
+    win98DialogMessage: '',
 
     // 可视化波纹数据
     waveBars: [30, 50, 70, 90, 70, 50, 40, 60, 80, 100, 80, 60, 45, 65, 85, 95, 75, 55, 35, 50],
@@ -71,25 +78,72 @@ Page({
     if (this.playTimer) {
       clearInterval(this.playTimer);
     }
+    if (this.loadingTimer) {
+      clearTimeout(this.loadingTimer);
+    }
   },
 
   // 播放/暂停
   onPlayPause: function () {
+    // 如果正在loading，增加点击计数
+    if (this.data.isLoading) {
+      this.setData({
+        loadingClickCount: this.data.loadingClickCount + 1
+      });
+
+      // 超过3次点击，显示温馨提示
+      if (this.data.loadingClickCount >= 3) {
+        this.showWin98Dialog(
+          '温馨提示',
+          '音乐正在努力加载中...\n\n（其实真正播放功能还在开发中）\n\n那个笨蛋程序员正在拼命加班写代码呢~\n\n请再耐心等待一下下吧！'
+        );
+        // 重置计数
+        this.setData({ loadingClickCount: 0 });
+      }
+      return;
+    }
+
     const playing = !this.data.playing;
 
     if (playing) {
-      // 开始播放
+      // 清除之前的loading计时器（如果有）
+      if (this.loadingTimer) {
+        clearTimeout(this.loadingTimer);
+        this.loadingTimer = null;
+      }
+
+      // 显示loading状态
       this.setData({
-        playing: true,
-        statusText: `正在播放: ${this.data.currentTrack.title} - ${this.data.currentTrack.artist}`
+        isLoading: true,
+        loadingClickCount: 0,
+        statusText: '正在加载音乐...'
       });
 
-      // 启动进度更新
-      this.startProgress();
+      // 模拟加载延迟（1.5秒后开始播放）
+      this.loadingTimer = setTimeout(() => {
+        // 确保回调执行时页面仍然处于loading状态
+        if (this.data && this.data.isLoading) {
+          this.setData({
+            isLoading: false,
+            playing: true,
+            statusText: `正在播放: ${this.data.currentTrack.title} - ${this.data.currentTrack.artist}`
+          });
+
+          // 启动进度更新
+          this.startProgress();
+        }
+        this.loadingTimer = null;
+      }, 1500);
     } else {
-      // 暂停
+      // 暂停不需要loading，同时清除loading计时器
+      if (this.loadingTimer) {
+        clearTimeout(this.loadingTimer);
+        this.loadingTimer = null;
+      }
+
       this.setData({
         playing: false,
+        isLoading: false,
         statusText: '已暂停 - 点击继续播放'
       });
 
@@ -98,6 +152,24 @@ Page({
         clearInterval(this.playTimer);
       }
     }
+  },
+
+  // 显示Win98风格提示框
+  showWin98Dialog: function(title, message) {
+    this.setData({
+      showWin98Dialog: true,
+      win98DialogTitle: title,
+      win98DialogMessage: message
+    });
+  },
+
+  // 关闭Win98提示框
+  closeWin98Dialog: function() {
+    this.setData({
+      showWin98Dialog: false,
+      win98DialogTitle: '',
+      win98DialogMessage: ''
+    });
   },
 
   // 上一曲
