@@ -850,7 +850,7 @@
 .file-explorer-dialog {
   width: 90%;
   max-width: 450px;
-  max-height: 75vh;
+  height: 500px;
 }
 
 .file-explorer-dialog .win98-window-body {
@@ -953,8 +953,9 @@
 
 /* 文件列表内容 */
 .file-explorer-content {
-  max-height: 400px;
+  height: 350px;
   padding: 16px;
+  overflow-y: auto;
 }
 
 .file-list {

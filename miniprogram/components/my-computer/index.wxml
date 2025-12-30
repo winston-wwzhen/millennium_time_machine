@@ -450,6 +450,16 @@
           <button class="win98-btn-close" bindtap="onCloseFileExplorer">×</button>
         </view>
       </view>
+
+      <!-- 菜单栏 -->
+      <view class="menu-bar">
+        <text class="menu-item">文件(F)</text>
+        <text class="menu-item">编辑(E)</text>
+        <text class="menu-item">查看(V)</text>
+        <text class="menu-item">收藏(A)</text>
+        <text class="menu-item">帮助(H)</text>
+      </view>
+
       <view class="win98-window-body">
         <!-- 工具栏 -->
         <view class="file-explorer-toolbar">
@@ -474,6 +484,11 @@
           </view>
           <text class="file-count">共 {{fileExplorerItems.length}} 个对象</text>
         </scroll-view>
+      </view>
+
+      <!-- 状态栏 -->
+      <view class="status-bar">
+        <text>{{fileExplorerItems.length}} 个对象</text>
       </view>
     </view>
   </view>

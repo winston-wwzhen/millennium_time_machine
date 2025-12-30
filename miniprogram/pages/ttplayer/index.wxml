@@ -55,8 +55,10 @@
         <button class="ctrl-btn" bindtap="onPrev">
           <text class="btn-icon">⏮</text>
         </button>
-        <button class="ctrl-btn main-play" bindtap="onPlayPause">
-          <text class="btn-icon">{{playing ? '⏸' : '▶'}}</text>
+        <button class="ctrl-btn main-play {{isLoading ? 'loading' : ''}}" bindtap="onPlayPause">
+          <text class="btn-icon" wx:if="{{isLoading}}">⏳</text>
+          <text class="btn-icon" wx:elif="{{playing}}">⏸</text>
+          <text class="btn-icon" wx:else>▶</text>
         </button>
         <button class="ctrl-btn" bindtap="onNext">
           <text class="btn-icon">⏭</text>
@@ -148,6 +150,22 @@
                 backgroundColor="#3a3a5e"
                 block-size="10"/>
         <text class="band-value">{{item.value}}dB</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- Win98风格提示弹窗 -->
+  <view class="win98-dialog-overlay" wx:if="{{showWin98Dialog}}" catchtap="closeWin98Dialog">
+    <view class="win98-dialog-window" catchtap="stopPropagation">
+      <view class="win98-dialog-title-bar">
+        <text class="win98-dialog-title-text">{{win98DialogTitle}}</text>
+        <view class="win98-dialog-close" bindtap="closeWin98Dialog">×</view>
+      </view>
+      <view class="win98-dialog-content">
+        <text class="win98-dialog-message">{{win98DialogMessage}}</text>
+      </view>
+      <view class="win98-dialog-actions">
+        <button class="win98-dialog-btn" bindtap="closeWin98Dialog">确定</button>
       </view>
     </view>
   </view>
