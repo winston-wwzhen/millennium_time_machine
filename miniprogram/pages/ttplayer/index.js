@@ -28,20 +28,35 @@ Page({
     },
     currentTrackIndex: 0,
 
-    // 播放列表
+    // 播放列表 - 来自D:\Music的珍藏歌单（24首）
     playlist: [
+      // 2006金曲
       { id: 1, title: '童话', artist: '光良', album: '童话', duration: '3:54' },
-      { id: 2, title: '第一次爱的人', artist: '王心凌', album: 'Cyndi With U', duration: '4:12' },
-      { id: 3, title: '孤单北半球', artist: '欧得洋', album: '孤单北半球', duration: '4:23' },
-      { id: 4, title: '江南', artist: '林俊杰', album: '第二天堂', duration: '4:28' },
-      { id: 5, title: '七里香', artist: '周杰伦', album: '七里香', duration: '5:05' },
-      { id: 6, title: '波斯猫', artist: 'S.H.E', album: '奇幻旅程', duration: '3:45' },
-      { id: 7, title: '倔强', artist: '五月天', album: '时光机', duration: '4:21' },
-      { id: 8, title: '我们的爱', artist: 'F.I.R', album: '飞儿乐团', duration: '4:38' },
-      { id: 9, title: 'Take Me To Your Heart', artist: 'Michael Learns To Rock', album: 'Take Me To Your Heart', duration: '3:56' },
-      { id: 10, title: '老鼠爱大米', artist: '王启文', album: '老鼠爱大米', duration: '4:18' },
-      { id: 11, title: '丁香花', artist: '唐磊', album: '丁香花', duration: '4:33' },
-      { id: 12, title: '十年', artist: '陈奕迅', album: '黑·白·灰', duration: '3:52' },
+      { id: 2, title: '七里香', artist: '周杰伦', album: '七里香', duration: '5:05' },
+      { id: 3, title: '江南', artist: '林俊杰', album: '第二天堂', duration: '4:28' },
+      { id: 4, title: '十年', artist: '陈奕迅', album: '黑·白·灰', duration: '3:52' },
+      { id: 5, title: '隐形的翅膀', artist: '张韶涵', album: '潘朵拉', duration: '3:58' },
+      { id: 6, title: '不想长大', artist: 'S.H.E', album: '不想长大', duration: '4:15' },
+      // 非主流必听
+      { id: 7, title: '嘻唰唰', artist: '花儿乐队', album: '花龄盛会', duration: '3:32' },
+      { id: 8, title: '睫毛弯弯', artist: '王心凌', album: 'Cyndi With U', duration: '3:58' },
+      { id: 9, title: '反转地球', artist: '潘玮柏', album: '反转地球', duration: '4:02' },
+      { id: 10, title: '我们的爱', artist: 'F.I.R', album: '飞儿乐团', duration: '4:38' },
+      // 2006爆款
+      { id: 11, title: '老鼠爱大米', artist: '杨臣刚', album: '老鼠爱大米', duration: '4:45' },
+      { id: 12, title: '两只蝴蝶', artist: '庞龙', album: '两只蝴蝶', duration: '4:22' },
+      { id: 13, title: '猪之歌', artist: '香香', album: '猪之歌', duration: '3:48' },
+      { id: 14, title: '别说我的眼泪你无所谓', artist: '东来东往', album: '回到我身边', duration: '4:33' },
+      { id: 15, title: '秋天不回来', artist: '王强', album: '秋天不回来', duration: '4:08' },
+      { id: 16, title: '香水有毒', artist: '胡杨林', album: '香水有毒', duration: '3:52' },
+      { id: 17, title: '求佛', artist: '誓言', album: '求佛', duration: '4:25' },
+      { id: 18, title: '一万个理由', artist: '郑源', album: '一万个理由', duration: '4:38' },
+      { id: 19, title: '你到底爱谁', artist: '刘嘉亮', album: '你到底爱谁', duration: '4:18' },
+      { id: 20, title: '丁香花', artist: '唐磊', album: '丁香花', duration: '4:33' },
+      { id: 21, title: '狼爱上羊', artist: '汤潮', album: '狼爱上羊', duration: '4:12' },
+      { id: 22, title: '不想让你哭', artist: '王强', album: '不想让你哭', duration: '4:05' },
+      { id: 23, title: '你是我的玫瑰花', artist: '庞龙', album: '你是我的玫瑰花', duration: '4:28' },
+      { id: 24, title: '笔记', artist: '周笔畅', album: '谁动了我的琴弦', duration: '4:08' },
     ],
 
     // 状态文本
@@ -119,21 +134,36 @@ Page({
         statusText: '正在加载音乐...'
       });
 
-      // 模拟加载延迟（1.5秒后开始播放）
+      // 模拟加载延迟（3秒后弹出煽情对话框）
       this.loadingTimer = setTimeout(() => {
         // 确保回调执行时页面仍然处于loading状态
         if (this.data && this.data.isLoading) {
+          // 取消loading状态
           this.setData({
             isLoading: false,
-            playing: true,
-            statusText: `正在播放: ${this.data.currentTrack.title} - ${this.data.currentTrack.artist}`
+            playing: false,
+            statusText: '就绪 - 点击播放开始欣赏音乐'
           });
 
-          // 启动进度更新
-          this.startProgress();
+          // 弹出煽情对话框
+          this.showWin98Dialog(
+            '致那些年的旋律',
+            `那些年，我们用千千静听听歌，
+每一首歌都精心收藏，
+每一个播放列表都用心编排。
+
+时光荏苒，岁月如梭，
+那些旋律依然在记忆深处回响。
+
+虽然这里无法播放真正的音乐，
+但那份关于青春的回忆，
+永远都在。
+
+—— 千禧时光机 敬上`
+          );
         }
         this.loadingTimer = null;
-      }, 1500);
+      }, 3000);
     } else {
       // 暂停不需要loading，同时清除loading计时器
       if (this.loadingTimer) {

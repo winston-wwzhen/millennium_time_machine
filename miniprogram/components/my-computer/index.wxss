@@ -234,6 +234,31 @@
   border-bottom: 1px solid #ffffff;
 }
 
+/* 普通按钮 - 与标准按钮相同高度 */
+.win98-btn {
+  font-size: 12px;
+  color: #000;
+  height: 22px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #c0c0c0;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.win98-btn:active {
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
+}
+
 /* 状态栏 */
 .status-bar {
   border-top: 1px solid #808080;
@@ -2223,8 +2248,8 @@
 /* ==================== 禁用文件提示弹窗样式 ==================== */
 
 .disabled-message-dialog {
-  width: 320px;
-  max-width: 85%;
+  width: 360px;
+  max-width: 90%;
 }
 
 .disabled-message-dialog .win98-window-body {
@@ -2233,9 +2258,10 @@
 }
 
 .disabled-message-content {
-  padding: 20px 24px;
-  min-height: 80px;
+  padding: 24px 28px;
+  min-height: 100px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   background: #fff;
@@ -2244,12 +2270,13 @@
 }
 
 .disabled-message-text {
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.8;
   color: #000;
   text-align: center;
   word-wrap: break-word;
   white-space: pre-wrap;
+  font-family: "SimSun", "宋体", serif;
 }
 
 /* ==================== NVIDIA驱动安装弹窗样式 ==================== */
@@ -2488,4 +2515,1183 @@
 
 .nvidia-driver-dialog .win98-btn-std::after {
   border: none;
+}
+
+/* ==================== 未来游戏弹窗（赛博朋克风格） ==================== */
+
+/* 遮罩层 */
+.future-game-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3100;
+  animation: future-fade-in 0.3s ease-out;
+}
+
+@keyframes future-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* 对话框容器 */
+.future-game-dialog {
+  position: relative;
+  width: 480px;
+  max-width: 95%;
+  background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 50%, #0f0f23 100%);
+  border: 2px solid #00ffff;
+  box-shadow:
+    0 0 20px rgba(0, 255, 255, 0.5),
+    0 0 40px rgba(0, 255, 255, 0.3),
+    inset 0 0 60px rgba(0, 255, 255, 0.05);
+  border-radius: 4px;
+  overflow: hidden;
+  animation: future-slide-in 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes future-slide-in {
+  from {
+    transform: scale(0.8) translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+/* 扫描线效果 */
+.future-scanlines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.15),
+    rgba(0, 0, 0, 0.15) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+  z-index: 1;
+  animation: future-scan 8s linear infinite;
+}
+
+@keyframes future-scan {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 100px;
+  }
+}
+
+/* 标题栏 */
+.future-title-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: linear-gradient(90deg, #ff00ff 0%, #00ffff 50%, #ff00ff 100%);
+  background-size: 200% 100%;
+  border-bottom: 2px solid #00ffff;
+  z-index: 2;
+  animation: future-gradient-flow 3s linear infinite;
+}
+
+@keyframes future-gradient-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+/* 标题栏发光效果 */
+.future-title-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  animation: future-glow-slide 2s ease-in-out infinite;
+}
+
+@keyframes future-glow-slide {
+  0%, 100% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(100%);
+  }
+}
+
+/* 标题文字 */
+.future-title-text {
+  position: relative;
+  z-index: 3;
+  font-size: 14px;
+  font-weight: bold;
+  font-family: 'Courier New', monospace;
+  color: #0a0a1a;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+  letter-spacing: 2px;
+}
+
+/* 关闭按钮 */
+.future-btn-close {
+  position: relative;
+  z-index: 3;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: bold;
+  color: #0a0a1a;
+  background: rgba(255, 255, 255, 0.3);
+  border: 2px solid #0a0a1a;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+  line-height: 1;
+}
+
+.future-btn-close:active {
+  background: rgba(255, 255, 255, 0.5);
+  transform: scale(0.9);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+}
+
+/* 内容区域 */
+.future-game-body {
+  position: relative;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 2;
+}
+
+/* 全息图标容器 */
+.future-hologram-icon {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+/* 全息图标 */
+.hologram-icon {
+  font-size: 56px;
+  position: relative;
+  z-index: 2;
+  animation: future-hologram-float 3s ease-in-out infinite;
+}
+
+@keyframes future-hologram-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+/* 全息环 */
+.hologram-ring {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 2px solid rgba(0, 255, 255, 0.6);
+  border-radius: 50%;
+  animation: future-ring-expand 2s ease-out infinite;
+}
+
+.hologram-ring.delay-1 {
+  animation-delay: 0.5s;
+}
+
+.hologram-ring.delay-2 {
+  animation-delay: 1s;
+}
+
+@keyframes future-ring-expand {
+  0% {
+    transform: scale(0.5);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+/* 游戏名称 */
+.future-game-name {
+  font-size: 18px;
+  font-weight: bold;
+  font-family: 'SimHei', 'Microsoft YaHei', sans-serif;
+  color: #00ffff;
+  text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
+  margin-bottom: 20px;
+  letter-spacing: 1px;
+}
+
+/* 信息网格 */
+.future-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 20px;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.future-info-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px;
+  background: rgba(0, 255, 255, 0.05);
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  border-radius: 2px;
+}
+
+.future-info-label {
+  font-size: 10px;
+  font-family: 'Courier New', monospace;
+  color: #ff00ff;
+  margin-bottom: 4px;
+  letter-spacing: 1px;
+}
+
+.future-info-value {
+  font-size: 12px;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+
+.future-info-value.required {
+  color: #00ff00;
+  text-shadow: 0 0 8px #00ff00;
+}
+
+.future-info-value.current {
+  color: #ff0000;
+  text-shadow: 0 0 8px #ff0000;
+}
+
+.future-info-value.year {
+  color: #ffff00;
+  text-shadow: 0 0 8px #ffff00;
+}
+
+.future-info-value.status {
+  color: #ff00ff;
+  text-shadow: 0 0 8px #ff00ff;
+  animation: future-status-blink 1s ease-in-out infinite;
+}
+
+@keyframes future-status-blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* 错误消息 */
+.future-error-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 12px;
+  background: rgba(255, 0, 255, 0.05);
+  border: 1px solid rgba(255, 0, 255, 0.3);
+  border-radius: 2px;
+}
+
+.error-text-line {
+  font-size: 11px;
+  font-family: 'Courier New', monospace;
+  color: #ff00ff;
+  line-height: 1.6;
+  letter-spacing: 1px;
+  text-shadow: 0 0 5px rgba(255, 0, 255, 0.5);
+}
+
+/* 底部提示 */
+.future-footer {
+  font-size: 10px;
+  font-family: 'Courier New', monospace;
+  color: rgba(0, 255, 255, 0.7);
+  text-align: center;
+  letter-spacing: 1px;
+  animation: future-footer-pulse 2s ease-in-out infinite;
+}
+
+@keyframes future-footer-pulse {
+  0%, 100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* 底部按钮区域 */
+.future-actions {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding: 12px 16px;
+  background: rgba(10, 10, 26, 0.5);
+  border-top: 1px solid rgba(0, 255, 255, 0.3);
+  z-index: 2;
+}
+
+/* 确认按钮 */
+.future-btn-accept {
+  padding: 10px 32px;
+  font-size: 12px;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  color: #0a0a1a;
+  background: linear-gradient(180deg, #00ffff 0%, #00cccc 100%);
+  border: 2px solid #00ffff;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: all 0.2s;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+.future-btn-accept:active {
+  background: linear-gradient(180deg, #00cccc 0%, #009999 100%);
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+  transform: scale(0.98);
+}
+
+/* ==================== 程序向导弹窗（手机竖屏优化 - 精致版 v2） ==================== */
+
+/* 程序向导弹窗容器 */
+.installer-wizard-dialog {
+  width: 90vw;
+  max-width: 400px;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  box-shadow: 6px 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* 向导标题栏 - 更丰富的渐变 */
+.installer-title-bar {
+  background: linear-gradient(180deg, #0000b0 0%, #1084d0 45%, #0a6cb0 100%);
+  padding: 6px 10px;
+  position: relative;
+}
+
+/* 标题栏文字样式优化 */
+.installer-title-bar .win98-title-text {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* 向导标题栏底部分隔线 */
+.installer-title-bar::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5) 50%, transparent);
+  opacity: 0.4;
+}
+
+/* 向导弹窗主体 - 垂直布局 */
+.installer-wizard-body {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 14px;
+  gap: 14px;
+  max-height: 58vh;
+  overflow-y: auto;
+  background: linear-gradient(180deg, #d8d8d8 0%, #cccccc 100%);
+}
+
+/* 怀旧模拟提示（显眼） */
+.installer-simulation-notice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: linear-gradient(135deg, #fff9e6 0%, #fff3cd 100%);
+  border: 2px solid;
+  border-color: #ffc107 #ff9800 #ff9800 #ffc107;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(255, 152, 0, 0.2);
+}
+
+.notice-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.notice-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: #e65100;
+  letter-spacing: 0.5px;
+}
+
+/* 顶部图标和信息区域 - 增强视觉效果 */
+.installer-header-section {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  background: linear-gradient(145deg, #fafafa 0%, #f5f5f5 100%);
+  border: 2px solid;
+  border-color: #909090 #ffffff #ffffff #909090;
+  box-shadow: inset 2px 2px 4px rgba(255, 255, 255, 0.9),
+              inset -1px -1px 2px rgba(0, 0, 0, 0.08);
+  border-radius: 3px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 顶部区域背景装饰 */
+.installer-header-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #0000a0, #20a0f0, #0000a0);
+  opacity: 0.7;
+}
+
+/* 大图标 - 增加阴影和层次 */
+.installer-icon-large {
+  font-size: 56px;
+  line-height: 1;
+  flex-shrink: 0;
+  filter: drop-shadow(2px 3px 4px rgba(0, 0, 0, 0.25));
+  position: relative;
+  z-index: 1;
+}
+
+/* 程序信息 */
+.installer-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 7px;
+  flex: 1;
+  position: relative;
+  z-index: 1;
+  padding-top: 2px;
+}
+
+.installer-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0000c0;
+  line-height: 1.2;
+  letter-spacing: 0.3px;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
+}
+
+.installer-version {
+  font-size: 10px;
+  color: #444;
+  background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+  padding: 2px 6px;
+  border-radius: 3px;
+  align-self: flex-start;
+  border: 1px solid;
+  border-color: #a0a0a0 #ffffff #ffffff #a0a0a0;
+  box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.6),
+              0 1px 2px rgba(0, 0, 0, 0.05);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  margin-top: 2px;
+}
+
+.installer-description {
+  font-size: 10px;
+  color: #666;
+  line-height: 1.35;
+  font-style: italic;
+  opacity: 0.85;
+}
+
+/* 欢迎内容 - 增强设计 */
+.installer-welcome-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: linear-gradient(145deg, #ffffff 0%, #fbfbfb 100%);
+  border: 2px solid;
+  border-color: #888 #ffffff #ffffff #888;
+  box-shadow: inset 2px 2px 4px rgba(255, 255, 255, 0.95),
+              inset -1px -1px 2px rgba(0, 0, 0, 0.06);
+  border-radius: 3px;
+  position: relative;
+}
+
+/* 欢迎区域左侧装饰条 */
+.installer-welcome-content::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 4px;
+  background: linear-gradient(180deg, #0000b0, #30b0f0, #0000b0);
+  border-radius: 0 2px 2px 0;
+}
+
+.welcome-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #0000b0;
+  line-height: 1.35;
+  margin-left: 10px;
+  letter-spacing: 0.3px;
+}
+
+.welcome-message {
+  font-size: 11px;
+  color: #2a2a2a;
+  line-height: 1.7;
+  white-space: pre-line;
+  margin-left: 10px;
+  font-weight: 400;
+  text-align: justify;
+}
+
+/* 选项 - 精致设计 */
+.installer-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: linear-gradient(145deg, #ffffff 0%, #f3f3f3 100%);
+  border: 2px solid;
+  border-color: #888 #ffffff #ffffff #888;
+  box-shadow: inset 2px 2px 4px rgba(255, 255, 255, 0.85),
+              inset -1px -1px 2px rgba(0, 0, 0, 0.05);
+  border-radius: 3px;
+  position: relative;
+  padding-top: 16px;
+}
+
+/* 选项区域装饰 */
+.installer-options::before {
+  content: '选项';
+  position: absolute;
+  top: -9px;
+  left: 14px;
+  background: linear-gradient(135deg, #f3f3f3, #ebebeb);
+  padding: 2px 10px;
+  font-size: 9px;
+  color: #555;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  border: 1px solid;
+  border-color: #999 #ddd #ddd #999;
+  border-radius: 2px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.installer-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  min-height: 36px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 4px;
+  border: 1px solid #e0e0e0;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.installer-option:active {
+  background: rgba(20, 140, 220, 0.15);
+  transform: scale(0.98);
+}
+
+.installer-option.option-selected {
+  background: rgba(20, 140, 220, 0.12);
+  border-color: rgba(20, 140, 220, 0.4);
+  box-shadow: 0 0 0 1px rgba(20, 140, 220, 0.2),
+              inset 0 1px 2px rgba(20, 140, 220, 0.1);
+}
+
+.option-bullet {
+  font-size: 16px;
+  color: #0000b0;
+  line-height: 1;
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+  filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.15));
+}
+
+.option-bullet,
+.option-text {
+  pointer-events: none;
+}
+
+.option-text {
+  font-size: 12px;
+  color: #222;
+  line-height: 1.4;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+}
+
+/* 底部按钮区域 - 增强设计 */
+.installer-wizard-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 12px 14px 14px 14px;
+  background: linear-gradient(180deg, #c5c5c5 0%, #b5b5b5 100%);
+  border-top: 1px solid #999;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+/* 取消按钮样式 */
+.installer-cancel-btn {
+  min-width: 70px;
+  height: 22px;
+  padding: 0 14px;
+  font-size: 12px;
+  background: linear-gradient(180deg, #e0e0e0 0%, #d0d0d0 50%, #c5c5c5 100%);
+  border: 2px solid;
+  border-color: #ffffff #606060 #606060 #ffffff;
+  box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.7),
+              0 2px 4px rgba(0, 0, 0, 0.15);
+  color: #333;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.installer-cancel-btn:active {
+  background: linear-gradient(180deg, #c5c5c5 0%, #d0d0d0 50%, #e0e0e0 100%);
+  border-color: #606060 #ffffff #ffffff #606060;
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.15);
+  transform: translateY(1px);
+}
+
+/* 开始按钮样式 */
+.installer-primary-btn {
+  min-width: 70px;
+  height: 22px;
+  padding: 0 18px;
+  font-size: 12px;
+  background: linear-gradient(180deg, #20b0f0 0%, #1080d0 45%, #0a60a0 100%);
+  border: 2px solid;
+  border-color: #40c0ff #004080 #004080 #40c0ff;
+  box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.4),
+              0 2px 6px rgba(0, 80, 160, 0.3);
+  color: #ffffff;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.3);
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.installer-primary-btn:active {
+  background: linear-gradient(180deg, #0a60a0 0%, #1080d0 55%, #20b0f0 100%);
+  border-color: #004080 #40c0ff #40c0ff #004080;
+  box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.25);
+  transform: translateY(1px);
+  text-shadow: none;
+}
+
+/* ==================== 安装完成弹窗（煽情怀旧） ==================== */
+
+/* 完成弹窗容器 */
+.install-complete-dialog {
+  width: 90vw;
+  max-width: 380px;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  box-shadow: 6px 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* 完成弹窗标题栏 - 怀旧渐变 */
+.complete-title-bar {
+  background: linear-gradient(180deg, #0000b0 0%, #1084d0 45%, #0a6cb0 100%);
+  padding: 8px 10px;
+  position: relative;
+}
+
+/* 完成弹窗主体 */
+.install-complete-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 20px 20px 20px;
+  background: linear-gradient(180deg, #d8d8d8 0%, #cccccc 100%);
+}
+
+/* 成功图标区域 */
+.complete-icon-area {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.complete-icon-large {
+  font-size: 64px;
+  line-height: 1;
+  filter: drop-shadow(3px 4px 6px rgba(0, 0, 0, 0.25));
+}
+
+.complete-checkmark {
+  position: absolute;
+  bottom: -4px;
+  right: -8px;
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  border: 2px solid;
+  border-color: #66bb6a #2e7d32 #2e7d32 #66bb6a;
+}
+
+/* 程序名称 */
+.complete-program-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0000b0;
+  margin-bottom: 16px;
+  letter-spacing: 0.5px;
+}
+
+/* 煽情文案 */
+.complete-message {
+  font-size: 13px;
+  color: #333;
+  line-height: 1.8;
+  white-space: pre-line;
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: 400;
+  max-width: 300px;
+}
+
+/* 桌面图标提示 */
+.complete-shortcut-notice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: linear-gradient(135deg, #fff9e6 0%, #fff3cd 100%);
+  border: 1px solid;
+  border-color: #ffc107 #ff9800 #ff9800 #ffc107;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(255, 152, 0, 0.15);
+}
+
+.shortcut-icon {
+  font-size: 18px;
+}
+
+.shortcut-text {
+  font-size: 12px;
+  color: #e65100;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+/* 底部按钮区域 */
+.complete-actions {
+  display: flex;
+  justify-content: center;
+  padding: 12px 14px 14px 14px;
+  background: linear-gradient(180deg, #c5c5c5 0%, #b5b5b5 100%);
+  border-top: 1px solid #999;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+/* 完成按钮样式 */
+.complete-primary-btn {
+  min-width: 100px;
+  height: 24px;
+  padding: 0 24px;
+  font-size: 12px;
+  background: linear-gradient(180deg, #20b0f0 0%, #1080d0 45%, #0a60a0 100%);
+  border: 2px solid;
+  border-color: #40c0ff #004080 #004080 #40c0ff;
+  box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.4),
+              0 2px 6px rgba(0, 80, 160, 0.3);
+  color: #ffffff;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.3);
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.complete-primary-btn:active {
+  background: linear-gradient(180deg, #0a60a0 0%, #1080d0 55%, #20b0f0 100%);
+  border-color: #004080 #40c0ff #40c0ff #004080;
+  box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.25);
+  transform: translateY(1px);
+  text-shadow: none;
+}
+/* ==================== 歌词展示弹窗（Win98风格 - 怀旧MP3播放器） ==================== */
+
+.music-lyrics-dialog {
+  background: linear-gradient(180deg, #e8e8e8 0%, #d0d0d0 100%);
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #808080;
+  border-bottom: 2px solid #808080;
+  box-shadow: inset 1px 1px #dfdfdf, inset -1px -1px #0a0a0a, 0 10px 40px rgba(0, 0, 0, 0.5);
+  width: 400px;
+  max-width: 93vw;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 标题栏 - 音乐主题 */
+.music-title-bar {
+  background: linear-gradient(90deg, #4a90d9 0%, #2a60a9 50%, #1a5089 100%);
+}
+
+/* 歌词内容区域 */
+.music-lyrics-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+/* 歌曲信息区域 */
+.music-info-section {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  background: linear-gradient(135deg, rgba(74, 144, 217, 0.1) 0%, rgba(42, 96, 169, 0.05) 100%);
+  border: 2px solid;
+  border-color: #4a90d9 #2a60a9 #2a60a9 #4a90d9;
+  border-radius: 8px;
+}
+
+.music-cover {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  background: linear-gradient(135deg, #4a90d9 0%, #2a60a9 100%);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(74, 144, 217, 0.4);
+}
+
+.music-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+}
+
+.music-song-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #1a5089;
+  line-height: 1.3;
+}
+
+.music-artist,
+.music-album,
+.music-year {
+  font-size: 12px;
+  color: #666;
+  line-height: 1.4;
+}
+
+/* 歌词内容 */
+.lyrics-content {
+  padding: 16px;
+  background: #fff;
+  border: 2px inset #fff;
+  box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  min-height: 200px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.lyrics-text {
+  font-size: 14px;
+  line-height: 1.8;
+  color: #333;
+  white-space: pre-line;
+  font-family: 'SimSun', serif;
+  letter-spacing: 0.5px;
+}
+
+/* 歌词滚动条样式 */
+.lyrics-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.lyrics-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.lyrics-content::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #4a90d9 0%, #2a60a9 100%);
+  border-radius: 4px;
+}
+
+.lyrics-content::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #5aa0e9 0%, #3a70b9 100%);
+}
+
+/* ==================== 歌词弹窗怀旧装饰元素 ==================== */
+
+/* 怀旧横幅 */
+.music-nostalgia-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+  background: linear-gradient(135deg, rgba(74, 144, 217, 0.15) 0%, rgba(42, 96, 169, 0.1) 100%);
+  border: 1px solid rgba(74, 144, 217, 0.3);
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.banner-text {
+  font-size: 13px;
+  color: #2a60a9;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+
+/* 封面区域增强 - 年份徽章 */
+.music-cover {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  background: linear-gradient(135deg, #4a90d9 0%, #2a60a9 100%);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(74, 144, 217, 0.4);
+  position: relative;
+}
+
+.cover-icon {
+  font-size: 36px;
+  line-height: 1;
+}
+
+.cover-year {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  font-size: 10px;
+  font-weight: bold;
+  color: #fff;
+  background: linear-gradient(135deg, #ff9800 0%, #ff6f00 100%);
+  padding: 2px 6px;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(255, 152, 0, 0.4);
+  letter-spacing: 0.5px;
+}
+
+/* 怀旧提示 */
+.music-nostalgia-tip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: linear-gradient(135deg, rgba(255, 249, 230, 0.8) 0%, rgba(255, 243, 205, 0.6) 100%);
+  border: 1px dashed rgba(255, 152, 0, 0.4);
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.tip-icon {
+  font-size: 14px;
+}
+
+.tip-text {
+  font-size: 11px;
+  color: #e65100;
+  font-style: italic;
+  letter-spacing: 0.3px;
+}
+
+/* 底部怀旧文字 */
+.music-footer-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, rgba(74, 144, 217, 0.08) 0%, rgba(42, 96, 169, 0.05) 100%);
+  border-top: 1px solid rgba(74, 144, 217, 0.2);
+  border-radius: 6px;
+  margin-top: 8px;
+}
+
+.footer-text {
+  font-size: 11px;
+  color: #666;
+  text-align: center;
+  letter-spacing: 1px;
+  font-family: 'SimSun', serif;
+  line-height: 1.6;
+}
+
+/* ==================== 音乐弹窗按钮样式 ==================== */
+
+/* 按钮容器 */
+.music-cancel-btn,
+.music-goto-btn {
+  flex: 1;
+  margin: 0 6px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  letter-spacing: 0.5px;
+}
+
+.music-cancel-btn:first-child,
+.music-goto-btn:first-child {
+  margin-left: 0;
+}
+
+.music-cancel-btn:last-child,
+.music-goto-btn:last-child {
+  margin-right: 0;
+}
+
+/* 取消按钮 - 灰色柔和风格 */
+.music-cancel-btn {
+  background: linear-gradient(180deg, #f5f5f5 0%, #e0e0e0 100%);
+  border: 1px solid #c0c0c0;
+  color: #666;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08),
+              inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.music-cancel-btn::after {
+  border: none;
+}
+
+/* 去听歌按钮 - 蓝色渐变高亮风格 */
+.music-goto-btn {
+  background: linear-gradient(180deg, #5ba3f5 0%, #3a8ce6 50%, #2978d4 100%);
+  border: 1px solid #1a68c4;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 3px 10px rgba(42, 136, 230, 0.35),
+              inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.music-goto-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.music-goto-btn::after {
+  border: none;
+}
+
+/* 按钮active状态 */
+.music-cancel-btn:active {
+  background: linear-gradient(180deg, #e0e0e0 0%, #d0d0d0 100%);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12),
+              inset 0 1px 2px rgba(0, 0, 0, 0.05);
+  transform: translateY(1px);
+}
+
+.music-goto-btn:active {
+  background: linear-gradient(180deg, #4a92e5 0%, #2978d4 50%, #1a68c4 100%);
+  box-shadow: 0 1px 5px rgba(42, 136, 230, 0.4),
+              inset 0 2px 4px rgba(0, 0, 0, 0.15);
+  transform: translateY(1px);
 }
