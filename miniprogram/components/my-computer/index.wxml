@@ -1126,8 +1126,8 @@
   </view>
 
   <!-- 全屏游戏弹窗（反恐精英） -->
-  <view class="fullscreen-game-overlay" wx:if="{{showFullscreenGame}}">
-    <view class="fullscreen-game-container">
+  <view class="fullscreen-game-overlay" wx:if="{{showFullscreenGame}}" catchtap="doNothing">
+    <view class="fullscreen-game-container" catchtap="stopPropagation">
       <!-- 加载状态 -->
       <view class="fullscreen-game-loading" wx:if="{{fullscreenGameState.loading}}">
         <view class="loading-icon">{{fullscreenGameData.icon}}</view>
@@ -1147,11 +1147,8 @@
           <text class="incompatible-detail">推荐: DirectX 9.0c 显卡</text>
           <text class="incompatible-detail">当前: 标准VGA适配器</text>
         </view>
-        <button class="win98-btn-std" bindtap="closeFullscreenGame">确定</button>
+        <button class="win98-btn-std" catchtap="closeFullscreenGame">确定</button>
       </view>
-
-      <!-- 关闭按钮 -->
-      <button class="fullscreen-close-btn" bindtap="closeFullscreenGame" wx:if="{{fullscreenGameState.loading}}">×</button>
     </view>
   </view>
 

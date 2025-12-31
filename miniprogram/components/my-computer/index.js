@@ -270,6 +270,18 @@ Component({
   },
 
   methods: {
+    // ==================== 工具方法 ====================
+
+    // 阻止事件冒泡
+    stopPropagation() {
+      // 空函数，仅用于阻止事件冒泡
+    },
+
+    // 空操作
+    doNothing() {
+      // 空函数
+    },
+
     // ==================== 窗口控制 ====================
 
     // 关闭窗口
@@ -2922,6 +2934,9 @@ AI助手本人无法直接将这份文件送达给相关部门，
 
     // 关闭全屏游戏弹窗
     closeFullscreenGame() {
+      const gamesPath = "D:\\Games";
+
+      // 关闭全屏游戏弹窗，同时返回到Games目录
       this.setData({
         showFullscreenGame: false,
         fullscreenGameData: null,
@@ -2929,6 +2944,16 @@ AI助手本人无法直接将这份文件送达给相关部门，
           loading: true,
           incompatible: false,
         },
+        // 确保文件浏览器打开并在Games目录
+        showFileExplorer: true,
+        fileExplorerPath: gamesPath,
+        fileExplorerBreadcrumbs: [
+          { label: "D:\\", path: "D:\\" },
+          { label: "Games", path: gamesPath }
+        ],
+      }, () => {
+        // 在setData回调中加载文件列表
+        this.loadFileExplorerItems(gamesPath);
       });
     },
 
