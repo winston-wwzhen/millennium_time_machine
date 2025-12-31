@@ -92,7 +92,7 @@
 /* 菜单栏 */
 .menu-bar {
   display: flex;
-  gap: 4px;
+  gap: 2px;
   padding: 2px 4px;
   background: #c0c0c0;
   border-bottom: 1px solid #808080;
@@ -125,8 +125,8 @@
   display: flex;
   align-items: center;
   cursor: pointer;
-  padding: 2px 8px;
-  min-width: 60px;
+  padding: 2px 6px;
+  min-width: 40px;
 }
 
 .menu-arrow {
@@ -143,14 +143,14 @@
   border-color: #808080 #ffffff #ffffff #808080;
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
   z-index: 100;
-  min-width: 110px;
+  min-width: 100px;
   padding: 2px 0;
 }
 
 .menu-dropdown-item {
   display: flex;
   align-items: center;
-  padding: 6px 12px;
+  padding: 5px 10px;
   font-size: 11px;
   cursor: pointer;
   font-family: 'SimSun', sans-serif;
@@ -170,6 +170,32 @@
 .menu-item-icon {
   margin-right: 8px;
   font-size: 12px;
+}
+
+/* 菜单分隔线 */
+.menu-dropdown-separator {
+  height: 1px;
+  background: #c0c0c0;
+  margin: 4px 0;
+  border-top: 1px solid #ffffff;
+}
+
+/* 禁用菜单项 */
+.menu-dropdown-item.menu-disabled {
+  color: #808080;
+  cursor: not-allowed;
+}
+
+.menu-dropdown-item.menu-disabled:active {
+  background: transparent;
+  color: #808080;
+}
+
+/* 菜单快捷键 */
+.menu-shortcut {
+  margin-left: auto;
+  font-size: 10px;
+  color: #808080;
 }
 
 /* 窗口主体 */
@@ -1651,4 +1677,606 @@
   word-break: keep-all;
   overflow-wrap: break-word;
   letter-spacing: 0.5px;
+}
+
+/* ==================== 命令行控制台样式 ==================== */
+
+.cmd-console-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 2300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cmd-console-window {
+  width: 700px;
+  max-width: 95%;
+  height: 520px;
+  max-height: 85vh;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #fff #000 #000 #fff;
+  box-shadow: 6px 6px 15px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+}
+
+/* 控制台标题栏 */
+.cmd-title-bar {
+  background: linear-gradient(180deg, #1084d0 0%, #000080 100%);
+  display: flex;
+  align-items: center;
+  padding: 3px 5px;
+  border-bottom: 1px solid #000;
+}
+
+.cmd-title-icon {
+  font-size: 14px;
+  margin-right: 5px;
+}
+
+.cmd-title-text {
+  flex: 1;
+  color: #fff;
+  font-size: 13px;
+  font-weight: bold;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+/* 控制台菜单栏 */
+.cmd-menu-bar {
+  display: flex;
+  background: #c0c0c0;
+  padding: 3px 8px;
+  border-bottom: 1px solid #808080;
+}
+
+.cmd-menu-item {
+  font-size: 11px;
+  color: #000;
+  padding: 2px 10px;
+  cursor: pointer;
+}
+
+.cmd-menu-item:nth-child(n+2) {
+  margin-left: 0;
+}
+
+.cmd-menu-item:active {
+  background: #000080;
+  color: #fff;
+}
+
+/* 控制台内容区域 */
+.cmd-content {
+  flex: 1;
+  background: #000;
+  padding: 8px 10px;
+  margin: 3px 4px 2px 4px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+  border-left: 2px inset #808080;
+  border-right: 2px inset #808080;
+  box-sizing: border-box;
+}
+
+.cmd-output {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.cmd-line {
+  font-size: 13px;
+  line-height: 1.5;
+  font-family: 'Consolas', 'Lucida Console', 'Courier New', monospace;
+  white-space: pre-wrap;
+  word-break: break-all;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  display: block;
+  margin-bottom: 1px;
+  max-width: 100%;
+}
+
+/* 不同类型输出的样式 - 更接近真实CMD */
+.cmd-line-system { color: #c0c0c0; }
+.cmd-line-command { color: #c0c0c0; }
+.cmd-line-output { color: #c0c0c0; }
+.cmd-line-info { color: #aaaaaa; font-style: italic; }
+.cmd-line-warning { color: #ffff00; }
+.cmd-line-error { color: #ff4444; }
+.cmd-line-secret { color: #ff80ff; }
+.cmd-line-hint { color: #00ffff; font-style: italic; }
+
+/* 输入区域 */
+.cmd-input-area {
+  display: flex;
+  align-items: center;
+  padding: 6px 8px;
+  background: #c0c0c0;
+  border-top: 2px inset #808080;
+  border-left: 2px inset #808080;
+  border-right: 2px inset #808080;
+  border-bottom: 2px inset #808080;
+}
+
+.cmd-prompt {
+  font-size: 13px;
+  color: #000;
+  font-family: 'Consolas', 'Lucida Console', 'Courier New', monospace;
+  margin-right: 5px;
+  white-space: nowrap;
+  font-weight: bold;
+}
+
+.cmd-input {
+  flex: 1;
+  font-size: 13px;
+  color: #000;
+  background: #fff;
+  border: 2px inset #808080;
+  padding: 3px 6px;
+  font-family: 'Consolas', 'Lucida Console', 'Courier New', monospace;
+  min-width: 0;
+}
+
+/* 底部提示栏 */
+.cmd-scrollbar-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 8px;
+  background: #c0c0c0;
+  border-top: 1px solid #808080;
+  font-size: 10px;
+  color: #808080;
+  font-family: 'Tahoma', 'SimSun', sans-serif;
+}
+
+/* ==================== USB驱动器安装弹窗样式 ==================== */
+
+.usb-driver-dialog {
+  width: 400px;
+  max-width: 90%;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #fff #000 #000 #fff;
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.dialog-content {
+  padding: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.dialog-icon {
+  font-size: 48px;
+  flex-shrink: 0;
+}
+
+.dialog-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dialog-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #000;
+}
+
+.dialog-message {
+  font-size: 12px;
+  color: #000;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.dialog-message-success {
+  font-size: 12px;
+  color: #008000;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.dialog-hint {
+  font-size: 11px;
+  color: #808080;
+  font-style: italic;
+  margin-top: 4px;
+}
+
+.dialog-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px;
+  border-top: 1px solid #808080;
+}
+
+/* 安装进度 */
+.install-progress {
+  width: 100%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 20px;
+  background: #fff;
+  border: 2px inset #808080;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #000080, #1084d0);
+  width: 0%;
+}
+
+.progress-animate {
+  animation: progress-animation 1.5s ease-in-out infinite;
+}
+
+@keyframes progress-animation {
+  0% { width: 0%; }
+  50% { width: 70%; }
+  100% { width: 100%; }
+}
+
+.progress-text {
+  font-size: 12px;
+  color: #000;
+}
+
+/* ==================== 文件内容弹窗样式 ==================== */
+
+.file-content-dialog {
+  width: 500px;
+  max-width: 90%;
+  max-height: 80vh;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #fff #000 #000 #fff;
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+}
+
+.file-content-body {
+  padding: 16px;
+  background: #fff;
+  border: 2px inset #808080;
+  margin: 8px;
+  max-height: 400px;
+  overflow-y: auto;
+  min-height: 200px;
+}
+
+.file-content-text {
+  font-size: 12px;
+  line-height: 1.5;
+  font-family: 'Courier New', 'SimSun', monospace;
+  color: #000;
+  white-space: pre;
+  display: block;
+  width: 100%;
+}
+
+/* ==================== Fonts提示弹窗样式 ==================== */
+
+.fonts-message-dialog {
+  width: 320px;
+  max-width: 85%;
+}
+
+.fonts-message-dialog .win98-window-body {
+  padding: 0;
+  flex: unset;
+}
+
+.fonts-message-content {
+  padding: 20px 24px;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border: 2px inset #808080;
+  margin: 8px;
+}
+
+.fonts-message-text {
+  font-size: 13px;
+  line-height: 1.8;
+  color: #000;
+  text-align: center;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+/* ==================== 禁用文件提示弹窗样式 ==================== */
+
+.disabled-message-dialog {
+  width: 320px;
+  max-width: 85%;
+}
+
+.disabled-message-dialog .win98-window-body {
+  padding: 0;
+  flex: unset;
+}
+
+.disabled-message-content {
+  padding: 20px 24px;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border: 2px inset #808080;
+  margin: 8px;
+}
+
+.disabled-message-text {
+  font-size: 13px;
+  line-height: 1.8;
+  color: #000;
+  text-align: center;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+/* ==================== NVIDIA驱动安装弹窗样式 ==================== */
+
+.nvidia-driver-dialog {
+  width: 400px;
+  max-width: 90%;
+  min-height: 320px;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #fff #000 #000 #fff;
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* 欢迎页面 */
+.nvidia-welcome-content {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.nvidia-logo {
+  font-size: 18px;
+  font-weight: bold;
+  color: #76b900;
+  text-align: center;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #c0c0c0;
+}
+
+.nvidia-welcome-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nvidia-section-title {
+  font-size: 13px;
+  font-weight: bold;
+  color: #000;
+}
+
+.nvidia-section-text {
+  font-size: 12px;
+  color: #333;
+}
+
+.nvidia-version {
+  font-size: 12px;
+  color: #666;
+  font-family: 'Courier New', monospace;
+}
+
+.nvidia-date {
+  font-size: 11px;
+  color: #888;
+}
+
+.nvidia-hardware {
+  font-size: 11px;
+  color: #333;
+  font-family: 'Courier New', monospace;
+  margin-left: 8px;
+}
+
+.nvidia-welcome-egg {
+  margin-top: 8px;
+  padding: 10px;
+  background: linear-gradient(135deg, #fff5e6 0%, #ffe6cc 100%);
+  border: 1px dashed #ff9900;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nvidia-egg-text {
+  font-size: 11px;
+  color: #cc6600;
+  text-align: center;
+}
+
+/* 安装中页面 */
+.nvidia-installing-content {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-height: 160px;
+}
+
+.nvidia-install-step {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.install-step-text {
+  font-size: 13px;
+  color: #000;
+}
+
+.progress-bar {
+  height: 20px;
+  background: #fff;
+  border: 2px inset #808080;
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(180deg, #0000ff 0%, #000080 100%);
+  transition: width 0.3s ease;
+}
+
+.progress-percent {
+  font-size: 12px;
+  color: #000;
+  text-align: center;
+  font-family: 'Courier New', monospace;
+}
+
+.install-log {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  background: #000;
+  border: 2px inset #808080;
+  min-height: 80px;
+}
+
+.log-line {
+  font-size: 11px;
+  color: #00ff00;
+  font-family: 'Courier New', monospace;
+}
+
+/* 完成页面 */
+.nvidia-complete-content {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.complete-icon {
+  font-size: 48px;
+  text-align: center;
+}
+
+.complete-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #000;
+  text-align: center;
+}
+
+.complete-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  padding: 12px;
+  background: #f5f5f5;
+  border: 1px inset #808080;
+}
+
+.info-item {
+  font-size: 12px;
+  color: #333;
+  font-family: 'Courier New', monospace;
+}
+
+.nvidia-complete-egg {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #e6f3ff 0%, #cce6ff 100%);
+  border: 1px dashed #0066cc;
+  border-radius: 4px;
+}
+
+.egg-line {
+  font-size: 10px;
+  color: #666;
+  text-align: center;
+}
+
+.egg-title {
+  font-size: 13px;
+  font-weight: bold;
+  color: #0066cc;
+  text-align: center;
+}
+
+.egg-text {
+  font-size: 11px;
+  color: #004d99;
+  text-align: left;
+  margin-left: 12px;
+}
+
+/* NVIDIA对话框按钮样式 */
+.nvidia-driver-dialog .dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #c0c0c0;
+  border-top: 1px solid #808080;
+}
+
+.nvidia-driver-dialog .win98-btn-std {
+  min-width: 80px;
+  padding: 6px 16px;
+  font-size: 12px;
+  font-family: 'SimSun', 'MS Sans Serif', sans-serif;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #fff #000 #000 #fff;
+  color: #000;
+  cursor: pointer;
+  outline: none;
+}
+
+.nvidia-driver-dialog .win98-btn-std:active {
+  border-color: #000 #fff #fff #000;
+  padding: 7px 15px 5px 17px;
+}
+
+.nvidia-driver-dialog .win98-btn-std::after {
+  border: none;
 }

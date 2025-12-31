@@ -52,6 +52,24 @@ const EGG_IDS = {
   DISK_CLEANUP_MASTER: 'disk_cleanup_master',             // 磁盘清理大师
   DEVICE_MANAGER_EXPERT: 'device_manager_expert',         // 设备管理专家
   FILE_EXPLORER_MASTER: 'file_explorer_master',           // 文件浏览器大师
+  // C盘彩蛋
+  C_HIDDEN_DOT: 'c_hidden_dot',                           // C:\ . 隐藏文件
+  C_EMPTY_FOLDER: 'c_empty_folder',                       // C:\Windows\ 空名文件夹
+  C_TEMP_NESTING: 'c_temp_nesting',                       // C:\Windows\Temp\ 5层套娃
+  C_SYSTEM_LONGPRESS: 'c_system_longpress',               // system.ini 长按3秒
+  C_FONTS_SPAM: 'c_fonts_spam',                           // Fonts disabled连点10次
+  // D盘彩蛋
+  D_SECRET_FILE: 'd_secret_file',                         // D:\ .secret 隐藏文件
+  D_README_CLICK5: 'd_readme_click5',                     // readme.txt连点5次
+  D_GAMES_CLICK10: 'd_games_click10',                     // Games文件夹点击10次
+  D_FUTURE_GAMES: 'd_future_games',                       // 特定游戏组合
+  D_MUSIC_REPEAT: 'd_music_repeat',                       // Music歌曲连点5次
+  D_VIDEOS_DEEP: 'd_videos_deep',                         // Videos最深层
+  D_AUTOEXEC_LONG: 'd_autoexec_long',                     // autoexec.bat长按3秒
+  // USB彩蛋
+  USB_INVISIBLE_FOLDER: 'usb_invisible_folder',           // 空名文件夹
+  USB_FILE_CLICK7: 'usb_file_click7',                     // 普通文件.txt连点7次
+  USB_NESTING_10: 'usb_nesting_10',                       // 10层套娃
 };
 
 // 彩蛋配置 - 时光币奖励（单位：分钟）
@@ -454,6 +472,189 @@ const EGG_CONFIG = {
     reward: {
       coins: 800,
       badge: '文件大师'
+    }
+  },
+  // C盘彩蛋配置
+  [EGG_IDS.C_HIDDEN_DOT]: {
+    id: EGG_IDS.C_HIDDEN_DOT,
+    name: '隐藏的角落',
+    description: '你发现了C盘根目录的隐藏文件...',
+    hint: '开启"显示所有文件"后查看C:\\根目录',
+    rarity: 'common',
+    type: 'action',
+    reward: {
+      coins: 300,
+      badge: '寻宝者'
+    }
+  },
+  [EGG_IDS.C_EMPTY_FOLDER]: {
+    id: EGG_IDS.C_EMPTY_FOLDER,
+    name: '空空如也',
+    description: '你发现了Windows目录下的空文件夹...',
+    hint: '在C:\\Windows目录寻找空名文件夹',
+    rarity: 'common',
+    type: 'action',
+    reward: {
+      coins: 200,
+      badge: '探索者'
+    }
+  },
+  [EGG_IDS.C_TEMP_NESTING]: {
+    id: EGG_IDS.C_TEMP_NESTING,
+    name: '套娃专家',
+    description: '你钻进了Temp目录的深层...',
+    hint: '在C:\\Windows\\Temp连续进入5层子目录',
+    rarity: 'common',
+    type: 'action',
+    reward: {
+      coins: 400,
+      badge: '钻家'
+    }
+  },
+  [EGG_IDS.C_SYSTEM_LONGPRESS]: {
+    id: EGG_IDS.C_SYSTEM_LONGPRESS,
+    name: '耐心的人',
+    description: '你长按system.ini发现了秘密...',
+    hint: '在C:\\Windows目录长按system.ini 3秒',
+    rarity: 'common',
+    type: 'action',
+    reward: {
+      coins: 100,
+      badge: '耐心'
+    }
+  },
+  [EGG_IDS.C_FONTS_SPAM]: {
+    id: EGG_IDS.C_FONTS_SPAM,
+    name: '执着的人',
+    description: '你点了Fonts文件夹10次...',
+    hint: '连续点击Fonts文件夹10次',
+    rarity: 'common',
+    type: 'action',
+    reward: {
+      coins: 300,
+      badge: '执着'
+    }
+  },
+  // D盘彩蛋配置
+  [EGG_IDS.D_SECRET_FILE]: {
+    id: EGG_IDS.D_SECRET_FILE,
+    name: '秘密文件',
+    description: '你发现了D盘根目录的隐藏文件...',
+    hint: '开启"显示所有文件"后查看D:\\根目录',
+    rarity: 'common',
+    type: 'action',
+    reward: {
+      coins: 300,
+      badge: '寻宝者'
+    }
+  },
+  [EGG_IDS.D_README_CLICK5]: {
+    id: EGG_IDS.D_README_CLICK5,
+    name: '阅读达人',
+    description: '你连续点击了readme.txt 5次...',
+    hint: '在D盘根目录连续点击readme.txt 5次',
+    rarity: 'common',
+    type: 'action',
+    reward: {
+      coins: 200,
+      badge: '书虫'
+    }
+  },
+  [EGG_IDS.D_GAMES_CLICK10]: {
+    id: EGG_IDS.D_GAMES_CLICK10,
+    name: '游戏狂热',
+    description: '你点了Games文件夹10次...',
+    hint: '在D盘根目录连续点击Games文件夹10次',
+    rarity: 'common',
+    type: 'action',
+    reward: {
+      coins: 500,
+      badge: '玩家'
+    }
+  },
+  [EGG_IDS.D_FUTURE_GAMES]: {
+    id: EGG_IDS.D_FUTURE_GAMES,
+    name: '穿越玩家',
+    description: '你发现了来自2026年的游戏...',
+    hint: '在D:\\Games目录中找到特定的穿越游戏',
+    rarity: 'rare',
+    type: 'action',
+    reward: {
+      coins: 800,
+      badge: '时空玩家'
+    }
+  },
+  [EGG_IDS.D_MUSIC_REPEAT]: {
+    id: EGG_IDS.D_MUSIC_REPEAT,
+    name: '单曲循环',
+    description: '你连点同一首歌曲5次...',
+    hint: '在D:\\Music目录连续点击同一首歌5次',
+    rarity: 'common',
+    type: 'action',
+    reward: {
+      coins: 300,
+      badge: '音乐迷'
+    }
+  },
+  [EGG_IDS.D_VIDEOS_DEEP]: {
+    id: EGG_IDS.D_VIDEOS_DEEP,
+    name: '深度探索者',
+    description: '你钻进了Videos目录的深层...',
+    hint: '探索D:\\Videos目录到最深层',
+    rarity: 'rare',
+    type: 'action',
+    reward: {
+      coins: 600,
+      badge: '探索家'
+    }
+  },
+  [EGG_IDS.D_AUTOEXEC_LONG]: {
+    id: EGG_IDS.D_AUTOEXEC_LONG,
+    name: '怀旧达人',
+    description: '你长按autoexec.bat发现了秘密...',
+    hint: '在D盘根目录长按autoexec.bat 3秒',
+    rarity: 'common',
+    type: 'action',
+    reward: {
+      coins: 200,
+      badge: '怀旧'
+    }
+  },
+  // USB彩蛋配置
+  [EGG_IDS.USB_INVISIBLE_FOLDER]: {
+    id: EGG_IDS.USB_INVISIBLE_FOLDER,
+    name: '隐形收藏',
+    description: '你发现了USB盘的空名文件夹...',
+    hint: '在USB盘根目录寻找空名文件夹',
+    rarity: 'rare',
+    type: 'action',
+    reward: {
+      coins: 500,
+      badge: '收藏家'
+    }
+  },
+  [EGG_IDS.USB_FILE_CLICK7]: {
+    id: EGG_IDS.USB_FILE_CLICK7,
+    name: '执着点击',
+    description: '你连点了普通文件7次...',
+    hint: '在USB盘连续点击任意普通文件7次',
+    rarity: 'common',
+    type: 'action',
+    reward: {
+      coins: 200,
+      badge: '执着'
+    }
+  },
+  [EGG_IDS.USB_NESTING_10]: {
+    id: EGG_IDS.USB_NESTING_10,
+    name: '终极套娃',
+    description: '你钻进了10层套娃目录...',
+    hint: '在USB盘连续进入10层子目录',
+    rarity: 'legendary',
+    type: 'action',
+    reward: {
+      coins: 1000,
+      badge: '套娃大师'
     }
   }
 };

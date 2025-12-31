@@ -10,6 +10,7 @@
 
     <!-- 菜单栏 -->
     <view class="menu-bar">
+      <!-- 文件菜单 -->
       <view class="menu-dropdown-wrapper">
         <view class="menu-dropdown-trigger" catchtap="onFileMenuTap">
           <text class="menu-item">文件</text>
@@ -28,11 +29,91 @@
             <text class="menu-item-icon">🔧</text>
             <text>设备管理器</text>
           </view>
+          <view class="menu-dropdown-separator"></view>
+          <view class="menu-dropdown-item" catchtap="onCloseWindow">
+            <text class="menu-item-icon">❌</text>
+            <text>关闭</text>
+          </view>
         </view>
       </view>
-      <text class="menu-item">编辑(E)</text>
-      <text class="menu-item">查看(V)</text>
-      <text class="menu-item" bindtap="onShowHelp">帮助(H)</text>
+      <!-- 编辑菜单 -->
+      <view class="menu-dropdown-wrapper">
+        <view class="menu-dropdown-trigger" catchtap="onEditMenuTap">
+          <text class="menu-item">编辑</text>
+        </view>
+        <!-- 编辑菜单下拉 -->
+        <view class="menu-dropdown-content" wx:if="{{showEditMenu}}" catchtap="onEditMenuTap">
+          <view class="menu-dropdown-item menu-disabled">
+            <text class="menu-item-icon">↩️</text>
+            <text>撤销</text>
+          </view>
+          <view class="menu-dropdown-separator"></view>
+          <view class="menu-dropdown-item menu-disabled">
+            <text class="menu-item-icon">✂️</text>
+            <text>剪切</text>
+          </view>
+          <view class="menu-dropdown-item menu-disabled">
+            <text class="menu-item-icon">📋</text>
+            <text>复制</text>
+          </view>
+          <view class="menu-dropdown-item menu-disabled">
+            <text class="menu-item-icon">📄</text>
+            <text>粘贴</text>
+          </view>
+          <view class="menu-dropdown-separator"></view>
+          <view class="menu-dropdown-item menu-disabled">
+            <text class="menu-item-icon">🔍</text>
+            <text>全部选中</text>
+          </view>
+        </view>
+      </view>
+      <!-- 查看菜单 -->
+      <view class="menu-dropdown-wrapper">
+        <view class="menu-dropdown-trigger" catchtap="onViewMenuTap">
+          <text class="menu-item">查看</text>
+        </view>
+        <!-- 查看菜单下拉 -->
+        <view class="menu-dropdown-content" wx:if="{{showViewMenu}}" catchtap="onViewMenuTap">
+          <view class="menu-dropdown-item" catchtap="onRefreshView">
+            <text class="menu-item-icon">🔄</text>
+            <text>刷新</text>
+          </view>
+          <view class="menu-dropdown-separator"></view>
+          <view class="menu-dropdown-item menu-disabled">
+            <text class="menu-item-icon">📊</text>
+            <text>大图标</text>
+          </view>
+          <view class="menu-dropdown-item menu-disabled">
+            <text class="menu-item-icon">📋</text>
+            <text>小图标</text>
+          </view>
+          <view class="menu-dropdown-item menu-disabled">
+            <text class="menu-item-icon">📝</text>
+            <text>列表</text>
+          </view>
+          <view class="menu-dropdown-item menu-disabled">
+            <text class="menu-item-icon">📄</text>
+            <text>详细信息</text>
+          </view>
+        </view>
+      </view>
+      <!-- 帮助菜单 -->
+      <view class="menu-dropdown-wrapper">
+        <view class="menu-dropdown-trigger" catchtap="onHelpMenuTap">
+          <text class="menu-item">帮助</text>
+        </view>
+        <!-- 帮助菜单下拉 -->
+        <view class="menu-dropdown-content" wx:if="{{showHelpMenu}}" catchtap="onHelpMenuTap">
+          <view class="menu-dropdown-item" catchtap="onShowHelp">
+            <text class="menu-item-icon">❓</text>
+            <text>帮助主题</text>
+          </view>
+          <view class="menu-dropdown-item" catchtap="onShowAbout">
+            <text class="menu-item-icon">ℹ️</text>
+            <text>关于</text>
+          </view>
+        </view>
+      </view>
     </view>
 
     <view class="win98-window-body" bindtap="onWindowBodyTap">
@@ -598,7 +679,7 @@
         <!-- 文件列表 -->
         <scroll-view class="file-explorer-content" scroll-y>
           <view class="file-list">
-            <view class="file-item {{item.disabled ? 'disabled' : ''}}" wx:for="{{fileExplorerItems}}" wx:key="name" bindtap="onFileItemTap" data-item="{{item}}">
+            <view class="file-item {{item.disabled ? 'disabled' : ''}}" wx:for="{{fileExplorerItems}}" wx:key="name" bindtap="onFileItemTap" bindlongpress="onSystemIniLongPressStart" bindtouchend="onSystemIniLongPressEnd" data-item="{{item}}">
               <text class="file-icon">{{item.icon}}</text>
               <text class="file-name">{{item.name}}</text>
               <text class="file-rarity" wx:if="{{item.rarity}}">{{item.rarity === 'common' ? '⭐' : item.rarity === 'rare' ? '💎' : item.rarity === 'epic' ? '🌟' : '👑'}}</text>
@@ -753,15 +834,312 @@
 
       <!-- 记事本菜单栏 -->
       <view class="notepad-menu-bar">
-        <text class="notepad-menu-item">文件(F)</text>
-        <text class="notepad-menu-item">编辑(E)</text>
-        <text class="notepad-menu-item">搜索(S)</text>
-        <text class="notepad-menu-item">帮助(H)</text>
+        <text class="notepad-menu-item">文件</text>
+        <text class="notepad-menu-item">编辑</text>
+        <text class="notepad-menu-item">搜索</text>
+        <text class="notepad-menu-item">帮助</text>
       </view>
 
       <!-- 记事本内容区域 -->
       <view class="notepad-content">
         <text class="notepad-text">{{notepadContent}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 命令行控制台 -->
+  <view class="cmd-console-overlay" wx:if="{{showCmdConsole}}" catchtap="closeCmdConsole">
+    <view class="cmd-console-window" catchtap="stopPropagation">
+      <!-- 控制台标题栏 -->
+      <view class="cmd-title-bar">
+        <view class="cmd-title-icon">💻</view>
+        <view class="cmd-title-text">{{cmdCurrentDir}}\\cmd.exe</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="closeCmdConsole">×</button>
+        </view>
+      </view>
+
+      <!-- 控制台菜单栏 -->
+      <view class="cmd-menu-bar">
+        <text class="cmd-menu-item">文件</text>
+        <text class="cmd-menu-item">编辑</text>
+        <text class="cmd-menu-item">查看</text>
+      </view>
+
+      <!-- 控制台内容区域 -->
+      <scroll-view class="cmd-content" scroll-y scroll-into-view="{{scrollIntoView}}" scroll-top="{{cmdScrollTop}}">
+        <view class="cmd-output">
+          <block wx:for="{{cmdOutput}}" wx:key="index">
+            <text class="cmd-line cmd-line-{{item.type}}">{{item.text}}</text>
+          </block>
+        </view>
+      </scroll-view>
+
+      <!-- 输入区域 -->
+      <view class="cmd-input-area">
+        <text class="cmd-prompt">{{cmdPrompt}}</text>
+        <input
+          class="cmd-input"
+          type="text"
+          value="{{cmdInput}}"
+          bindinput="onCmdInput"
+          bindconfirm="onCmdExecute"
+          bindkeydown="onCmdKeyDown"
+          placeholder="{{showCmdConsole ? '' : '输入命令...'}}"
+          focus="{{showCmdConsole}}"
+          confirm-type="done"
+        />
+      </view>
+
+      <!-- 滚动条说明 -->
+      <view class="cmd-scrollbar-hint" wx:if="{{cmdHistory.length > 0}}">
+        <text>↑↓ 浏览历史 | Enter 执行 | Exit 退出</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- USB驱动器安装弹窗 -->
+  <view class="win98-dialog-overlay" wx:if="{{showUsbDriverDialog}}" catchtap="onCancelInstallUsbDriver">
+    <view class="usb-driver-dialog" catchtap="stopPropagation">
+      <!-- 确认步骤 -->
+      <view wx:if="{{usbDriverStep === 'confirm'}}">
+        <view class="win98-title-bar">
+          <view class="win98-title-icon">💾</view>
+          <view class="win98-title-text">硬件安装向导</view>
+          <view class="win98-title-controls">
+            <button class="win98-btn-close" bindtap="onCancelInstallUsbDriver">×</button>
+          </view>
+        </view>
+
+        <view class="dialog-content">
+          <view class="dialog-icon">🔧</view>
+          <view class="dialog-text">
+            <text class="dialog-title">找到新硬件</text>
+            <text class="dialog-message">是否安装USB存储设备驱动？\n\n安装后可以访问USB盘。</text>
+          </view>
+        </view>
+
+        <view class="dialog-buttons">
+          <button class="win98-btn" bindtap="onConfirmInstallUsbDriver">安装</button>
+          <button class="win98-btn" bindtap="onCancelInstallUsbDriver">取消</button>
+        </view>
+      </view>
+
+      <!-- 安装中步骤 -->
+      <view wx:if="{{usbDriverStep === 'installing'}}">
+        <view class="win98-title-bar">
+          <view class="win98-title-icon">💾</view>
+          <view class="win98-title-text">硬件安装向导</view>
+        </view>
+
+        <view class="dialog-content">
+          <view class="install-progress">
+            <view class="progress-bar">
+              <view class="progress-fill progress-animate"></view>
+            </view>
+            <text class="progress-text">正在安装驱动程序...</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 安装成功步骤 -->
+      <view wx:if="{{usbDriverStep === 'success'}}">
+        <view class="win98-title-bar">
+          <view class="win98-title-icon">💾</view>
+          <view class="win98-title-text">安装成功</view>
+          <view class="win98-title-controls">
+            <button class="win98-btn-close" bindtap="closeUsbDriverDialog">×</button>
+          </view>
+        </view>
+
+        <view class="dialog-content">
+          <view class="dialog-icon">✅</view>
+          <view class="dialog-text">
+            <text class="dialog-message">硬件安装向导</text>
+            <text class="dialog-message-success">USB存储设备驱动安装成功！\n\n现在您可以访问USB盘了。</text>
+            <text class="dialog-hint">提示：在"我的电脑"中点击USB盘图标即可进入</text>
+          </view>
+        </view>
+
+        <view class="dialog-buttons">
+          <button class="win98-btn" bindtap="closeUsbDriverDialog">确定</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- NVIDIA驱动安装弹窗 -->
+  <view class="win98-dialog-overlay" wx:if="{{showNvidiaDriverDialog}}" catchtap="onNvidiaDriverCancel">
+    <view class="nvidia-driver-dialog" catchtap="stopPropagation">
+      <!-- 欢迎步骤 -->
+      <view wx:if="{{nvidiaDriverStep === 'welcome'}}">
+        <view class="win98-title-bar">
+          <view class="win98-title-icon">🎮</view>
+          <view class="win98-title-text">NVIDIA显卡驱动安装向导</view>
+          <view class="win98-title-controls">
+            <button class="win98-btn-close" bindtap="onNvidiaDriverCancel">×</button>
+          </view>
+        </view>
+
+        <view class="win98-window-body">
+          <view class="nvidia-welcome-content">
+            <view class="nvidia-logo">🔷 NVIDIA</view>
+            <view class="nvidia-welcome-section">
+              <text class="nvidia-section-title">欢迎使用</text>
+              <text class="nvidia-section-text">NVIDIA Windows 2000/XP 显示驱动程序</text>
+              <text class="nvidia-version">版本 91.47</text>
+              <text class="nvidia-date">发布日期: 2006年6月15日</text>
+            </view>
+
+            <view class="nvidia-welcome-section">
+              <text class="nvidia-section-title">检测到的硬件</text>
+              <text class="nvidia-hardware">• NVIDIA GeForce 7600 GT (256MB)</text>
+              <text class="nvidia-hardware">• PCI 总线: VEN_10DE&DEV_0391</text>
+            </view>
+
+            <view class="nvidia-welcome-egg">
+              <text class="nvidia-egg-text">那些年，7600GT是最强显卡 💪</text>
+              <text class="nvidia-egg-text">那些年，显卡只要500块钱 💰</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="dialog-actions">
+          <button class="win98-btn-std" bindtap="onNvidiaDriverCancel">取消</button>
+          <button class="win98-btn-std" bindtap="onNvidiaDriverNext">下一步 ></button>
+        </view>
+      </view>
+
+      <!-- 安装中步骤 -->
+      <view wx:if="{{nvidiaDriverStep === 'installing'}}">
+        <view class="win98-title-bar">
+          <view class="win98-title-icon">🎮</view>
+          <view class="win98-title-text">正在安装...</view>
+        </view>
+
+        <view class="win98-window-body">
+          <view class="nvidia-installing-content">
+            <view class="nvidia-install-step">
+              <text class="install-step-text">正在复制文件...</text>
+              <view class="progress-bar">
+                <view class="progress-fill" style="width: {{nvidiaDriverProgress}}%"></view>
+              </view>
+              <text class="progress-percent">{{nvidiaDriverProgress}}%</text>
+            </view>
+
+            <view class="install-log">
+              <text class="log-line" wx:if="{{nvidiaDriverProgress > 0}}">✓ nv4_disp.dll</text>
+              <text class="log-line" wx:if="{{nvidiaDriverProgress > 30}}">✓ nv4_mini.sys</text>
+              <text class="log-line" wx:if="{{nvidiaDriverProgress > 60}}">✓ nvcpl.dll</text>
+              <text class="log-line" wx:if="{{nvidiaDriverProgress > 90}}">✓ 注册表配置完成</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 完成步骤 -->
+      <view wx:if="{{nvidiaDriverStep === 'complete'}}">
+        <view class="win98-title-bar">
+          <view class="win98-title-icon">🎮</view>
+          <view class="win98-title-text">安装完成</view>
+          <view class="win98-title-controls">
+            <button class="win98-btn-close" bindtap="onNvidiaDriverComplete">×</button>
+          </view>
+        </view>
+
+        <view class="win98-window-body">
+          <view class="nvidia-complete-content">
+            <view class="complete-icon">✅</view>
+            <text class="complete-title">驱动程序安装成功！</text>
+
+            <view class="complete-info">
+              <text class="info-item">• 驱动版本: 91.47</text>
+              <text class="info-item">• 显卡: GeForce 7600 GT</text>
+              <text class="info-item">• 显存: 256MB</text>
+            </view>
+
+            <view class="nvidia-complete-egg">
+              <text class="egg-line">━━━━━━━━━━━━━━━━━━━━━━━━━━━━</text>
+              <text class="egg-title">穿越提示</text>
+              <text class="egg-text">恭喜！你成功安装了2006年的显卡驱动</text>
+              <text class="egg-text">当年7600GT可以流畅运行：</text>
+              <text class="egg-text">• Warcraft 3 (魔兽争霸3)</text>
+              <text class="egg-text">• CS 1.6 (反恐精英)</text>
+              <text class="egg-text">• Need for Speed (极品飞车)</text>
+              <text class="egg-line">━━━━━━━━━━━━━━━━━━━━━━━━━━━━</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="dialog-actions">
+          <button class="win98-btn-std" bindtap="onNvidiaDriverComplete">完成</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 文件内容弹窗（Win98风格） -->
+  <view class="win98-dialog-overlay" wx:if="{{showFileContentDialog}}" catchtap="closeFileContentDialog">
+    <view class="file-content-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-icon">📄</view>
+        <view class="win98-title-text">{{fileContentData.title}}</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="closeFileContentDialog">×</button>
+        </view>
+      </view>
+
+      <view class="file-content-body">
+        <block wx:for="{{fileContentData.contentLines}}" wx:key="index">
+          <text class="file-content-text">{{item}}</text>
+        </block>
+      </view>
+
+      <!-- 根据showCloseButton属性决定是否显示关闭按钮 -->
+      <view class="dialog-buttons" wx:if="{{fileContentData && fileContentData.showCloseButton}}">
+        <button class="win98-btn" bindtap="closeFileContentDialog">关闭</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- Fonts提示弹窗（Win98风格） -->
+  <view class="win98-dialog-overlay" wx:if="{{showFontsMessageDialog}}" catchtap="closeFontsMessageDialog">
+    <view class="win98-window fonts-message-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-icon">📁</view>
+        <view class="win98-title-text">Fonts</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="closeFontsMessageDialog">×</button>
+        </view>
+      </view>
+      <view class="win98-window-body">
+        <view class="fonts-message-content">
+          <text class="fonts-message-text">{{fontsMessageContent}}</text>
+        </view>
+      </view>
+      <view class="dialog-actions">
+        <button class="win98-btn-std" bindtap="closeFontsMessageDialog">确定</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 禁用文件提示弹窗（Win98风格） -->
+  <view class="win98-dialog-overlay" wx:if="{{showDisabledMessageDialog}}" catchtap="closeDisabledMessageDialog">
+    <view class="win98-window disabled-message-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-icon">⚠️</view>
+        <view class="win98-title-text">{{disabledMessageTitle}}</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="closeDisabledMessageDialog">×</button>
+        </view>
+      </view>
+      <view class="win98-window-body">
+        <view class="disabled-message-content">
+          <text class="disabled-message-text">{{disabledMessageContent}}</text>
+        </view>
+      </view>
+      <view class="dialog-actions">
+        <button class="win98-btn-std" bindtap="closeDisabledMessageDialog">确定</button>
       </view>
     </view>
   </view>

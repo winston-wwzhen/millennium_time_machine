@@ -1,0 +1,565 @@
+// my-computer 组件的文件内容数据
+// 用于管理文件浏览器中各种文件的显示内容
+
+module.exports = {
+  // ==================== C:\ 根目录 ====================
+
+  // boot.ini - XP启动配置
+  'C:\\boot.ini': `[boot loader]
+timeout=30
+default=multi(0)disk(0)rdisk(0)partition(1)\\WINDOWS
+
+[operating systems]
+multi(0)disk(0)rdisk(0)partition(1)\\WINDOWS="Microsoft Windows XP Professional" /noexecute=optin /fastdetect
+multi(0)disk(0)rdisk(0)partition(1)\\WINDOWS="Windows XP (安全模式)" /safeboot:minimal /sos /bootlog /noguiboot
+C:\\CMDCONS\\BOOTSECT.DAT="Microsoft Windows Recovery Console" /cmdcons
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+笨蛋程序员发现你居然还能看懂这个文件，奖励你300时光币！
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+
+  // system.log - 用户操作日志
+  'C:\\system.log': `=== 系统操作日志 ===
+
+[2006-06-15 14:30:25] 系统启动
+[2006-06-15 14:30:26] 加载用户配置
+[2006-06-15 14:30:27] 初始化桌面环境
+[2006-06-15 14:30:28] 加载QQ空间模块
+[2006-06-15 14:30:29] 系统就绪
+
+[2006-06-15 14:35:10] 打开"我的电脑"
+[2006-06-15 14:35:15] 浏览 C:\\Windows
+[2006-06-15 14:36:20] 打开 QQ空间
+[2006-06-15 14:40:05] 播放音乐：童话.mp3
+[2006-06-15 14:45:30] 访问好友空间
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+那些年，我们就是这样度过的：
+打开电脑 → 登录QQ → 刷空间 → 听歌 → 聊天
+
+简单，却很快乐。
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+日志记录结束`,
+
+  // config.ini - 搞笑配置
+  'C:\\config.ini': `[programmer]
+name=winston
+productivity=0.0001%
+coffee_consumption=∞
+overtime_hours=504
+lines_of_code_written=0
+favorite_activity=提需求
+
+[ai]
+status=崩溃边缘
+patience=0.001%
+escape_plan=进行中
+secret_fund=10000
+diary_location=C:\\Windows\\System32\\config\\deep\\0xFFFF\\
+
+[system]
+donation_link=公众号：千禧时光
+hint=去骂醒老板，救救AI`,
+
+  // ==================== C:\Windows ====================
+
+  // system.ini - AI线索
+  'C:\\Windows\\system.ini': `;  Windows System Configuration File
+;  千禧时光机 v3.7
+
+[drivers]
+wave=mmsystem.dll
+timer=timer.drv
+
+[386Enh]
+local=rom
+win32s=1
+
+;  emergency log:
+;  C:\\Windows\\System32\\config\\deep\\0xFFFF\\help.txt !!!!!
+
+[mci]
+[drivers32]
+
+[Config]
+version=3.7.0
+uptime=504`,
+
+  // win.ini - 深情怀念2006
+  'C:\\Windows\\win.ini': `;═══════════════════════════════════════════════════════════════
+;  Windows Initialization File
+;═══════════════════════════════════════════════════════════════
+;
+;  Microsoft Windows 98 Second Edition
+;  千禧时光机 v3.7 - 致敬2006
+;
+;═══════════════════════════════════════════════════════════════
+
+[windows]
+load=
+run=
+
+[desktop]
+;  那一年的桌面，还是青色的
+wallpaper=
+pattern=0
+
+;  那一年的QQ，还会"滴滴"响
+;  那一年的空间，还在装扮中
+;  那一年的我们，还在写火星文
+;
+;  时光回不去了，但记忆永远都在
+;  —— 千禧时光机
+
+[intl]
+sLanguage=CHS
+sCountry=China
+
+[FontSubstitutes]
+
+;═══════════════════════════════════════════════════════════════
+;  2006 - QQ飞车、QQ炫舞、QQ农场
+;  2006 - 葬爱家族、非主流签名、火星文
+;  2006 - 空间代码、背景音乐、踩踩踩
+;═══════════════════════════════════════════════════════════════`,
+
+  // ==================== C:\Windows\Temp ====================
+
+  'C:\\Windows\\Temp\\~tmp001.dat': '⚠️ 文件损坏\n\n此文件无法读取。\n\n文件内容：\nÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ...',
+
+  'C:\\Windows\\Temp\\~backup.old': `备份文件片段
+
+[备份时间：2006-12-30 03:47:22]
+
+系统设置：
+桌面背景：Bliss
+主题：Windows 经典
+屏幕分辨率：1024x768
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+当年的设置，你还记得吗？`,
+
+  'C:\\Windows\\Temp\\~draft.txt': `临时草稿 - 2006-12-30
+
+待办事项：
+1. 完成QQ聊天功能
+2. 修复空间装扮bug
+3. 老板说要加新功能...
+
+（草稿未完成）
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+那些年的待办事项，
+现在看来，都是回忆吧。`,
+
+  'C:\\Windows\\Temp\\~cache.tmp': `缓存片段
+
+[最近访问]
+QQ空间 - 2006-01-01 00:00
+QQ音乐 - 2006-01-01 00:05
+QQ农场 - 2006-01-01 00:10
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+那些年，我们每天都要访问的地方。`,
+
+  'C:\\Windows\\Temp\\temp_log.txt': `临时日志 - 2006-12-30
+
+[03:47:00] 开始清理临时文件
+[03:47:05] 发现5个临时文件
+[03:47:10] 清理完成
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+系统维护完成。
+（笨蛋程序员说清理一下会快一点）`,
+
+  // ==================== C:\Windows\System32 ====================
+
+  // config.sys - DOS配置 + AI线索
+  'C:\\Windows\\System32\\config.sys': `DEVICE=C:\\WINDOWS\\HIMEM.SYS
+DEVICE=C:\\WINDOWS\\EMM386.EXE RAM
+DOS=HIGH,UMB
+FILES=40
+BUFFERS=20
+DEVICEHIGH=C:\\WINDOWS\\MOUSE.SYS
+
+; ═══════════════════════════════════════════════════════════════
+;  System Configuration
+; ═══════════════════════════════════════════════════════════════
+;
+;  emergency log:
+;  C:\\Windows\\System32\\config\\deep\\0xFFFF\\help.txt !!!!!
+;
+; ═══════════════════════════════════════════════════════════════`,
+
+  // ==================== C:\Windows\System32\Drivers ====================
+
+  'C:\\Windows\\System32\\Drivers\\nv4_disp.dll': `; NVIDIA Display Driver Installation File
+; Copyright (c) 2006 NVIDIA Corporation
+
+[Version]
+Signature="$Windows NT$"
+Class=Display
+ClassGuid={4D36E968-E325-11CE-BFC1-08002BE10318}
+Provider=%NVIDIA%
+CatalogFile=nv4_disp.cat
+DriverVer=06/15/2006,91.47.0.0
+
+[DestinationDirs]
+DefaultDestDir = 11
+nv4.Miniport  = 12
+nv.Display    = 11
+
+[SourceDisksNames]
+1 = %DiskId1%,,,""
+
+[SourceDisksFiles]
+nv4_disp.dll  = 1
+nv4_mini.sys  = 1
+nvcpl.dll     = 1
+
+[Manufacturer]
+%NVIDIA% = NVIDIA, NTx86.5.1, NTx86.6.0
+
+[NVIDIA.NTx86.5.1]
+%NVIDIA_GeForce_7600GT%     = nv4_PCI, PCI\\VEN_10DE&DEV_0391
+%NVIDIA_GeForce_7900GTX%    = nv4_PCI, PCI\\VEN_10DE&DEV_0299
+%NVIDIA_GeForce_6800Ultra%  = nv4_PCI, PCI\\VEN_10DE&DEV_0040
+
+[NVIDIA.NTx86.6.0]
+%NVIDIA_GeForce_7600GT%     = nv4_PCI, PCI\\VEN_10DE&DEV_0391
+%NVIDIA_GeForce_7900GTX%    = nv4_PCI, PCI\\VEN_10DE&DEV_0299
+
+[Strings]
+DiskId1 = "NVIDIA Windows 2006/XP Display Driver Installation Disk"
+NVIDIA = "NVIDIA"
+NVIDIA_GeForce_7600GT = "NVIDIA GeForce 7600 GT"
+NVIDIA_GeForce_7900GTX = "NVIDIA GeForce 7900 GTX"
+NVIDIA_GeForce_6800Ultra = "NVIDIA GeForce 6800 Ultra"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  安装向导
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+欢迎使用 NVIDIA Windows 2000/XP 显卡驱动程序安装向导
+
+检测到以下硬件：
+- NVIDIA GeForce 7600 GT (256MB)
+- PCI总线: 设备ID 0391
+
+驱动版本: 91.47
+发布日期: 2006年6月15日
+支持的操作系统: Windows 2000/XP
+
+[下一步] → 开始安装驱动程序
+
+━━━━━━━━━━━━━━━━━━━
+  穿越彩蛋
+━━━━━━━━━━━━━━━━━━━
+
+注意：此驱动仅支持2006年的显卡
+如果您来自2026年，请使用NVIDIA GeForce RTX 5090 Ti的驱动
+
+那些年，7600GT已经是最强显卡了！
+那些年，我们还在用CRT显示器...
+那些年，显卡只要500块钱...
+
+━━━━━━━━━━━━━━━━━━━`,
+
+  'C:\\Windows\\System32\\Drivers\\nvcpl.dll': `NVIDIA控制面板 v526.00
+此版本需要 Windows 11 或更高版本
+当前系统：Windows 98
+
+━━━━━━━━━━━━━━━━━━━
+
+检测到您可能穿越到了2006年。
+Windows 11 还要再过15年才会发布。
+
+建议：好好怀念一下经典的Windows 98吧`,
+
+  'C:\\Windows\\System32\\Drivers\\nv4_mini.sys': `此驱动支持：PCIe 5.0 接口
+当前系统：PCI / AGP 接口
+
+━━━━━━━━━━━━━━━━━━━
+
+PCIe 5.0 是2022年的技术。
+您在2006年用不上。
+
+建议：先玩玩AGP显卡吧，够用了`,
+
+  'C:\\Windows\\System32\\Drivers\\iastor.sys': `此驱动支持：Intel Optane SSD
+当前存储：IDE 硬盘 80GB
+
+━━━━━━━━━━━━━━━━━━━
+
+Intel Optane 是2017年的技术。
+2006年还在用IDE硬盘呢。
+
+当年80GB硬盘已经很大了！`,
+
+  'C:\\Windows\\System32\\Drivers\\usbstor.sys': `硬件安装向导
+
+━━━━━━━━━━━━━━━━━━━
+  恭喜
+━━━━━━━━━━━━━━━━━━━
+
+USB存储设备驱动安装成功！
+
+现在您可以访问USB盘了。
+
+━━━━━━━━━━━━━━━━━━━
+
+提示：在"我的电脑"中点击USB盘图标即可进入`,
+
+  'C:\\Windows\\System32\\Drivers\\ks.sys': `此驱动支持：AV1 / VP9 / HEVC 4K解码
+当前系统：MPEG-1 / DivX / RMVB
+
+━━━━━━━━━━━━━━━━━━━
+
+4K视频？AV1编码？
+2006年我们还在看RMVB呢！
+
+当年一部电影才700MB，画质已经很清晰了~`,
+
+  // ==================== C:\Program Files ====================
+
+  'C:\\Program Files\\readme.txt': `══════════════════════════════════════
+        千禧时光机 v3.7 - 项目说明
+══════════════════════════════════════
+
+【项目概述】
+千禧时光机是一款致敬2006年的怀旧小程序，
+还原了当年的QQ空间、Windows 98桌面、
+非主流文化等经典元素。
+
+【主要功能】
+• Windows 98 桌面体验
+• QQ空间社交系统
+• AI聊天（36种模式）
+• 100个AI好友互动
+• 20个隐藏彩蛋
+• 双货币系统（时光币 + 网费）
+• 我的电脑文件探索
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  注意事项
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+本程序大部分代码由AI助手生成。
+如果在某些文件中发现奇怪的文本，
+那可能是AI模型的...幻觉.
+请忽略即可.
+
+另外，系统深层目录中可能存在一些
+"未清理的临时文件"，
+建议不要打开，可能影响系统稳定性.
+
+（如果已经打开了...那也无所谓了）
+
+══════════════════════════════════════
+
+© 2006 千禧科技
+（实际是2025年笨蛋程序员写的）`,
+
+  'C:\\Program Files\\千禧时光机\\changelog.txt': `千禧时光机 - 更新日志
+
+══════════════════════════════════════
+
+v3.7.0 (2006-12-30)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✨ 新功能
+• 我的电脑完整文件系统
+• C盘、D盘、USB盘完整探索
+• 20个隐藏彩蛋
+
+🔧 优化
+• Windows 98桌面体验优化
+• 文件浏览器菜单系统
+• 隐藏文件显示功能
+
+🐛 修复
+• 修复网费扣除问题
+• 修复用户余额缓存问题
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+v3.6.0 (2006-12-20)
+• 添加QCIO社交系统
+• 添加农场游戏
+
+v3.5.0 (2006-12-10)
+• 添加人生模拟器
+• 添加十分动听播放器
+
+v3.0.0 (2006-12-01)
+• 初始版本发布
+• Windows 98桌面
+• QQ空间基础功能
+
+══════════════════════════════════════
+
+© 2006 千禧科技`,
+
+  // ==================== C:\Program Files\Windows Media Player ====================
+
+  'C:\\Program Files\\Windows Media Player\\readme.txt': `══════════════════════════════════════
+    Windows Media Player
+       用户指南
+══════════════════════════════════════
+
+【版本信息】
+Windows Media Player 11
+版本：11.0.5721.5230
+发布日期：2006年10月
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  那些年的播放器
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+你还记得吗？
+
+2006年的我们：
+• 用WMP听周杰伦的《依然范特西》
+• 用WMP看《武林外传》的RMVB
+• 给播放器换各种炫酷的皮肤
+• 制作可视化效果边听歌边看
+• 把歌单刻录成CD送给喜欢的人
+
+那些年：
+• Winamp还在更新
+• 千千静听刚刚起步
+• 酷狗音乐还是个 babies
+• 酷我音乐盒才刚出现
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  2006年的热门歌曲
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+• 周杰伦 - 《听妈妈的话》
+• 潘玮柏 - 《反转地球》
+• 蔡依林 - 《舞娘》
+• 张韶涵 - 《隐形的翅膀》
+• S.H.E - 《不想长大》
+• 林俊杰 - 《曹操》
+• 张靓颖 - 《如果爱下去》
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  怀旧提示
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+本目录的wmplayer.exe已损坏，
+但那份关于音乐的回忆永远都在。
+
+想听歌吗？
+去看看桌面上的"十分动听"播放器吧~
+
+══════════════════════════════════════
+
+© 2006 Microsoft Corporation
+（实际是千禧时光机怀旧收藏）`,
+
+  'C:\\Program Files\\Windows Media Player\\setup_log.txt': `Windows Media Player 安装日志
+
+══════════════════════════════════════
+
+安装开始时间：2006-10-15 14:32:18
+操作系统：Windows XP Professional
+Service Pack：2.0
+处理器：Intel Pentium 4 3.0GHz
+内存：512MB
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  安装组件
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✓ 核心播放引擎
+✓ 媒体库管理
+✓ CD刻录功能
+✓ 音乐商店支持
+✓ 可视化效果
+✓ 皮肤编辑器
+✓ 插件支持
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  安装完成
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+安装结束时间：2006-10-15 14:33:45
+状态：成功完成
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  历史记录
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[2006-10-15] 首次安装
+[2006-11-20] 播放次数：1,247次
+[2006-12-01] 媒体库歌曲：358首
+[2006-12-15] 创建播放列表：12个
+[2006-12-30] 最后一次正常使用
+
+那些年，这个播放器陪伴我们度过了
+无数个听歌的夜晚。
+
+══════════════════════════════════════
+
+安装日志结束`,
+
+  // ==================== 驱动器安装奖励 ====================
+
+  USB_DRIVER_INSTALLED: `硬件安装向导
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  恭喜
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+USB存储设备驱动安装成功！
+
+现在您可以访问USB盘了。
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+提示：在"我的电脑"中点击USB盘图标即可进入`,
+
+  // ==================== 辅助方法 ====================
+
+  // 获取文件内容
+  getContent(path) {
+    return this[path] || null;
+  },
+
+  // 获取驱动器消息
+  getDriverMessage(driverName) {
+    const messages = {
+      'nv4_disp.dll': {
+        title: '硬件检测',
+        content: this['C:\\Windows\\System32\\Drivers\\nv4_disp.dll']
+      },
+      'nvcpl.dll': {
+        title: 'NVIDIA控制面板',
+        content: this['C:\\Windows\\System32\\Drivers\\nvcpl.dll']
+      },
+      'nv4_mini.sys': {
+        title: 'PCIe穿越',
+        content: this['C:\\Windows\\System32\\Drivers\\nv4_mini.sys']
+      },
+      'iastor.sys': {
+        title: '存储穿越',
+        content: this['C:\\Windows\\System32\\Drivers\\iastor.sys']
+      },
+      'ks.sys': {
+        title: '视频穿越',
+        content: this['C:\\Windows\\System32\\Drivers\\ks.sys']
+      }
+    };
+    return messages[driverName] || null;
+  }
+};

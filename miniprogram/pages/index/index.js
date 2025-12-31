@@ -1499,6 +1499,22 @@ Page({
     this.setData({ showMyComputer: false });
   },
 
+  // 从我的电脑打开浏览器
+  onOpenBrowser: function () {
+    wx.navigateTo({
+      url: '/pages/browser/index'
+    });
+  },
+
+  // 从我的电脑打开我的文档
+  onOpenDocuments: function () {
+    this.setData({
+      showMyDocuments: true,
+      baseZIndex: this.data.baseZIndex + 10,
+      myDocumentsZIndex: this.data.baseZIndex + 10
+    });
+  },
+
   // 关闭网管系统
   onCloseNetworkSystem: function () {
     this.setData({ showNetworkSystem: false });

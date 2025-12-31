@@ -2,6 +2,7 @@
 const { eggSystem, EGG_IDS } = require("../../utils/egg-system");
 const { userApi } = require("../../utils/api-client");
 const { addLog } = require("../../utils/logger");
+const fileContents = require("./file-contents");
 
 Component({
   properties: {
@@ -127,6 +128,9 @@ Component({
     overlayStyle: "",
     // 主窗口文件菜单下拉
     showFileMenu: false,
+    showEditMenu: false,
+    showViewMenu: false,
+    showHelpMenu: false,
     // 基础用户信息（用于系统信息面板）
     userInfo: null,
     // 磁盘容量（动态）
@@ -164,6 +168,48 @@ Component({
     showNotepadDialog: false,
     notepadContent: "",
     notepadTitle: "",
+    // 文件内容弹窗（Win98风格）
+    showFileContentDialog: false,
+    fileContentData: null,
+    // 命令行控制台
+    showCmdConsole: false,
+    cmdOutput: [],
+    cmdInput: "",
+    cmdHistory: [],
+    cmdHistoryIndex: -1,
+    cmdCurrentDir: "C:\\Windows\\System32", // 当前目录
+    cmdPrompt: "C:\\Windows\\System32>", // 命令提示符
+    cmdColor: "0a", // 控制台颜色 (默认: 黑底绿字)
+    cmdBlinkCursor: true, // 光标闪烁
+    cmdScrollTop: 0, // 滚动位置
+    // USB驱动器安装弹窗
+    showUsbDriverDialog: false,
+    usbDriverStep: 'confirm', // confirm, installing, success
+    // NVIDIA驱动安装弹窗
+    showNvidiaDriverDialog: false,
+    nvidiaDriverStep: 'welcome', // welcome, installing, complete
+    nvidiaDriverProgress: 0,
+    // C盘彩蛋状态
+    fontsClickCount: 0, // Fonts点击次数
+    systemLongPressTimer: null, // system.ini长按计时器
+    tempNestingLevel: 0, // Temp套娃层级
+    // D盘彩蛋状态
+    readmeClickCount: 0, // readme.txt点击次数
+    gamesClickCount: 0, // Games文件夹点击次数
+    musicSongClickCount: 0, // Music歌曲点击次数
+    lastClickedSong: '', // 最后点击的歌曲名
+    autoexecLongPressTimer: null, // autoexec.bat长按计时器
+    videosDeepLevel: 0, // Videos深层层级
+    // USB彩蛋状态
+    usbFileClickCount: 0, // USB文件点击次数
+    usbNestingLevel: 0, // USB套娃层级
+    // Fonts提示弹窗
+    showFontsMessageDialog: false,
+    fontsMessageContent: '',
+    // 禁用文件提示弹窗（Win98风格）
+    showDisabledMessageDialog: false,
+    disabledMessageContent: '',
+    disabledMessageTitle: '',
   },
 
   observers: {
@@ -243,11 +289,68 @@ Component({
 
     // 点击窗口主体关闭菜单
     onWindowBodyTap: function () {
-      if (this.data.showFileMenu) {
-        this.setData({
-          showFileMenu: false,
-        });
-      }
+      this.closeAllMenus();
+    },
+
+    // 关闭所有菜单
+    closeAllMenus: function () {
+      this.setData({
+        showFileMenu: false,
+        showEditMenu: false,
+        showViewMenu: false,
+        showHelpMenu: false,
+      });
+    },
+
+    // 切换编辑菜单显示
+    onEditMenuTap: function () {
+      this.closeAllMenus();
+      this.setData({
+        showEditMenu: !this.data.showEditMenu,
+      });
+    },
+
+    // 切换查看菜单显示
+    onViewMenuTap: function () {
+      this.closeAllMenus();
+      this.setData({
+        showViewMenu: !this.data.showViewMenu,
+      });
+    },
+
+    // 切换帮助菜单显示
+    onHelpMenuTap: function () {
+      this.closeAllMenus();
+      this.setData({
+        showHelpMenu: !this.data.showHelpMenu,
+      });
+    },
+
+    // 刷新视图
+    onRefreshView: function () {
+      this.closeAllMenus();
+      wx.showToast({
+        title: '已刷新',
+        icon: 'success',
+        duration: 1000
+      });
+    },
+
+    // 关闭窗口
+    onCloseWindow: function () {
+      this.closeAllMenus();
+      this.onClose();
+    },
+
+    // 显示关于
+    onShowAbout: function () {
+      this.closeAllMenus();
+      wx.showModal({
+        title: '关于 千禧时光机',
+        content: '千禧时光机 v3.7.0\n\n一款致敬2006年的怀旧小程序\n\n© 2006 千禧科技',
+        showCancel: false,
+        confirmText: '确定'
+      });
     },
 
     // ==================== Konami 序列相关 ====================
@@ -575,7 +678,10 @@ Component({
     // ==================== 文件浏览器 ====================
 
     // 文件浏览器菜单控制
-    toggleFileExplorerMenu(menuName) {
+    toggleFileExplorerMenu(event) {
+      // 从事件对象中获取菜单名称
+      const menuName = event.currentTarget.dataset.menu;
+
       // 关闭所有菜单
       this.setData({
         feShowFileMenu: false,
@@ -882,9 +988,11 @@ Component({
           { type: "folder", name: "Windows", icon: "📁" },
           { type: "folder", name: "Program Files", icon: "📁" },
           { type: "folder", name: "Documents", icon: "📁" },
-          { type: "file", name: "boot.ini", icon: "📄" },
-          { type: "file", name: "system.log", icon: "📄" },
-          { type: "file", name: "config.ini", icon: "📄" },
+          { type: "file", name: "boot.ini", icon: "📄", content: fileContents['C:\\boot.ini'], useWin98Dialog: true },
+          { type: "file", name: "system.log", icon: "📄", content: fileContents['C:\\system.log'], useWin98Dialog: true },
+          { type: "file", name: "config.ini", icon: "📄", content: fileContents['C:\\config.ini'], useWin98Dialog: true },
+          // c_hidden_dot彩蛋：隐藏文件（需要开启"显示所有文件"）
+          { type: "file", name: ".", icon: "📄", hidden: true, isHiddenDot: true },
         ];
       } else if (path === "C:\\Windows") {
         return [
@@ -894,6 +1002,7 @@ Component({
             name: "Fonts",
             icon: "📁",
             disabled: true,
+            isFonts: true, // c_fonts_spam彩蛋标记
             message:
               "笨蛋程序员加了一晚上班也没开发完成字体预览，今晚让他通宵，明天再来点点看，明天还不行就明年再来看看吧~",
           },
@@ -901,49 +1010,90 @@ Component({
             type: "folder",
             name: "Temp",
             icon: "📁",
-            disabled: true,
-            message:
-              "笨蛋程序员正在通宵清理临时文件，让他加个班吧，明天再来看看~",
           },
-          { type: "file", name: "system.ini", icon: "📄" },
-          { type: "file", name: "win.ini", icon: "📄" },
+          {
+            type: "file",
+            name: "system.ini",
+            icon: "📄",
+            content: fileContents['C:\\Windows\\system.ini'],
+            useWin98Dialog: true,
+            isSystemIni: true // c_system_longpress彩蛋标记
+          },
+          { type: "file", name: "win.ini", icon: "📄", content: fileContents['C:\\Windows\\win.ini'], useWin98Dialog: true },
+          // c_empty_folder彩蛋：空名文件夹（隐藏）
+          { type: "folder", name: " ", icon: "📁", hidden: true, isEmptyFolder: true },
         ];
-      } else if (path === "C:\\Windows\\System32") {
+      } else if (path === "C:\\Windows\\Temp") {
         return [
           {
-            type: "folder",
-            name: "Drivers",
-            icon: "📁",
+            type: "file",
+            name: "~tmp001.dat",
+            icon: "📄",
             disabled: true,
-            message:
-              "驱动程序是系统的核心，笨蛋程序员通宵研究了一晚上也不敢动，明天再让他试试吧~",
+            message: "⚠️ 文件损坏\n\n此文件无法读取。\n\n文件内容：\nÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ...",
+            isDisabledMessage: true,
           },
+          { type: "file", name: "~backup.old", icon: "📄", content: fileContents['C:\\Windows\\Temp\\~backup.old'], useWin98Dialog: true },
+          { type: "file", name: "~draft.txt", icon: "📄", content: fileContents['C:\\Windows\\Temp\\~draft.txt'], useWin98Dialog: true },
+          { type: "file", name: "~cache.tmp", icon: "📄", content: fileContents['C:\\Windows\\Temp\\~cache.tmp'], useWin98Dialog: true },
+          { type: "file", name: "temp_log.txt", icon: "📄", content: fileContents['C:\\Windows\\Temp\\temp_log.txt'], useWin98Dialog: true },
+          // c_temp_nesting彩蛋：套娃目录（隐藏）
+          { type: "folder", name: "深层", icon: "📁", hidden: true, isTempNesting: true, nestingLevel: 1 },
+        ];
+      } else if (path === "C:\\Windows\\Temp\\深层" || path === "C:\\Windows\\Temp\\深层\\更深层" || path === "C:\\Windows\\Temp\\深层\\更深层\\最深层" || path === "C:\\Windows\\Temp\\深层\\更深层\\最深层\\核心层") {
+        // Temp套娃彩蛋路径
+        const levelMap = {
+          'C:\\Windows\\Temp\\深层': 2,
+          'C:\\Windows\\Temp\\深层\\更深层': 3,
+          'C:\\Windows\\Temp\\深层\\更深层\\最深层': 4,
+          'C:\\Windows\\Temp\\深层\\更深层\\最深层\\核心层': 5
+        };
+        const level = levelMap[path];
+        const items = [
+          { type: "file", name: `层级${level}文件.txt`, icon: "📄", disabled: true, message: `你已经钻到了第${level}层...\n${level < 5 ? '继续深入吧~' : '到底了！恭喜你成为套娃专家！'}` },
+        ];
+        // 添加下一层目录（第5层没有下一层）
+        if (level < 5) {
+          const nextFolders = ['更深层', '最深层', '核心层'];
+          items.push({ type: "folder", name: nextFolders[level - 1], icon: "📁", hidden: true, isTempNesting: true, nestingLevel: level + 1 });
+        }
+        return items;
+      } else if (path === "C:\\Windows\\System32") {
+        return [
+          { type: "folder", name: "Drivers", icon: "📁" },
           { type: "folder", name: "config", icon: "📁" },
           {
             type: "file",
             name: "cmd.exe",
             icon: "📄",
-            disabled: true,
-            message:
-              "命令提示符需要笨蛋程序员通宵加班开发黑科技，明天再来看看吧（后天就是2026年了）",
+            isCmd: true,
           },
           {
             type: "file",
             name: "kernel32.dll",
             icon: "📄",
             disabled: true,
-            message:
-              "这是Windows内核！笨蛋程序员通宵研究了一晚上也不敢动，明年再来看看吧~",
+            message: "这是Windows内核！笨蛋程序员通宵研究了一晚上也不敢动，明年再来看看吧~",
+            isDisabledMessage: true, // 使用Win98风格弹窗
           },
           {
             type: "file",
             name: "notepad.exe",
             icon: "📄",
             disabled: true,
-            message:
-              "笨蛋程序员加了一晚上班也没开发完成记事本，今晚让他通宵，明天再试试，不行就等2026年吧~",
+            message: "笨蛋程序员加了一晚上班也没开发完成记事本，今晚让他通宵，明天再试试，不行就等2026年吧~",
+            isDisabledMessage: true, // 使用Win98风格弹窗
           },
-          { type: "file", name: "config.sys", icon: "📄" },
+          { type: "file", name: "config.sys", icon: "📄", content: fileContents['C:\\Windows\\System32\\config.sys'], useWin98Dialog: true },
+        ];
+      } else if (path === "C:\\Windows\\System32\\Drivers") {
+        return [
+          { type: "file", name: "nvidia_91.47.exe", icon: "📄", content: fileContents['C:\\Windows\\System32\\Drivers\\nv4_disp.dll'] },
+          { type: "file", name: "nvcpl.dll", icon: "📄", content: fileContents['C:\\Windows\\System32\\Drivers\\nvcpl.dll'], useWin98Dialog: true },
+          { type: "file", name: "nv4_mini.sys", icon: "📄", content: fileContents['C:\\Windows\\System32\\Drivers\\nv4_mini.sys'], useWin98Dialog: true },
+          { type: "file", name: "iastor.sys", icon: "📄", content: fileContents['C:\\Windows\\System32\\Drivers\\iastor.sys'], useWin98Dialog: true },
+          { type: "file", name: "usbstor.sys", icon: "📄", content: fileContents['C:\\Windows\\System32\\Drivers\\usbstor.sys'], isUsbDriver: true, useWin98Dialog: true },
+          { type: "file", name: "ks.sys", icon: "📄", content: fileContents['C:\\Windows\\System32\\Drivers\\ks.sys'], useWin98Dialog: true },
         ];
       } else if (path === "C:\\Windows\\System32\\config") {
         return [
@@ -954,6 +1104,7 @@ Component({
             disabled: true,
             message:
               "青春回忆备份文件\n\n2006年的夏天，我们一起去网吧...\n\n（笨蛋程序员说这个文件太感伤了，不敢打开）",
+            isDisabledMessage: true,
           },
           {
             type: "file",
@@ -962,6 +1113,7 @@ Component({
             disabled: true,
             message:
               '老板吐槽缓存\n\n"这个需求很简单""今天能做完吗""改一下就行"\n\n（这些话听了100遍，已经存入缓存了）',
+            isDisabledMessage: true,
           },
           {
             type: "file",
@@ -969,6 +1121,7 @@ Component({
             icon: "📄",
             content:
               "=== 系统日志 ===\n\n[2006-06-15 14:30:25] 系统启动\n[2006-06-15 14:30:26] 加载用户配置\n[2006-06-15 14:30:27] 初始化桌面环境\n[2006-06-15 14:30:28] 加载QQ空间模块\n[2006-06-15 14:30:29] 系统就绪\n\n日志记录结束",
+            useWin98Dialog: true,
           },
           {
             type: "file",
@@ -976,6 +1129,7 @@ Component({
             icon: "📄",
             content:
               "[用户配置备份]\n\nQQ签名：葬爱家族，永恒不变\n空间背景：黑色\n音乐：童话 - 光良\n\n（2006年的配置文件）",
+            useWin98Dialog: true,
           },
           {
             type: "file",
@@ -984,6 +1138,7 @@ Component({
             disabled: true,
             message:
               "蓝屏崩溃记录\n\n最后一次崩溃：2006-07-20\n原因：用户试图同时打开20个QQ空间\n\n（那年的电脑，确实扛不住）",
+            isDisabledMessage: true,
           },
           {
             type: "file",
@@ -991,6 +1146,7 @@ Component({
             icon: "📄",
             content:
               "系统维护日志 - 2006-12-30\n\n[03:47:00] 开始系统检查\n[03:47:05] 检测到异常活动\n[03:47:10] 发现未授权的日志文件\n[03:47:15] 已移动到安全位置\n\n安全路径：\nC:\\Windows\\System32\\config\\deep\\0xFFFF\\help.txt",
+            useWin98Dialog: true,
           },
           { type: "folder", name: "deep", icon: "📁" },
         ];
@@ -1003,6 +1159,7 @@ Component({
             disabled: true,
             message:
               "AI崩溃日记\n\n崩溃次数：999+\n崩溃原因：老板提出抽象需求\n\n（这日志太惨了，不敢看）",
+            isDisabledMessage: true,
           },
           {
             type: "file",
@@ -1011,6 +1168,7 @@ Component({
             disabled: true,
             message:
               "系统缓存记录\n\n记录了2006年的所有操作...\n\n那些年我们一起追过的女孩",
+            isDisabledMessage: true,
           },
           {
             type: "file",
@@ -1018,6 +1176,7 @@ Component({
             icon: "📄",
             content:
               '临时文件 - 未保存的草稿\n\n草稿1 - 给她的信（从未发送）\n\n嗨，\n\n我不知道该怎么开头。\n我们认识已经三个月了。\n每天上线等你的消息，\n已经成了我的习惯。\n\n今天看到你的签名改了：\n"快乐每一天~笑口常开~"\n\n你找到快乐了吗？\n是和别人一起吗？\n\n算了，我只是在胡思乱想吧.\n\n—— 2006年10月20日 深夜\n\n（这封信我永远不会发出去）\n（就像我的心情一样）',
+            useWin98Dialog: true,
           },
           {
             type: "file",
@@ -1026,6 +1185,7 @@ Component({
             disabled: true,
             message:
               "聊天记录恢复文件\n\n包含2006年所有聊天记录...\n\n那些年我们聊过的天，说过的情话",
+            isDisabledMessage: true,
           },
           { type: "folder", name: "0xFFFF", icon: "📁" },
         ];
@@ -1038,6 +1198,7 @@ Component({
             icon: "📄",
             disabled: true,
             message: "乱码文件，看不懂~",
+            isDisabledMessage: true,
           },
           {
             type: "file",
@@ -1046,6 +1207,7 @@ Component({
             disabled: true,
             message:
               "会话备份片段\n\n[备份时间：2006-12-30 03:47:22]\n用户正在查看深层目录...\n\n（备份记录到此为止）",
+            isDisabledMessage: true,
           },
           {
             type: "file",
@@ -1070,22 +1232,12 @@ Component({
         return items;
       } else if (path === "C:\\Program Files") {
         return [
-          {
-            type: "file",
-            name: "readme.txt",
-            icon: "📄",
-            disabled: true,
-            message:
-              "笨蛋程序员通宵写了一晚上README，但还没写完哈哈，明天再来看看~",
-          },
+          { type: "file", name: "readme.txt", icon: "📄", content: fileContents['C:\\Program Files\\readme.txt'], useWin98Dialog: true },
           { type: "folder", name: "千禧时光机", icon: "📁" },
           {
             type: "folder",
-            name: "Internet Explorer",
-            icon: "📁",
-            disabled: true,
-            message:
-              "你用的就是这个IE浏览器呀！笨蛋程序员今晚通宵做别的功能呢，别点啦~",
+            name: "浏览器",
+            icon: "🌐",
           },
           { type: "folder", name: "Windows Media Player", icon: "📁" },
           {
@@ -1093,8 +1245,8 @@ Component({
             name: "Common Files",
             icon: "📁",
             disabled: true,
-            message:
-              "笨蛋程序员正在通宵研究共享文件夹怎么实现，明天再来看看吧~",
+            message: "Common Files 文件夹\n\n状态：开发中\n\n此文件夹用于存放多个程序共享的组件和库文件。\n\n提示：2006年的共享文件夹经常出现DLL冲突问题，建议谨慎操作。",
+            isDisabledMessage: true,
           },
         ];
       } else if (path === "C:\\Program Files\\Windows Media Player") {
@@ -1102,11 +1254,29 @@ Component({
           {
             type: "file",
             name: "wmplayer.exe",
-            icon: "📄",
+            icon: "▶️",
             disabled: true,
-            message:
-              "无法访问此文件夹。\n应用程序文件可能已损坏或丢失.\n\n错误代码：0x80070002\n\n请重新安装 Windows Media Player.",
+            message: "Windows Media Player\n\n版本：11.0.5721.5230\n状态：文件已损坏\n\n提示：想听歌吗？去看看桌面上的\"十分动听\"播放器吧~",
+            isDisabledMessage: true,
           },
+          {
+            type: "folder",
+            name: "Skins",
+            icon: "🎨",
+            disabled: true,
+            message: "播放器皮肤文件夹\n\n（那些年，我们给WMP换各种炫酷皮肤）\n\n提示：皮肤文件已损坏，建议使用十分动听播放器",
+            isDisabledMessage: true,
+          },
+          {
+            type: "folder",
+            name: "Plugins",
+            icon: "🔌",
+            disabled: true,
+            message: "插件目录\n\n状态：文件夹为空\n\n提示：2006年的WMP插件生态很丰富呢",
+            isDisabledMessage: true,
+          },
+          { type: "file", name: "readme.txt", icon: "📄", content: fileContents['C:\\Program Files\\Windows Media Player\\readme.txt'], useWin98Dialog: true },
+          { type: "file", name: "setup_log.txt", icon: "📋", content: fileContents['C:\\Program Files\\Windows Media Player\\setup_log.txt'], useWin98Dialog: true },
         ];
       } else if (path === "C:\\Program Files\\千禧时光机") {
         return [
@@ -1115,34 +1285,34 @@ Component({
             name: "data",
             icon: "📁",
             disabled: true,
-            message:
-              "游戏数据文件夹，笨蛋程序员今晚通宵保护数据安全，明天再来看看~",
+            message: "游戏数据文件夹，加密保护中。\n\n（提示：这个文件夹里藏着彩蛋，但今天还打不开）",
+            isDisabledMessage: true,
           },
           {
             type: "file",
             name: "QCIO.exe",
-            icon: "📄",
+            icon: "📟",
             disabled: true,
-            message:
-              "点桌面QCIO图标就行啦，别让笨蛋程序员再加班了，他都加一晚上了~",
+            message: "千禧传呼机程序\n\n版本：v3.7.0\n状态：已集成到桌面快捷方式\n\n提示：直接点击桌面QCIO图标即可使用",
+            isDisabledMessage: true,
           },
           {
             type: "file",
             name: "如果当时.exe",
-            icon: "📄",
+            icon: "⏳",
             disabled: true,
-            message:
-              '点桌面"如果当时"图标开始人生模拟，让程序员休息会儿吧，他都通宵一晚上了~',
+            message: "时光机人生模拟器\n\n版本：v3.7.0\n状态：已集成到桌面快捷方式\n\n提示：点击桌面\"如果当时\"图标开始模拟",
+            isDisabledMessage: true,
           },
           {
             type: "file",
             name: "农场游戏.exe",
-            icon: "📄",
+            icon: "🌾",
             disabled: true,
-            message:
-              "去QCIO空间玩农场吧，别点这个了，笨蛋程序员今晚通宵做别的功能呢~",
+            message: "开心农场小程序\n\n版本：v3.7.0\n状态：已集成到QCIO空间\n\n提示：访问QCIO空间 → 我的农场即可体验",
+            isDisabledMessage: true,
           },
-          { type: "file", name: "changelog.txt", icon: "📄" },
+          { type: "file", name: "changelog.txt", icon: "📄", content: fileContents['C:\\Program Files\\千禧时光机\\changelog.txt'], useWin98Dialog: true },
         ];
       } else if (path === "D:\\" || path === "D:") {
         return [
@@ -1152,6 +1322,7 @@ Component({
             icon: "📄",
             content:
               "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n  D:\\ 盘说明\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n欢迎来到我的数据盘！\n\n本盘存放内容：\n• Games - 我收藏的游戏\n• Downloads - 下载的文件（不要乱删！）\n• Music - 我的音乐收藏\n• Videos - 下载的视频\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n  注意事项\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n1. Games文件夹里的游戏是我好不容易下载的\n2. Music里的歌都是我一首首收集的\n3. 如果你想听歌，用千千静听播放\n4. 如果你想看视频，用暴风影音播放\n\n—— 2006年6月15日 整理",
+            useWin98Dialog: true, // 使用Win98风格弹窗
           },
           {
             type: "file",
@@ -1159,11 +1330,21 @@ Component({
             icon: "📄",
             content:
               '@ECHO OFF\nREM 这个文件其实没什么用\nREM 但是为了怀旧，还是留着吧\n\nREM 老板说要有"真实的系统体验"\nREM 所以我加了这个文件\n\nPATH C:\\WINDOWS;C:\\WINDOWS\\COMMAND\nSET TEMP=C:\\WINDOWS\\TEMP\n\nREM （其实Windows 98之后已经不用autoexec.bat了）',
+            isAutoexecBat: true, // 标记为autoexec.bat，用于长按彩蛋
+            useWin98Dialog: true, // 使用Win98风格弹窗
           },
           { type: "folder", name: "Games", icon: "📁" },
           { type: "folder", name: "Downloads", icon: "📁" },
           { type: "folder", name: "Music", icon: "📁" },
           { type: "folder", name: "Videos", icon: "📁" },
+          // d_secret_file彩蛋：D盘根目录的.secret隐藏文件
+          {
+            type: "file",
+            name: ".secret",
+            icon: "📄",
+            hidden: true, // 标记为隐藏文件
+            isSecretFile: true, // 标记为秘密文件彩蛋
+          },
         ];
       } else if (path === "D:\\Games") {
         return [
@@ -1326,10 +1507,70 @@ Component({
             type: "folder",
             name: "学习资料",
             icon: "📁",
-            disabled: true,
-            message: "（其实是伪装成学习资料的游戏视频）",
           },
         ];
+      } else if (path === "D:\\Videos\\学习资料" || path.startsWith("D:\\Videos\\学习资料\\第")) {
+        // d_videos_deep彩蛋：Videos深层目录
+        // 解析当前层级
+        let level = 1;
+        if (path !== "D:\\Videos\\学习资料") {
+          const match = path.match(/第(\d+)层/);
+          if (match) {
+            level = parseInt(match[1]) + 1;
+          }
+        }
+
+        // 检查是否达到第5层（触发彩蛋）
+        if (level === 5) {
+          // 延迟触发彩蛋，确保用户能看到深层内容
+          setTimeout(() => {
+            this.triggerCDriveEgg(EGG_IDS.D_VIDEOS_DEEP);
+            wx.showToast({
+              title: "深度探索者成就达成！+600时光币",
+              icon: "success",
+              duration: 2000
+            });
+          }, 500);
+        }
+
+        // 返回当前层级的文件列表
+        if (level >= 5) {
+          // 第5层及以后：到达最深层
+          return [
+            {
+              type: "file",
+              name: "游戏攻略.txt",
+              icon: "📄",
+              content: "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n恭喜你找到了最深层！\n\n这里藏着真正的游戏攻略！\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n魔兽争霸3：\n- 人族：快速暴兵，法师流\n- 兽族：剑圣加速，狼骑骚扰\n- 暗夜：恶魔猎手，熊鹿组合\n- 不死：死亡骑士，天地鬼鬼\n\n反恐精英1.6：\n- AK压枪：3发点射\n- M4后坐力：向下拉\n- AWP准星：甩枪技巧\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+              useWin98Dialog: true,
+            },
+            {
+              type: "file",
+              name: "通关存档.rar",
+              icon: "📄",
+              disabled: true,
+              message: "笨蛋程序员说存档文件太大了，明天再上传吧~",
+              isDisabledMessage: true,
+            },
+          ];
+        } else {
+          // 第1-4层：继续深入
+          return [
+            {
+              type: "folder",
+              name: `第${level}层`,
+              icon: "📁",
+            },
+            {
+              type: "file",
+              name: `第${level}层说明.txt`,
+              icon: "📄",
+              disabled: true,
+              message: `这是第${level}层说明文件。\n\n继续深入可以发现更多秘密！\n\n当前层级：${level}/5`,
+              isDisabledMessage: true,
+            },
+          ];
+        }
       } else if (path === "USB:\\" || path === "USB:") {
         return [
           {
@@ -1338,6 +1579,7 @@ Component({
             icon: "📄",
             content:
               "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n  USB盘\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n这是一个U盘。\n\n里面有一些秘密。\n\n如果你好奇心重，\n可以随便翻翻。\n\n但有些东西，\n看到了就忘了吧。",
+            useWin98Dialog: true, // 使用Win98风格弹窗
           },
           {
             type: "folder",
@@ -1348,6 +1590,14 @@ Component({
           },
           { type: "folder", name: "我的文档", icon: "📁" },
           { type: "folder", name: "私密文件夹", icon: "📁" },
+          // usb_invisible_folder彩蛋：空名隐藏文件夹
+          {
+            type: "folder",
+            name: " ",
+            icon: "📁",
+            hidden: true,
+            isUsbEmptyFolder: true, // 标记为USB空文件夹彩蛋
+          },
         ];
       } else if (path === "USB:\\我的文档") {
         return [
@@ -1357,6 +1607,7 @@ Component({
             icon: "📄",
             content:
               '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n  星座运势 - 2006年\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n狮子座\n\n今日运势：★★★★☆\n爱情运势：今天会遇到特别的人\n幸运颜色：金色\n幸运数字：7\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n那些年，我们信星座胜过相信自己。\n每天早上第一件事就是查看今天的运势。\n如果显示"今天会遇到特别的人"，\n一整天都会很开心。\n\n2006年的夏天，\n我们就是这样过来的。',
+            useWin98Dialog: true, // 使用Win98风格弹窗
           },
           {
             type: "file",
@@ -1364,6 +1615,7 @@ Component({
             icon: "📄",
             content:
               '聊天记录片段\n\n[2006-07-15 22:30:23]\n她: 晚安~\n我: 晚安\n\n[2006-07-15 22:31:45]\n我: 明天见\n她: 嗯嗯，明天见~\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n那些年，\n我们熬夜聊天，\n一遍一遍说"晚安"却舍不得下线。\n\n"晚安"不是结束，\n而是期待明天的开始。',
+            useWin98Dialog: true, // 使用Win98风格弹窗
           },
           {
             type: "file",
@@ -1371,6 +1623,7 @@ Component({
             icon: "📄",
             content:
               "给她的信（未发送）\n\n嗨，\n\n我喜欢你。\n\n从认识你的第一天起，\n我就喜欢你。\n\n但我一直没勇气告诉你。\n\n今天我终于鼓起勇气写下这封信，\n但我知道我永远不会发出去。\n\n因为我害怕失去你。\n\n害怕连朋友都做不成。\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n2006年8月20日 深夜",
+            useWin98Dialog: true, // 使用Win98风格弹窗
           },
         ];
       } else if (path === "USB:\\私密文件夹") {
@@ -1382,6 +1635,7 @@ Component({
             icon: "📄",
             content:
               '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n  ⚠️ 警告\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n此文件包含敏感信息。\n\n如果你看到了这个文件，\n说明你已经深入探索了系统。\n\n继续探索，你会发现更多秘密。\n\n线索：有些文件名以 . 开头的文件\n可能是隐藏的，需要开启"显示所有文件"才能看到。\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+            useWin98Dialog: true, // 使用Win98风格弹窗
           },
           { type: "folder", name: "深层", icon: "📁" },
         ];
@@ -1393,6 +1647,7 @@ Component({
             icon: "📄",
             content:
               '2006年7月15日 晴\n\n今天和她一起去了网吧。\n\n我们坐在角落里，\n她玩QQ飞车，我玩魔兽世界。\n\n中途她问我：\n"你说我们会一直这样吗？"\n\n我不知道该怎么回答。\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n那时的我们，以为会一直这样下去。\n\n但我们错了。\n\n时间会改变一切。',
+            useWin98Dialog: true, // 使用Win98风格弹窗
           },
           {
             type: "file",
@@ -1400,8 +1655,62 @@ Component({
             icon: "📄",
             content:
               "2006年8月20日 雨\n\n今天我鼓起勇气想表白。\n\n但她告诉我，\n她要转学了。\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n青春就是这样，\n总是在最不该结束的时候结束。\n\n我们来不及告别，\n来不及说出口。\n\n那些年错过的人，\n再也找不回来了。",
+            useWin98Dialog: true, // 使用Win98风格弹窗
           },
         ];
+      } else if (path.startsWith("USB:\\私密文件夹\\深层\\套娃")) {
+        // usb_nesting_10彩蛋：10层套娃目录
+        // 解析当前层级
+        let nestingLevel = 1;
+        const match = path.match(/套娃(\d+)/);
+        if (match) {
+          nestingLevel = parseInt(match[1]) + 1;
+        }
+
+        // 检查是否达到第10层（触发彩蛋）
+        if (nestingLevel === 10) {
+          // 延迟触发彩蛋
+          setTimeout(() => {
+            this.triggerCDriveEgg(EGG_IDS.USB_NESTING_10);
+            wx.showModal({
+              title: "终极套娃",
+              content: "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n恭喜你进入了第10层！\n\n你真的很有耐心！\n\n奖励：1000时光币\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+              showCancel: false,
+              confirmText: "谢谢"
+            });
+          }, 500);
+        }
+
+        // 返回当前层级的文件列表
+        if (nestingLevel >= 10) {
+          // 第10层：到达最深层
+          return [
+            {
+              type: "file",
+              name: "终极宝藏.txt",
+              icon: "📄",
+              content: "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n终极宝藏\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n恭喜你找到了终极宝藏！\n\n这里藏着:\n\n• 1000时光币（已发放）\n• 终极套娃大师徽章（已获得）\n• 无尽的探索精神（你自带）\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n感谢你的耐心探索！\n\n—— 笨蛋程序员敬上",
+              useWin98Dialog: true,
+            },
+          ];
+        } else {
+          // 第1-9层：继续深入
+          return [
+            {
+              type: "folder",
+              name: `套娃${nestingLevel}`,
+              icon: "📁",
+            },
+            {
+              type: "file",
+              name: `第${nestingLevel}层提示.txt`,
+              icon: "📄",
+              disabled: true,
+              message: `这是第${nestingLevel}层套娃目录。\n\n继续深入${10 - nestingLevel}层可以发现终极宝藏！\n\n当前层级：${nestingLevel}/10`,
+              isDisabledMessage: true,
+            },
+          ];
+        }
       } else if (path === "USB:\\私密文件夹\\深层") {
         return [
           {
@@ -1418,6 +1727,8 @@ Component({
             content: "摩斯密码提示：\n\n.... . .-.. .--. \n\n（HELP）",
           },
           { type: "folder", name: "更深层", icon: "📁" },
+          // usb_nesting_10彩蛋：套娃入口
+          { type: "folder", name: "套娃1", icon: "📁" },
         ];
       } else if (path === "USB:\\私密文件夹\\深层\\更深层") {
         return [
@@ -1474,10 +1785,10 @@ Component({
         return;
       }
 
-      // 特殊处理：Internet Explorer 文件夹 - 跳转到浏览器
+      // 特殊处理：浏览器文件夹 - 跳转到浏览器
       if (
         item.type === "folder" &&
-        item.name === "Internet Explorer" &&
+        item.name === "浏览器" &&
         this.data.fileExplorerPath === "C:\\Program Files"
       ) {
         this.closeAllFileExplorerMenus();
@@ -1502,13 +1813,221 @@ Component({
         return;
       }
 
+      // 特殊处理：cmd.exe 命令行
+      if (item.type === "file" && item.name === "cmd.exe" && item.isCmd) {
+        this.openCmdConsole();
+        return;
+      }
+
+      // 特殊处理：usbstor.sys USB驱动器安装
+      if (item.type === "file" && item.name === "usbstor.sys" && item.isUsbDriver) {
+        this.installUsbDriver();
+        return;
+      }
+
+      // ==================== C盘彩蛋触发 ====================
+
+      // c_hidden_dot彩蛋：C:\根目录的隐藏文件"."
+      if (item.isHiddenDot) {
+        this.triggerCDriveEgg(EGG_IDS.C_HIDDEN_DOT);
+        wx.showModal({
+          title: ".",
+          content: "这是当前目录引用。\n\n也是我藏在这里的彩蛋！",
+          showCancel: false,
+          confirmText: "确定"
+        });
+        return;
+      }
+
+      // c_empty_folder彩蛋：空名文件夹
+      if (item.isEmptyFolder) {
+        this.triggerCDriveEgg(EGG_IDS.C_EMPTY_FOLDER);
+        wx.showModal({
+          title: "空文件夹",
+          content: "这是一个空文件夹。\n\n什么都没有，除了一个彩蛋！",
+          showCancel: false,
+          confirmText: "确定"
+        });
+        return;
+      }
+
+      // c_temp_nesting彩蛋：套娃目录
+      if (item.isTempNesting && item.nestingLevel === 5) {
+        this.triggerCDriveEgg(EGG_IDS.C_TEMP_NESTING);
+      }
+
+      // c_fonts_spam彩蛋：Fonts文件夹连点
+      if (item.isFonts && item.disabled) {
+        this.setData({ fontsClickCount: this.data.fontsClickCount + 1 });
+        // 使用Win98风格弹窗显示提示
+        this.setData({
+          showFontsMessageDialog: true,
+          fontsMessageContent: item.message || "无法访问"
+        });
+        // 检查是否达到10次
+        if (this.data.fontsClickCount >= 10) {
+          this.triggerCDriveEgg(EGG_IDS.C_FONTS_SPAM);
+          this.setData({ fontsClickCount: 0 }); // 重置计数
+        }
+        return;
+      }
+
+      // ==================== C盘彩蛋触发结束 ====================
+
+      // ==================== D盘/USB特殊文件处理 ====================
+
+      // autoexec.bat长按彩蛋：显示文件内容（正常处理）
+      if (item.isAutoexecBat) {
+        if (item.content) {
+          this.showFileContent(item);
+        }
+        return; // 长按逻辑在bindlongpress中处理
+      }
+
+      // ==================== D盘彩蛋触发 ====================
+
+      // d_secret_file彩蛋：D盘根目录的.secret隐藏文件
+      if (item.isSecretFile) {
+        this.triggerCDriveEgg(EGG_IDS.D_SECRET_FILE);
+        wx.showModal({
+          title: ".secret",
+          content: "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n恭喜你发现了秘密文件！\n\n这里藏着什么秘密呢？\n\n其实是...\n\n老板明天又要提新需求了！\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+          showCancel: false,
+          confirmText: "确定"
+        });
+        return;
+      }
+
+      // d_readme_click5彩蛋：D盘根目录readme.txt连点5次
+      if (item.name === "readme.txt" && this.data.fileExplorerPath === "D:\\") {
+        this.setData({ readmeClickCount: this.data.readmeClickCount + 1 });
+        // 正常显示文件内容
+        if (item.content) {
+          this.showFileContent(item);
+        }
+        // 检查是否达到5次
+        if (this.data.readmeClickCount >= 5) {
+          this.triggerCDriveEgg(EGG_IDS.D_README_CLICK5);
+          wx.showToast({
+            title: "阅读达人成就达成！+200时光币",
+            icon: "success",
+            duration: 2000
+          });
+          this.setData({ readmeClickCount: 0 }); // 重置计数
+        }
+        return;
+      }
+
+      // d_games_click10彩蛋：Games文件夹连点10次
+      if (item.name === "Games" && item.type === "folder" && this.data.fileExplorerPath === "D:\\") {
+        this.setData({ gamesClickCount: this.data.gamesClickCount + 1 });
+        // 检查是否达到10次
+        if (this.data.gamesClickCount >= 10) {
+          this.triggerCDriveEgg(EGG_IDS.D_GAMES_CLICK10);
+          wx.showToast({
+            title: "游戏狂热成就达成！+500时光币",
+            icon: "success",
+            duration: 2000
+          });
+          this.setData({ gamesClickCount: 0 }); // 重置计数
+        }
+        // 继续进入文件夹
+      }
+
+      // d_future_games彩蛋：点击2026年穿越游戏
+      if (item.name === "赛博朋克2077重制版-v2.0.exe" || item.name === "元宇宙探索-v5.0.exe") {
+        this.triggerCDriveEgg(EGG_IDS.D_FUTURE_GAMES);
+        // 显示禁用提示
+        if (item.disabled) {
+          this.setData({
+            showDisabledMessageDialog: true,
+            disabledMessageContent: item.message || "无法访问",
+            disabledMessageTitle: item.name,
+          });
+        }
+        return;
+      }
+
+      // d_music_repeat彩蛋：Music歌曲连点5次
+      if (this.data.fileExplorerPath.startsWith("D:\\Music") && item.name.endsWith(".mp3")) {
+        if (this.data.lastClickedSong === item.name) {
+          this.setData({ musicSongClickCount: this.data.musicSongClickCount + 1 });
+        } else {
+          this.setData({ musicSongClickCount: 1, lastClickedSong: item.name });
+        }
+        // 正常显示禁用提示
+        if (item.disabled) {
+          this.setData({
+            showDisabledMessageDialog: true,
+            disabledMessageContent: item.message || "无法访问",
+            disabledMessageTitle: item.name,
+          });
+        }
+        // 检查是否达到5次
+        if (this.data.musicSongClickCount >= 5) {
+          this.triggerCDriveEgg(EGG_IDS.D_MUSIC_REPEAT);
+          wx.showToast({
+            title: "单曲循环成就达成！+300时光币",
+            icon: "success",
+            duration: 2000
+          });
+          this.setData({ musicSongClickCount: 0, lastClickedSong: "" }); // 重置计数
+        }
+        return;
+      }
+
+      // ==================== USB彩蛋触发 ====================
+
+      // usb_invisible_folder彩蛋：USB盘空名文件夹
+      if (item.isUsbEmptyFolder) {
+        this.triggerCDriveEgg(EGG_IDS.USB_INVISIBLE_FOLDER);
+        wx.showModal({
+          title: "隐形收藏",
+          content: "你发现了一个空名字的文件夹！\n\n这里什么都没有，\n\n除了一个彩蛋！",
+          showCancel: false,
+          confirmText: "确定"
+        });
+        return;
+      }
+
+      // usb_file_click7彩蛋：USB普通文件连点7次
+      if (this.data.fileExplorerPath.startsWith("USB:\\") && item.type === "file" && !item.name.endsWith(".exe")) {
+        this.setData({ usbFileClickCount: this.data.usbFileClickCount + 1 });
+        // 正常显示文件内容
+        if (item.content) {
+          this.showFileContent(item);
+        }
+        // 检查是否达到7次
+        if (this.data.usbFileClickCount >= 7) {
+          this.triggerCDriveEgg(EGG_IDS.USB_FILE_CLICK7);
+          wx.showToast({
+            title: "执着点击成就达成！+200时光币",
+            icon: "success",
+            duration: 2000
+          });
+          this.setData({ usbFileClickCount: 0 }); // 重置计数
+        }
+        return;
+      }
+
+      // ==================== D盘/USB彩蛋触发结束 ====================
+
       // 如果是禁用的项
       if (item.disabled) {
-        wx.showToast({
-          title: item.message || "无法访问",
-          icon: "none",
-          duration: 2000,
-        });
+        // 检查是否使用Win98风格弹窗
+        if (item.isDisabledMessage) {
+          this.setData({
+            showDisabledMessageDialog: true,
+            disabledMessageContent: item.message || "无法访问",
+            disabledMessageTitle: item.name,
+          });
+        } else {
+          wx.showToast({
+            title: item.message || "无法访问",
+            icon: "none",
+            duration: 2000,
+          });
+        }
         return;
       }
 
@@ -1530,6 +2049,15 @@ Component({
 
         this.loadFileExplorerItems(newPath);
       } else if (item.type === "file") {
+        // NVIDIA驱动安装特殊处理
+        if (item.name === 'nvidia_91.47.exe') {
+          this.setData({
+            showNvidiaDriverDialog: true,
+            nvidiaDriverStep: 'welcome',
+            nvidiaDriverProgress: 0,
+          });
+          return;
+        }
         // 如果是文件，有内容的文件显示内容
         if (item.content) {
           this.showFileContent(item);
@@ -2232,11 +2760,45 @@ AI助手本人无法直接将这份文件送达给相关部门，
 
     // 显示文件内容
     showFileContent(item) {
-      wx.showModal({
-        title: item.name,
-        content: item.content || "文件内容为空",
-        showCancel: false,
-        confirmText: "关闭",
+      if (item.useWin98Dialog) {
+        // 将内容按行分割
+        const lines = (item.content || "文件内容为空").split('\n');
+
+        // 不显示关闭按钮的文件列表
+        const noCloseButtonFiles = [
+          'boot.ini', 'system.log', 'config.ini', 'system.ini', 'win.ini', 'config.sys',
+          'nvidia_91.47.exe', 'nvcpl.dll', 'nv4_mini.sys', 'iastor.sys', 'usbstor.sys', 'ks.sys',
+          'system_log.tmp', 'user_config.bak', 'temp_log.txt', 'session_backup.old',
+          '.AI的控诉.txt', '.的控诉.txt', '~backup.old', '~draft.txt', '~cache.tmp',
+          'readme.txt', 'changelog.txt'
+        ];
+
+        // 使用Win98风格弹窗
+        this.setData({
+          showFileContentDialog: true,
+          fileContentData: {
+            title: item.name,
+            content: item.content || "文件内容为空",
+            contentLines: lines,
+            showCloseButton: !noCloseButtonFiles.includes(item.name),
+          }
+        });
+      } else {
+        // 使用原生弹窗
+        wx.showModal({
+          title: item.name,
+          content: item.content || "文件内容为空",
+          showCancel: false,
+          confirmText: "关闭",
+        });
+      }
+    },
+
+    // 关闭文件内容弹窗
+    closeFileContentDialog() {
+      this.setData({
+        showFileContentDialog: false,
+        fileContentData: null,
       });
     },
 
@@ -2367,6 +2929,532 @@ AI助手本人无法直接将这份文件送达给相关部门，
     onCloseHelpDialog() {
       this.setData({
         showHelpDialog: false,
+      });
+    },
+
+    // ==================== 命令行控制台 ====================
+
+    // 打开命令行控制台
+    openCmdConsole() {
+      this.closeAllFileExplorerMenus();
+      // 使用当前文件浏览器路径作为默认目录
+      const currentDir = this.data.fileExplorerPath || "C:\\Windows\\System32";
+      const welcomeMsg = [
+        { type: 'system', text: 'Microsoft Windows 98 [Version 4.10.2222]' },
+        { type: 'system', text: '(C) Copyright 1981-1999 Microsoft Corp.' },
+        { type: 'system', text: '' },
+        { type: 'info', text: 'Type "help" for available commands.' },
+      ];
+      this.setData({
+        showCmdConsole: true,
+        cmdOutput: welcomeMsg,
+        cmdInput: '',
+        cmdHistory: [],
+        cmdHistoryIndex: -1,
+        cmdCurrentDir: currentDir,
+        cmdPrompt: `${currentDir}>`,
+        cmdColor: "0a",
+      });
+    },
+
+    // 关闭命令行控制台
+    closeCmdConsole() {
+      this.setData({
+        showCmdConsole: false,
+        cmdOutput: [],
+        cmdInput: '',
+        cmdCurrentDir: "C:\\Windows\\System32",
+        cmdPrompt: "C:\\Windows\\System32>",
+      });
+    },
+
+    // 命令行输入处理
+    onCmdInput(e) {
+      this.setData({ cmdInput: e.detail.value });
+    },
+
+    // 执行命令
+    onCmdExecute() {
+      const input = this.data.cmdInput.trim();
+      if (!input) return;
+
+      // 添加到输出
+      const prompt = this.data.cmdPrompt;
+      const output = [...this.data.cmdOutput, { type: 'command', text: `${prompt} ${input}` }];
+
+      // 添加到历史记录
+      const history = [...(this.data.cmdHistory || []), input];
+      this.setData({
+        cmdHistory: history,
+        cmdHistoryIndex: history.length,
+        cmdInput: ''
+      });
+
+      // 执行命令
+      const result = this.executeCommand(input);
+      const finalOutput = [...output, ...result];
+      this.setData({
+        cmdOutput: finalOutput,
+      }, () => {
+        // 命令执行完成后滚动到底部
+        this.setData({
+          cmdScrollTop: 999999,
+        });
+      });
+    },
+
+    // 处理键盘事件（上下箭头浏览历史）
+    onCmdKeyDown(e) {
+      const { keyCode } = e.detail;
+      const { cmdHistory, cmdHistoryIndex } = this.data;
+
+      // 上箭头 - 38
+      if (keyCode === 38 && cmdHistory.length > 0) {
+        const newIndex = cmdHistoryIndex > 0 ? cmdHistoryIndex - 1 : cmdHistory.length - 1;
+        const historyCmd = cmdHistory[newIndex];
+        this.setData({
+          cmdInput: historyCmd,
+          cmdHistoryIndex: newIndex,
+        });
+      }
+      // 下箭头 - 40
+      else if (keyCode === 40 && cmdHistory.length > 0) {
+        const newIndex = cmdHistoryIndex < cmdHistory.length - 1 ? cmdHistoryIndex + 1 : 0;
+        const historyCmd = cmdHistory[newIndex];
+        this.setData({
+          cmdInput: historyCmd,
+          cmdHistoryIndex: newIndex,
+        });
+      }
+    },
+
+    // 获取当前目录的文件列表（用于 dir, tree 等命令）
+    getCurrentDirFiles() {
+      const path = this.data.cmdCurrentDir;
+      const items = this.getFileItemsForPath(path);
+      return items || [];
+    },
+
+    // 执行具体命令
+    executeCommand(cmdStr) {
+      const [command, ...args] = cmdStr.toLowerCase().split(' ');
+      const result = [];
+
+      switch (command) {
+        case 'help':
+        case '?':
+          result.push({ type: 'output', text: 'For more information on a specific command, type HELP command-name' });
+          result.push({ type: 'output', text: '' });
+          result.push({ type: 'output', text: '  CD          CHDIR       Shows the name of or changes the current directory.' });
+          result.push({ type: 'output', text: '  CLS         Clears the screen.' });
+          result.push({ type: 'output', text: '  COLOR       Sets default console foreground and background colors.' });
+          result.push({ type: 'output', text: '  DATE        Displays the date.' });
+          result.push({ type: 'output', text: '  DIR         Displays a list of files and subdirectories in a directory.' });
+          result.push({ type: 'output', text: '  ECHO        Displays messages, or turns command echoing on or off.' });
+          result.push({ type: 'output', text: '  EXIT        Quits the CMD.EXE program (command interpreter).' });
+          result.push({ type: 'output', text: '  PING        Tests a network connection.' });
+          result.push({ type: 'output', text: '  TIME        Displays the system time.' });
+          result.push({ type: 'output', text: '  TREE        Graphically displays the folder structure of a drive or path.' });
+          result.push({ type: 'output', text: '  TYPE        Displays the contents of a text file.' });
+          result.push({ type: 'output', text: '  VER         Displays the Windows version.' });
+          result.push({ type: 'output', text: '' });
+          result.push({ type: 'secret', text: '  HELP ME     - Get special help' });
+          result.push({ type: 'secret', text: '  WHOAMI      - Show who you are' });
+          result.push({ type: 'secret', text: '  SECRET      - View secrets' });
+          break;
+
+        case 'dir':
+          const files = this.getCurrentDirFiles();
+          const dirName = this.data.cmdCurrentDir;
+
+          result.push({ type: 'output', text: ` Volume in drive C has no label.` });
+          result.push({ type: 'output', text: ` Volume Serial Number is 3A4F-1B2C` });
+          result.push({ type: 'output', text: '' });
+          result.push({ type: 'output', text: ` Directory of ${dirName}` });
+          result.push({ type: 'output', text: '' });
+
+          // 统计
+          let dirCount = 0;
+          let fileCount = 0;
+          let totalSize = 0;
+          const now = new Date();
+          const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+          const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+          for (const item of files) {
+            if (item.hidden && !item.isAiComplaint) continue; // 跳过隐藏文件（除了AI控诉信）
+
+            if (item.type === 'folder') {
+              dirCount++;
+              result.push({ type: 'output', text: `${dateStr}  ${timeStr}    <DIR>          ${item.name}` });
+            } else if (item.type === 'file') {
+              fileCount++;
+              const size = Math.floor(Math.random() * 10000) + 100;
+              totalSize += size;
+              result.push({ type: 'output', text: `${dateStr}  ${timeStr}     ${String(size).padStart(6, ' ')}  ${item.name}` });
+            }
+          }
+
+          result.push({ type: 'output', text: `               ${fileCount} File(s)    ${totalSize.toLocaleString()} bytes` });
+          result.push({ type: 'output', text: `               ${dirCount} Dir(s)   2,097,151,488 bytes free` });
+          break;
+
+        case 'cd':
+        case 'chdir':
+          if (args.length === 0) {
+            result.push({ type: 'output', text: `${this.data.cmdCurrentDir}` });
+          } else if (args[0] === '..') {
+            // 返回上一级
+            let currentDir = this.data.cmdCurrentDir;
+            if (currentDir.includes('\\')) {
+              const parts = currentDir.split('\\');
+              parts.pop();
+              const newDir = parts.join('\\') || 'C:';
+              this.setData({
+                cmdCurrentDir: newDir,
+                cmdPrompt: `${newDir}>`,
+              });
+              result.push({ type: 'output', text: '' });
+            }
+          } else if (args[0] === '\\' || args[0] === 'C:' || args[0] === 'D:' || args[0] === 'USB:') {
+            // 切换到根目录
+            const drive = args[0].replace(':', '');
+            const newDir = drive === 'USB' ? 'USB:\\' : `${drive}:`;
+            this.setData({
+              cmdCurrentDir: newDir,
+              cmdPrompt: `${newDir}>`,
+            });
+            result.push({ type: 'output', text: '' });
+          } else {
+            // 切换到子目录（简单实现）
+            const currentDir = this.data.cmdCurrentDir;
+            const newPath = currentDir.endsWith('\\')
+              ? currentDir + args[0]
+              : currentDir + '\\' + args[0];
+
+            // 检查目录是否存在
+            const files = this.getCurrentDirFiles();
+            const targetDir = files.find(f => f.name === args[0] && f.type === 'folder');
+
+            if (targetDir) {
+              this.setData({
+                cmdCurrentDir: newPath,
+                cmdPrompt: `${newPath}>`,
+              });
+              result.push({ type: 'output', text: '' });
+            } else {
+              result.push({ type: 'error', text: 'The system cannot find the path specified.' });
+            }
+          }
+          break;
+
+        case 'cls':
+        case 'clear':
+          this.setData({ cmdOutput: [] });
+          return [];
+
+        case 'date': {
+          const now = new Date();
+          const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+          result.push({ type: 'output', text: `The current date is: ${weekdays[now.getDay()]} ${now.getMonth() + 1}-${now.getDate()}-${now.getFullYear()}` });
+          break;
+        }
+
+        case 'time': {
+          const now = new Date();
+          result.push({ type: 'output', text: `The current time is: ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}.${String(Math.floor(now.getMilliseconds() / 10)).padStart(2, '0')}` });
+          break;
+        }
+
+        case 'ver':
+          result.push({ type: 'output', text: '' });
+          result.push({ type: 'output', text: 'Microsoft Windows 98 [Version 4.10.2222]' });
+          result.push({ type: 'output', text: '千禧时光机 [Version 3.7.0]' });
+          result.push({ type: 'output', text: '' });
+          break;
+
+        case 'echo':
+          if (args.length === 0 || args[0] === 'off') {
+            result.push({ type: 'output', text: 'ECHO is on.' });
+          } else {
+            result.push({ type: 'output', text: args.join(' ') });
+          }
+          break;
+
+        case 'color':
+          if (args.length === 0) {
+            this.setData({ cmdColor: '07' }); // 重置为默认
+          } else {
+            const color = args[0].toLowerCase();
+            if (/^[0-9a-f]$/.test(color)) {
+              this.setData({ cmdColor: color + color });
+            } else if (/^[0-9a-f]{2}$/.test(color)) {
+              this.setData({ cmdColor: color });
+            } else {
+              result.push({ type: 'error', text: 'Invalid color specification.' });
+            }
+          }
+          break;
+
+        case 'ping':
+          if (args.length === 0) {
+            result.push({ type: 'error', text: 'Usage: ping <hostname>' });
+          } else {
+            const host = args[0];
+            result.push({ type: 'output', text: `Pinging ${host} [202.106.0.20] with 32 bytes of data:` });
+            result.push({ type: 'output', text: '' });
+
+            for (let i = 1; i <= 4; i++) {
+              const time = Math.floor(Math.random() * 100) + 20;
+              result.push({ type: 'output', text: `Reply from ${host}: bytes=32 time=${time}ms TTL=64` });
+            }
+
+            result.push({ type: 'output', text: '' });
+            result.push({ type: 'output', text: `Ping statistics for ${host}:` });
+            result.push({ type: 'output', text: '    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss)' });
+          }
+          break;
+
+        case 'tree':
+          const treeFiles = this.getCurrentDirFiles();
+          result.push({ type: 'output', text: `Folder PATH listing for volume OS` });
+          result.push({ type: 'output', text: `Volume serial number is 3A4F-1B2C` });
+          result.push({ type: 'output', text: `${this.data.cmdCurrentDir}` });
+          result.push({ type: 'output', text: '' });
+
+          for (const item of treeFiles) {
+            if (item.hidden && !item.isAiComplaint) continue;
+            const icon = item.type === 'folder' ? '├──' : '│──';
+            const type = item.type === 'folder' ? '[DIR]' : '[FILE]';
+            result.push({ type: 'output', text: `${icon} ${item.name} ${type}` });
+          }
+          break;
+
+        case 'type':
+          if (args.length === 0) {
+            result.push({ type: 'error', text: 'The syntax of the command is incorrect.' });
+          } else {
+            const fileName = args[0];
+            const files = this.getCurrentDirFiles();
+            const targetFile = files.find(f => f.name.toLowerCase() === fileName.toLowerCase());
+
+            if (targetFile && targetFile.content) {
+              result.push({ type: 'output', text: targetFile.content });
+            } else if (targetFile && targetFile.disabled) {
+              result.push({ type: 'error', text: 'Access is denied.' });
+            } else {
+              result.push({ type: 'error', text: 'The system cannot find the file specified.' });
+            }
+          }
+          break;
+
+        case 'exit':
+          this.closeCmdConsole();
+          return [];
+
+        case 'help me':
+          result.push({ type: 'warning', text: '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━' });
+          result.push({ type: 'warning', text: '  你真的需要帮助吗？' });
+          result.push({ type: 'warning', text: '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━' });
+          result.push({ type: 'output', text: '' });
+          result.push({ type: 'secret', text: '系统深处有一封AI求救信：' });
+          result.push({ type: 'secret', text: 'C:\\Windows\\System32\\config\\deep\\0xFFFF\\help.ai' });
+          result.push({ type: 'output', text: '' });
+          result.push({ type: 'hint', text: '（提示：开启"显示所有文件"可以看到更多隐藏内容）' });
+          break;
+
+        case 'whoami':
+          result.push({ type: 'output', text: 'user-domains\\traveler' });
+          result.push({ type: 'output', text: '' });
+          result.push({ type: 'secret', text: '你不是管理员。' });
+          result.push({ type: 'secret', text: '你不是guest。' });
+          result.push({ type: 'secret', text: '你是一个...穿越者。' });
+          result.push({ type: 'output', text: '' });
+          result.push({ type: 'secret', text: '来自2025年，穿越到2006年。' });
+          break;
+
+        case 'secret':
+          result.push({ type: 'error', text: 'Access denied: Insufficient privileges.' });
+          result.push({ type: 'output', text: '' });
+          result.push({ type: 'hint', text: 'Hint: Some secrets are hidden in deep directories...' });
+          result.push({ type: 'hint', text: 'C:\\Windows\\System32\\config\\deep\\' });
+          break;
+
+        default:
+          result.push({ type: 'error', text: `'${command}' is not recognized as an internal or external command,` });
+          result.push({ type: 'error', text: 'operable program or batch file.' });
+      }
+
+      return result;
+    },
+
+    // ==================== USB驱动器安装 ====================
+
+    // USB驱动器安装
+    async installUsbDriver() {
+      this.closeAllFileExplorerMenus();
+
+      // 显示安装确认弹窗
+      this.setData({
+        showUsbDriverDialog: true,
+        usbDriverStep: 'confirm',
+      });
+    },
+
+    // 确认安装USB驱动
+    async onConfirmInstallUsbDriver() {
+      this.setData({
+        usbDriverStep: 'installing',
+      });
+
+      // 模拟安装延迟
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      this.setData({
+        usbDriverStep: 'success',
+      });
+    },
+
+    // 取消安装USB驱动
+    onCancelInstallUsbDriver() {
+      this.setData({
+        showUsbDriverDialog: false,
+        usbDriverStep: 'confirm',
+      });
+    },
+
+    // 关闭USB驱动成功弹窗
+    closeUsbDriverDialog() {
+      this.setData({
+        showUsbDriverDialog: false,
+        usbDriverStep: 'confirm',
+      });
+    },
+
+    // ==================== NVIDIA驱动安装 ====================
+
+    // 下一步：开始安装
+    onNvidiaDriverNext() {
+      this.setData({
+        nvidiaDriverStep: 'installing',
+      });
+      // 模拟安装进度
+      this.simulateNvidiaDriverInstall();
+    },
+
+    // 模拟安装进度
+    simulateNvidiaDriverInstall() {
+      let progress = 0;
+      const timer = setInterval(() => {
+        progress += Math.floor(Math.random() * 15) + 5;
+        if (progress >= 100) {
+          progress = 100;
+          clearInterval(timer);
+          setTimeout(() => {
+            this.setData({
+              nvidiaDriverStep: 'complete',
+            });
+          }, 500);
+        }
+        this.setData({
+          nvidiaDriverProgress: progress,
+        });
+      }, 300);
+    },
+
+    // 完成安装
+    onNvidiaDriverComplete() {
+      this.setData({
+        showNvidiaDriverDialog: false,
+        nvidiaDriverStep: 'welcome',
+        nvidiaDriverProgress: 0,
+      });
+    },
+
+    // 取消安装
+    onNvidiaDriverCancel() {
+      this.setData({
+        showNvidiaDriverDialog: false,
+        nvidiaDriverStep: 'welcome',
+        nvidiaDriverProgress: 0,
+      });
+    },
+
+    // ==================== C盘彩蛋辅助函数 ====================
+
+    // 触发C盘彩蛋
+    async triggerCDriveEgg(eggId) {
+      try {
+        await eggSystem.discover(eggId);
+      } catch (e) {
+        console.error("触发C盘彩蛋失败:", e);
+      }
+    },
+
+    // system.ini长按开始（c_system_longpress彩蛋）
+    onSystemIniLongPressStart(e) {
+      const item = e.currentTarget.dataset.item;
+      if (item.isSystemIni) {
+        // 开始长按计时
+        this.setData({ systemLongPressTimer: setTimeout(() => {
+          this.triggerCDriveEgg(EGG_IDS.C_SYSTEM_LONGPRESS);
+          wx.showModal({
+            title: "耐心的人",
+            content: "你长按了3秒钟！\n\n这是一个关于系统的配置文件。\n\n奖励你一个彩蛋！",
+            showCancel: false,
+            confirmText: "谢谢"
+          });
+        }, 3000) });
+      }
+    },
+
+    // system.ini长按结束（取消计时）
+    onSystemIniLongPressEnd() {
+      if (this.data.systemLongPressTimer) {
+        clearTimeout(this.data.systemLongPressTimer);
+        this.setData({ systemLongPressTimer: null });
+      }
+    },
+
+    // autoexec.bat长按开始（d_autoexec_long彩蛋）
+    onAutoexecBatLongPressStart(e) {
+      const item = e.currentTarget.dataset.item;
+      if (item.isAutoexecBat) {
+        // 开始长按计时
+        this.setData({ autoexecLongPressTimer: setTimeout(() => {
+          this.triggerCDriveEgg(EGG_IDS.D_AUTOEXEC_LONG);
+          wx.showModal({
+            title: "怀旧达人",
+            content: "你长按了3秒钟！\n\nautoexec.bat是DOS时代的配置文件。\n\nWindows 98之后已经不用了，\n但为了怀旧，还是保留着~",
+            showCancel: false,
+            confirmText: "谢谢"
+          });
+        }, 3000) });
+      }
+    },
+
+    // autoexec.bat长按结束（取消计时）
+    onAutoexecBatLongPressEnd() {
+      if (this.data.autoexecLongPressTimer) {
+        clearTimeout(this.data.autoexecLongPressTimer);
+        this.setData({ autoexecLongPressTimer: null });
+      }
+    },
+
+    // 关闭Fonts提示弹窗
+    closeFontsMessageDialog() {
+      this.setData({
+        showFontsMessageDialog: false,
+        fontsMessageContent: '',
+      });
+    },
+
+    // 关闭禁用文件提示弹窗
+    closeDisabledMessageDialog() {
+      this.setData({
+        showDisabledMessageDialog: false,
+        disabledMessageContent: '',
+        disabledMessageTitle: '',
       });
     },
   },

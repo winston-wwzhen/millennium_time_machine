@@ -522,7 +522,7 @@
   <ttplayer show="{{showTTPlayer}}" bindclose="onCloseTTPlayer"></ttplayer>
 
   <!-- 我的电脑组件 -->
-  <my-computer show="{{showMyComputer}}" zIndex="{{myComputerZIndex}}" bindclose="onCloseMyComputer" bindkonamihalf="onKonamiHalfComplete"></my-computer>
+  <my-computer show="{{showMyComputer}}" zIndex="{{myComputerZIndex}}" bindclose="onCloseMyComputer" bindkonamihalf="onKonamiHalfComplete" bindopenbrowser="onOpenBrowser" bindopendocuments="onOpenDocuments"></my-computer>
 
   <!-- 网管系统组件 -->
   <network-neighborhood show="{{showNetworkSystem}}" zIndex="{{networkSystemZIndex}}" bindclose="onCloseNetworkSystem"></network-neighborhood>
