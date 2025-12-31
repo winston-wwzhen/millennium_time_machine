@@ -1012,13 +1012,7 @@
   background: #000080;
 }
 
-.file-item.disabled {
-  opacity: 0.6;
-}
-
-.file-item.disabled .file-name {
-  color: #999;
-}
+/* 移除disabled样式，让游戏图标正常显示 */
 
 /* 隐藏文件样式 */
 .file-item.isHidden {
@@ -1996,6 +1990,202 @@
   font-family: 'Courier New', 'Consolas', monospace;
   color: #c0c0c0; /* DOS 浅灰色文字 */
   text-shadow: 0 0 2px rgba(192, 192, 192, 0.3);
+}
+
+/* ==================== 游戏错误弹窗样式 ==================== */
+
+.game-error-dialog {
+  width: 380px;
+  max-width: 90%;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #fff #000 #000 #fff;
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+}
+
+.error-title-bar {
+  background: linear-gradient(180deg, #000080 0%, #0000ff 100%);
+}
+
+.error-icon {
+  font-size: 16px;
+}
+
+.game-error-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 16px;
+  min-height: 80px;
+}
+
+.error-icon-large {
+  font-size: 32px;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.error-message-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.error-main-text {
+  font-size: 13px;
+  line-height: 1.5;
+  font-family: 'SimSun', 'MS Sans Serif', sans-serif;
+  color: #000;
+}
+
+.error-game-name {
+  font-size: 12px;
+  line-height: 1.4;
+  font-family: 'SimSun', 'MS Sans Serif', sans-serif;
+  color: #666;
+  font-style: italic;
+}
+
+/* ==================== 全屏游戏弹窗样式（反恐精英） ==================== */
+
+.fullscreen-game-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #000;
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fullscreen-game-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 加载状态 */
+.fullscreen-game-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.loading-icon {
+  font-size: 80px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.05); }
+}
+
+.loading-title {
+  font-size: 32px;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(0, 150, 255, 0.8);
+}
+
+.loading-message {
+  font-size: 16px;
+  color: #0f0;
+  font-family: 'Courier New', monospace;
+}
+
+.loading-bar {
+  width: 300px;
+  height: 20px;
+  background: #333;
+  border: 2px solid #666;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.loading-bar-progress {
+  height: 100%;
+  background: linear-gradient(90deg, #0f0, #0a0);
+  width: 100%;
+  animation: loading-progress 2s linear infinite;
+}
+
+@keyframes loading-progress {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* 不兼容状态 */
+.fullscreen-game-incompatible {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 40px;
+  background: #c0c0c0;
+  border: 3px outset #fff;
+  box-shadow: 0 0 50px rgba(255, 0, 0, 0.3);
+}
+
+.incompatible-icon {
+  font-size: 64px;
+}
+
+.incompatible-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #800000;
+}
+
+.incompatible-message {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: center;
+}
+
+.incompatible-text {
+  font-size: 16px;
+  color: #000;
+}
+
+.incompatible-detail {
+  font-size: 14px;
+  color: #666;
+  font-family: 'Courier New', monospace;
+}
+
+/* 关闭按钮 */
+.fullscreen-close-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #c0c0c0;
+  border: 2px outset #fff;
+  cursor: pointer;
+}
+
+.fullscreen-close-btn:active {
+  border: 2px inset #fff;
 }
 
 /* ==================== Fonts提示弹窗样式 ==================== */

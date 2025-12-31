@@ -1102,6 +1102,59 @@
     </view>
   </view>
 
+  <!-- 游戏错误弹窗（Win98风格） -->
+  <view class="win98-dialog-overlay" wx:if="{{showGameErrorDialog}}" catchtap="closeGameErrorDialog">
+    <view class="game-error-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar error-title-bar">
+        <view class="win98-title-icon error-icon">{{gameErrorData.errorIcon}}</view>
+        <view class="win98-title-text">{{gameErrorData.title}}</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="closeGameErrorDialog">×</button>
+        </view>
+      </view>
+      <view class="game-error-body">
+        <view class="error-icon-large">{{gameErrorData.errorIcon}}</view>
+        <view class="error-message-area">
+          <text class="error-main-text">{{gameErrorData.shortMessage}}</text>
+          <text class="error-game-name">{{gameErrorData.gameName}}</text>
+        </view>
+      </view>
+      <view class="dialog-actions">
+        <button class="win98-btn-std" bindtap="closeGameErrorDialog">确定</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 全屏游戏弹窗（反恐精英） -->
+  <view class="fullscreen-game-overlay" wx:if="{{showFullscreenGame}}">
+    <view class="fullscreen-game-container">
+      <!-- 加载状态 -->
+      <view class="fullscreen-game-loading" wx:if="{{fullscreenGameState.loading}}">
+        <view class="loading-icon">{{fullscreenGameData.icon}}</view>
+        <text class="loading-title">{{fullscreenGameData.gameName}}</text>
+        <text class="loading-message">{{fullscreenGameData.loadingMessage}}</text>
+        <view class="loading-bar">
+          <view class="loading-bar-progress"></view>
+        </view>
+      </view>
+
+      <!-- 不兼容状态 -->
+      <view class="fullscreen-game-incompatible" wx:if="{{fullscreenGameState.incompatible}}">
+        <view class="incompatible-icon">⚠️</view>
+        <text class="incompatible-title">系统不兼容</text>
+        <view class="incompatible-message">
+          <text class="incompatible-text">当前系统配置无法运行此游戏</text>
+          <text class="incompatible-detail">推荐: DirectX 9.0c 显卡</text>
+          <text class="incompatible-detail">当前: 标准VGA适配器</text>
+        </view>
+        <button class="win98-btn-std" bindtap="closeFullscreenGame">确定</button>
+      </view>
+
+      <!-- 关闭按钮 -->
+      <button class="fullscreen-close-btn" bindtap="closeFullscreenGame" wx:if="{{fullscreenGameState.loading}}">×</button>
+    </view>
+  </view>
+
   <!-- Fonts提示弹窗（Win98风格） -->
   <view class="win98-dialog-overlay" wx:if="{{showFontsMessageDialog}}" catchtap="closeFontsMessageDialog">
     <view class="win98-window fonts-message-dialog" catchtap="stopPropagation">
