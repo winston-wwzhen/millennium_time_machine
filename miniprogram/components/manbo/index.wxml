@@ -1,0 +1,131 @@
+<view class="manbo-overlay {{show ? 'show' : ''}}" style="{{overlayStyle}}" catchtap="onMinimize">
+  <view class="manbo-window" style="left: {{windowX}}px; top: {{windowY}}px;" catchtap="stopPropagation">
+    <!-- 2005风格软件界面 -->
+    <view class="window-frame" catchtouchmove="preventDefault">
+      <!-- 标题栏 -->
+      <view class="title-bar">
+        <view class="title-left" catchtouchstart="onDragStart" catchtouchmove="onDragMove" catchtouchend="onDragEnd">
+          <image class="app-icon" src="/images/borders/border_win98.png" mode="aspectFit"></image>
+          <text class="app-name">慢播 3.0</text>
+        </view>
+        <view class="title-controls">
+          <view class="win98-btn-close" catchtap="onClose">×</view>
+        </view>
+      </view>
+
+      <!-- 主内容区 -->
+      <view class="main-content">
+        <!-- 播放区域 -->
+        <view class="play-area">
+          <!-- 演示版本提示 -->
+          <view class="demo-notice">
+            <text class="notice-icon">⚠️</text>
+            <text class="notice-text">怀旧模拟程序，无实际播放功能</text>
+          </view>
+
+          <view class="play-screen">
+            <image wx:if="{{isVideoPlaying}}" class="screen-image" src="{{currentVideoImage}}" mode="scaleToFill"></image>
+            <view wx:else class="screen-default">
+              <text class="screen-text">🎬 慢播</text>
+              <text class="screen-subtitle">Video Player</text>
+              <text class="screen-status">就绪</text>
+            </view>
+          </view>
+
+          <!-- 播放控制 -->
+          <view class="play-controls">
+            <view class="ctrl-btn ctrl-btn-disabled">⏮</view>
+            <view class="ctrl-btn play-btn {{isLoading ? 'loading' : ''}}" catchtap="onPlayClick">
+              <text wx:if="{{isLoading}}">⏳</text>
+              <text wx:else>▶</text>
+            </view>
+            <view class="ctrl-btn {{isVideoPlaying ? '' : 'ctrl-btn-disabled'}}" catchtap="onStopClick">⏹</view>
+            <view class="ctrl-btn ctrl-btn-disabled">⏭</view>
+          </view>
+
+          <!-- 进度条 -->
+          <view class="progress-bar-area">
+            <text class="time-text">00:00:00</text>
+            <view class="progress-track">
+              <view class="progress-fill"></view>
+            </view>
+            <text class="time-text">00:00:00</text>
+          </view>
+        </view>
+
+        <!-- 播放列表 -->
+        <view class="playlist-area">
+          <view class="playlist-header">
+            <text class="playlist-title">播放列表</text>
+            <text class="playlist-count">{{videoList.length}} 个文件</text>
+          </view>
+          <view class="playlist-content">
+            <scroll-view class="video-scroll-container" scroll-x="true" show-scrollbar="false">
+              <view class="video-cards-wrapper">
+                <view
+                  class="video-card {{selectedVideoIndex === index ? 'selected' : ''}}"
+                  wx:for="{{videoList}}"
+                  wx:key="index"
+                  data-index="{{index}}"
+                  catchtap="onVideoClick">
+                  <image class="video-card-thumb" src="{{item.image}}" mode="aspectFill"></image>
+                  <view class="video-card-info">
+                    <text class="video-card-name">{{item.name}}</text>
+                    <text class="video-card-meta">{{item.category}} · {{item.year}}</text>
+                  </view>
+                </view>
+              </view>
+            </scroll-view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 状态栏 -->
+      <view class="status-bar">
+        <text class="status-text">状态: 就绪 | 播放器已就绪</text>
+        <text class="status-time">2005-01-01 12:00:00</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 警告弹窗 -->
+  <view class="warning-overlay {{showWarning ? 'show' : ''}}" catchtap="onHideWarning">
+    <view class="warning-dialog" catchtap="stopPropagation">
+      <view class="warning-header">
+        <text class="warning-icon">⚠️</text>
+        <text class="warning-title">温馨提示</text>
+      </view>
+      <view class="warning-content">
+        <text class="warning-text">尊敬的用户：</text>
+        <text class="warning-text">本软件仅用于怀旧展示，不支持实际播放功能。</text>
+        <text class="warning-text">如需观看视频，请使用正规视频平台。</text>
+        <text class="warning-motto">"那些年，我们追剧看电影的日子"</text>
+      </view>
+      <view class="warning-actions">
+        <view class="warning-btn secondary" catchtap="onHideWarning">知道了</view>
+        <view class="warning-btn primary" catchtap="onClose">关闭</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 怀念弹窗 -->
+  <view class="nostalgia-overlay {{showNostalgia ? 'show' : ''}}" catchtap="onHideNostalgia">
+    <view class="nostalgia-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-left">
+          <text class="win98-title-icon">🎬</text>
+          <text class="win98-title-text">慢播回忆</text>
+        </view>
+        <view class="win98-title-controls">
+          <view class="win98-btn-close" catchtap="onHideNostalgia">×</view>
+        </view>
+      </view>
+      <view class="win98-content">
+        <text class="nostalgia-text">{{nostalgiaText}}</text>
+      </view>
+      <view class="win98-footer">
+        <view class="win98-button" catchtap="onHideNostalgia">我知道了</view>
+      </view>
+    </view>
+  </view>
+</view>

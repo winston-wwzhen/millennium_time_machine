@@ -1367,4 +1367,51 @@
       </view>
     </view>
   </view>
+
+  <!-- 视频回忆弹窗（Win98风格 - 怀旧视频播放器） -->
+  <view class="win98-dialog-overlay" wx:if="{{showVideoMemoryDialog}}" catchtap="closeVideoMemoryDialog">
+    <view class="video-memory-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar video-title-bar">
+        <view class="win98-title-icon">🎬</view>
+        <view class="win98-title-text">{{videoMemoryData.title}}</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="closeVideoMemoryDialog">×</button>
+        </view>
+      </view>
+
+      <view class="video-memory-body">
+        <!-- 怀旧装饰横幅 -->
+        <view class="video-nostalgia-banner">
+          <text class="banner-text">✨ 那些年，我们用RealPlayer看视频的日子 ✨</text>
+        </view>
+
+        <!-- 视频信息区域 -->
+        <view class="video-info-section">
+          <view class="video-cover">
+            <text class="video-icon">🎬</text>
+            <text class="video-year">{{videoMemoryData.year}}</text>
+          </view>
+          <view class="video-details">
+            <text class="video-filename">{{videoMemoryData.videoName}}</text>
+            <text class="video-format">格式：{{videoMemoryData.format}}</text>
+          </view>
+        </view>
+
+        <!-- 视频回忆内容 -->
+        <view class="video-memory-content">
+          <text class="memory-text">{{videoMemoryData.memory}}</text>
+        </view>
+
+        <!-- 底部怀旧文字 -->
+        <view class="video-footer-text">
+          <text class="footer-text">那些年追过的动漫电视剧电影</text>
+          <text class="footer-text">承载着我们最珍贵的青春回忆</text>
+        </view>
+      </view>
+
+      <view class="dialog-actions">
+        <button class="win98-btn-std" bindtap="closeVideoMemoryDialog">关闭</button>
+      </view>
+    </view>
+  </view>
 </view>

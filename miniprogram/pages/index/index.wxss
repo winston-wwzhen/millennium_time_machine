@@ -1723,3 +1723,172 @@ page {
   background: #006cbd;
 }
 
+/* ==================== 欢迎弹窗 - 时间穿越提示 ==================== */
+
+.welcome-dialog {
+  width: 380px;
+  max-width: 90vw;
+  box-sizing: border-box;
+}
+
+.welcome-content {
+  padding: 18px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 70vh;
+  overflow-y: auto;
+  word-wrap: break-word;
+  word-break: break-word;
+  box-sizing: border-box;
+}
+
+.welcome-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #000080;
+  font-family: 'SimSun', serif;
+  display: block;
+  text-align: center;
+  line-height: 1.5;
+  word-wrap: break-word;
+  word-break: break-word;
+  box-sizing: border-box;
+  padding: 0 2px;
+}
+
+.welcome-subtitle {
+  font-size: 13px;
+  color: #4a0080;
+  font-family: 'SimSun', serif;
+  display: block;
+  text-align: center;
+  line-height: 1.4;
+  word-wrap: break-word;
+  word-break: break-word;
+  box-sizing: border-box;
+  padding: 6px 12px;
+  margin: 4px 0;
+  font-style: italic;
+}
+
+.welcome-section {
+  margin: 6px 0;
+  padding: 10px;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 193, 7, 0.1) 100%);
+  border: 2px solid #daa520;
+  border-radius: 8px;
+  text-align: center;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.welcome-highlight {
+  font-size: 15px;
+  font-weight: bold;
+  color: #b8860b;
+  font-family: 'SimSun', serif;
+  text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
+  word-wrap: break-word;
+  word-break: break-word;
+  display: block;
+  box-sizing: border-box;
+  padding: 0 4px;
+}
+
+.welcome-text {
+  font-size: 12px;
+  color: #333;
+  font-family: 'SimSun', serif;
+  line-height: 1.5;
+  text-align: justify;
+  text-indent: 2em;
+  word-wrap: break-word;
+  word-break: break-word;
+  display: block;
+  box-sizing: border-box;
+  padding: 0 2px;
+}
+
+.welcome-tips {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 6px 0;
+  box-sizing: border-box;
+}
+
+.welcome-tip {
+  font-size: 12px;
+  color: #444;
+  font-family: 'SimSun', serif;
+  line-height: 1.5;
+  padding: 8px 10px;
+  background: rgba(0, 128, 255, 0.05);
+  border-left: 3px solid #000080;
+  border-radius: 0 4px 4px 0;
+  word-wrap: break-word;
+  word-break: break-word;
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+}
+
+.welcome-footer {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #c0c0c0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-sizing: border-box;
+}
+
+.welcome-footer-text {
+  font-size: 13px;
+  color: #000080;
+  font-family: 'SimSun', serif;
+  font-weight: bold;
+  text-align: center;
+  line-height: 1.4;
+  word-wrap: break-word;
+  word-break: break-word;
+  display: block;
+  box-sizing: border-box;
+  padding: 0 2px;
+}
+
+/* 欢迎弹窗主按钮样式 - 2006年代复古风格 */
+.welcome-btn-primary {
+  background: linear-gradient(180deg, #5a8eea 0%, #3d7dd8 15%, #2e6bcc 50%, #1e5bb0 85%, #154a94 100%);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 14px;
+  height: 42px;
+  line-height: 42px;
+  padding: 0 28px;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.4) inset,
+    0 -1px 0 rgba(0, 0, 0, 0.2) inset,
+    0 4px 12px rgba(30, 91, 176, 0.4),
+    0 2px 4px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 -1px 1px rgba(0, 0, 0, 0.3);
+  letter-spacing: 0.5px;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.welcome-btn-primary:active {
+  background: linear-gradient(180deg, #1e5bb0 0%, #2e6bcc 50%, #3d7dd8 100%);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.2) inset,
+    0 -1px 0 rgba(0, 0, 0, 0.3) inset,
+    0 2px 6px rgba(30, 91, 176, 0.3),
+    0 1px 2px rgba(0, 0, 0, 0.3);
+  transform: translateY(1px);
+}
+

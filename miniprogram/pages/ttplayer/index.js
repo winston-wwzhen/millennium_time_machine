@@ -3,8 +3,7 @@ Page({
   data: {
     // 播放状态
     playing: false,
-    isLoading: false, // loading状态
-    loadingClickCount: 0, // loading时点击次数
+    isLoading: false,
     currentTime: 0,
     duration: 234, // 默认3:54
     progress: 0,
@@ -16,7 +15,11 @@ Page({
     win98DialogTitle: '',
     win98DialogMessage: '',
 
-    // 可视化波纹数据
+    // 怀旧弹窗
+    showNostalgia: false,
+    nostalgiaText: '',
+
+    // 可视化波纹数据（静态，不动态更新）
     waveBars: [30, 50, 70, 90, 70, 50, 40, 60, 80, 100, 80, 60, 45, 65, 85, 95, 75, 55, 35, 50],
 
     // 当前曲目
@@ -93,95 +96,87 @@ Page({
     if (this.playTimer) {
       clearInterval(this.playTimer);
     }
-    if (this.loadingTimer) {
-      clearTimeout(this.loadingTimer);
-    }
   },
 
   // 播放/暂停
   onPlayPause: function () {
-    // 如果正在loading，增加点击计数
-    if (this.data.isLoading) {
+    // 先显示loading状态
+    this.setData({
+      isLoading: true,
+    });
+
+    // 模拟加载延迟后显示怀旧弹窗
+    setTimeout(() => {
+      // 随机选择一段怀旧文案
+      const nostalgiaTexts = [
+        `那时候，听歌要用十分动听。
+
+MP3格式，一首歌只有3-5MB，音质虽然一般，但那份期待是真的。
+
+下载要等几分钟，在QQ空间分享歌词，设为背景音乐，每个人进你空间都能听到。
+
+有时候下载到一半断了，那种心情，现在的年轻人不会懂。
+
+那些年，我们一边吐槽十分动听的广告，一边还是每天打开它，因为只有它，能播放我们想听的音乐。
+
+现在音乐平台无处不在，无损音质随点随听，但再也没有那种分享的感动了。
+
+致我们终将逝去的青春`,
+
+          `那些年，听歌是一件很酷的事。
+
+周杰伦的《七里香》，林俊杰的《江南》，光良的《童话》，孙燕姿的《遇见》...
+
+每首歌都有回忆，每段回忆都有歌。
+
+下课回家路上，戴着耳机，看着窗外的风景，耳机里是那一首循环播放的歌。
+
+现在歌单里几千首歌，随机播放，但再也没有那种单曲循环的深情了。
+
+回不去的听歌时光`,
+
+          `那些年，QQ空间的背景音乐很重要。
+
+把喜欢的歌设为背景音乐，别人访问你的空间就能听到，这是最流行的分享方式。
+
+"七里香"放完了自动切到"江南"，然后是"童话"...
+
+那时候QQ音乐还没这么强大，十分动听是我们装机必备的播放器。
+
+现在QQ空间的背景音乐功能早就不在了，那些歌还在，但听歌的人变了。
+
+那些年的QQ空间回忆`,
+
+          `那时候，每个网吧的电脑里，都装着十分动听。
+
+那些年，我们用它听过：《七里香》、《江南》、《童话》、《十年》、《隐形的翅膀》、《不想长大》、《睫毛弯弯》...
+
+虽然是怀旧模拟，但那份回忆是真的。
+
+现在十分动听已经不在了，那些音乐平台也换了一波又一波。
+
+但每当我们听到这些老歌，就会想起那个戴着耳机听歌的年代。
+
+那些年，十分动听陪伴的日子`,
+      ];
+
+      const randomText = nostalgiaTexts[Math.floor(Math.random() * nostalgiaTexts.length)];
       this.setData({
-        loadingClickCount: this.data.loadingClickCount + 1
-      });
-
-      // 超过3次点击，显示温馨提示
-      if (this.data.loadingClickCount >= 3) {
-        this.showWin98Dialog(
-          '温馨提示',
-          '音乐正在努力加载中...\n\n（其实真正播放功能还在开发中）\n\n那个笨蛋程序员正在拼命加班写代码呢~\n\n请再耐心等待一下下吧！'
-        );
-        // 重置计数
-        this.setData({ loadingClickCount: 0 });
-      }
-      return;
-    }
-
-    const playing = !this.data.playing;
-
-    if (playing) {
-      // 清除之前的loading计时器（如果有）
-      if (this.loadingTimer) {
-        clearTimeout(this.loadingTimer);
-        this.loadingTimer = null;
-      }
-
-      // 显示loading状态
-      this.setData({
-        isLoading: true,
-        loadingClickCount: 0,
-        statusText: '正在加载音乐...'
-      });
-
-      // 模拟加载延迟（3秒后弹出煽情对话框）
-      this.loadingTimer = setTimeout(() => {
-        // 确保回调执行时页面仍然处于loading状态
-        if (this.data && this.data.isLoading) {
-          // 取消loading状态
-          this.setData({
-            isLoading: false,
-            playing: false,
-            statusText: '就绪 - 点击播放开始欣赏音乐'
-          });
-
-          // 弹出煽情对话框
-          this.showWin98Dialog(
-            '致那些年的旋律',
-            `那些年，我们用千千静听听歌，
-每一首歌都精心收藏，
-每一个播放列表都用心编排。
-
-时光荏苒，岁月如梭，
-那些旋律依然在记忆深处回响。
-
-虽然这里无法播放真正的音乐，
-但那份关于青春的回忆，
-永远都在。
-
-—— 千禧时光机 敬上`
-          );
-        }
-        this.loadingTimer = null;
-      }, 3000);
-    } else {
-      // 暂停不需要loading，同时清除loading计时器
-      if (this.loadingTimer) {
-        clearTimeout(this.loadingTimer);
-        this.loadingTimer = null;
-      }
-
-      this.setData({
-        playing: false,
         isLoading: false,
-        statusText: '已暂停 - 点击继续播放'
+        nostalgiaText: randomText,
+        showNostalgia: true,
+        statusText: '正在播放: ' + this.data.currentTrack.title + ' - ' + this.data.currentTrack.artist
       });
+      this.startProgress();
+    }, 2000);
+  },
 
-      // 停止进度更新
-      if (this.playTimer) {
-        clearInterval(this.playTimer);
-      }
-    }
+  // 关闭怀旧弹窗
+  closeNostalgia: function() {
+    this.setData({
+      showNostalgia: false,
+      nostalgiaText: ''
+    });
   },
 
   // 显示Win98风格提示框
@@ -228,7 +223,6 @@ Page({
       currentTrackIndex: index,
       currentTime: 0,
       progress: 0,
-      playing: true,
       statusText: `正在播放: ${track.title} - ${track.artist}`
     });
 
@@ -251,19 +245,13 @@ Page({
       let currentTime = this.data.currentTime + 1;
       let progress = (currentTime / this.data.duration) * 100;
 
-      // 更新可视化波纹（随机变化）
-      const waveBars = this.data.waveBars.map(bar => {
-        return Math.floor(Math.random() * 100) + 30;
-      });
-
       if (currentTime >= this.data.duration) {
         // 播放结束
         this.onTrackEnd();
       } else {
         this.setData({
           currentTime: currentTime,
-          progress: progress,
-          waveBars: waveBars
+          progress: progress
         });
       }
     }, 1000);

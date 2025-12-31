@@ -549,11 +549,50 @@
     </view>
   </view>
 
+  <!-- 欢迎弹窗 - 时间穿越提示 -->
+  <view class="win98-overlay" wx:if="{{showWelcomeDialog}}" bindtap="onWelcomeDialogConfirm">
+    <view class="win98-window welcome-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">⏰ 时间穿越成功</view>
+      </view>
+      <view class="win98-window-body">
+        <scroll-view class="welcome-content" scroll-y>
+          <text class="welcome-title">现在的北京时间是 2026年1月1日。</text>
+          <text class="welcome-subtitle">但在这台电脑里，我将时钟回拨了整整 7305 天。</text>
+
+          <view class="welcome-section">
+            <text class="welcome-highlight">欢迎来到 2006年1月1日。</text>
+          </view>
+
+          <text class="welcome-text">仅仅睡了一觉，却跨越了20年。外面的世界也许变了，但在这个像素构建的平行宇宙里，一切都还在原点。请随意点击，去找回那些被你弄丢的时光：</text>
+
+          <view class="welcome-tips">
+            <text class="welcome-tip">📂 点击【我的电脑】别只盯着C盘，去翻翻那些深层文件夹，那里藏着当年的日记和未解的秘密。</text>
+            <text class="welcome-tip">🐧 登录【QCIO】也许那个曾经灰掉的头像，又开始了跳动。</text>
+            <text class="welcome-tip">🎬 运行【如果当时】这一次，人生剧本的选择权交回你手里，结局会不会不一样？</text>
+            <text class="welcome-tip">🎁 寻找【彩蛋】哪怕只是点点桌面的小狮子，或者去我的电脑里瞎逛，里面埋藏了无数的彩蛋，等待着那个好奇心还没过期的你。</text>
+          </view>
+
+          <view class="welcome-footer">
+            <text class="welcome-footer-text">20年过去了，还好你回来了。</text>
+            <text class="welcome-footer-text">准备好重启了吗？</text>
+          </view>
+        </scroll-view>
+      </view>
+      <view class="win98-window-footer">
+        <button class="win98-btn welcome-btn-primary" bindtap="onWelcomeDialogConfirm">重返2006</button>
+      </view>
+    </view>
+  </view>
+
   <!-- 十分动听播放器组件 -->
   <ttplayer show="{{showTTPlayer}}" zIndex="{{ttplayerZIndex}}" bindclose="onCloseTTPlayer"></ttplayer>
 
+  <!-- 慢播视频播放器组件 -->
+  <manbo show="{{showManbo}}" zIndex="{{manboZIndex}}" bindclose="onCloseManbo"></manbo>
+
   <!-- 我的电脑组件 -->
-  <my-computer show="{{showMyComputer}}" zIndex="{{myComputerZIndex}}" bindclose="onCloseMyComputer" bindkonamihalf="onKonamiHalfComplete" bindopenbrowser="onOpenBrowser" bindopendocuments="onOpenDocuments" bindopenttplayer="onOpenTTPlayer"></my-computer>
+  <my-computer show="{{showMyComputer}}" zIndex="{{myComputerZIndex}}" bindclose="onCloseMyComputer" bindkonamihalf="onKonamiHalfComplete" bindopenbrowser="onOpenBrowser" bindopendocuments="onOpenDocuments" bindopenttplayer="onOpenTTPlayer" bindopenmanbo="onOpenManbo"></my-computer>
 
   <!-- 网管系统组件 -->
   <network-neighborhood show="{{showNetworkSystem}}" zIndex="{{networkSystemZIndex}}" bindclose="onCloseNetworkSystem"></network-neighborhood>

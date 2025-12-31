@@ -291,6 +291,15 @@ const userApi = {
       type: 'upgradeProgram',
       programName
     });
+  },
+
+  /**
+   * 标记欢迎弹窗已显示
+   */
+  markWelcomeDialogShown() {
+    return callCloudFunction('user', {
+      type: 'markWelcomeDialogShown'
+    });
   }
 };
 

@@ -55,6 +55,9 @@ exports.main = async (event, context) => {
         const todayStr = `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}`;
         const lastDailyDate = user.eggStats?.lastDailyDate;
 
+        // 检查是否需要显示欢迎弹窗
+        const showWelcomeDialog = !user.welcomeDialogShown;
+
         // 检查是否需要每日扣除网费
         let dailyDeducted = false;
         let newDaysUsed = user.eggStats?.daysUsed || 0;
@@ -101,7 +104,8 @@ exports.main = async (event, context) => {
           dailyDeducted,
           daysUsed: newDaysUsed,
           netFee: user.netFee || 0,
-          coins: user.coins || 0
+          coins: user.coins || 0,
+          showWelcomeDialog
         };
       } else {
         // 新用户：创建记录，赠送初始网费
@@ -1414,6 +1418,28 @@ exports.main = async (event, context) => {
       }
 
       return { success: true, programName };
+    } catch (e) {
+      console.error(e);
+      return { success: false, errMsg: e.message };
+    }
+  }
+
+  // 🎬 标记欢迎弹窗已显示
+  if (type === 'markWelcomeDialogShown') {
+    try {
+      const updateRes = await db.collection('users').where({
+        _openid: openid
+      }).update({
+        data: {
+          welcomeDialogShown: true
+        }
+      });
+
+      if (updateRes.stats.updated === 0) {
+        return { success: false, errMsg: '用户不存在' };
+      }
+
+      return { success: true };
     } catch (e) {
       console.error(e);
       return { success: false, errMsg: e.message };

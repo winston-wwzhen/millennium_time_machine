@@ -31,9 +31,9 @@
     <!-- 可视化效果区域 -->
     <view class="visualizer">
       <view class="visualizer-bg">
-        <!-- 2005风格的可视化波纹 -->
+        <!-- 静态波纹，无动画 -->
         <view class="wave-container">
-          <view class="wave-bar {{playing ? 'animating' : ''}}" wx:for="{{waveBars}}" wx:key="index" style="height: {{item}}px; animation-delay: {{index * 0.05}}s;"></view>
+          <view class="wave-bar" wx:for="{{waveBars}}" wx:key="index" style="height: {{item}}px;"></view>
         </view>
       </view>
 
@@ -63,7 +63,6 @@
         </button>
         <button class="ctrl-btn main-play {{isLoading ? 'loading' : ''}}" bindtap="onPlayPause">
           <text class="btn-icon" wx:if="{{isLoading}}">⏳</text>
-          <text class="btn-icon" wx:elif="{{playing}}">⏸</text>
           <text class="btn-icon" wx:else>▶</text>
         </button>
         <button class="ctrl-btn" bindtap="onNext">
@@ -172,6 +171,22 @@
       </view>
       <view class="win98-dialog-actions">
         <button class="win98-dialog-btn" bindtap="closeWin98Dialog">确定</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 怀旧弹窗 -->
+  <view class="win98-dialog-overlay" wx:if="{{showNostalgia}}" catchtap="closeNostalgia">
+    <view class="win98-dialog-window" catchtap="stopPropagation">
+      <view class="win98-dialog-title-bar">
+        <text class="win98-dialog-title-text">🎵 十分动听回忆</text>
+        <view class="win98-dialog-close" bindtap="closeNostalgia">×</view>
+      </view>
+      <view class="win98-dialog-content">
+        <text class="win98-dialog-message">{{nostalgiaText}}</text>
+      </view>
+      <view class="win98-dialog-actions">
+        <button class="win98-dialog-btn" bindtap="closeNostalgia">我知道了</button>
       </view>
     </view>
   </view>

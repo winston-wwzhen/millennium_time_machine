@@ -20,13 +20,18 @@ App({
       onlineMinutes: 0,
       lastSyncTime: null,
       lastOnlineDate: null,
+      // 欢迎弹窗状态
+      showWelcomeDialog: false,
+      // 初始化完成 Promise
+      initPromise: null,
     };
 
     // 预加载常用数据（异步，不阻塞启动）
     this.preloadData();
 
     // 初始化用户数据（创建 users 集合记录）
-    this.initUserData();
+    // 保存 Promise 供页面使用
+    this.globalData.initPromise = this.initUserData();
 
     // 启动在线计时
     this.startOnlineTimer();
@@ -64,6 +69,11 @@ App({
         // 保存用户头像名称到 globalData
         if (result.avatarName) {
           this.globalData.avatarName = result.avatarName;
+        }
+
+        // 保存欢迎弹窗状态到 globalData
+        if (result.showWelcomeDialog !== undefined) {
+          this.globalData.showWelcomeDialog = result.showWelcomeDialog;
         }
 
         // 如果是新用户，显示欢迎提示

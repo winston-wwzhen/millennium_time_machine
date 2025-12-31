@@ -97,6 +97,7 @@ Page({
     showStartMenu: false,
     showSubmenu: false, // 子菜单显示状态
     showTTPlayer: false, // 十分动听播放器显示状态
+    showManbo: false, // 慢播播放器显示状态
     showMyComputer: false, // 我的电脑显示状态
     showNetworkSystem: false, // 网管系统显示状态
     showMyDocuments: false, // 我的文档显示状态
@@ -105,6 +106,7 @@ Page({
     // 组件z-index管理（确保后打开的组件显示在上层）
     baseZIndex: 2000,
     ttplayerZIndex: 2000,
+    manboZIndex: 2000,
     myComputerZIndex: 2000,
     networkSystemZIndex: 2000,
     myDocumentsZIndex: 2000,
@@ -197,6 +199,8 @@ Page({
     showAboutDialog: false,
     // 关机弹窗
     showShutdownDialog: false,
+    // 欢迎弹窗（时间穿越提示）
+    showWelcomeDialog: false,
   },
 
   onLoad: function () {
@@ -259,6 +263,24 @@ Page({
         }
       });
     });
+
+    // 检查是否需要显示欢迎弹窗
+    // 等待 app 初始化完成后再检查，避免时序问题
+    const app = getApp();
+    if (app.globalData.initPromise) {
+      app.globalData.initPromise.then(() => {
+        if (app.globalData.showWelcomeDialog) {
+          this.setData({ showWelcomeDialog: true });
+        }
+      }).catch(err => {
+        console.error('等待初始化完成失败:', err);
+      });
+    } else {
+      // 降级处理：如果 initPromise 不存在，直接检查
+      if (app.globalData.showWelcomeDialog) {
+        this.setData({ showWelcomeDialog: true });
+      }
+    }
   },
 
   // 页面卸载时清理彩蛋回调
@@ -631,8 +653,12 @@ Page({
         });
         return;
       }
-      // 升级后显示文件损坏提示（致敬快播）
-      this.setData({ showErrorDialog: true });
+      // 升级后显示慢播组件
+      const currentZIndex = this.data.myComputerZIndex || 2000;
+      this.setData({
+        showManbo: true,
+        manboZIndex: currentZIndex + 10
+      });
       return;
     }
 
@@ -870,6 +896,28 @@ Page({
       }
     });
   },
+
+  // 欢迎弹窗 - 确认并标记已显示
+  onWelcomeDialogConfirm: async function () {
+    try {
+      // 调用云函数标记弹窗已显示
+      await userApi.markWelcomeDialogShown();
+
+      // 更新 globalData
+      const app = getApp();
+      app.globalData.showWelcomeDialog = false;
+
+      // 关闭弹窗
+      this.setData({ showWelcomeDialog: false });
+    } catch (e) {
+      console.error('标记欢迎弹窗失败:', e);
+      // 即使失败也关闭弹窗，避免重复显示
+      this.setData({ showWelcomeDialog: false });
+    }
+  },
+
+  // 欢迎弹窗 - 阻止事件冒泡
+  stopPropagation: function () {},
 
   // 关机弹窗 - 取消关机
   onShutdownCancel: function () {
@@ -1532,6 +1580,11 @@ Page({
     this.setData({ showTTPlayer: false });
   },
 
+  // 关闭慢播播放器
+  onCloseManbo: function () {
+    this.setData({ showManbo: false });
+  },
+
   // 打开十分动听播放器
   onOpenTTPlayer: function () {
     // 让十分动听的z-index高于我的电脑
@@ -1539,6 +1592,15 @@ Page({
     this.setData({
       showTTPlayer: true,
       ttplayerZIndex: currentZIndex + 10
+    });
+  },
+
+  // 打开慢播播放器
+  onOpenManbo: function () {
+    const currentZIndex = this.data.myComputerZIndex || 2000;
+    this.setData({
+      showManbo: true,
+      manboZIndex: currentZIndex + 10
     });
   },
 

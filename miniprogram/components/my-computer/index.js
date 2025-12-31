@@ -208,6 +208,9 @@ Component({
     lastClickedSong: '', // 最后点击的歌曲名
     autoexecLongPressTimer: null, // autoexec.bat长按计时器
     videosDeepLevel: 0, // Videos深层层级
+    animeVideoClickCount: 0, // 动漫视频点击次数
+    dramaVideoClickCount: 0, // 电视剧视频点击次数
+    movieVideoClickCount: 0, // 电影视频点击次数
     // USB彩蛋状态
     usbFileClickCount: 0, // USB文件点击次数
     usbNestingLevel: 0, // USB套娃层级
@@ -228,6 +231,9 @@ Component({
     // 歌词展示弹窗（Win98风格）
     showMusicLyricsDialog: false,
     musicLyricsData: null,
+    // 视频回忆弹窗（Win98风格）
+    showVideoMemoryDialog: false,
+    videoMemoryData: null,
   },
 
   observers: {
@@ -1005,6 +1011,10 @@ Component({
 
     // 根据路径获取文件项
     getFileItemsForPath(path) {
+      // 调试：输出所有路径
+      if (path.includes("学习资料")) {
+        console.log("[getFileItemsForPath] 学习资料相关路径:", path);
+      }
       // 调试日志：检查0xFFFF文件夹时的状态
       if (path.includes("0xFFFF")) {
         console.log(
@@ -2321,68 +2331,82 @@ Component({
             useWin98Dialog: true,
           },
         ];
-      } else if (path === "D:\\Videos\\学习资料" || path.startsWith("D:\\Videos\\学习资料\\第")) {
-        // d_videos_deep彩蛋：Videos深层目录
-        // 解析当前层级
-        let level = 1;
-        if (path !== "D:\\Videos\\学习资料") {
-          const match = path.match(/第(\d+)层/);
-          if (match) {
-            level = parseInt(match[1]) + 1;
+      } else if (path === "D:\\Videos\\学习资料") {
+        // d_videos_deep彩蛋：Videos深层目录（伪装学习资料）
+        return [
+          {
+            type: "folder",
+            name: ".tmp",
+            icon: "📁",
+            hidden: true,
+          },
+        ];
+      } else if (path.startsWith("D:\\Videos\\学习资料\\.tmp")) {
+        // 定义完整的目录层级结构
+        const pathHierarchy = {
+          "D:\\Videos\\学习资料\\.tmp": "backup",
+          "D:\\Videos\\学习资料\\.tmp\\backup": "重要资料",
+          "D:\\Videos\\学习资料\\.tmp\\backup\\重要资料": "请勿删除",
+          "D:\\Videos\\学习资料\\.tmp\\backup\\重要资料\\请勿删除": "仅限个人",
+          "D:\\Videos\\学习资料\\.tmp\\backup\\重要资料\\请勿删除\\仅限个人": "高清完整版",
+          "D:\\Videos\\学习资料\\.tmp\\backup\\重要资料\\请勿删除\\仅限个人\\高清完整版": "无删减",
+          "D:\\Videos\\学习资料\\.tmp\\backup\\重要资料\\请勿删除\\仅限个人\\高清完整版\\无删减": "SERIES",
+        };
+
+        console.log("[.tmp路径调试] path:", path);
+        console.log("[.tmp路径调试] pathHierarchy中的key:", Object.keys(pathHierarchy));
+
+        if (pathHierarchy[path]) {
+          const nextFolder = pathHierarchy[path];
+          if (nextFolder === "SERIES") {
+            // 触发彩蛋，返回东方系列和西洋系列
+            setTimeout(() => {
+              this.triggerCDriveEgg(EGG_IDS.D_VIDEOS_DEEP);
+            }, 500);
+            return [
+              {
+                type: "folder",
+                name: "东方系列",
+                icon: "📁",
+              },
+              {
+                type: "folder",
+                name: "西洋系列",
+                icon: "📁",
+              },
+            ];
+          } else {
+            return [
+              {
+                type: "folder",
+                name: nextFolder,
+                icon: "📁",
+              },
+            ];
           }
         }
-
-        // 检查是否达到第5层（触发彩蛋）
-        if (level === 5) {
-          // 延迟触发彩蛋，确保用户能看到深层内容
-          setTimeout(() => {
-            this.triggerCDriveEgg(EGG_IDS.D_VIDEOS_DEEP);
-            wx.showToast({
-              title: "深度探索者成就达成！+600时光币",
-              icon: "success",
-              duration: 2000
-            });
-          }, 500);
-        }
-
-        // 返回当前层级的文件列表
-        if (level >= 5) {
-          // 第5层及以后：到达最深层
-          return [
-            {
-              type: "file",
-              name: "游戏攻略.txt",
-              icon: "📄",
-              content: "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n恭喜你找到了最深层！\n\n这里藏着真正的游戏攻略！\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n魔兽争霸3：\n- 人族：快速暴兵，法师流\n- 兽族：剑圣加速，狼骑骚扰\n- 暗夜：恶魔猎手，熊鹿组合\n- 不死：死亡骑士，天地鬼鬼\n\n反恐精英1.6：\n- AK压枪：3发点射\n- M4后坐力：向下拉\n- AWP准星：甩枪技巧\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
-              useWin98Dialog: true,
-            },
-            {
-              type: "file",
-              name: "通关存档.rar",
-              icon: "📄",
-              disabled: true,
-              message: "笨蛋程序员说存档文件太大了，明天再上传吧~",
-              isDisabledMessage: true,
-            },
-          ];
-        } else {
-          // 第1-4层：继续深入
-          return [
-            {
-              type: "folder",
-              name: `第${level}层`,
-              icon: "📁",
-            },
-            {
-              type: "file",
-              name: `第${level}层说明.txt`,
-              icon: "📄",
-              disabled: true,
-              message: `这是第${level}层说明文件。\n\n继续深入可以发现更多秘密！\n\n当前层级：${level}/5`,
-              isDisabledMessage: true,
-            },
-          ];
-        }
+      } else if (path === "D:\\Videos\\学习资料\\.tmp\\backup\\重要资料\\请勿删除\\仅限个人\\高清完整版\\无删减\\东方系列") {
+        // 东方系列：日语学习视频（显示视频回忆弹窗）
+        return [
+          {
+            type: "file",
+            name: "日语入门_第1课.mp4",
+            icon: "🎬",
+            isLearningMaterialVideo: true,
+            videoType: "learning_japanese",
+          },
+        ];
+      } else if (path === "D:\\Videos\\学习资料\\.tmp\\backup\\重要资料\\请勿删除\\仅限个人\\高清完整版\\无删减\\西洋系列") {
+        // 西洋系列：英语学习视频（显示视频回忆弹窗）
+        return [
+          {
+            type: "file",
+            name: "英语口语_第1课.mp4",
+            icon: "🎬",
+            isLearningMaterialVideo: true,
+            videoType: "learning_english",
+          },
+        ];
       } else if (path === "USB:\\" || path === "USB:") {
         return [
           {
@@ -2822,6 +2846,66 @@ Component({
 
       // ==================== D盘/USB彩蛋触发结束 ====================
 
+      // ==================== Videos视频文件处理 ====================
+
+      // 检测是否在Videos目录下点击视频文件
+      if (this.data.fileExplorerPath.startsWith("D:\\Videos") &&
+          (item.name.endsWith(".rmvb") || item.name.endsWith(".avi") || item.name.endsWith(".mp4"))) {
+        // 确定视频类型
+        let videoType = "";
+        let eggId = null;
+        let countKey = "";
+        let currentCount = 0;
+
+        if (this.data.fileExplorerPath.startsWith("D:\\Videos\\动漫")) {
+          videoType = "anime";
+          eggId = EGG_IDS.D_VIDEOS_ANIME;
+          countKey = "animeVideoClickCount";
+          currentCount = this.data.animeVideoClickCount;
+        } else if (this.data.fileExplorerPath.startsWith("D:\\Videos\\电视剧")) {
+          videoType = "drama";
+          eggId = EGG_IDS.D_VIDEOS_DRAMA;
+          countKey = "dramaVideoClickCount";
+          currentCount = this.data.dramaVideoClickCount;
+        } else if (this.data.fileExplorerPath.startsWith("D:\\Videos\\电影")) {
+          videoType = "movie";
+          eggId = EGG_IDS.D_VIDEOS_MOVIE;
+          countKey = "movieVideoClickCount";
+          currentCount = this.data.movieVideoClickCount;
+        }
+
+        // 检查彩蛋是否已经达成
+        if (eggSystem.discovered[eggId]) {
+          // 彩蛋已达成，不再显示弹窗和计数
+          return;
+        }
+
+        // 只处理动漫/电视剧/电影分类的视频
+        // 学习资料等其他目录下的视频不触发视频回忆弹窗
+        if (!videoType) {
+          // 不在三个分类下，不触发视频回忆处理
+          // 继续执行后面的逻辑（disabled处理等）
+        } else {
+          // 在三个分类下，增加计数并显示视频回忆弹窗
+          // 增加计数
+          const newCount = currentCount + 1;
+          this.setData({ [countKey]: newCount });
+
+          // 显示视频回忆弹窗
+          this.showVideoMemoryDialog(item, videoType);
+
+          // 检查是否达到5次触发彩蛋
+          if (newCount >= 5) {
+            this.triggerCDriveEgg(eggId);
+            // 彩蛋系统会自动显示Win98风格弹窗，不需要额外toast
+            // 重置计数
+            this.setData({ [countKey]: 0 });
+          }
+          // 处理完成后返回
+          return;
+        }
+      }
+
       // Downloads文件夹程序特殊处理
       if (this.data.fileExplorerPath === "D:\\Downloads" && item.name && item.name.endsWith('.exe')) {
         // 如果是禁用的文件（已安装）
@@ -2843,6 +2927,12 @@ Component({
           // 可安装的程序，显示安装向导
           this.showFileContent(item);
         }
+        return;
+      }
+
+      // 学习资料视频特殊处理（显示视频回忆弹窗）
+      if (item.isLearningMaterialVideo) {
+        this.showVideoMemoryDialog(item, item.videoType);
         return;
       }
 
@@ -4250,6 +4340,207 @@ AI助手本人无法直接将这份文件送达给相关部门，
       this.setData({
         showMusicLyricsDialog: false,
         musicLyricsData: null
+      });
+    },
+
+    // 去十分动听听歌
+    gotoTTPlayer() {
+      // 先关闭音乐弹窗
+      this.setData({
+        showMusicLyricsDialog: false,
+        musicLyricsData: null
+      });
+      // 触发事件通知父组件打开十分动听
+      this.triggerEvent("openttplayer");
+    },
+
+    // 显示视频回忆弹窗
+    showVideoMemoryDialog(videoItem, videoType) {
+      // 根据视频类型生成怀旧内容
+      const memoryContent = this.generateVideoMemoryContent(videoItem, videoType);
+
+      this.setData({
+        showVideoMemoryDialog: true,
+        videoMemoryData: {
+          videoName: videoItem.name,
+          videoType: videoType,
+          ...memoryContent
+        }
+      });
+    },
+
+    // 生成视频回忆内容
+    generateVideoMemoryContent(videoItem, videoType) {
+      // 获取视频名称（去除扩展名）
+      const videoName = videoItem.name.replace(/\.(rmvb|avi|mp4)$/, '');
+
+      const memories = {
+        anime: {
+          titles: {
+            '火影忍者_EP001': {
+              title: '鸣人的忍者之路',
+              memory: `"我要成为火影！"\n\n这句口号陪我们走过了整个青春。\n\n鸣人的忍道、佐助的复仇、小樱的成长、\n卡卡西的教导、自来也的牺牲...\n\n那些年，我们学着结印，\n喊着"影分身之术"，\n相信着只要努力就能实现梦想。\n\n现在回想起来，\n火影教会了我们什么是友情，\n什么是永不放弃。`
+            },
+            '死神_EP001': {
+              title: '一护的死神代理',
+              memory: `"既然你这么想死，\n那我就成全你，用我的斩魄刀！"\n\n黑崎一护的代理死神之旅，\n朽木露琪亚的救赎，\n阿散井恋次的追击...\n\n那些年，\n我们记住了卍解、虚化、始解，\n记住了护庭十三队的番队。\n\n千年血战篇我们等了十年，\n青春也结束了。`
+            },
+            '海贼王_EP001': {
+              title: '路飞的冒险',
+              memory: `"我是要成为海贼王的男人！"\n\n蒙奇·D·路飞的草帽，\n承载着香克斯的约定。\n\n索隆的剑道、娜美的航海图、\n山治的料理、乌索普的勇气...\n\n那些年，\n我们相信着梦想与伙伴，\n相信着ONE PIECE真的存在。\n\n现在路飞还没找到宝藏，\n但我们的青春已经远航。`
+            },
+            '犬夜叉_EP001': {
+              title: '穿越时空的相遇',
+              memory: `戈薇掉进食骨井，\n穿越回了500年前的战国时代。\n\n犬夜叉的狗耳朵，\n珊瑚的飞来骨，\n弥勒的风穴，七宝的狐火...\n\n那些年，\n我们为犬夜叉和戈薇的爱情揪心，\n为杀生丸的冷酷心动。\n\n穿越时空的爱恋，\n是我们对浪漫最早的定义。`
+            },
+            '数码宝贝_EP001': {
+              title: '被选召的孩子',
+              memory: `滚球兽、亚古兽、暴龙兽、\n战斗暴龙兽、奥米加兽...\n\n太一、阿和、阿武、美美...\n\n那些年，\n我们相信自己也会被选召，\n相信着会有数码宝贝伙伴。\n\n"Butterfly"的旋律响起，\n就是我们无限勇气的证明。\n\n光叔走了，\n但数码宝贝永远在我们心中。`
+            },
+            '灌篮高手_EP001': {
+              title: '湘北的奇迹',
+              memory: `"教练，我想打篮球！"\n\n三井寿的浪子回头，\n流川枫的冷峻帅气，\n樱木花道的搞笑热血...\n\n那些年，\n我们学会了"教练，我想打篮球"，\n学会了"安西教练，你好，我是樱木花道"。 \n\n湘北没有称霸全国，\n但我们的青春永远燃烧。\n\nSLAM DUNK！`
+            }
+          },
+          default: {
+            title: '动漫回忆',
+            memory: `那些年，我们每天放学回家第一件事，\n就是打开电脑看最新的动漫。\n\n火影忍者、死神、海贼王三大民工番，\n每一集都追得津津有味。\n\n和同学讨论剧情，猜测下一集的发展，\n为角色的命运揪心，为热血的场面激动。`
+          }
+        },
+        drama: {
+          titles: {
+            '武林外传_EP01': {
+              title: '同福客栈的欢声笑语',
+              memory: `"额错咧，额真滴错咧..."\n\n佟湘玉的经典开场白，\n白展堂的葵花点穴手，\n吕秀才的"子曾经曰过"，\n郭芙蓉的排山倒海...\n\n那些年，\n同福客栈的每一集都是欢乐，\n李大嘴、燕小六、邢捕头、钱夫人...\n\n一群人，一个客栈，\n演绎了我们最美好的回忆。`
+            },
+            '仙剑奇侠传_EP01': {
+              title: '李逍遥和赵灵儿',
+              memory: `"赵灵儿，\n我不会让你死的！"\n\n李逍遥的侠义，\n赵灵儿的善良，\n林月如的痴情...\n\n那首《杀破狼》，\n"这江湖统统都在我笔下..."\n\n胡歌还是青涩的李逍遥，\n刘亦菲还是最美的赵灵儿。\n\n仙剑奇侠传，\n是我们心中永远的经典。`
+            },
+            '恶作剧之吻_EP01': {
+              title: '湘琴和直树',
+              memory: `IQ200的天才少年，\n爱上笨蛋湘琴。\n\n袁湘琴的执着可爱，\n江直树的傲娇温柔，\n阿金的守护...\n\n那些年，\n我们相信笨蛋也能追到天才，\n相信着爱情可以跨越一切。\n\n多田薰老师走了，\n但湘琴和直树的爱情永远活着。`
+            },
+            '王子变青蛙_EP01': {
+              title: '单均昊的失忆',
+              memory: `堂堂Senwell集团总经理，\n失忆后成了农夫...\n\n明道的单均昊，\n陈乔恩的叶天瑜。\n\n"什么都知道的田希甄"，\n"总是被骗的芸熙"...\n\n那些年，\n明道的"青蛙王子"造型，\n承包了我们的少女心。\n\n总裁爱上我，\n是从这部剧开始的梦想。`
+            }
+          },
+          default: {
+            title: '电视剧回忆',
+            memory: `那些年，我们追过的电视剧。\n\n武林外传，同福客栈里的欢声笑语，\n佟湘玉的白口、白展堂的葵花点穴手、\n吕秀才的"子曾经曰过"...\n\n仙剑奇侠传，李逍遥和赵灵儿的爱情故事，\n那首《杀破狼》至今还能哼出旋律。`
+          }
+        },
+        movie: {
+          titles: {
+            '功夫': {
+              title: '一支穿云箭',
+              memory: `"一支穿云箭，\n千军万马来相见！"\n\n周星驰的《功夫》，\n包租婆的狮子吼，\n火云邪神的蛤蟆功，\n十二路谭腿、洪家铁线拳...\n\n那些年，\n这句话成了班级群里最流行的梗。\n\n星爷告诉我们，\n万中无一的武功奇才，\n可能就卖着两毛一根的棒棒糖。`
+            },
+            '无极': {
+              title: '一个馒头引发的血案',
+              memory: `陈凯歌的《无极》，\n被胡戈恶搞成了"一个馒头引发的血案"。\n\n"你毁了我做好人的机会！"\n\n那些年，\n我们一边吐槽电影，\n一边看着恶搞视频笑到肚子痛。\n\n现在回想起来，\n吐槽也是一种青春的记忆。`
+            },
+            '夜宴': {
+              title: '章子怡的古装',
+              memory: `冯小刚的《夜宴》，\n章子怡的婉后，\n葛优的厉帝，\n吴彦祖的无鸾...\n\n那些年，\n我们为章子怡的古装造型惊艳，\n为这部"中国版哈姆雷特"震撼。\n\n莎士比亚的故事，\n披上了中国古装的外衣，\n成了我们独特的记忆。`
+            },
+            '满城尽带黄金甲': {
+              title: '张艺谋的黄金',
+              memory: `张艺谋的黄金大片，\n满城尽带黄金甲！\n\n周润发的 King，\n巩俐的皇后，\n周杰伦的杰王子...\n\n那些年，\n金灿灿的视觉震撼，\n周杰伦唱着《菊花台》，\n"菊花残，满地伤..."\n\n华语大片的时代，\n从这里开始。`
+            },
+            '疯狂的石头': {
+              title: '小成本黑马',
+              memory: `宁浩的小成本电影，\n成了当年的票房黑马！\n\n黄渤的出道作品，\n郭涛的笨贼，\n徐峥的开发商...\n\n那些年，\n多线叙事的黑色幽默，\n让我们笑到停不下来。\n\n"道哥，你这是要让我当市长啊！"\n\n国产电影的希望，\n从《疯狂的石头》开始。`
+            }
+          },
+          default: {
+            title: '电影回忆',
+            memory: `那些年，我们看过的电影。\n\n周星驰的《功夫》，\n"一支穿云箭，千军万马来相见"\n那句话成了当年最流行的梗。\n\n那时候看电影，\n要么去电影院，要么在电脑上看盗版。\n\n虽然现在看来画质很差，\n但那份期待和兴奋，永远不会忘。`
+          }
+        },
+        learning_japanese: {
+          title: '东方系列·日语入门',
+          memory: `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  日语入门_第1课.mp4
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+あ、い、う、え、お...
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+恭喜你找到了东方系列！
+
+这些学习资料...咳咳，很有教育意义。
+
+あ、い、う、え、お、か、き、く、け、こ...
+
+さ、さ、し、す、せ、そ...
+
+た、ち、つ、て、と...
+
+な、に、ぬ、ね、の...
+
+は、ひ、ふ、へ、ほ...
+
+ま、み、む、め、も...
+
+や、ゆ、よ...
+
+ら、り、る、れ、ろ...
+
+わ、を、ん...
+
+（笨蛋程序员说：其实我也看不懂，\n只是觉得名字很专业）`
+        },
+        learning_english: {
+          title: '西洋系列·英语口语',
+          memory: `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  英语口语_第1课.mp4
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Hello! How are you?
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+恭喜你找到了西洋系列！
+
+这些学习资料...咳咳，很有教育意义。
+
+I am fine, thank you!
+
+And you?
+
+（笨蛋程序员说：其实我也是瞎编的，\n只是为了凑齐东方和西洋两大系列）`
+        }
+      };
+
+      const typeData = memories[videoType];
+      const specificMemory = typeData.titles ? typeData.titles[videoName] : null;
+
+      // 学习资料视频有简单的结构（title + memory），没有 titles
+      if (videoType === 'learning_japanese' || videoType === 'learning_english') {
+        return {
+          title: typeData.title,
+          memory: typeData.memory,
+          year: '2006',
+          format: videoItem.name.split('.').pop().toUpperCase()
+        };
+      }
+
+      return {
+        title: specificMemory ? specificMemory.title : typeData.default.title,
+        memory: specificMemory ? specificMemory.memory : typeData.default.memory,
+        year: '2006',
+        format: videoItem.name.split('.').pop().toUpperCase()
+      };
+    },
+
+    // 关闭视频回忆弹窗
+    closeVideoMemoryDialog() {
+      this.setData({
+        showVideoMemoryDialog: false,
+        videoMemoryData: null
       });
     },
 

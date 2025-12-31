@@ -65,6 +65,9 @@ const EGG_IDS = {
   D_FUTURE_GAMES: 'd_future_games',                       // 特定游戏组合
   D_MUSIC_REPEAT: 'd_music_repeat',                       // Music歌曲连点5次
   D_VIDEOS_DEEP: 'd_videos_deep',                         // Videos最深层
+  D_VIDEOS_ANIME: 'd_videos_anime',                       // 动漫视频连点5个
+  D_VIDEOS_DRAMA: 'd_videos_drama',                       // 电视剧视频连点5个
+  D_VIDEOS_MOVIE: 'd_videos_movie',                       // 电影视频连点5个
   D_AUTOEXEC_LONG: 'd_autoexec_long',                     // autoexec.bat长按3秒
   // USB彩蛋
   USB_INVISIBLE_FOLDER: 'usb_invisible_folder',           // 空名文件夹
@@ -606,6 +609,42 @@ const EGG_CONFIG = {
     reward: {
       coins: 600,
       badge: '探索家'
+    }
+  },
+  [EGG_IDS.D_VIDEOS_ANIME]: {
+    id: EGG_IDS.D_VIDEOS_ANIME,
+    name: '动漫迷',
+    description: '你连续观看了5部动漫...',
+    hint: '在D:\\Videos\\动漫目录连续点击5个视频文件',
+    rarity: 'common',
+    type: 'action',
+    reward: {
+      coins: 500,
+      badge: '二次元'
+    }
+  },
+  [EGG_IDS.D_VIDEOS_DRAMA]: {
+    id: EGG_IDS.D_VIDEOS_DRAMA,
+    name: '剧迷',
+    description: '你连续追了5部电视剧...',
+    hint: '在D:\\Videos\\电视剧目录连续点击5个视频文件',
+    rarity: 'common',
+    type: 'action',
+    reward: {
+      coins: 500,
+      badge: '追剧狂'
+    }
+  },
+  [EGG_IDS.D_VIDEOS_MOVIE]: {
+    id: EGG_IDS.D_VIDEOS_MOVIE,
+    name: '电影发烧友',
+    description: '你连续观看了5部电影...',
+    hint: '在D:\\Videos\\电影目录连续点击5个视频文件',
+    rarity: 'common',
+    type: 'action',
+    reward: {
+      coins: 500,
+      badge: '影评人'
     }
   },
   [EGG_IDS.D_AUTOEXEC_LONG]: {
