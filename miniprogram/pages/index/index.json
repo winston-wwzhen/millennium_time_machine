@@ -6,6 +6,7 @@
     "my-computer": "../../components/my-computer/index",
     "network-neighborhood": "../../components/network-neighborhood/index",
     "my-documents": "../../components/my-documents/index",
-    "recycle-bin": "../../components/recycle-bin/index"
+    "recycle-bin": "../../components/recycle-bin/index",
+    "cmd-console": "../../components/cmd-console/index"
   }
 }

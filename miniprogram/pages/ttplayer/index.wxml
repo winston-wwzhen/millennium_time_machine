@@ -22,6 +22,12 @@
 
   <!-- 主播放区域 -->
   <view class="main-area">
+    <!-- 怀旧模拟提示横幅 -->
+    <view class="simulation-banner">
+      <text class="banner-icon">ℹ️</text>
+      <text class="banner-text">怀旧模拟程序，无实际音乐播放功能</text>
+    </view>
+
     <!-- 可视化效果区域 -->
     <view class="visualizer">
       <view class="visualizer-bg">

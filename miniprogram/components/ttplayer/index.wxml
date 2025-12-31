@@ -1,4 +1,4 @@
-<view class="ttplayer-window {{show ? 'show' : 'hide'}}" catchtap="stopPropagation">
+<view class="ttplayer-window {{show ? 'show' : 'hide'}}" catchtap="stopPropagation" style="{{overlayStyle}}">
   <!-- 2005风格顶部标题栏 -->
   <view class="title-bar">
     <view class="title-left">
@@ -21,6 +21,12 @@
 
   <!-- 主播放区域 -->
   <view class="main-area">
+    <!-- 怀旧模拟提示横幅 -->
+    <view class="simulation-banner">
+      <text class="banner-icon">ℹ️</text>
+      <text class="banner-text">怀旧模拟程序，无实际音乐播放功能</text>
+    </view>
+
     <!-- 可视化效果区域 -->
     <view class="visualizer">
       <!-- 歌曲信息显示 -->

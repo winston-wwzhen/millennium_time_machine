@@ -122,6 +122,10 @@
         <text class="menu-text">程序</text>
         <text class="submenu-arrow {{showSubmenu ? 'expanded' : ''}}">{{showSubmenu ? '▾' : '▸'}}</text>
       </view>
+      <view class="menu-item" catchtap="openCmdConsole">
+        <text class="menu-icon">💻</text>
+        <text class="menu-text">命令提示符</text>
+      </view>
       <view class="menu-item" bindtap="onIconTap" data-path="/pages/my-documents/index">
         <text class="menu-icon">📂</text>
         <text class="menu-text">我的文档</text>
@@ -210,6 +214,33 @@
         </view>
         <view class="dialog-actions">
           <button class="win98-btn-std" bindtap="hideErrorDialog">确定</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 版本过低弹窗（十分动听/慢播未升级） -->
+  <view class="win98-overlay" wx:if="{{showVersionTooLowDialog}}" bindtap="hideVersionTooLowDialog">
+    <view class="win98-window version-low-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">⚠️ 版本过低</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="hideVersionTooLowDialog">×</button>
+        </view>
+      </view>
+      <view class="win98-window-body">
+        <view class="error-dialog-content">
+          <view class="error-icon">⚠️</view>
+          <view class="error-messages">
+            <text class="error-title">程序版本过低</text>
+            <text class="error-text">{{versionLowProgramName}}需要先升级才能运行。</text>
+            <text class="error-text">请进入"我的电脑" → "D:\Downloads"</text>
+            <text class="error-text">运行对应版本的安装程序。</text>
+            <text class="error-code">错误代码: 0x80070005</text>
+          </view>
+        </view>
+        <view class="dialog-actions">
+          <button class="win98-btn-std" bindtap="hideVersionTooLowDialog">确定</button>
         </view>
       </view>
     </view>
@@ -519,10 +550,10 @@
   </view>
 
   <!-- 十分动听播放器组件 -->
-  <ttplayer show="{{showTTPlayer}}" bindclose="onCloseTTPlayer"></ttplayer>
+  <ttplayer show="{{showTTPlayer}}" zIndex="{{ttplayerZIndex}}" bindclose="onCloseTTPlayer"></ttplayer>
 
   <!-- 我的电脑组件 -->
-  <my-computer show="{{showMyComputer}}" zIndex="{{myComputerZIndex}}" bindclose="onCloseMyComputer" bindkonamihalf="onKonamiHalfComplete" bindopenbrowser="onOpenBrowser" bindopendocuments="onOpenDocuments"></my-computer>
+  <my-computer show="{{showMyComputer}}" zIndex="{{myComputerZIndex}}" bindclose="onCloseMyComputer" bindkonamihalf="onKonamiHalfComplete" bindopenbrowser="onOpenBrowser" bindopendocuments="onOpenDocuments" bindopenttplayer="onOpenTTPlayer"></my-computer>
 
   <!-- 网管系统组件 -->
   <network-neighborhood show="{{showNetworkSystem}}" zIndex="{{networkSystemZIndex}}" bindclose="onCloseNetworkSystem"></network-neighborhood>
@@ -532,4 +563,7 @@
 
   <!-- 回收站组件 -->
   <recycle-bin show="{{showRecycleBin}}" zIndex="{{recycleBinZIndex}}" bindclose="onCloseRecycleBin"></recycle-bin>
+
+  <!-- CMD 命令提示符组件 -->
+  <cmd-console show="{{showCmdConsole}}" zIndex="{{cmdConsoleZIndex}}" bindclose="closeCmdConsole"></cmd-console>
 </view>

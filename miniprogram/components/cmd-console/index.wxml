@@ -1,0 +1,50 @@
+<!-- CMD 命令提示符窗口 -->
+<view class="cmd-console-overlay" wx:if="{{show}}" style="{{overlayStyle}}" catchtap="close">
+  <view class="cmd-console-window" catchtap="stopPropagation">
+    <!-- 控制台标题栏 -->
+    <view class="cmd-title-bar">
+      <view class="cmd-title-icon">💻</view>
+      <view class="win98-title-text">{{cmdCurrentDir}}\\cmd.exe</view>
+      <view class="win98-title-controls">
+        <button class="win98-btn-close" bindtap="close">×</button>
+      </view>
+    </view>
+
+    <!-- 控制台菜单栏 -->
+    <view class="cmd-menu-bar">
+      <text class="cmd-menu-item">文件</text>
+      <text class="cmd-menu-item">编辑</text>
+      <text class="cmd-menu-item">查看</text>
+    </view>
+
+    <!-- 控制台内容区域 -->
+    <scroll-view class="cmd-content" scroll-y scroll-into-view="{{scrollIntoView}}" scroll-top="{{cmdScrollTop}}">
+      <view class="cmd-output">
+        <block wx:for="{{cmdOutput}}" wx:key="index">
+          <text class="cmd-line cmd-line-{{item.type}}">{{item.text}}</text>
+        </block>
+      </view>
+    </scroll-view>
+
+    <!-- 输入区域 -->
+    <view class="cmd-input-area">
+      <text class="cmd-prompt">{{cmdPrompt}}</text>
+      <input
+        class="cmd-input"
+        type="text"
+        value="{{cmdInput}}"
+        bindinput="onCmdInput"
+        bindconfirm="onCmdExecute"
+        bindkeydown="onCmdKeyDown"
+        placeholder="{{show ? '' : '输入命令...'}}"
+        focus="{{show}}"
+        confirm-type="done"
+      />
+    </view>
+
+    <!-- 滚动条说明 -->
+    <view class="cmd-scrollbar-hint" wx:if="{{cmdHistory.length > 0}}">
+      <text>↑↓ 浏览历史 | Enter 执行 | Exit 退出</text>
+    </view>
+  </view>
+</view>

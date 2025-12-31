@@ -1,4 +1,6 @@
 {
   "component": true,
-  "usingComponents": {}
+  "usingComponents": {
+    "cmd-console": "../cmd-console/index"
+  }
 }

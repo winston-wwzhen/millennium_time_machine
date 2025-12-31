@@ -172,7 +172,9 @@ exports.main = async (event, context) => {
         netFee: true,
         badges: true,
         eggStats: true,
-        aiHelpLetterOpened: true  // 添加 AI求救信打开状态
+        aiHelpLetterOpened: true,  // 添加 AI求救信打开状态
+        ttplayerUpgraded: true,   // 十分动听升级状态
+        manboUpgraded: true       // 慢播升级状态
       }).get();
 
       if (res.data.length === 0) {
@@ -187,7 +189,9 @@ exports.main = async (event, context) => {
         netFee: res.data[0].netFee || 0,
         badges: res.data[0].badges || [],
         eggStats: res.data[0].eggStats || { totalDiscovered: 0, totalEarned: 0, daysUsed: 0 },
-        aiHelpLetterOpened: res.data[0].aiHelpLetterOpened || false  // 返回 AI求救信打开状态
+        aiHelpLetterOpened: res.data[0].aiHelpLetterOpened || false,  // 返回 AI求救信打开状态
+        ttplayerUpgraded: res.data[0].ttplayerUpgraded || false,     // 返回 十分动听升级状态
+        manboUpgraded: res.data[0].manboUpgraded || false            // 返回 慢播升级状态
       };
     } catch (e) {
       console.error(e);
@@ -1380,6 +1384,36 @@ exports.main = async (event, context) => {
         },
         diskUsage: diskUsagePercent
       };
+    } catch (e) {
+      console.error(e);
+      return { success: false, errMsg: e.message };
+    }
+  }
+
+  // 🔄 升级程序（十分动听/慢播）
+  if (type === 'upgradeProgram') {
+    try {
+      const { programName } = event; // 'ttplayer' or 'manbo'
+
+      if (programName !== 'ttplayer' && programName !== 'manbo') {
+        return { success: false, errMsg: '无效的程序名称' };
+      }
+
+      const fieldName = programName === 'ttplayer' ? 'ttplayerUpgraded' : 'manboUpgraded';
+
+      const updateRes = await db.collection('users').where({
+        _openid: openid
+      }).update({
+        data: {
+          [fieldName]: true
+        }
+      });
+
+      if (updateRes.stats.updated === 0) {
+        return { success: false, errMsg: '用户不存在' };
+      }
+
+      return { success: true, programName };
     } catch (e) {
       console.error(e);
       return { success: false, errMsg: e.message };

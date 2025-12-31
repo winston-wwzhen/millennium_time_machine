@@ -253,13 +253,14 @@ const qcioProfileCache = {
 /**
  * 批量预加载常用数据
  * 在应用启动时预加载，提升首屏速度
- * 注意：不再设置缓存，各组件直接从API获取实时数据
+ * 注意：
+ * - 不再设置缓存，各组件直接从API获取实时数据
+ * - 不调用 login()，避免与 app.js 的 initUserData() 重复创建用户
  * @returns {Promise<object>} - 预加载结果
  */
 async function preloadCommonData() {
   console.log('[Cache] Preloading common data...');
   const results = {
-    userInfo: null,
     balance: null
   };
 
@@ -267,17 +268,11 @@ async function preloadCommonData() {
     // 可以并行加载多个数据
     const { userApi } = require('./api-client');
 
-    // 并行获取用户信息和余额（用于预热，不设置缓存）
-    const [userInfo, balance] = await Promise.allSettled([
-      userApi.login().catch(() => null),
-      userApi.getBalance().catch(() => null)
-    ]);
+    // 只预加载余额数据，不调用 login() 避免重复创建用户
+    // app.js 的 initUserData() 已经负责登录和创建用户
+    const balance = await userApi.getBalance().catch(() => null);
 
-    if (userInfo?.value?.success) {
-      results.userInfo = true;
-    }
-
-    if (balance?.value?.success) {
+    if (balance?.success) {
       results.balance = true;
     }
 

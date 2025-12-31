@@ -138,7 +138,7 @@
         <!-- 第二行驱动器容器 -->
         <view class="drives-row-secondary">
           <view class="drive-item">
-            <view class="drive-icon" bindtap="onDriveTap" data-drive="D">💿</view>
+            <view class="drive-icon" bindtap="onDriveTap" data-drive="D">💾</view>
             <text class="drive-label">(D:)</text>
             <text class="drive-size">本地磁盘</text>
           </view>
@@ -847,56 +847,14 @@
     </view>
   </view>
 
-  <!-- 命令行控制台 -->
-  <view class="cmd-console-overlay" wx:if="{{showCmdConsole}}" catchtap="closeCmdConsole">
-    <view class="cmd-console-window" catchtap="stopPropagation">
-      <!-- 控制台标题栏 -->
-      <view class="cmd-title-bar">
-        <view class="cmd-title-icon">💻</view>
-        <view class="cmd-title-text">{{cmdCurrentDir}}\\cmd.exe</view>
-        <view class="win98-title-controls">
-          <button class="win98-btn-close" bindtap="closeCmdConsole">×</button>
-        </view>
-      </view>
-
-      <!-- 控制台菜单栏 -->
-      <view class="cmd-menu-bar">
-        <text class="cmd-menu-item">文件</text>
-        <text class="cmd-menu-item">编辑</text>
-        <text class="cmd-menu-item">查看</text>
-      </view>
-
-      <!-- 控制台内容区域 -->
-      <scroll-view class="cmd-content" scroll-y scroll-into-view="{{scrollIntoView}}" scroll-top="{{cmdScrollTop}}">
-        <view class="cmd-output">
-          <block wx:for="{{cmdOutput}}" wx:key="index">
-            <text class="cmd-line cmd-line-{{item.type}}">{{item.text}}</text>
-          </block>
-        </view>
-      </scroll-view>
-
-      <!-- 输入区域 -->
-      <view class="cmd-input-area">
-        <text class="cmd-prompt">{{cmdPrompt}}</text>
-        <input
-          class="cmd-input"
-          type="text"
-          value="{{cmdInput}}"
-          bindinput="onCmdInput"
-          bindconfirm="onCmdExecute"
-          bindkeydown="onCmdKeyDown"
-          placeholder="{{showCmdConsole ? '' : '输入命令...'}}"
-          focus="{{showCmdConsole}}"
-          confirm-type="done"
-        />
-      </view>
-
-      <!-- 滚动条说明 -->
-      <view class="cmd-scrollbar-hint" wx:if="{{cmdHistory.length > 0}}">
-        <text>↑↓ 浏览历史 | Enter 执行 | Exit 退出</text>
-      </view>
-    </view>
-  </view>
+  <!-- 命令行控制台组件 -->
+  <cmd-console
+    show="{{showCmdConsole}}"
+    zIndex="2400"
+    fileSystem="{{cmdFileSystem}}"
+    initialDir="{{cmdInitialDir}}"
+    bindclose="closeCmdConsole">
+  </cmd-console>
 
   <!-- USB驱动器安装弹窗 -->
   <view class="win98-dialog-overlay" wx:if="{{showUsbDriverDialog}}" catchtap="onCancelInstallUsbDriver">
@@ -1125,6 +1083,74 @@
     </view>
   </view>
 
+  <!-- 未来游戏弹窗（赛博朋克风格） -->
+  <view class="future-game-overlay" wx:if="{{showFutureGameDialog}}" catchtap="closeFutureGameDialog">
+    <view class="future-game-dialog" catchtap="stopPropagation">
+      <!-- 扫描线效果 -->
+      <view class="future-scanlines"></view>
+
+      <!-- 顶部标题栏 -->
+      <view class="future-title-bar">
+        <view class="future-title-glow"></view>
+        <text class="future-title-text">⚠ 系统不兼容</text>
+        <view class="future-title-controls">
+          <text class="future-btn-close" bindtap="closeFutureGameDialog">×</text>
+        </view>
+      </view>
+
+      <!-- 内容区域 -->
+      <view class="future-game-body">
+        <!-- 全息效果图标 -->
+        <view class="future-hologram-icon">
+          <text class="hologram-icon">🌆</text>
+          <view class="hologram-ring"></view>
+          <view class="hologram-ring delay-1"></view>
+          <view class="hologram-ring delay-2"></view>
+        </view>
+
+        <!-- 游戏名称 -->
+        <text class="future-game-name">{{futureGameData.gameName}}</text>
+
+        <!-- 版本信息 -->
+        <view class="future-info-grid">
+          <view class="future-info-item">
+            <text class="future-info-label">所需系统：</text>
+            <text class="future-info-value required">Windows 11+</text>
+          </view>
+          <view class="future-info-item">
+            <text class="future-info-label">当前系统：</text>
+            <text class="future-info-value current">Windows 98</text>
+          </view>
+          <view class="future-info-item">
+            <text class="future-info-label">年份：</text>
+            <text class="future-info-value year">2026</text>
+          </view>
+          <view class="future-info-item">
+            <text class="future-info-label">状态：</text>
+            <text class="future-info-value status">时空异常</text>
+          </view>
+        </view>
+
+        <!-- 错误消息 -->
+        <view class="future-error-message">
+          <text class="error-text-line">┌─────────────────────────────────┐</text>
+          <text class="error-text-line">│ 检测到时空异常               │</text>
+          <text class="error-text-line">│ 此软件来自2026年              │</text>
+          <text class="error-text-line">│ 请等待20年                    │</text>
+          <text class="error-text-line">└─────────────────────────────────┘</text>
+        </view>
+
+        <!-- 底部提示 -->
+        <text class="future-footer">神经链接已断开 // 等待2026年</text>
+      </view>
+
+      <!-- 底部按钮 -->
+      <view class="future-actions">
+        <button class="future-btn-accept" bindtap="closeFutureGameDialog">确认</button>
+      </view>
+    </view>
+  </view>
+
   <!-- 全屏游戏弹窗（反恐精英） -->
   <view class="fullscreen-game-overlay" wx:if="{{showFullscreenGame}}" catchtap="doNothing">
     <view class="fullscreen-game-container" catchtap="stopPropagation">
@@ -1173,6 +1199,97 @@
     </view>
   </view>
 
+  <!-- 程序向导弹窗（Win98风格 - 手机竖屏优化） -->
+  <view class="win98-dialog-overlay" wx:if="{{showInstallerWizard}}" catchtap="closeInstallerWizard">
+    <view class="installer-wizard-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar installer-title-bar">
+        <view class="win98-title-icon">{{installerData.icon}}</view>
+        <view class="win98-title-text">{{installerData.name}}</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="closeInstallerWizard">×</button>
+        </view>
+      </view>
+
+      <view class="installer-wizard-body">
+        <!-- 怀旧模拟提示（显眼） -->
+        <view class="installer-simulation-notice">
+          <text class="notice-icon">ℹ️</text>
+          <text class="notice-text">怀旧模拟，非真实安装</text>
+        </view>
+
+        <!-- 顶部图标区域 -->
+        <view class="installer-header-section">
+          <view class="installer-icon-large">{{installerData.icon}}</view>
+          <view class="installer-info">
+            <text class="installer-name">{{installerData.name}}</text>
+            <text class="installer-version">{{installerData.version}}</text>
+            <text class="installer-description">{{installerData.description}}</text>
+          </view>
+        </view>
+
+        <!-- 欢迎消息区域 -->
+        <view class="installer-welcome-content">
+          <text class="welcome-title">{{installerData.isUpgrade ? '升级向导' : '欢迎使用'}} {{installerData.name}}</text>
+          <text class="welcome-message">{{installerData.welcomeMessage}}</text>
+        </view>
+
+        <!-- 选项 -->
+        <view class="installer-options">
+          <view class="installer-option {{installerOptions[0] ? 'option-selected' : ''}}" catchtap="toggleInstallerOption" data-index="0">
+            <text class="option-bullet">{{installerOptions[0] ? '◉' : '○'}}</text>
+            <text class="option-text">{{installerData.isUpgrade ? '保留当前设置' : '使用默认目录'}}</text>
+          </view>
+          <view class="installer-option {{installerOptions[1] ? 'option-selected' : ''}}" catchtap="toggleInstallerOption" data-index="1">
+            <text class="option-bullet">{{installerOptions[1] ? '◉' : '○'}}</text>
+            <text class="option-text">{{installerData.isUpgrade ? '自定义设置' : '自定义目录'}}</text>
+          </view>
+          <view class="installer-option {{installerOptions[2] ? 'option-selected' : ''}}" catchtap="toggleInstallerOption" data-index="2">
+            <text class="option-bullet">{{installerOptions[2] ? '☑' : '☐'}}</text>
+            <text class="option-text">{{installerData.isUpgrade ? '升级后启用桌面图标' : '添加桌面图标'}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 底部按钮 -->
+      <view class="installer-wizard-actions">
+        <button class="win98-btn installer-cancel-btn" bindtap="closeInstallerWizard">取消</button>
+        <button class="win98-btn-std installer-primary-btn" bindtap="executeInstall">{{installerData.isUpgrade ? '开始升级' : '开始'}}</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 安装完成弹窗（Win98风格 - 煽情怀旧） -->
+  <view class="win98-dialog-overlay" wx:if="{{showInstallCompleteDialog}}" catchtap="closeInstallCompleteDialog">
+    <view class="install-complete-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar complete-title-bar">
+        <view class="win98-title-icon">{{installCompleteData.programIcon}}</view>
+        <view class="win98-title-text">{{installCompleteData.isUpgrade ? '升级完成' : '安装完成'}}</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="closeInstallCompleteDialog">×</button>
+        </view>
+      </view>
+
+      <view class="install-complete-body">
+        <!-- 成功图标 -->
+        <view class="complete-icon-area">
+          <view class="complete-icon-large">{{installCompleteData.programIcon}}</view>
+          <view class="complete-checkmark">✓</view>
+        </view>
+
+        <!-- 程序名称 -->
+        <text class="complete-program-name">{{installCompleteData.programName}}</text>
+
+        <!-- 煽情文案 -->
+        <text class="complete-message">{{installCompleteData.message}}</text>
+      </view>
+
+      <!-- 底部按钮 -->
+      <view class="complete-actions">
+        <button class="win98-btn-std complete-primary-btn" bindtap="closeInstallCompleteDialog">那些年</button>
+      </view>
+    </view>
+  </view>
+
   <!-- 禁用文件提示弹窗（Win98风格） -->
   <view class="win98-dialog-overlay" wx:if="{{showDisabledMessageDialog}}" catchtap="closeDisabledMessageDialog">
     <view class="win98-window disabled-message-dialog" catchtap="stopPropagation">
@@ -1190,6 +1307,63 @@
       </view>
       <view class="dialog-actions">
         <button class="win98-btn-std" bindtap="closeDisabledMessageDialog">确定</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 歌曲信息弹窗（Win98风格 - 怀旧MP3播放器） -->
+  <view class="win98-dialog-overlay" wx:if="{{showMusicLyricsDialog}}" catchtap="closeMusicLyricsDialog">
+    <view class="music-lyrics-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar music-title-bar">
+        <view class="win98-title-icon">🎵</view>
+        <view class="win98-title-text">关于这首歌 - {{musicLyricsData.title}}</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="closeMusicLyricsDialog">×</button>
+        </view>
+      </view>
+
+      <view class="music-lyrics-body">
+        <!-- 怀旧装饰横幅 -->
+        <view class="music-nostalgia-banner">
+          <text class="banner-text">✨ 那些年，我们用千千静听听歌的日子 ✨</text>
+        </view>
+
+        <!-- 歌曲信息 -->
+        <view class="music-info-section">
+          <view class="music-cover">
+            <text class="cover-icon">🎵</text>
+            <text class="cover-year">2006</text>
+          </view>
+          <view class="music-details">
+            <text class="music-song-title">{{musicLyricsData.title}}</text>
+            <text class="music-artist">歌手：{{musicLyricsData.artist}}</text>
+            <text class="music-album">专辑：{{musicLyricsData.album}}</text>
+            <text class="music-year">发行年份：{{musicLyricsData.year}}</text>
+          </view>
+        </view>
+
+        <!-- 怀旧提示 -->
+        <view class="music-nostalgia-tip">
+          <text class="tip-icon">💾</text>
+          <text class="tip-text">来自D:\Music的珍藏歌单</text>
+        </view>
+
+        <!-- 歌曲回忆内容 -->
+        <view class="lyrics-content">
+          <text class="lyrics-text">{{musicLyricsData.lyrics}}</text>
+        </view>
+
+        <!-- 底部怀旧文字 -->
+        <view class="music-footer-text">
+          <text class="footer-text">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</text>
+          <text class="footer-text">那些年的旋律，依然在记忆深处回响...</text>
+          <text class="footer-text">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</text>
+        </view>
+      </view>
+
+      <view class="dialog-actions">
+        <button class="win98-btn music-cancel-btn" bindtap="closeMusicLyricsDialog">取消</button>
+        <button class="win98-btn-std music-goto-btn" bindtap="gotoTTPlayer">去听歌</button>
       </view>
     </view>
   </view>

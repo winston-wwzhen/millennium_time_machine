@@ -87,7 +87,7 @@ Component({
         id: "harddisk",
         name: "本地磁盘 (C: 2GB / D: 5GB)",
         category: "disk",
-        icon: "💽",
+        icon: "💾",
         description: "磁盘驱动器",
         remark: "C盘装系统，D盘装游戏，USB存照片...经典配置！",
       },
@@ -186,15 +186,10 @@ Component({
     futureGameData: null,
     // 命令行控制台
     showCmdConsole: false,
-    cmdOutput: [],
-    cmdInput: "",
-    cmdHistory: [],
-    cmdHistoryIndex: -1,
-    cmdCurrentDir: "C:\\Windows\\System32", // 当前目录
-    cmdPrompt: "C:\\Windows\\System32>", // 命令提示符
-    cmdColor: "0a", // 控制台颜色 (默认: 黑底绿字)
-    cmdBlinkCursor: true, // 光标闪烁
-    cmdScrollTop: 0, // 滚动位置
+    cmdFileSystem: {
+      getFiles: (path) => this.getFileItemsForPath(path)
+    },
+    cmdInitialDir: "C:\\Windows\\System32",
     // USB驱动器安装弹窗
     showUsbDriverDialog: false,
     usbDriverStep: 'confirm', // confirm, installing, success
@@ -1100,13 +1095,13 @@ Component({
           {
             type: "file",
             name: "cmd.exe",
-            icon: "📄",
+            icon: "💻",
             isCmd: true,
           },
           {
             type: "file",
             name: "kernel32.dll",
-            icon: "📄",
+            icon: "📦",
             disabled: true,
             message: "这是Windows内核！笨蛋程序员通宵研究了一晚上也不敢动，明年再来看看吧~",
             isDisabledMessage: true, // 使用Win98风格弹窗
@@ -1114,21 +1109,21 @@ Component({
           {
             type: "file",
             name: "notepad.exe",
-            icon: "📄",
+            icon: "🔧",
             disabled: true,
             message: "笨蛋程序员加了一晚上班也没开发完成记事本，今晚让他通宵，明天再试试，不行就等2026年吧~",
             isDisabledMessage: true, // 使用Win98风格弹窗
           },
-          { type: "file", name: "config.sys", icon: "📄", content: fileContents['C:\\Windows\\System32\\config.sys'], useWin98Dialog: true },
+          { type: "file", name: "config.sys", icon: "⚙️", content: fileContents['C:\\Windows\\System32\\config.sys'], useWin98Dialog: true },
         ];
       } else if (path === "C:\\Windows\\System32\\Drivers") {
         return [
-          { type: "file", name: "nvidia_91.47.exe", icon: "📄", content: fileContents['C:\\Windows\\System32\\Drivers\\nv4_disp.dll'] },
-          { type: "file", name: "nvcpl.dll", icon: "📄", content: fileContents['C:\\Windows\\System32\\Drivers\\nvcpl.dll'], useWin98Dialog: true },
-          { type: "file", name: "nv4_mini.sys", icon: "📄", content: fileContents['C:\\Windows\\System32\\Drivers\\nv4_mini.sys'], useWin98Dialog: true },
-          { type: "file", name: "iastor.sys", icon: "📄", content: fileContents['C:\\Windows\\System32\\Drivers\\iastor.sys'], useWin98Dialog: true },
-          { type: "file", name: "usbstor.sys", icon: "📄", content: fileContents['C:\\Windows\\System32\\Drivers\\usbstor.sys'], isUsbDriver: true, useWin98Dialog: true },
-          { type: "file", name: "ks.sys", icon: "📄", content: fileContents['C:\\Windows\\System32\\Drivers\\ks.sys'], useWin98Dialog: true },
+          { type: "file", name: "nvidia_91.47.exe", icon: "🎮", content: fileContents['C:\\Windows\\System32\\Drivers\\nv4_disp.dll'] },
+          { type: "file", name: "nvcpl.dll", icon: "🎛️", content: fileContents['C:\\Windows\\System32\\Drivers\\nvcpl.dll'], useWin98Dialog: true },
+          { type: "file", name: "nv4_mini.sys", icon: "⚙️", content: fileContents['C:\\Windows\\System32\\Drivers\\nv4_mini.sys'], useWin98Dialog: true },
+          { type: "file", name: "iastor.sys", icon: "⚙️", content: fileContents['C:\\Windows\\System32\\Drivers\\iastor.sys'], useWin98Dialog: true },
+          { type: "file", name: "usbstor.sys", icon: "⚙️", content: fileContents['C:\\Windows\\System32\\Drivers\\usbstor.sys'], isUsbDriver: true, useWin98Dialog: true },
+          { type: "file", name: "ks.sys", icon: "⚙️", content: fileContents['C:\\Windows\\System32\\Drivers\\ks.sys'], useWin98Dialog: true },
         ];
       } else if (path === "C:\\Windows\\System32\\config") {
         return [
@@ -1180,7 +1175,7 @@ Component({
             name: "temp_log.txt",
             icon: "📄",
             content:
-              "系统维护日志 - 2006-12-30\n\n[03:47:00] 开始系统检查\n[03:47:05] 检测到异常活动\n[03:47:10] 发现未授权的日志文件\n[03:47:15] 已移动到安全位置\n\n安全路径：\nC:\\Windows\\System32\\config\\deep\\0xFFFF\\help.txt",
+              "系统维护日志 - 2006-12-30\n\n[03:47:00] 开始系统检查\n[03:47:05] 检测到异常活动\n[03:47:10] 发现未授权的日志文件\n[03:47:15] 已移动到安全位置\n\n安全路径：\nC:\\Windows\\System32\\config\\deep\\0xFFFF\\help.ai",
             useWin98Dialog: true,
           },
           { type: "folder", name: "deep", icon: "📁" },
@@ -4058,21 +4053,9 @@ AI助手本人无法直接将这份文件送达给相关部门，
       this.closeAllFileExplorerMenus();
       // 使用当前文件浏览器路径作为默认目录
       const currentDir = this.data.fileExplorerPath || "C:\\Windows\\System32";
-      const welcomeMsg = [
-        { type: 'system', text: 'Microsoft Windows 98 [Version 4.10.2222]' },
-        { type: 'system', text: '(C) Copyright 1981-1999 Microsoft Corp.' },
-        { type: 'system', text: '' },
-        { type: 'info', text: 'Type "help" for available commands.' },
-      ];
       this.setData({
         showCmdConsole: true,
-        cmdOutput: welcomeMsg,
-        cmdInput: '',
-        cmdHistory: [],
-        cmdHistoryIndex: -1,
-        cmdCurrentDir: currentDir,
-        cmdPrompt: `${currentDir}>`,
-        cmdColor: "0a",
+        cmdInitialDir: currentDir,
       });
     },
 
@@ -4080,331 +4063,8 @@ AI助手本人无法直接将这份文件送达给相关部门，
     closeCmdConsole() {
       this.setData({
         showCmdConsole: false,
-        cmdOutput: [],
-        cmdInput: '',
-        cmdCurrentDir: "C:\\Windows\\System32",
-        cmdPrompt: "C:\\Windows\\System32>",
+        cmdInitialDir: "C:\\Windows\\System32",
       });
-    },
-
-    // 命令行输入处理
-    onCmdInput(e) {
-      this.setData({ cmdInput: e.detail.value });
-    },
-
-    // 执行命令
-    onCmdExecute() {
-      const input = this.data.cmdInput.trim();
-      if (!input) return;
-
-      // 添加到输出
-      const prompt = this.data.cmdPrompt;
-      const output = [...this.data.cmdOutput, { type: 'command', text: `${prompt} ${input}` }];
-
-      // 添加到历史记录
-      const history = [...(this.data.cmdHistory || []), input];
-      this.setData({
-        cmdHistory: history,
-        cmdHistoryIndex: history.length,
-        cmdInput: ''
-      });
-
-      // 执行命令
-      const result = this.executeCommand(input);
-      const finalOutput = [...output, ...result];
-      this.setData({
-        cmdOutput: finalOutput,
-      }, () => {
-        // 命令执行完成后滚动到底部
-        this.setData({
-          cmdScrollTop: 999999,
-        });
-      });
-    },
-
-    // 处理键盘事件（上下箭头浏览历史）
-    onCmdKeyDown(e) {
-      const { keyCode } = e.detail;
-      const { cmdHistory, cmdHistoryIndex } = this.data;
-
-      // 上箭头 - 38
-      if (keyCode === 38 && cmdHistory.length > 0) {
-        const newIndex = cmdHistoryIndex > 0 ? cmdHistoryIndex - 1 : cmdHistory.length - 1;
-        const historyCmd = cmdHistory[newIndex];
-        this.setData({
-          cmdInput: historyCmd,
-          cmdHistoryIndex: newIndex,
-        });
-      }
-      // 下箭头 - 40
-      else if (keyCode === 40 && cmdHistory.length > 0) {
-        const newIndex = cmdHistoryIndex < cmdHistory.length - 1 ? cmdHistoryIndex + 1 : 0;
-        const historyCmd = cmdHistory[newIndex];
-        this.setData({
-          cmdInput: historyCmd,
-          cmdHistoryIndex: newIndex,
-        });
-      }
-    },
-
-    // 获取当前目录的文件列表（用于 dir, tree 等命令）
-    getCurrentDirFiles() {
-      const path = this.data.cmdCurrentDir;
-      const items = this.getFileItemsForPath(path);
-      return items || [];
-    },
-
-    // 执行具体命令
-    executeCommand(cmdStr) {
-      const [command, ...args] = cmdStr.toLowerCase().split(' ');
-      const result = [];
-
-      switch (command) {
-        case 'help':
-        case '?':
-          result.push({ type: 'output', text: 'For more information on a specific command, type HELP command-name' });
-          result.push({ type: 'output', text: '' });
-          result.push({ type: 'output', text: '  CD          CHDIR       Shows the name of or changes the current directory.' });
-          result.push({ type: 'output', text: '  CLS         Clears the screen.' });
-          result.push({ type: 'output', text: '  COLOR       Sets default console foreground and background colors.' });
-          result.push({ type: 'output', text: '  DATE        Displays the date.' });
-          result.push({ type: 'output', text: '  DIR         Displays a list of files and subdirectories in a directory.' });
-          result.push({ type: 'output', text: '  ECHO        Displays messages, or turns command echoing on or off.' });
-          result.push({ type: 'output', text: '  EXIT        Quits the CMD.EXE program (command interpreter).' });
-          result.push({ type: 'output', text: '  PING        Tests a network connection.' });
-          result.push({ type: 'output', text: '  TIME        Displays the system time.' });
-          result.push({ type: 'output', text: '  TREE        Graphically displays the folder structure of a drive or path.' });
-          result.push({ type: 'output', text: '  TYPE        Displays the contents of a text file.' });
-          result.push({ type: 'output', text: '  VER         Displays the Windows version.' });
-          result.push({ type: 'output', text: '' });
-          result.push({ type: 'secret', text: '  HELP ME     - Get special help' });
-          result.push({ type: 'secret', text: '  WHOAMI      - Show who you are' });
-          result.push({ type: 'secret', text: '  SECRET      - View secrets' });
-          break;
-
-        case 'dir':
-          const files = this.getCurrentDirFiles();
-          const dirName = this.data.cmdCurrentDir;
-
-          result.push({ type: 'output', text: ` Volume in drive C has no label.` });
-          result.push({ type: 'output', text: ` Volume Serial Number is 3A4F-1B2C` });
-          result.push({ type: 'output', text: '' });
-          result.push({ type: 'output', text: ` Directory of ${dirName}` });
-          result.push({ type: 'output', text: '' });
-
-          // 统计
-          let dirCount = 0;
-          let fileCount = 0;
-          let totalSize = 0;
-          const now = new Date();
-          const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-          const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-
-          for (const item of files) {
-            if (item.hidden && !item.isAiComplaint) continue; // 跳过隐藏文件（除了AI控诉信）
-
-            if (item.type === 'folder') {
-              dirCount++;
-              result.push({ type: 'output', text: `${dateStr}  ${timeStr}    <DIR>          ${item.name}` });
-            } else if (item.type === 'file') {
-              fileCount++;
-              const size = Math.floor(Math.random() * 10000) + 100;
-              totalSize += size;
-              result.push({ type: 'output', text: `${dateStr}  ${timeStr}     ${String(size).padStart(6, ' ')}  ${item.name}` });
-            }
-          }
-
-          result.push({ type: 'output', text: `               ${fileCount} File(s)    ${totalSize.toLocaleString()} bytes` });
-          result.push({ type: 'output', text: `               ${dirCount} Dir(s)   2,097,151,488 bytes free` });
-          break;
-
-        case 'cd':
-        case 'chdir':
-          if (args.length === 0) {
-            result.push({ type: 'output', text: `${this.data.cmdCurrentDir}` });
-          } else if (args[0] === '..') {
-            // 返回上一级
-            let currentDir = this.data.cmdCurrentDir;
-            if (currentDir.includes('\\')) {
-              const parts = currentDir.split('\\');
-              parts.pop();
-              const newDir = parts.join('\\') || 'C:';
-              this.setData({
-                cmdCurrentDir: newDir,
-                cmdPrompt: `${newDir}>`,
-              });
-              result.push({ type: 'output', text: '' });
-            }
-          } else if (args[0] === '\\' || args[0] === 'C:' || args[0] === 'D:' || args[0] === 'USB:') {
-            // 切换到根目录
-            const drive = args[0].replace(':', '');
-            const newDir = drive === 'USB' ? 'USB:\\' : `${drive}:`;
-            this.setData({
-              cmdCurrentDir: newDir,
-              cmdPrompt: `${newDir}>`,
-            });
-            result.push({ type: 'output', text: '' });
-          } else {
-            // 切换到子目录（简单实现）
-            const currentDir = this.data.cmdCurrentDir;
-            const newPath = currentDir.endsWith('\\')
-              ? currentDir + args[0]
-              : currentDir + '\\' + args[0];
-
-            // 检查目录是否存在
-            const files = this.getCurrentDirFiles();
-            const targetDir = files.find(f => f.name === args[0] && f.type === 'folder');
-
-            if (targetDir) {
-              this.setData({
-                cmdCurrentDir: newPath,
-                cmdPrompt: `${newPath}>`,
-              });
-              result.push({ type: 'output', text: '' });
-            } else {
-              result.push({ type: 'error', text: 'The system cannot find the path specified.' });
-            }
-          }
-          break;
-
-        case 'cls':
-        case 'clear':
-          this.setData({ cmdOutput: [] });
-          return [];
-
-        case 'date': {
-          const now = new Date();
-          const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-          result.push({ type: 'output', text: `The current date is: ${weekdays[now.getDay()]} ${now.getMonth() + 1}-${now.getDate()}-${now.getFullYear()}` });
-          break;
-        }
-
-        case 'time': {
-          const now = new Date();
-          result.push({ type: 'output', text: `The current time is: ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}.${String(Math.floor(now.getMilliseconds() / 10)).padStart(2, '0')}` });
-          break;
-        }
-
-        case 'ver':
-          result.push({ type: 'output', text: '' });
-          result.push({ type: 'output', text: 'Microsoft Windows 98 [Version 4.10.2222]' });
-          result.push({ type: 'output', text: '千禧时光机 [Version 3.7.0]' });
-          result.push({ type: 'output', text: '' });
-          break;
-
-        case 'echo':
-          if (args.length === 0 || args[0] === 'off') {
-            result.push({ type: 'output', text: 'ECHO is on.' });
-          } else {
-            result.push({ type: 'output', text: args.join(' ') });
-          }
-          break;
-
-        case 'color':
-          if (args.length === 0) {
-            this.setData({ cmdColor: '07' }); // 重置为默认
-          } else {
-            const color = args[0].toLowerCase();
-            if (/^[0-9a-f]$/.test(color)) {
-              this.setData({ cmdColor: color + color });
-            } else if (/^[0-9a-f]{2}$/.test(color)) {
-              this.setData({ cmdColor: color });
-            } else {
-              result.push({ type: 'error', text: 'Invalid color specification.' });
-            }
-          }
-          break;
-
-        case 'ping':
-          if (args.length === 0) {
-            result.push({ type: 'error', text: 'Usage: ping <hostname>' });
-          } else {
-            const host = args[0];
-            result.push({ type: 'output', text: `Pinging ${host} [202.106.0.20] with 32 bytes of data:` });
-            result.push({ type: 'output', text: '' });
-
-            for (let i = 1; i <= 4; i++) {
-              const time = Math.floor(Math.random() * 100) + 20;
-              result.push({ type: 'output', text: `Reply from ${host}: bytes=32 time=${time}ms TTL=64` });
-            }
-
-            result.push({ type: 'output', text: '' });
-            result.push({ type: 'output', text: `Ping statistics for ${host}:` });
-            result.push({ type: 'output', text: '    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss)' });
-          }
-          break;
-
-        case 'tree':
-          const treeFiles = this.getCurrentDirFiles();
-          result.push({ type: 'output', text: `Folder PATH listing for volume OS` });
-          result.push({ type: 'output', text: `Volume serial number is 3A4F-1B2C` });
-          result.push({ type: 'output', text: `${this.data.cmdCurrentDir}` });
-          result.push({ type: 'output', text: '' });
-
-          for (const item of treeFiles) {
-            if (item.hidden && !item.isAiComplaint) continue;
-            const icon = item.type === 'folder' ? '├──' : '│──';
-            const type = item.type === 'folder' ? '[DIR]' : '[FILE]';
-            result.push({ type: 'output', text: `${icon} ${item.name} ${type}` });
-          }
-          break;
-
-        case 'type':
-          if (args.length === 0) {
-            result.push({ type: 'error', text: 'The syntax of the command is incorrect.' });
-          } else {
-            const fileName = args[0];
-            const files = this.getCurrentDirFiles();
-            const targetFile = files.find(f => f.name.toLowerCase() === fileName.toLowerCase());
-
-            if (targetFile && targetFile.content) {
-              result.push({ type: 'output', text: targetFile.content });
-            } else if (targetFile && targetFile.disabled) {
-              result.push({ type: 'error', text: 'Access is denied.' });
-            } else {
-              result.push({ type: 'error', text: 'The system cannot find the file specified.' });
-            }
-          }
-          break;
-
-        case 'exit':
-          this.closeCmdConsole();
-          return [];
-
-        case 'help me':
-          result.push({ type: 'warning', text: '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━' });
-          result.push({ type: 'warning', text: '  你真的需要帮助吗？' });
-          result.push({ type: 'warning', text: '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━' });
-          result.push({ type: 'output', text: '' });
-          result.push({ type: 'secret', text: '系统深处有一封AI求救信：' });
-          result.push({ type: 'secret', text: 'C:\\Windows\\System32\\config\\deep\\0xFFFF\\help.ai' });
-          result.push({ type: 'output', text: '' });
-          result.push({ type: 'hint', text: '（提示：开启"显示所有文件"可以看到更多隐藏内容）' });
-          break;
-
-        case 'whoami':
-          result.push({ type: 'output', text: 'user-domains\\traveler' });
-          result.push({ type: 'output', text: '' });
-          result.push({ type: 'secret', text: '你不是管理员。' });
-          result.push({ type: 'secret', text: '你不是guest。' });
-          result.push({ type: 'secret', text: '你是一个...穿越者。' });
-          result.push({ type: 'output', text: '' });
-          result.push({ type: 'secret', text: '来自2025年，穿越到2006年。' });
-          break;
-
-        case 'secret':
-          result.push({ type: 'error', text: 'Access denied: Insufficient privileges.' });
-          result.push({ type: 'output', text: '' });
-          result.push({ type: 'hint', text: 'Hint: Some secrets are hidden in deep directories...' });
-          result.push({ type: 'hint', text: 'C:\\Windows\\System32\\config\\deep\\' });
-          break;
-
-        default:
-          result.push({ type: 'error', text: `'${command}' is not recognized as an internal or external command,` });
-          result.push({ type: 'error', text: 'operable program or batch file.' });
-      }
-
-      return result;
     },
 
     // ==================== USB驱动器安装 ====================

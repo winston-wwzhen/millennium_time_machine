@@ -40,6 +40,12 @@ Page({
         path: "/pages/my-computer/index",
       },
       {
+        id: "my-documents",
+        name: "我的文档",
+        icon: "📁",
+        path: "/pages/my-documents/index",
+      },
+      {
         id: "qcio",
         name: "QCIO",
         icon: "📟",
@@ -64,28 +70,22 @@ Page({
         path: "/pages/browser/index",
       },
       {
+        id: "ttplayer",
+        name: "十分动听",
+        icon: "🎵",
+        path: "/pages/ttplayer/index",
+      },
+      {
         id: "avatar",
         name: "非主流相机",
         icon: "📸",
         path: "/pages/avatar/index",
       },
       {
-        id: "my-documents",
-        name: "我的文档",
-        icon: "📁",
-        path: "/pages/my-documents/index",
-      },
-      {
         id: "recycle-bin",
         name: "回收站",
         icon: "🗑️",
         path: "/pages/recycle-bin/index",
-      },
-      {
-        id: "ttplayer",
-        name: "十分动听",
-        icon: "🎵",
-        path: "/pages/ttplayer/index",
       },
       {
         id: "manbo",
@@ -101,13 +101,15 @@ Page({
     showNetworkSystem: false, // 网管系统显示状态
     showMyDocuments: false, // 我的文档显示状态
     showRecycleBin: false, // 回收站显示状态
+    showCmdConsole: false, // CMD 控制台显示状态
     // 组件z-index管理（确保后打开的组件显示在上层）
     baseZIndex: 2000,
+    ttplayerZIndex: 2000,
     myComputerZIndex: 2000,
     networkSystemZIndex: 2000,
     myDocumentsZIndex: 2000,
     recycleBinZIndex: 2000,
-    systemTime: "",
+    cmdConsoleZIndex: 2000,
     // 网络连接状态
     networkConnected: true, // 默认连接
     networkStatus: "online", // online, offline, connecting
@@ -116,6 +118,11 @@ Page({
     userNetFee: 0, // 用户网费（分钟）
     userCoins: 0, // 用户时光币
     showNetworkPlugin: true, // 网管系统插件显示状态
+    // 程序升级状态（通过Downloads安装包升级后解锁）
+    ttplayerUpgraded: false, // 十分动听是否已升级
+    manboUpgraded: false, // 慢播是否已升级
+    showVersionTooLowDialog: false, // 版本过低弹窗
+    versionLowProgramName: "", // 版本过低的程序名称
     // 音量状态
     soundEnabled: true, // 音量开启状态
     showVolumeInfo: false, // 显示音量信息气泡
@@ -272,6 +279,8 @@ Page({
           "userInfo.avatar": balanceResult.avatar || "👤",
           userNetFee: balanceResult.netFee || 0,
           userCoins: balanceResult.coins || 0,
+          ttplayerUpgraded: balanceResult.ttplayerUpgraded || false,
+          manboUpgraded: balanceResult.manboUpgraded || false,
         });
       }
     } catch (e) {
@@ -515,7 +524,7 @@ Page({
     });
   },
 
-  onIconTap: function (e) {
+  onIconTap: async function (e) {
     const path = e.currentTarget.dataset.path;
     const iconId = e.currentTarget.id;
     const icon = this.data.desktopIcons.find(i => i.id === iconId);
@@ -523,9 +532,21 @@ Page({
     // 图标点击彩蛋检测
     this.checkIconClickEggs(iconId);
 
-    // 十分动听 - 打开播放器组件
+    // 十分动听 - 检查升级状态
     if (path && path.includes("ttplayer")) {
       this.addLog('open', '十分动听');
+      // 实时获取升级状态，确保数据最新
+      const { userApi } = require('../../utils/api-client.js');
+      const balanceResult = await userApi.getBalance();
+      const isUpgraded = balanceResult && balanceResult.ttplayerUpgraded;
+
+      if (!isUpgraded) {
+        this.setData({
+          showVersionTooLowDialog: true,
+          versionLowProgramName: "十分动听"
+        });
+        return;
+      }
       this.setData({ showTTPlayer: true });
       return;
     }
@@ -595,9 +616,22 @@ Page({
       this.addLog('open', '如果当时');
     }
 
-    // 慢播 - 文件损坏提示（致敬快播）
+    // 慢播 - 检查升级状态
     if (path && path.includes("manbo")) {
-      this.addLog('open', '慢播', '文件损坏');
+      this.addLog('open', '慢播');
+      // 实时获取升级状态，确保数据最新
+      const { userApi } = require('../../utils/api-client.js');
+      const balanceResult = await userApi.getBalance();
+      const isUpgraded = balanceResult && balanceResult.manboUpgraded;
+
+      if (!isUpgraded) {
+        this.setData({
+          showVersionTooLowDialog: true,
+          versionLowProgramName: "慢播"
+        });
+        return;
+      }
+      // 升级后显示文件损坏提示（致敬快播）
       this.setData({ showErrorDialog: true });
       return;
     }
@@ -1382,6 +1416,10 @@ Page({
     this.setData({ showErrorDialog: false });
   },
 
+  hideVersionTooLowDialog: function () {
+    this.setData({ showVersionTooLowDialog: false });
+  },
+
   // 点击系统时间显示日期详情
   onTimeTap: function () {
     const now = new Date();
@@ -1494,6 +1532,16 @@ Page({
     this.setData({ showTTPlayer: false });
   },
 
+  // 打开十分动听播放器
+  onOpenTTPlayer: function () {
+    // 让十分动听的z-index高于我的电脑
+    const currentZIndex = this.data.myComputerZIndex || 2000;
+    this.setData({
+      showTTPlayer: true,
+      ttplayerZIndex: currentZIndex + 10
+    });
+  },
+
   // 关闭我的电脑
   onCloseMyComputer: function () {
     this.setData({ showMyComputer: false });
@@ -1528,6 +1576,21 @@ Page({
   // 关闭回收站
   onCloseRecycleBin: function () {
     this.setData({ showRecycleBin: false });
+  },
+
+  // 打开 CMD 控制台
+  openCmdConsole: function () {
+    this.setData({
+      showStartMenu: false,
+      showCmdConsole: true,
+      baseZIndex: this.data.baseZIndex + 10,
+      cmdConsoleZIndex: this.data.baseZIndex + 10,
+    });
+  },
+
+  // 关闭 CMD 控制台
+  closeCmdConsole: function () {
+    this.setData({ showCmdConsole: false });
   },
 
   onShareAppMessage: function () {

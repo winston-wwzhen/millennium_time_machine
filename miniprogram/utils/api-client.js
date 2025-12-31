@@ -280,6 +280,17 @@ const userApi = {
     return callCloudFunction('user', {
       type: 'addAiHelpLetterReward'
     });
+  },
+
+  /**
+   * 升级程序（十分动听/慢播）
+   * @param {string} programName - 'ttplayer' or 'manbo'
+   */
+  upgradeProgram(programName) {
+    return callCloudFunction('user', {
+      type: 'upgradeProgram',
+      programName
+    });
   }
 };
 

@@ -132,6 +132,53 @@
 
 ---
 
+### 6. CMD 命令提示符
+
+**入口**：
+- 开始菜单 → 程序 → 附件 → 命令提示符
+- C:\Windows\System32\cmd.exe
+
+**功能说明**：
+- Win98 风格命令行界面
+- 完整命令支持（help, dir, cd, cls, date, time, ver, echo, color, ping, tree, type, exit）
+- 特殊命令（help me, whoami, secret）
+- 命令历史（↑↓ 箭头浏览）
+- 工作目录切换（cd 命令）
+- 文件系统集成（dir, tree, type 可访问虚拟文件系统）
+
+**可用命令**：
+| 命令 | 说明 |
+|------|------|
+| HELP / ? | 显示帮助列表 |
+| HELP ME | 特殊帮助（提示 AI 求救信位置） |
+| DIR / LS | 显示当前目录文件列表 |
+| CD / CHDIR | 切换工作目录 |
+| CLS / CLEAR | 清屏 |
+| DATE | 显示当前日期 |
+| TIME | 显示当前时间 |
+| VER | 显示 Windows 版本 |
+| ECHO | 输出文本 |
+| COLOR | 设置控制台颜色 |
+| PING | 测试网络连接 |
+| TREE | 显示目录树结构 |
+| TYPE | 显示文本文件内容 |
+| WHOAMI | 显示用户身份 |
+| SECRET | 查看秘密（提示：权限不足） |
+| EXIT | 退出命令提示符 |
+
+**文件系统集成**：
+- CMD 组件接收 `fileSystem` 属性（包含 `getFiles` 函数）
+- `dir`, `ls`, `tree` 命令可列出当前目录的文件和文件夹
+- `type` 命令可读取文本文件内容
+- `cd` 命令可切换到任何已定义的目录
+
+**组件复用**：
+- CMD 是独立组件 (`miniprogram/components/cmd-console/`)
+- 在桌面开始菜单和我的电脑中共享使用
+- 传入不同的 `initialDir` 参数实现不同入口
+
+---
+
 ## 文件目录结构
 
 ### C盘 (C:)
@@ -294,7 +341,15 @@ USB:\
 miniprogram/components/my-computer/
 ├── index.js           # 主逻辑
 ├── index.wxml         # 窗口UI
-└── index.wxss         # 样式
+├── index.wxss         # 样式
+├── index.json         # 组件配置（引用 cmd-console）
+└── file-contents.js   # 文件内容定义
+
+miniprogram/components/cmd-console/
+├── index.js           # CMD 核心逻辑（命令解析、执行）
+├── index.wxml         # CMD 窗口UI
+├── index.wxss         # Win98 风格样式
+└── index.json         # 组件配置
 ```
 
 ### 主要方法
@@ -338,6 +393,7 @@ miniprogram/components/my-computer/
 
 | 版本 | 日期 | 更新内容 |
 |------|------|----------|
+| v3.9 | 2025-12-31 | CMD 命令提示符组件化，开始菜单添加 CMD 入口，统一命令功能 |
 | v3.8 | 2025-12-30 | 移除不规范彩蛋文件，文件浏览器添加菜单栏和状态栏，固定高度 |
 | v3.7 | 2025-12-29 | 完善我的电脑功能系统 |
 | v3.6 | 2025-12-29 | 初始实现基础功能 |
