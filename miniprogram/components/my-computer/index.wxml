@@ -1080,18 +1080,18 @@
 
   <!-- 文件内容弹窗（Win98风格） -->
   <view class="win98-dialog-overlay" wx:if="{{showFileContentDialog}}" catchtap="closeFileContentDialog">
-    <view class="file-content-dialog" catchtap="stopPropagation">
+    <view class="file-content-dialog {{fileContentData.isBatFile ? 'bat-file-dialog' : ''}}" catchtap="stopPropagation">
       <view class="win98-title-bar">
-        <view class="win98-title-icon">📄</view>
+        <view class="win98-title-icon">{{fileContentData.isBatFile ? '⚙️' : '📄'}}</view>
         <view class="win98-title-text">{{fileContentData.title}}</view>
         <view class="win98-title-controls">
           <button class="win98-btn-close" bindtap="closeFileContentDialog">×</button>
         </view>
       </view>
 
-      <view class="file-content-body">
+      <view class="file-content-body {{fileContentData.isBatFile ? 'bat-file-body' : ''}}">
         <block wx:for="{{fileContentData.contentLines}}" wx:key="index">
-          <text class="file-content-text">{{item}}</text>
+          <text class="file-content-text {{fileContentData.isBatFile ? 'bat-file-text' : ''}}">{{item}}</text>
         </block>
       </view>
 

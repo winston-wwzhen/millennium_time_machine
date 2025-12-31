@@ -1327,7 +1327,7 @@ Component({
           {
             type: "file",
             name: "autoexec.bat",
-            icon: "📄",
+            icon: "⚙️",
             content:
               '@ECHO OFF\nREM 这个文件其实没什么用\nREM 但是为了怀旧，还是留着吧\n\nREM 老板说要有"真实的系统体验"\nREM 所以我加了这个文件\n\nPATH C:\\WINDOWS;C:\\WINDOWS\\COMMAND\nSET TEMP=C:\\WINDOWS\\TEMP\n\nREM （其实Windows 98之后已经不用autoexec.bat了）',
             isAutoexecBat: true, // 标记为autoexec.bat，用于长按彩蛋
@@ -2766,12 +2766,15 @@ AI助手本人无法直接将这份文件送达给相关部门，
 
         // 不显示关闭按钮的文件列表
         const noCloseButtonFiles = [
-          'boot.ini', 'system.log', 'config.ini', 'system.ini', 'win.ini', 'config.sys',
+          'boot.ini', 'system.log', 'config.ini', 'system.ini', 'win.ini', 'config.sys', 'autoexec.bat',
           'nvidia_91.47.exe', 'nvcpl.dll', 'nv4_mini.sys', 'iastor.sys', 'usbstor.sys', 'ks.sys',
           'system_log.tmp', 'user_config.bak', 'temp_log.txt', 'session_backup.old',
           '.AI的控诉.txt', '.的控诉.txt', '~backup.old', '~draft.txt', '~cache.tmp',
           'readme.txt', 'changelog.txt'
         ];
+
+        // 判断是否为 .bat 文件
+        const isBatFile = item.name.endsWith('.bat');
 
         // 使用Win98风格弹窗
         this.setData({
@@ -2781,6 +2784,7 @@ AI助手本人无法直接将这份文件送达给相关部门，
             content: item.content || "文件内容为空",
             contentLines: lines,
             showCloseButton: !noCloseButtonFiles.includes(item.name),
+            isBatFile: isBatFile,
           }
         });
       } else {

@@ -1979,6 +1979,25 @@
   width: 100%;
 }
 
+/* ==================== .bat 文件 DOS 风格样式 ==================== */
+
+.bat-file-dialog {
+  background: #000080; /* DOS 深蓝色背景 */
+}
+
+.bat-file-body {
+  background: #000; /* DOS 黑色背景 */
+  border-color: #c0c0c0;
+}
+
+.bat-file-text {
+  font-size: 14px;
+  line-height: 1.4;
+  font-family: 'Courier New', 'Consolas', monospace;
+  color: #c0c0c0; /* DOS 浅灰色文字 */
+  text-shadow: 0 0 2px rgba(192, 192, 192, 0.3);
+}
+
 /* ==================== Fonts提示弹窗样式 ==================== */
 
 .fonts-message-dialog {
