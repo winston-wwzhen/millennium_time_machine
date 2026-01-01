@@ -1,6 +1,6 @@
 <!-- 文本文件查看器组件 -->
 <view class="text-viewer-overlay {{show ? 'show' : 'hide'}}" catchtap="onClose">
-  <view class="win98-window" catchtap="stopPropagation">
+  <view class="win98-window" catchtap="stopPropagation" catchlongpress="stopPropagation" catchtouchmove="stopPropagation">
     <view class="win98-title-bar">
       <view class="win98-title-text">{{fileName}} - 记事本</view>
       <view class="win98-title-controls">
@@ -17,14 +17,12 @@
     </view> -->
 
     <view class="win98-window-body">
-      <!-- 文本内容区域 -->
-      <view class="text-content">
+      <!-- 文本内容区域 - 使用 scroll-view 支持滚动 -->
+      <scroll-view class="text-content" scroll-y>
         <!-- 彩蛋秘籍第一册内容 -->
         <view wx:if="{{isSecretFile && fileName === '彩蛋秘籍-第一册.txt'}}">
-          <text class="preview-title">═══════════════════════════════════════</text>
           <text class="preview-title">          千禧时光机 - 彩蛋秘籍</text>
           <text class="preview-title">               【第一册】</text>
-          <text class="preview-title">═══════════════════════════════════════</text>
 
           <text class="preview-line"></text>
           <text class="preview-section">【普通彩蛋达成方案】(6/10)</text>
@@ -66,18 +64,14 @@
           </view>
 
           <text class="preview-line"></text>
-          <text class="preview-title">───────────────────────────────────────</text>
           <text class="preview-line">   祝你发现所有彩蛋！</text>
-          <text class="preview-title">───────────────────────────────────────</text>
           <text class="preview-line"></text>
         </view>
 
         <!-- 彩蛋秘籍第二册内容 -->
         <view wx:elif="{{fileName === '彩蛋秘籍-第二册.txt'}}">
-          <text class="preview-title">═══════════════════════════════════════</text>
           <text class="preview-title">          千禧时光机 - 彩蛋秘籍</text>
           <text class="preview-title">               【第二册】</text>
-          <text class="preview-title">═══════════════════════════════════════</text>
 
           <text class="preview-line"></text>
           <text class="preview-section">【普通彩蛋达成方案】(6/10)</text>
@@ -119,17 +113,61 @@
           </view>
 
           <text class="preview-line"></text>
-          <text class="preview-title">───────────────────────────────────────</text>
           <text class="preview-line">   更多彩蛋等待探索...</text>
-          <text class="preview-title">───────────────────────────────────────</text>
+          <text class="preview-line"></text>
+        </view>
+
+        <!-- 彩蛋秘籍第三册内容 -->
+        <view wx:elif="{{fileName === '彩蛋秘籍-第三册.txt'}}">
+          <text class="preview-title">          千禧时光机 - 彩蛋秘籍</text>
+          <text class="preview-title">               【第三册】</text>
+
+          <text class="preview-line"></text>
+          <text class="preview-section">【C盘彩蛋达成方案】(5/5)</text>
+
+          <!-- 隐藏的角落 -->
+          <view class="secret-egg-item">
+            <text class="secret-egg-name">👁️ 隐藏的角落 (300💎)</text>
+            <text class="secret-egg-method">   → 在我的电脑中，点击"查看"菜单，选择"显示所有文件"</text>
+            <text class="secret-egg-method">   → 然后查看C盘根目录，会发现以点开头的隐藏文件</text>
+          </view>
+
+          <!-- 空空如也 -->
+          <view class="secret-egg-item">
+            <text class="secret-egg-name">📁 空空如也 (200💎)</text>
+            <text class="secret-egg-method">   → 进入C:\Windows目录</text>
+            <text class="secret-egg-method">   → 仔细寻找一个空名称的文件夹（看起来是空白）</text>
+          </view>
+
+          <!-- 套娃专家 -->
+          <view class="secret-egg-item">
+            <text class="secret-egg-name">🪆 套娃专家 (400💎)</text>
+            <text class="secret-egg-method">   → 进入C:\Windows\Temp目录</text>
+            <text class="secret-egg-method">   → 连续进入子目录4层深（深层 → 更深层 → 最深层 → 核心层）</text>
+          </view>
+
+          <!-- 耐心的人 -->
+          <view class="secret-egg-item">
+            <text class="secret-egg-name">⏳ 耐心的人 (100💎)</text>
+            <text class="secret-egg-method">   → 进入C:\Windows目录</text>
+            <text class="secret-egg-method">   → 找到system.ini文件，长按3秒不松手</text>
+          </view>
+
+          <!-- 执着的人 -->
+          <view class="secret-egg-item">
+            <text class="secret-egg-name">💪 执着的人 (300💎)</text>
+            <text class="secret-egg-method">   → 进入C:\Windows目录</text>
+            <text class="secret-egg-method">   → 找到Fonts文件夹，连续点击10次</text>
+          </view>
+
+          <text class="preview-line"></text>
+          <text class="preview-line">   C盘的秘密已全部揭开！</text>
           <text class="preview-line"></text>
         </view>
 
         <!-- 彩蛋大全内容 -->
         <view wx:else>
-          <text class="preview-title">═══════════════════════════════════════</text>
           <text class="preview-title">          千禧时光机 - 彩蛋大全</text>
-          <text class="preview-title">═══════════════════════════════════════</text>
 
           <text class="preview-line"></text>
 
@@ -188,12 +226,10 @@
           </view>
 
           <text class="preview-line"></text>
-          <text class="preview-title">───────────────────────────────────────</text>
           <text class="preview-line">   已发现: {{discovered}}/{{total}} 个彩蛋</text>
-          <text class="preview-title">───────────────────────────────────────</text>
           <text class="preview-line"></text>
         </view>
-      </view>
+      </scroll-view>
     </view>
 
     <!-- 状态栏 -->

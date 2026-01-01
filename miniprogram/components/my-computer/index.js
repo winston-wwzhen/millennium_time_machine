@@ -1102,7 +1102,7 @@ Component({
         console.log("[loadFileExplorerItems] 学习资料路径，过滤后items:", items.map(i => ({ name: i.name, eggId: i.eggId, hidden: i.hidden })));
       }
 
-      // c_temp_nesting彩蛋：套娃目录 - 进入第5层时触发
+      // c_temp_nesting彩蛋：套娃目录 - 进入第4层（核心层）时触发
       if (path === "C:\\Windows\\Temp\\深层\\更深层\\最深层\\核心层") {
         this.triggerCDriveEgg(EGG_IDS.C_TEMP_NESTING);
       }
@@ -1183,25 +1183,27 @@ Component({
           { type: "file", name: "~cache.tmp", icon: "📄", content: fileContents['C:\\Windows\\Temp\\~cache.tmp'], useWin98Dialog: true },
           { type: "file", name: "temp_log.txt", icon: "📄", content: fileContents['C:\\Windows\\Temp\\temp_log.txt'], useWin98Dialog: true },
           // c_temp_nesting彩蛋：套娃目录（隐藏）
-          { type: "folder", name: "深层", icon: "📁", hidden: true, isTempNesting: true, nestingLevel: 1 },
+          { type: "folder", name: "深层", icon: "📁", hidden: true, isTempNesting: true },
         ];
-      } else if (path === "C:\\Windows\\Temp\\深层" || path === "C:\\Windows\\Temp\\深层\\更深层" || path === "C:\\Windows\\Temp\\深层\\更深层\\最深层" || path === "C:\\Windows\\Temp\\深层\\更深层\\最深层\\核心层") {
-        // Temp套娃彩蛋路径
-        const levelMap = {
-          'C:\\Windows\\Temp\\深层': 2,
-          'C:\\Windows\\Temp\\深层\\更深层': 3,
-          'C:\\Windows\\Temp\\深层\\更深层\\最深层': 4,
-          'C:\\Windows\\Temp\\深层\\更深层\\最深层\\核心层': 5
-        };
-        const level = levelMap[path];
+      } else if (path.startsWith("C:\\Windows\\Temp\\深层")) {
+        // Temp套娃彩蛋路径 - 根据路径深度计算层级
+        const basePath = "C:\\Windows\\Temp";
+        const relativePath = path.slice(basePath.length + 1); // 去掉 "C:\Windows\Temp\"
+        const levels = relativePath.split('\\'); // ['深层', '更深层', '最深层', '核心层']
+        const level = levels.length; // 1=深层, 2=更深层, 3=最深层, 4=核心层
+
         const items = [
-          { type: "file", name: `层级${level}文件.txt`, icon: "📄", disabled: true, message: `你已经钻到了第${level}层...\n${level < 5 ? '继续深入吧~' : '到底了！恭喜你成为套娃专家！'}` },
+          { type: "file", name: `层级${level}文件.txt`, icon: "📄", disabled: true, message: `你已经钻到了第${level}层...\n${level < 4 ? '继续深入吧~' : '到底了！恭喜你成为套娃专家！'}` },
         ];
-        // 添加下一层目录（第5层没有下一层）
-        if (level < 5) {
-          const nextFolders = ['更深层', '最深层', '核心层'];
-          items.push({ type: "folder", name: nextFolders[level - 1], icon: "📁", hidden: true, isTempNesting: true, nestingLevel: level + 1 });
+
+        // 定义各层目录名称（顺序对应：从深层开始的下一层）
+        const folderNames = ['更深层', '最深层', '核心层'];
+
+        // 添加下一层目录（第4层核心层没有下一层）
+        if (level < 4 && folderNames[level - 1]) {
+          items.push({ type: "folder", name: folderNames[level - 1], icon: "📁", hidden: true, isTempNesting: true });
         }
+
         return items;
       } else if (path === "C:\\Windows\\System32") {
         return [
