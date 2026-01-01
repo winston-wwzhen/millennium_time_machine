@@ -1661,4 +1661,12 @@ Page({
       path: "/pages/index/index",
     };
   },
+
+  // 分享到朋友圈
+  onShareTimeline: function () {
+    return {
+      title: "千禧时光机 - 穿越回2006年",
+      imageUrl: "", // 可选：自定义分享图片
+    };
+  },
 });

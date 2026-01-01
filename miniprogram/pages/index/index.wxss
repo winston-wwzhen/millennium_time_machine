@@ -975,6 +975,20 @@ page {
   background: rgba(0, 0, 128, 0.3);
 }
 
+/* 隐蔽的作者签名 - 任务栏中央 */
+.author-signature {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 16rpx;
+  color: rgba(128, 128, 128, 0.4);
+  font-family: 'Arial', sans-serif;
+  letter-spacing: 1rpx;
+  pointer-events: none;
+  user-select: none;
+}
+
 /* ==================== 日历弹窗 ==================== */
 .date-dialog {
   position: absolute;

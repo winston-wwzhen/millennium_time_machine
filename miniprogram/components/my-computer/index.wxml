@@ -247,6 +247,53 @@
     </view>
   </view>
 
+  <!-- 关于弹窗 -->
+  <view class="win98-dialog-overlay" wx:if="{{showAboutDialog}}" catchtap="closeAboutDialog">
+    <view class="win98-window about-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">ℹ️ 关于 千禧时光机</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="closeAboutDialog">×</button>
+        </view>
+      </view>
+      <view class="win98-window-body">
+        <view class="about-content">
+          <!-- Logo 区域 -->
+          <view class="about-logo">
+            <text class="about-logo-icon">💾</text>
+            <text class="about-logo-title">千禧时光机</text>
+            <text class="about-logo-version">v3.7.0</text>
+          </view>
+
+          <!-- 描述信息 -->
+          <view class="about-description">
+            <text class="about-text">一款致敬2006年的怀旧小程序</text>
+            <text class="about-text">带你穿越回那个纯真的年代</text>
+          </view>
+
+          <!-- 分隔线 -->
+          <view class="about-divider"></view>
+
+          <!-- 版权信息 -->
+          <view class="about-copyright">
+            <text class="about-copyright-text">© 2006 千禧科技</text>
+            <text class="about-copyright-text">保留所有权利</text>
+          </view>
+
+          <!-- 系统信息 -->
+          <view class="about-system-info">
+            <text class="about-system-text">系统：Microsoft Windows 98 第二版</text>
+            <text class="about-system-text">内存：128 MB RAM</text>
+            <text class="about-system-text">处理器：Pentium III 800MHz</text>
+          </view>
+        </view>
+        <view class="dialog-actions">
+          <button class="win98-btn-std" bindtap="closeAboutDialog">确定</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
   <!-- 系统属性弹窗 -->
   <view class="win98-dialog-overlay" wx:if="{{showSystemProperties}}" catchtap="onCloseSystemProperties">
     <view class="win98-window system-properties-dialog" catchtap="stopPropagation">
@@ -695,6 +742,140 @@
     </view>
   </view>
 
+  <!-- 文件浏览器帮助弹窗 -->
+  <view class="win98-dialog-overlay" wx:if="{{showFeHelpDialog}}" catchtap="closeFeHelpDialog">
+    <view class="win98-window fe-help-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">❓ 文件浏览器 - 帮助</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="closeFeHelpDialog">×</button>
+        </view>
+      </view>
+      <view class="win98-window-body">
+        <view class="fe-help-content">
+          <view class="fe-help-section">
+            <text class="fe-help-title">📁 文件浏览</text>
+            <view class="fe-help-items">
+              <text class="fe-help-item">• 点击文件夹进入子目录</text>
+              <text class="fe-help-item">• 点击文件查看内容（部分文件可查看）</text>
+              <text class="fe-help-item">• 使用"向上"按钮返回上一级</text>
+            </view>
+          </view>
+
+          <view class="fe-help-section">
+            <text class="fe-help-title">👁️ 视图选项</text>
+            <view class="fe-help-items">
+              <text class="fe-help-item">• "显示所有文件"可查看隐藏文件</text>
+              <text class="fe-help-item">• "刷新"重新加载当前目录</text>
+            </view>
+          </view>
+
+          <view class="fe-help-section">
+            <text class="fe-help-title">📂 快速导航</text>
+            <view class="fe-help-items">
+              <text class="fe-help-item">• 收藏菜单可快速跳转到各驱动器</text>
+            </view>
+          </view>
+        </view>
+        <view class="dialog-actions">
+          <button class="win98-btn-std" bindtap="closeFeHelpDialog">确定</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 文件浏览器关于弹窗 -->
+  <view class="win98-dialog-overlay" wx:if="{{showFeAboutDialog}}" catchtap="closeFeAboutDialog">
+    <view class="win98-window fe-about-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">ℹ️ 关于</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="closeFeAboutDialog">×</button>
+        </view>
+      </view>
+      <view class="win98-window-body">
+        <view class="fe-about-content">
+          <!-- Logo 区域 -->
+          <view class="fe-about-logo">
+            <text class="fe-about-logo-icon">📂</text>
+            <text class="fe-about-logo-title">文件浏览器</text>
+            <text class="fe-about-logo-version">v1.0</text>
+          </view>
+
+          <!-- 描述信息 -->
+          <view class="fe-about-description">
+            <text class="fe-about-text">千禧时光机组件</text>
+          </view>
+
+          <!-- 分隔线 -->
+          <view class="fe-about-divider"></view>
+
+          <!-- 版权信息 -->
+          <view class="fe-about-copyright">
+            <text class="fe-about-copyright-text">© 2006 千禧科技</text>
+            <text class="fe-about-copyright-text">保留所有权利</text>
+          </view>
+
+          <!-- 彩蛋提示 -->
+          <view class="fe-about-egg">
+            <text class="fe-about-egg-text">（实际上是2025年笨蛋程序员写的）</text>
+          </view>
+        </view>
+        <view class="dialog-actions">
+          <button class="win98-btn-std" bindtap="closeFeAboutDialog">确定</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 文件浏览器属性弹窗 -->
+  <view class="win98-dialog-overlay" wx:if="{{showFePropertiesDialog}}" catchtap="closeFePropertiesDialog">
+    <view class="win98-window fe-properties-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">📋 属性</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="closeFePropertiesDialog">×</button>
+        </view>
+      </view>
+      <view class="win98-window-body">
+        <view class="fe-properties-content">
+          <!-- 路径信息 -->
+          <view class="fe-properties-section">
+            <text class="fe-properties-label">位置：</text>
+            <text class="fe-properties-value">{{fePropertiesData.path}}</text>
+          </view>
+
+          <!-- 统计信息 -->
+          <view class="fe-properties-stats">
+            <view class="fe-stat-item">
+              <text class="fe-stat-icon">📁</text>
+              <view class="fe-stat-info">
+                <text class="fe-stat-label">文件夹</text>
+                <text class="fe-stat-value">{{fePropertiesData.folders}} 个</text>
+              </view>
+            </view>
+            <view class="fe-stat-item">
+              <text class="fe-stat-icon">📄</text>
+              <view class="fe-stat-info">
+                <text class="fe-stat-label">文件</text>
+                <text class="fe-stat-value">{{fePropertiesData.files}} 个</text>
+              </view>
+            </view>
+          </view>
+
+          <!-- 总计 -->
+          <view class="fe-properties-total">
+            <text class="fe-total-label">总计：</text>
+            <text class="fe-total-value">{{fePropertiesData.total}} 个对象</text>
+          </view>
+        </view>
+        <view class="dialog-actions">
+          <button class="win98-btn-std" bindtap="closeFePropertiesDialog">确定</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
   <!-- 彩蛋发现弹窗 -->
   <view class="win98-dialog-overlay" wx:if="{{showEggDiscovery}}" catchtap="hideEggDiscovery">
     <view class="win98-window egg-discovery-dialog {{eggDiscoveryData.rarity}}" catchtap="stopPropagation">
@@ -946,7 +1127,7 @@
               <text class="nvidia-section-title">欢迎使用</text>
               <text class="nvidia-section-text">NVIDIA Windows 2000/XP 显示驱动程序</text>
               <text class="nvidia-version">版本 91.47</text>
-              <text class="nvidia-date">发布日期: 2006年6月15日</text>
+              <text class="nvidia-date">发布日期: 2006年1月1日</text>
             </view>
 
             <view class="nvidia-welcome-section">

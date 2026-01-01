@@ -74,6 +74,9 @@
       <!-- 运行中的任务 -->
     </view>
 
+    <!-- 隐蔽的作者签名 - 任务栏中央 -->
+    <view class="author-signature">winston</view>
+
     <view class="system-tray">
       <view class="network-wrapper">
         <view class="tray-icon network-icon {{networkConnected ? 'online' : 'offline'}}" bindtap="onNetworkIconTap">

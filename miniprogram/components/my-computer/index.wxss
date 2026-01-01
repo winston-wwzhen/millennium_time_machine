@@ -540,6 +540,395 @@
   font-family: 'SimSun', serif;
 }
 
+/* ==================== 关于弹窗 ==================== */
+
+.about-dialog {
+  width: 360px;
+  max-width: 90%;
+  max-height: 70vh;
+}
+
+.about-dialog .win98-window-body {
+  padding: 0;
+  flex: unset;
+}
+
+.about-content {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Logo 区域 */
+.about-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.about-logo-icon {
+  font-size: 56px;
+  margin-bottom: 12px;
+  filter: drop-shadow(2px 3px 4px rgba(0, 0, 0, 0.2));
+}
+
+.about-logo-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #000080;
+  margin-bottom: 4px;
+  font-family: 'SimSun', serif;
+}
+
+.about-logo-version {
+  font-size: 12px;
+  color: #666;
+  background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+  padding: 3px 10px;
+  border-radius: 3px;
+  border: 1px solid;
+  border-color: #a0a0a0 #ffffff #ffffff #a0a0a0;
+  font-family: 'Courier New', monospace;
+}
+
+/* 描述信息 */
+.about-description {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 16px;
+  gap: 6px;
+}
+
+.about-text {
+  font-size: 12px;
+  color: #333;
+  text-align: center;
+  line-height: 1.6;
+  font-family: 'SimSun', serif;
+}
+
+/* 分隔线 */
+.about-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #808080, transparent);
+  margin: 12px 0;
+}
+
+/* 版权信息 */
+.about-copyright {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 12px;
+  gap: 4px;
+}
+
+.about-copyright-text {
+  font-size: 11px;
+  color: #666;
+  text-align: center;
+  font-family: 'SimSun', serif;
+}
+
+/* 系统信息 */
+.about-system-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px;
+  background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+  border: 1px solid;
+  border-color: #a0a0a0 #ffffff #ffffff #a0a0a0;
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
+  gap: 4px;
+}
+
+.about-system-text {
+  font-size: 10px;
+  color: #666;
+  text-align: center;
+  font-family: 'Courier New', monospace;
+  white-space: nowrap;
+}
+
+/* ==================== 文件浏览器帮助弹窗 ==================== */
+
+.fe-help-dialog {
+  width: 380px;
+  max-width: 90%;
+  max-height: 70vh;
+}
+
+.fe-help-dialog .win98-window-body {
+  padding: 0;
+  flex: unset;
+}
+
+.fe-help-content {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fe-help-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fe-help-title {
+  font-size: 13px;
+  font-weight: bold;
+  color: #000080;
+  font-family: 'SimSun', serif;
+}
+
+.fe-help-items {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-left: 12px;
+}
+
+.fe-help-item {
+  font-size: 11px;
+  color: #333;
+  line-height: 1.6;
+  font-family: 'SimSun', serif;
+}
+
+/* ==================== 文件浏览器关于弹窗 ==================== */
+
+.fe-about-dialog {
+  width: 340px;
+  max-width: 90%;
+  max-height: 70vh;
+}
+
+.fe-about-dialog .win98-window-body {
+  padding: 0;
+  flex: unset;
+}
+
+.fe-about-content {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Logo 区域 */
+.fe-about-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.fe-about-logo-icon {
+  font-size: 48px;
+  margin-bottom: 10px;
+  filter: drop-shadow(2px 3px 4px rgba(0, 0, 0, 0.2));
+}
+
+.fe-about-logo-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #000080;
+  margin-bottom: 4px;
+  font-family: 'SimSun', serif;
+}
+
+.fe-about-logo-version {
+  font-size: 11px;
+  color: #666;
+  background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+  padding: 2px 8px;
+  border-radius: 3px;
+  border: 1px solid;
+  border-color: #a0a0a0 #ffffff #ffffff #a0a0a0;
+  font-family: 'Courier New', monospace;
+}
+
+/* 描述信息 */
+.fe-about-description {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.fe-about-text {
+  font-size: 12px;
+  color: #333;
+  text-align: center;
+  line-height: 1.6;
+  font-family: 'SimSun', serif;
+}
+
+/* 分隔线 */
+.fe-about-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #808080, transparent);
+  margin: 10px 0;
+}
+
+/* 版权信息 */
+.fe-about-copyright {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 8px;
+  gap: 3px;
+}
+
+.fe-about-copyright-text {
+  font-size: 11px;
+  color: #666;
+  text-align: center;
+  font-family: 'SimSun', serif;
+}
+
+/* 彩蛋提示 */
+.fe-about-egg {
+  padding: 8px 12px;
+  background: linear-gradient(135deg, #fff9e6 0%, #fff3cd 100%);
+  border: 1px dashed rgba(255, 152, 0, 0.4);
+  border-radius: 4px;
+}
+
+.fe-about-egg-text {
+  font-size: 10px;
+  color: #e65100;
+  text-align: center;
+  font-style: italic;
+  font-family: 'SimSun', serif;
+}
+
+/* ==================== 文件浏览器属性弹窗 ==================== */
+
+.fe-properties-dialog {
+  width: 340px;
+  max-width: 90%;
+  max-height: 70vh;
+}
+
+.fe-properties-dialog .win98-window-body {
+  padding: 0;
+  flex: unset;
+}
+
+.fe-properties-content {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 路径信息 */
+.fe-properties-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid;
+  border-color: #c0c0c0;
+}
+
+.fe-properties-label {
+  font-size: 11px;
+  color: #666;
+  font-family: 'SimSun', serif;
+}
+
+.fe-properties-value {
+  font-size: 11px;
+  color: #000;
+  font-family: 'Courier New', monospace;
+  word-break: break-all;
+  padding: 6px 8px;
+  background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+  border: 1px solid;
+  border-color: #a0a0a0 #ffffff #ffffff #a0a0a0;
+  border-radius: 3px;
+}
+
+/* 统计信息 */
+.fe-properties-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fe-stat-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: linear-gradient(135deg, #fafafa 0%, #f0f0f0 100%);
+  border: 1px solid;
+  border-color: #c0c0c0 #ffffff #ffffff #c0c0c0;
+  border-radius: 4px;
+}
+
+.fe-stat-icon {
+  font-size: 24px;
+}
+
+.fe-stat-info {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.fe-stat-label {
+  font-size: 12px;
+  color: #333;
+  font-family: 'SimSun', serif;
+}
+
+.fe-stat-value {
+  font-size: 14px;
+  font-weight: bold;
+  color: #000080;
+  font-family: 'SimSun', serif;
+}
+
+/* 总计 */
+.fe-properties-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: linear-gradient(135deg, #e8f4ff 0%, #d8e8ff 100%);
+  border: 1px solid;
+  border-color: #a0a0a0 #ffffff #ffffff #a0a0a0;
+  border-radius: 4px;
+}
+
+.fe-total-label {
+  font-size: 12px;
+  font-weight: bold;
+  color: #000080;
+  font-family: 'SimSun', serif;
+}
+
+.fe-total-value {
+  font-size: 14px;
+  font-weight: bold;
+  color: #000080;
+  font-family: 'SimSun', serif;
+}
+
 /* ==================== 系统属性弹窗 ==================== */
 
 .system-properties-dialog {

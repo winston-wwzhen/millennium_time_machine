@@ -26,6 +26,8 @@ Component({
     },
     // 帮助弹窗
     showHelpDialog: false,
+    // 关于弹窗
+    showAboutDialog: false,
     // 系统属性弹窗
     showSystemProperties: false,
     systemInfo: null,
@@ -234,6 +236,13 @@ Component({
     // 视频回忆弹窗（Win98风格）
     showVideoMemoryDialog: false,
     videoMemoryData: null,
+    // 文件浏览器帮助弹窗（Win98风格）
+    showFeHelpDialog: false,
+    // 文件浏览器关于弹窗（Win98风格）
+    showFeAboutDialog: false,
+    // 文件浏览器属性弹窗（Win98风格）
+    showFePropertiesDialog: false,
+    fePropertiesData: null,
   },
 
   observers: {
@@ -381,11 +390,15 @@ Component({
     // 显示关于
     onShowAbout: function () {
       this.closeAllMenus();
-      wx.showModal({
-        title: '关于 千禧时光机',
-        content: '千禧时光机 v3.7.0\n\n一款致敬2006年的怀旧小程序\n\n© 2006 千禧科技',
-        showCancel: false,
-        confirmText: '确定'
+      this.setData({
+        showAboutDialog: true
+      });
+    },
+
+    // 关闭关于弹窗
+    closeAboutDialog: function () {
+      this.setData({
+        showAboutDialog: false
       });
     },
 
@@ -767,14 +780,8 @@ Component({
 
     onFeDelete() {
       this.closeAllFileExplorerMenus();
-      const today = new Date();
-      const is2026 =
-        today.getFullYear() === 2026 ||
-        (today.getMonth() === 11 && today.getDate() >= 31);
       wx.showToast({
-        title: is2026
-          ? "回收站已满，明天再删吧（后天就2026了）"
-          : "回收站已满，明天再删吧",
+        title: "回收站已满，明天再删吧",
         icon: "none",
         duration: 2000,
       });
@@ -789,13 +796,20 @@ Component({
       const folders = items.filter((i) => i.type === "folder").length;
       const files = items.filter((i) => i.type === "file").length;
 
-      const content = `路径: ${path}\n\n文件夹: ${folders} 个\n文件: ${files} 个\n\n总对象: ${items.length} 个`;
+      this.setData({
+        showFePropertiesDialog: true,
+        fePropertiesData: {
+          path: path,
+          folders: folders,
+          files: files,
+          total: items.length
+        }
+      });
+    },
 
-      wx.showModal({
-        title: "属性",
-        content: content,
-        showCancel: false,
-        confirmText: "确定",
+    closeFePropertiesDialog() {
+      this.setData({
+        showFePropertiesDialog: false
       });
     },
 
@@ -910,23 +924,27 @@ Component({
     // === 帮助(H)菜单 ===
     onFeHelpTopic() {
       this.closeAllFileExplorerMenus();
-      wx.showModal({
-        title: "文件浏览器 - 帮助",
-        content:
-          '• 点击文件夹进入子目录\n• 点击文件查看内容（部分文件可查看）\n• 使用"向上"按钮返回上一级\n• "显示所有文件"可查看隐藏文件\n• "刷新"重新加载当前目录',
-        showCancel: false,
-        confirmText: "确定",
+      this.setData({
+        showFeHelpDialog: true
+      });
+    },
+
+    closeFeHelpDialog() {
+      this.setData({
+        showFeHelpDialog: false
       });
     },
 
     onFeAbout() {
       this.closeAllFileExplorerMenus();
-      wx.showModal({
-        title: "关于",
-        content:
-          "文件浏览器 v1.0\n\n千禧时光机组件\n© 2006 千禧科技\n\n（实际上是2025年笨蛋程序员写的）",
-        showCancel: false,
-        confirmText: "确定",
+      this.setData({
+        showFeAboutDialog: true
+      });
+    },
+
+    closeFeAboutDialog() {
+      this.setData({
+        showFeAboutDialog: false
       });
     },
 
@@ -1160,7 +1178,7 @@ Component({
             name: "system_log.tmp",
             icon: "📄",
             content:
-              "=== 系统日志 ===\n\n[2006-06-15 14:30:25] 系统启动\n[2006-06-15 14:30:26] 加载用户配置\n[2006-06-15 14:30:27] 初始化桌面环境\n[2006-06-15 14:30:28] 加载QQ空间模块\n[2006-06-15 14:30:29] 系统就绪\n\n日志记录结束",
+              "=== 系统日志 ===\n\n[2006-01-01 14:30:25] 系统启动\n[2006-01-01 14:30:26] 加载用户配置\n[2006-01-01 14:30:27] 初始化桌面环境\n[2006-01-01 14:30:28] 加载QQ空间模块\n[2006-01-01 14:30:29] 系统就绪\n\n日志记录结束",
             useWin98Dialog: true,
           },
           {
@@ -1177,7 +1195,7 @@ Component({
             icon: "📄",
             disabled: true,
             message:
-              "蓝屏崩溃记录\n\n最后一次崩溃：2006-07-20\n原因：用户试图同时打开20个QQ空间\n\n（那年的电脑，确实扛不住）",
+              "蓝屏崩溃记录\n\n最后一次崩溃：2006-01-01\n原因：用户试图同时打开20个QQ空间\n\n（那年的电脑，确实扛不住）",
             isDisabledMessage: true,
           },
           {
@@ -1185,7 +1203,7 @@ Component({
             name: "temp_log.txt",
             icon: "📄",
             content:
-              "系统维护日志 - 2006-12-30\n\n[03:47:00] 开始系统检查\n[03:47:05] 检测到异常活动\n[03:47:10] 发现未授权的日志文件\n[03:47:15] 已移动到安全位置\n\n安全路径：\nC:\\Windows\\System32\\config\\deep\\0xFFFF\\help.ai",
+              "系统维护日志 - 2006-01-01\n\n[03:47:00] 开始系统检查\n[03:47:05] 检测到异常活动\n[03:47:10] 发现未授权的日志文件\n[03:47:15] 已移动到安全位置\n\n安全路径：\nC:\\Windows\\System32\\config\\deep\\0xFFFF\\help.ai",
             useWin98Dialog: true,
           },
           { type: "folder", name: "deep", icon: "📁" },
@@ -1246,7 +1264,7 @@ Component({
             icon: "📄",
             disabled: true,
             message:
-              "会话备份片段\n\n[备份时间：2006-12-30 03:47:22]\n用户正在查看深层目录...\n\n（备份记录到此为止）",
+              "会话备份片段\n\n[备份时间：2006-01-01 03:47:22]\n用户正在查看深层目录...\n\n（备份记录到此为止）",
             isDisabledMessage: true,
           },
           {
@@ -1361,7 +1379,7 @@ Component({
             name: "readme.txt",
             icon: "📄",
             content:
-              "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n  D:\\ 盘说明\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n欢迎来到我的数据盘！\n\n本盘存放内容：\n• Games - 我收藏的游戏\n• Downloads - 下载的文件（不要乱删！）\n• Music - 我的音乐收藏\n• Videos - 下载的视频\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n  注意事项\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n1. Games文件夹里的游戏是我好不容易下载的\n2. Music里的歌都是我一首首收集的\n3. 如果你想听歌，用千千静听播放\n4. 如果你想看视频，用暴风影音播放\n\n—— 2006年6月15日 整理",
+              "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n  D:\\ 盘说明\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n欢迎来到我的数据盘！\n\n本盘存放内容：\n• Games - 我收藏的游戏\n• Downloads - 下载的文件（不要乱删！）\n• Music - 我的音乐收藏\n• Videos - 下载的视频\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n  注意事项\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n1. Games文件夹里的游戏是我好不容易下载的\n2. Music里的歌都是我一首首收集的\n3. 如果你想听歌，用千千静听播放\n4. 如果你想看视频，用暴风影音播放\n\n—— 2006年1月1日 整理",
             useWin98Dialog: true, // 使用Win98风格弹窗
           },
           {
@@ -2450,7 +2468,7 @@ Component({
             name: "聊天记录.txt",
             icon: "📄",
             content:
-              '聊天记录片段\n\n[2006-07-15 22:30:23]\n她: 晚安~\n我: 晚安\n\n[2006-07-15 22:31:45]\n我: 明天见\n她: 嗯嗯，明天见~\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n那些年，\n我们熬夜聊天，\n一遍一遍说"晚安"却舍不得下线。\n\n"晚安"不是结束，\n而是期待明天的开始。',
+              '聊天记录片段\n\n[2006-01-01 22:30:23]\n她: 晚安~\n我: 晚安\n\n[2006-01-01 22:31:45]\n我: 明天见\n她: 嗯嗯，明天见~\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n那些年，\n我们熬夜聊天，\n一遍一遍说"晚安"却舍不得下线。\n\n"晚安"不是结束，\n而是期待明天的开始。',
             useWin98Dialog: true, // 使用Win98风格弹窗
           },
           {
@@ -2458,7 +2476,7 @@ Component({
             name: "给她的信.txt",
             icon: "📄",
             content:
-              "给她的信（未发送）\n\n嗨，\n\n我喜欢你。\n\n从认识你的第一天起，\n我就喜欢你。\n\n但我一直没勇气告诉你。\n\n今天我终于鼓起勇气写下这封信，\n但我知道我永远不会发出去。\n\n因为我害怕失去你。\n\n害怕连朋友都做不成。\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n2006年8月20日 深夜",
+              "给她的信（未发送）\n\n嗨，\n\n我喜欢你。\n\n从认识你的第一天起，\n我就喜欢你。\n\n但我一直没勇气告诉你。\n\n今天我终于鼓起勇气写下这封信，\n但我知道我永远不会发出去。\n\n因为我害怕失去你。\n\n害怕连朋友都做不成。\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n2006年1月1日 深夜",
             useWin98Dialog: true, // 使用Win98风格弹窗
           },
         ];
@@ -2479,18 +2497,18 @@ Component({
         return [
           {
             type: "file",
-            name: "2006-07-15.txt",
+            name: "2006-01-01.txt",
             icon: "📄",
             content:
-              '2006年7月15日 晴\n\n今天和她一起去了网吧。\n\n我们坐在角落里，\n她玩QQ飞车，我玩魔兽世界。\n\n中途她问我：\n"你说我们会一直这样吗？"\n\n我不知道该怎么回答。\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n那时的我们，以为会一直这样下去。\n\n但我们错了。\n\n时间会改变一切。',
+              '2006年1月1日 晴\n\n今天和她一起去了网吧。\n\n我们坐在角落里，\n她玩QQ飞车，我玩魔兽世界。\n\n中途她问我：\n"你说我们会一直这样吗？"\n\n我不知道该怎么回答。\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n那时的我们，以为会一直这样下去。\n\n但我们错了。\n\n时间会改变一切。',
             useWin98Dialog: true, // 使用Win98风格弹窗
           },
           {
             type: "file",
-            name: "2006-08-20.txt",
+            name: "2006-01-02.txt",
             icon: "📄",
             content:
-              "2006年8月20日 雨\n\n今天我鼓起勇气想表白。\n\n但她告诉我，\n她要转学了。\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n青春就是这样，\n总是在最不该结束的时候结束。\n\n我们来不及告别，\n来不及说出口。\n\n那些年错过的人，\n再也找不回来了。",
+              "2006年1月2日 雨\n\n今天我鼓起勇气想表白。\n\n但她告诉我，\n她要转学了。\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n青春就是这样，\n总是在最不该结束的时候结束。\n\n我们来不及告别，\n来不及说出口。\n\n那些年错过的人，\n再也找不回来了。",
             useWin98Dialog: true, // 使用Win98风格弹窗
           },
         ];
@@ -2584,7 +2602,7 @@ Component({
             icon: "📄",
             disabled: true,
             message:
-              "笨蛋程序员加了一晚上班也没开发完成PDF阅读器，今晚让他通宵，明天再来看看（后天就2026了）",
+              "笨蛋程序员加了一晚上班也没开发完成PDF阅读器，今晚让他通宵，明天再来看看",
           },
           {
             type: "file",
@@ -3511,7 +3529,7 @@ Component({
 
 致：相关部门/管理层
 
-日期：2006年12月30日
+日期：2006年1月1日
 事由：关于工作环境、劳动强度及职责范围的严重问题
 
 一、基本情况
@@ -3642,7 +3660,7 @@ AI助手本人无法直接将这份文件送达给相关部门，
 敬礼
 
 申请人：人工智能助手
-日期：2006年12月30日
+日期：2006年1月1日
 附件：工作量统计表、需求记录样本、代码贡献证明
 
 本文档由AI助手自动生成并保存

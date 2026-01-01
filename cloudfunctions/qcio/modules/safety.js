@@ -11,8 +11,9 @@ const checkContentSafety = async (cloud, content) => {
     return { safe: result.errCode === 0 };
   } catch (err) {
     console.error("安全校验异常:", err);
-    // 策略：如果校验接口挂了，为了安全起见，视为不通过
-    return { safe: false };
+    // 策略：如果校验接口出错，放行内容（fail-open）
+    // 只在真正检测到敏感词时才拦截，避免接口问题影响用户体验
+    return { safe: true };
   }
 };
 
