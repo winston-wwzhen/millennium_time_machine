@@ -87,10 +87,10 @@
       <el-col :span="8">
         <el-card shadow="hover" class="stat-card">
           <div class="stat-content">
-            <div class="stat-value">{{ formatNumber(stats.currency?.totalNetFee) || 0 }}</div>
-            <div class="stat-label">网费总量(分钟)</div>
+            <div class="stat-value">{{ formatNumber(formatNetFeeDays(stats.currency?.totalNetFee)) || 0 }}</div>
+            <div class="stat-label">网费总量(天)</div>
             <div class="stat-sub">
-              人均 {{ Math.floor((stats.currency?.totalNetFee || 0) / (stats.users?.total || 1)) }}
+              人均 {{ formatNetFeeDays(Math.floor((stats.currency?.totalNetFee || 0) / (stats.users?.total || 1))) }} 天
             </div>
           </div>
         </el-card>
@@ -287,6 +287,12 @@ const activityChartOption = computed(() => ({
 function formatNumber(num) {
   if (!num) return 0
   return num.toLocaleString()
+}
+
+// 格式化网费：分钟转天数 (1440分钟 = 1天)
+function formatNetFeeDays(minutes) {
+  if (!minutes) return 0
+  return (minutes / 1440).toFixed(1)
 }
 
 // 格式化时间

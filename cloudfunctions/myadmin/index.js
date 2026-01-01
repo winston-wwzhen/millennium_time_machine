@@ -98,8 +98,6 @@ async function getDashboardStats() {
     db.collection('qcio_users').where({ updateTime: _.gte(todayStart) }).count(),
     db.collection('qcio_chat_history').count(),
     db.collection('qcio_chat_history').where({ timestamp: _.gte(todayStart) }).count(),
-    db.collection('qcio_visit_stats').count(),
-    db.collection('qcio_visit_stats').where({ lastVisitTime: _.gte(todayStart) }).count(),
     db.collection('user_activity_logs').where({ action: 'egg_discovered', createdAt: _.gte(todayStart) }).count(),
     db.collection('mood_garden').count()
   ]);
@@ -111,12 +109,10 @@ async function getDashboardStats() {
   const activeQCIO = results[4];
   const totalChats = results[5];
   const todayChats = results[6];
-  const totalVisits = results[7];
-  const todayVisits = results[8];
-  const todayEggs = results[9];
-  const moodGardenCount = results[10];
+  const todayEggs = results[7];
+  const moodGardenCount = results[8];
 
-  // 获取所有用户计算总和
+  // 获取所有用户计算总和（coins, netFee, badges）
   const allUsers = await db.collection('users').field({
     coins: true,
     netFee: true,
@@ -135,6 +131,21 @@ async function getDashboardStats() {
     if (user.badges && Array.isArray(user.badges)) {
       totalEggsDiscovered += user.badges.length;
     }
+  }
+
+  // 获取 QCIO 用户计算访问总和
+  const qcioUsers = await db.collection('qcio_users').field({
+    totalVisits: true,
+    todayVisits: true
+  }).get();
+
+  let totalVisits = 0;
+  let todayVisits = 0;
+
+  for (var j = 0; j < qcioUsers.data.length; j++) {
+    var qcioUser = qcioUsers.data[j];
+    totalVisits += qcioUser.totalVisits || 0;
+    todayVisits += qcioUser.todayVisits || 0;
   }
 
   const todayNew = todayUsers.total || 0;
@@ -158,8 +169,8 @@ async function getDashboardStats() {
         today: todayChats.total || 0
       },
       visits: {
-        total: totalVisits.total || 0,
-        today: todayVisits.total || 0
+        total: totalVisits,
+        today: todayVisits
       },
       eggs: {
         totalDiscovered: totalEggsDiscovered,
