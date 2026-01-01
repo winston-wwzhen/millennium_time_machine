@@ -47,6 +47,12 @@
             </view>
           </view>
 
+          <!-- 怀旧模拟提示横幅 -->
+          <view class="simulation-banner">
+            <text class="banner-icon">ℹ️</text>
+            <text class="banner-text">怀旧模拟程序，无实际搜索功能</text>
+          </view>
+
           <!-- Logo 和 搜索区 -->
           <view class="search-section">
             <view class="site-logo">
@@ -55,11 +61,6 @@
             </view>
 
             <view class="search-box">
-              <view class="search-tabs">
-                <text class="search-tab active">网页</text>
-                <text class="search-tab">音乐</text>
-                <text class="search-tab">图片</text>
-              </view>
               <view class="search-input-row">
                 <input class="search-input" placeholder="请输入关键词..." />
                 <button class="search-btn">搜索一下</button>

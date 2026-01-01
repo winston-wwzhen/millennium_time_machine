@@ -120,19 +120,20 @@ async function getDashboardStats() {
   const allUsers = await db.collection('users').field({
     coins: true,
     netFee: true,
-    eggStats: true
+    badges: true
   }).get();
 
   let totalCoins = 0;
   let totalNetFee = 0;
   let totalEggsDiscovered = 0;
 
-  for (let i = 0; i < allUsers.data.length; i++) {
+  for (var i = 0; i < allUsers.data.length; i++) {
     var user = allUsers.data[i];
     totalCoins += user.coins || 0;
     totalNetFee += user.netFee || 0;
-    if (user.eggStats && user.eggStats.eggsDiscovered) {
-      totalEggsDiscovered += user.eggStats.eggsDiscovered;
+    // 彩蛋数据存储在 badges 数组中
+    if (user.badges && Array.isArray(user.badges)) {
+      totalEggsDiscovered += user.badges.length;
     }
   }
 

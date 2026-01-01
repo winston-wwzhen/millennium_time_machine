@@ -24,7 +24,7 @@ export async function getDashboardStats() {
     const result = await callCloudFunction('myadmin', {
       action: 'getDashboardStats'
     })
-    return result.data
+    return result
   } catch (error) {
     console.error('获取统计数据失败:', error)
     throw error
@@ -56,7 +56,7 @@ export async function getGrowthTrend(days = 7) {
       action: 'getGrowthTrend',
       data: { days }
     })
-    return result.data
+    return result
   } catch (error) {
     console.error('获取增长趋势失败:', error)
     return []
@@ -89,7 +89,7 @@ export async function getUserList(params) {
       action: 'getUserList',
       data: params
     })
-    return result.data
+    return result
   } catch (error) {
     console.error('获取用户列表失败:', error)
     throw error
@@ -129,7 +129,7 @@ export async function getUserDetail(openid) {
       action: 'getUserDetail',
       data: { openid }
     })
-    return result.data
+    return result
   } catch (error) {
     console.error('获取用户详情失败:', error)
     throw error
@@ -145,7 +145,7 @@ export async function getUserTransactions(params) {
       action: 'getUserTransactions',
       data: params
     })
-    return result.data
+    return result
   } catch (error) {
     console.error('获取交易记录失败:', error)
     throw error
@@ -179,7 +179,7 @@ export async function getEggStats() {
     const result = await callCloudFunction('myadmin', {
       action: 'getEggStats'
     })
-    return result.data
+    return result
   } catch (error) {
     console.error('获取彩蛋统计失败:', error)
     throw error
@@ -195,7 +195,7 @@ export async function getEggRankings(limit = 20) {
       action: 'getEggRankings',
       data: { limit }
     })
-    return result.data
+    return result
   } catch (error) {
     console.error('获取彩蛋排行榜失败:', error)
     throw error
@@ -211,7 +211,7 @@ export async function getEggDiscoveryHistory(params) {
       action: 'getEggDiscoveryHistory',
       data: params
     })
-    return result.data
+    return result
   } catch (error) {
     console.error('获取彩蛋发现历史失败:', error)
     throw error
@@ -229,7 +229,7 @@ export async function getQCIOUserList(params) {
       action: 'getQCIOUserList',
       data: params
     })
-    return result.data
+    return result
   } catch (error) {
     console.error('获取 QCIO 用户列表失败:', error)
     throw error
@@ -245,7 +245,7 @@ export async function getQCIOUserDetail(qcioId) {
       action: 'getQCIOUserDetail',
       data: { qcioId }
     })
-    return result.data
+    return result
   } catch (error) {
     console.error('获取 QCIO 用户详情失败:', error)
     throw error
@@ -260,7 +260,7 @@ export async function getFarmStats() {
     const result = await callCloudFunction('myadmin', {
       action: 'getFarmStats'
     })
-    return result.data
+    return result
   } catch (error) {
     console.error('获取农场统计失败:', error)
     throw error
@@ -276,7 +276,7 @@ export async function getFarmLogs(params) {
       action: 'getFarmLogs',
       data: params
     })
-    return result.data
+    return result
   } catch (error) {
     console.error('获取农场日志失败:', error)
     throw error
@@ -294,7 +294,7 @@ export async function getChatHistory(params) {
       action: 'getChatHistory',
       data: params
     })
-    return result.data
+    return result
   } catch (error) {
     console.error('获取私聊历史失败:', error)
     throw error
@@ -310,7 +310,7 @@ export async function getGroupChatHistory(params) {
       action: 'getGroupChatHistory',
       data: params
     })
-    return result.data
+    return result
   } catch (error) {
     console.error('获取群聊历史失败:', error)
     throw error
@@ -327,7 +327,7 @@ export async function getVisitStats() {
     const result = await callCloudFunction('myadmin', {
       action: 'getVisitStats'
     })
-    return result.data
+    return result
   } catch (error) {
     console.error('获取访问统计失败:', error)
     throw error
@@ -343,7 +343,7 @@ export async function getVisitHistory(params) {
       action: 'getVisitHistory',
       data: params
     })
-    return result.data
+    return result
   } catch (error) {
     console.error('获取访问历史失败:', error)
     throw error
@@ -360,7 +360,7 @@ export async function exportUsers() {
     const result = await callCloudFunction('myadmin', {
       action: 'exportUsers'
     })
-    return result.data
+    return result
   } catch (error) {
     console.error('导出用户数据失败:', error)
     throw error
@@ -376,7 +376,7 @@ export async function exportTransactions(params) {
       action: 'exportTransactions',
       data: params
     })
-    return result.data
+    return result
   } catch (error) {
     console.error('导出交易记录失败:', error)
     throw error
@@ -391,7 +391,7 @@ export async function exportEggs() {
     const result = await callCloudFunction('myadmin', {
       action: 'exportEggs'
     })
-    return result.data
+    return result
   } catch (error) {
     console.error('导出彩蛋数据失败:', error)
     throw error
@@ -409,7 +409,7 @@ export async function getActivityLogs(params) {
       action: 'getActivityLogs',
       data: params
     })
-    return result.data
+    return result
   } catch (error) {
     console.error('获取活动日志失败:', error)
     throw error
@@ -436,7 +436,7 @@ export async function getRecentActivity(limit = 50) {
       action: 'getRecentActivity',
       data: { limit }
     })
-    return result.data
+    return result
   } catch (error) {
     console.error('获取最近活动失败:', error)
     return []

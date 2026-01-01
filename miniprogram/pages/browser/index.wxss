@@ -203,6 +203,40 @@ page {
   line-height: 1.5;
 }
 
+/* 怀旧模拟提示横幅 */
+.simulation-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.25) 0%, rgba(255, 152, 0, 0.2) 100%);
+  border: 2px solid rgba(255, 193, 7, 0.6);
+  padding: 12rpx 20rpx;
+  margin: 10px 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+}
+
+.banner-icon {
+  font-size: 14px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.banner-text {
+  font-size: 12px;
+  color: #f57c00;
+  font-weight: bold;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
 /* 顶部跑马灯 */
 .top-banner {
   background: linear-gradient(180deg, #ff9933 0%, #ff6600 100%);
