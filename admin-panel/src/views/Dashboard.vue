@@ -58,7 +58,7 @@
     <!-- 第二行卡片 -->
     <el-row :gutter="20" style="margin-top: 20px">
       <!-- 访问统计卡片 -->
-      <el-col :span="8">
+      <el-col :span="6">
         <el-card shadow="hover" class="stat-card">
           <div class="stat-content">
             <div class="stat-value">{{ stats.visits?.total || 0 }}</div>
@@ -70,27 +70,46 @@
         </el-card>
       </el-col>
 
-      <!-- 时光币卡片 -->
-      <el-col :span="8">
+      <!-- 货币统计卡片 -->
+      <el-col :span="6">
         <el-card shadow="hover" class="stat-card">
           <div class="stat-content">
-            <div class="stat-value">{{ formatNumber(stats.currency?.totalCoins) || 0 }}</div>
-            <div class="stat-label">时光币总量</div>
+            <div class="stat-value-double">
+              <div>{{ formatNumber(stats.currency?.totalCoins) || 0 }}</div>
+              <div>{{ formatNumber(formatNetFeeDays(stats.currency?.totalNetFee)) || 0 }}</div>
+            </div>
+            <div class="stat-label-double">
+              <span>时光币</span>
+              <span>网费(天)</span>
+            </div>
             <div class="stat-sub">
-              人均 {{ Math.floor((stats.currency?.totalCoins || 0) / (stats.users?.total || 1)) }}
+              人均 {{ Math.floor((stats.currency?.totalCoins || 0) / (stats.users?.total || 1)) }} 币 | {{ formatNetFeeDays(Math.floor((stats.currency?.totalNetFee || 0) / (stats.users?.total || 1))) }} 天
             </div>
           </div>
         </el-card>
       </el-col>
 
-      <!-- 网费卡片 -->
-      <el-col :span="8">
+      <!-- 如果当时统计卡片 -->
+      <el-col :span="6">
         <el-card shadow="hover" class="stat-card">
           <div class="stat-content">
-            <div class="stat-value">{{ formatNumber(formatNetFeeDays(stats.currency?.totalNetFee)) || 0 }}</div>
-            <div class="stat-label">网费总量(天)</div>
+            <div class="stat-value">{{ stats.ifthen?.totalPlays || 0 }}</div>
+            <div class="stat-label">如果当时游玩</div>
+            <div class="stat-change up">
+              今日 +{{ stats.ifthen?.todayPlays || 0 }} | 分享 {{ stats.ifthen?.totalShares || 0 }}
+            </div>
+          </div>
+        </el-card>
+      </el-col>
+
+      <!-- AI求救信卡片 -->
+      <el-col :span="6">
+        <el-card shadow="hover" class="stat-card ai-signal-card">
+          <div class="stat-content">
+            <div class="stat-value">{{ stats.aiDistressSignal || 0 }}</div>
+            <div class="stat-label">AI求救信发现</div>
             <div class="stat-sub">
-              人均 {{ formatNetFeeDays(Math.floor((stats.currency?.totalNetFee || 0) / (stats.users?.total || 1))) }} 天
+              {{ ((stats.aiDistressSignal || 0) / (stats.users?.total || 1) * 100).toFixed(1) }}% 用户发现
             </div>
           </div>
         </el-card>
@@ -581,5 +600,34 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.stat-value-double {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.stat-value-double div {
+  font-size: 28px;
+  font-weight: bold;
+  color: #303133;
+}
+
+.stat-label-double {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.stat-label-double span {
+  font-size: 14px;
+  color: #909399;
+}
+
+.ai-signal-card {
+  border: 2px solid #e6a23c;
 }
 </style>

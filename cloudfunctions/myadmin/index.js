@@ -99,7 +99,11 @@ async function getDashboardStats() {
     db.collection('qcio_chat_history').count(),
     db.collection('qcio_chat_history').where({ timestamp: _.gte(todayStart) }).count(),
     db.collection('user_activity_logs').where({ action: 'egg_discovered', createTime: _.gte(todayStart) }).count(),
-    db.collection('mood_garden').count()
+    db.collection('mood_garden').count(),
+    db.collection('ifthen_play_history').count(),
+    db.collection('ifthen_play_history').where({ createdAt: _.gte(todayStart) }).count(),
+    db.collection('ifthen_shares').count(),
+    db.collection('ifthen_shares').where({ createdAt: _.gte(todayStart) }).count()
   ]);
 
   const totalUsers = results[0];
@@ -111,6 +115,10 @@ async function getDashboardStats() {
   const todayChats = results[6];
   const todayEggs = results[7];
   const moodGardenCount = results[8];
+  const totalIfthenPlays = results[9];
+  const todayIfthenPlays = results[10];
+  const totalIfthenShares = results[11];
+  const todayIfthenShares = results[12];
 
   // 获取所有用户计算总和（coins, netFee, badges）
   const allUsers = await db.collection('users').field({
@@ -122,6 +130,7 @@ async function getDashboardStats() {
   let totalCoins = 0;
   let totalNetFee = 0;
   let totalEggsDiscovered = 0;
+  let aiDistressSignalCount = 0; // AI求救信发现数量
 
   for (var i = 0; i < allUsers.data.length; i++) {
     var user = allUsers.data[i];
@@ -130,6 +139,13 @@ async function getDashboardStats() {
     // 彩蛋数据存储在 badges 数组中
     if (user.badges && Array.isArray(user.badges)) {
       totalEggsDiscovered += user.badges.length;
+
+      // 统计AI求救信发现数量 (eggId = 'ai_distress_signal')
+      for (var j = 0; j < user.badges.length; j++) {
+        if (user.badges[j].eggId === 'ai_distress_signal') {
+          aiDistressSignalCount++;
+        }
+      }
     }
   }
 
@@ -211,7 +227,14 @@ async function getDashboardStats() {
         totalCoins: totalCoins,
         totalNetFee: totalNetFee
       },
-      moodGarden: moodGardenCount.total || 0
+      moodGarden: moodGardenCount.total || 0,
+      ifthen: {
+        totalPlays: totalIfthenPlays.total || 0,
+        todayPlays: todayIfthenPlays.total || 0,
+        totalShares: totalIfthenShares.total || 0,
+        todayShares: todayIfthenShares.total || 0
+      },
+      aiDistressSignal: aiDistressSignalCount
     }
   };
 }
