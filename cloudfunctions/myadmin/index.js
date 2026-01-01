@@ -98,7 +98,7 @@ async function getDashboardStats() {
     db.collection('qcio_users').where({ updateTime: _.gte(todayStart) }).count(),
     db.collection('qcio_chat_history').count(),
     db.collection('qcio_chat_history').where({ timestamp: _.gte(todayStart) }).count(),
-    db.collection('user_activity_logs').where({ action: 'egg_discovered', createdAt: _.gte(todayStart) }).count(),
+    db.collection('user_activity_logs').where({ action: 'egg_discovered', createTime: _.gte(todayStart) }).count(),
     db.collection('mood_garden').count()
   ]);
 
@@ -201,7 +201,7 @@ async function getGrowthTrend(days) {
       db.collection('users').where({ createTime: _.gte(dayStart).lt(dayEnd) }).count(),
       db.collection('qcio_users').where({ updateTime: _.gte(dayStart).lt(dayEnd) }).count(),
       db.collection('qcio_chat_history').where({ timestamp: _.gte(dayStart).lt(dayEnd) }).count(),
-      db.collection('qcio_visit_stats').where({ lastVisitTime: _.gte(dayStart).lt(dayEnd) }).count()
+      db.collection('user_activity_logs').where({ action: 'visit_space', createTime: _.gte(dayStart).lt(dayEnd) }).count()
     ]);
 
     trends.push({
