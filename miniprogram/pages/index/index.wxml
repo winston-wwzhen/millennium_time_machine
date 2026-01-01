@@ -1,4 +1,4 @@
-<view class="desktop {{showBlueScreen ? 'blue-screen' : ''}} {{isRefreshing ? 'refreshing' : ''}}" style="background-color: {{desktopBackgrounds[desktopBgIndex]}};" bindlongpress="onDesktopLongPress" bindtap="onDesktopTap" catchtap="onDesktopTap">
+<view class="desktop {{showBlueScreen ? 'blue-screen' : ''}} {{isRefreshing ? 'refreshing' : ''}}" style="{{currentBgStyle}}" bindlongpress="onDesktopLongPress" bindtap="onDesktopTap" catchtap="onDesktopTap">
   <!-- 蓝屏彩蛋覆盖层 -->
   <view class="blue-screen-overlay" wx:if="{{showBlueScreen}}">
     <view class="bsod-content">
@@ -598,6 +598,9 @@
 
   <!-- 我的文档组件 -->
   <my-documents show="{{showMyDocuments}}" zIndex="{{myDocumentsZIndex}}" bindclose="onCloseMyDocuments" catchlongtap="stopPropagation"></my-documents>
+
+  <!-- 彩蛋大全文本查看器 -->
+  <text-file-viewer show="{{showEggCollection}}" fileName="{{eggCollectionFileName}}" bindclose="onCloseEggCollection" catchlongtap="stopPropagation" catchtouchmove="stopPropagation"></text-file-viewer>
 
   <!-- 回收站组件 -->
   <recycle-bin show="{{showRecycleBin}}" zIndex="{{recycleBinZIndex}}" bindclose="onCloseRecycleBin" catchlongtap="stopPropagation"></recycle-bin>

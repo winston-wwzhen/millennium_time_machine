@@ -1550,5 +1550,88 @@ exports.main = async (event, context) => {
     }
   }
 
+  // 🏆 获取彩蛋发现排名
+  if (type === 'getEggRanking') {
+    try {
+      const { limit = 100 } = event;
+
+      // 先获取当前用户的彩蛋数据
+      const currentUserData = await db.collection('users')
+        .where({
+          _openid: openid
+        })
+        .field({
+          avatarName: true,
+          'eggStats.totalDiscovered': true
+        })
+        .limit(1)
+        .get();
+
+      let currentUserRank = 0;
+      let currentUserDiscovered = 0;
+
+      if (currentUserData.data.length > 0) {
+        const currentUser = currentUserData.data[0];
+        currentUserDiscovered = currentUser.eggStats?.totalDiscovered || 0;
+
+        // 计算当前用户的排名：有多少用户的彩蛋发现数量 >= 当前用户
+        // 注意：这里计算的是"有多少人排名在前面"
+        // 如果是0个，说明用户是第1名
+        const rankResult = await db.collection('users')
+          .where({
+            'eggStats.totalDiscovered': _.gte(currentUserDiscovered)
+          })
+          .count();
+
+        // 获取所有发现数量 >= 当前用户的用户（用于精确排名）
+        const betterUsers = await db.collection('users')
+          .where({
+            'eggStats.totalDiscovered': _.gt(currentUserDiscovered)
+          })
+          .count();
+
+        // 排名 = 发现数量比当前用户多的用户数 + 1
+        currentUserRank = betterUsers.total + 1;
+      }
+
+      // 获取前N名用户用于展示
+      const topRes = await db.collection('users')
+        .field({
+          avatarName: true,
+          avatar: true,
+          badges: true,
+          'eggStats.totalDiscovered': true,
+          'eggStats.totalEarned': true
+        })
+        .orderBy('eggStats.totalDiscovered', 'desc')
+        .limit(limit)
+        .get();
+
+      const topRanking = topRes.data.map((user, index) => ({
+        rank: index + 1,
+        avatarName: user.avatarName || '匿名用户',
+        avatar: user.avatar || '👤',
+        totalDiscovered: user.eggStats?.totalDiscovered || 0,
+        totalEarned: user.eggStats?.totalEarned || 0,
+        badges: user.badges || []
+      }));
+
+      // 获取总用户数
+      const totalUsersResult = await db.collection('users').count();
+
+      return {
+        success: true,
+        data: {
+          ranking: topRanking,
+          myRank: currentUserRank,
+          totalUsers: totalUsersResult.total
+        }
+      };
+    } catch (e) {
+      console.error(e);
+      return { success: false, errMsg: e.message };
+    }
+  }
+
   return { success: false, errMsg: 'Unknown type' };
 };

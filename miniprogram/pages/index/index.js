@@ -27,6 +27,7 @@ Page({
     showGodMode: false, // 上帝模式状态
     desktopBgIndex: 0, // 桌面背景索引
     lastTapTime: 0, // 上次点击时间（用于检测双击）
+    currentBgStyle: '', // 当前桌面背景样式（动态计算）
     // 桌面背景列表（彩蛋用）
     desktopBackgrounds: [
       "#008080", // 经典 Win98 青色
@@ -36,6 +37,7 @@ Page({
       "#2F4F4F", // 深岩灰
       "#4A0E4E", // 复古紫
       "#1B1B1B", // 纯黑
+      "https://636c-cloud1-4gvtpokae6f7dbab-1392774085.tcb.qcloud.la/wallpapers/%E5%A3%81%E7%BA%B8.jpg?sign=237f99f2194e08b01d9145b0e0e8bc6e&t=1767263627", // 自定义壁纸（云存储 HTTPS）
     ],
     // 桌面图标配置
     desktopIcons: [
@@ -103,6 +105,13 @@ Page({
         path: "/pages/recycle-bin/index",
       },
       {
+        id: "egg-collection",
+        name: "彩蛋大全",
+        icon: "🥚",
+        isImage: false,
+        path: "egg-collection",
+      },
+      {
         id: "manbo",
         name: "慢播",
         icon: cloudIcons.getCloudIconUrl('ifthen.png'),
@@ -119,6 +128,8 @@ Page({
     showMyDocuments: false, // 我的文档显示状态
     showRecycleBin: false, // 回收站显示状态
     showCmdConsole: false, // CMD 控制台显示状态
+    showEggCollection: false, // 彩蛋大全显示状态
+    eggCollectionFileName: '彩蛋大全.txt', // 彩蛋大全文件名
     // 组件z-index管理（确保后打开的组件显示在上层）
     baseZIndex: 2000,
     ttplayerZIndex: 2000,
@@ -256,6 +267,9 @@ Page({
     if (soundEnabled !== undefined) {
       this.setData({ soundEnabled });
     }
+
+    // 初始化桌面背景样式
+    this.updateBgStyle();
 
     // 注册彩蛋发现回调
     const { eggSystem } = require('../../utils/egg-system');
@@ -682,6 +696,18 @@ Page({
       this.setData({
         showManbo: true,
         manboZIndex: currentZIndex + 10
+      });
+      return;
+    }
+
+    // 彩蛋大全 - 直接打开彩蛋大全.txt
+    if (path === "egg-collection") {
+      this.addLog('open', '彩蛋大全');
+      this.setData({
+        showStartMenu: false,
+        showSubmenu: false,
+        showEggCollection: true,
+        baseZIndex: this.data.baseZIndex + 10
       });
       return;
     }
@@ -1247,9 +1273,31 @@ Page({
       desktopBgIndex: newIndex,
     });
 
+    // 更新背景样式
+    this.updateBgStyle();
+
     // 首次切换发现彩蛋
     if (newIndex === 1) {
       await eggSystem.discover(EGG_IDS.BG_SWITCH);
+    }
+  },
+
+  // 更新桌面背景样式
+  updateBgStyle: function() {
+    const bgValue = this.data.desktopBackgrounds[this.data.desktopBgIndex];
+
+    // 判断是图片还是颜色
+    // 支持本地路径 (/images/...)、云存储路径 (cloud://...) 和 HTTPS/HTTP URL
+    if (bgValue.startsWith('/') || bgValue.startsWith('cloud://') || bgValue.startsWith('http://') || bgValue.startsWith('https://')) {
+      // 图片背景
+      this.setData({
+        currentBgStyle: `background-image: url('${bgValue}'); background-size: cover; background-position: center; background-repeat: no-repeat;`
+      });
+    } else {
+      // 纯色背景
+      this.setData({
+        currentBgStyle: `background-color: ${bgValue};`
+      });
     }
   },
 
@@ -1261,8 +1309,7 @@ Page({
 
   // 触发蓝屏彩蛋
   triggerBlueScreen: async function () {
-    const result = await eggSystem.discover(EGG_IDS.BLUE_SCREEN);
-    const isNewDiscovery = result?.isNew || false;
+    await eggSystem.discover(EGG_IDS.BLUE_SCREEN);
 
     this.setData({
       showBlueScreen: true,
@@ -1273,15 +1320,6 @@ Page({
       this.setData({
         showBlueScreen: false,
       });
-
-      // 如果是首次发现，显示发现提示
-      if (isNewDiscovery) {
-        wx.showToast({
-          title: "🎉 发现彩蛋：那个年代的噩梦",
-          icon: "none",
-          duration: 3000,
-        });
-      }
     }, 3000);
   },
 
@@ -1310,14 +1348,6 @@ Page({
     this.setData({
       showHiddenIcon: newValue,
     });
-
-    if (newValue) {
-      wx.showToast({
-        title: "🎉 发现隐藏图标！",
-        icon: "none",
-        duration: 2000,
-      });
-    }
   },
 
   // 点击隐藏图标
@@ -1685,6 +1715,11 @@ Page({
   // 关闭回收站
   onCloseRecycleBin: function () {
     this.setData({ showRecycleBin: false });
+  },
+
+  // 关闭彩蛋大全
+  onCloseEggCollection: function () {
+    this.setData({ showEggCollection: false });
   },
 
   // 打开 CMD 控制台

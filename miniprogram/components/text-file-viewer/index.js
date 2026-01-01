@@ -1,5 +1,6 @@
 // components/text-file-viewer/index.js
 const { eggSystem, EGG_IDS } = require("../../utils/egg-system");
+const { userApi } = require("../../utils/api-client");
 
 Component({
   properties: {
@@ -17,7 +18,9 @@ Component({
     discovered: 0,
     total: 0,
     isSecretFile: false,
-    eggList: []
+    eggList: [],
+    myRank: 0,
+    isLoadingRanking: false
   },
 
   observers: {
@@ -75,6 +78,25 @@ Component({
       });
     },
 
+    // 加载我的排名
+    loadRanking: async function() {
+      this.setData({ isLoadingRanking: true });
+
+      try {
+        const result = await userApi.getEggRanking(100);
+
+        if (result && result.success) {
+          // 直接使用云函数返回的 myRank
+          const myRank = result.data.myRank || 0;
+          this.setData({ myRank });
+        }
+      } catch (err) {
+        console.error('Load ranking error:', err);
+      } finally {
+        this.setData({ isLoadingRanking: false });
+      }
+    },
+
     // 加载彩蛋列表（带状态）- 动态加载所有彩蛋
     loadEggList: async function() {
       // 确保先加载云端数据
@@ -100,6 +122,9 @@ Component({
         discovered: discoveredIds.size,
         total: Object.keys(EGG_IDS).length
       });
+
+      // 加载排名
+      this.loadRanking();
     },
 
     // 加载彩蛋秘籍（第一册：仅10条普通彩蛋）

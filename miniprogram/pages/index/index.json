@@ -9,6 +9,7 @@
     "my-documents": "../../components/my-documents/index",
     "recycle-bin": "../../components/recycle-bin/index",
     "cmd-console": "../../components/cmd-console/index",
-    "egg-discovery-dialog": "../../components/egg-discovery-dialog/index"
+    "egg-discovery-dialog": "../../components/egg-discovery-dialog/index",
+    "text-file-viewer": "../../components/text-file-viewer/index"
   }
 }

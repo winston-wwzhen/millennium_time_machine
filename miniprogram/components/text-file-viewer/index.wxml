@@ -171,6 +171,28 @@
 
           <text class="preview-line"></text>
 
+          <!-- 我的排名 -->
+          <text class="preview-section">【🏆 我的探索成就】</text>
+          <view class="my-rank-section">
+            <view class="rank-row">
+              <text class="rank-label">已发现彩蛋</text>
+              <text class="rank-value">{{discovered}}<text class="rank-slash">/</text>{{total}}</text>
+              <text class="rank-unit">个</text>
+            </view>
+            <view class="rank-row" wx:if="{{discovered > 0 && myRank > 0 && myRank <= 100}}">
+              <text class="rank-label">全平台排名</text>
+              <text class="rank-value highlight">第{{myRank}}</text>
+              <text class="rank-unit">名</text>
+            </view>
+            <view class="rank-row" wx:if="{{discovered > 0 && myRank > 100}}">
+              <text class="rank-label">全平台排名</text>
+              <text class="rank-value warning">未进入前100</text>
+              <text class="rank-unit">(第{{myRank}}名)</text>
+            </view>
+          </view>
+
+          <text class="preview-line"></text>
+
           <!-- 普通彩蛋 -->
           <text class="preview-section">【普通彩蛋】</text>
           <view class="egg-list-section">
