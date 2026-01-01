@@ -334,7 +334,6 @@ async function getUserTransactions(data) {
 async function getEggStats() {
   const users = await db.collection('users')
     .field({
-      eggStats: true,
       badges: true
     })
     .get();
@@ -355,31 +354,37 @@ async function getEggStats() {
 
   for (var i = 0; i < users.data.length; i++) {
     var user = users.data[i];
-    var eggs = (user.eggStats && user.eggStats.discoveredEggs) ? user.eggStats.discoveredEggs : [];
-    stats.totalDiscovered += eggs.length;
+    var badges = user.badges || [];
+    stats.totalDiscovered += badges.length;
 
-    for (var j = 0; j < eggs.length; j++) {
-      var egg = eggs[j];
-      if (stats.byRarity[egg.rarity]) {
-        stats.byRarity[egg.rarity].count++;
+    for (var j = 0; j < badges.length; j++) {
+      var badge = badges[j];
+      var eggId = badge.eggId;
+
+      // 从 EGG_CONFIG 获取彩蛋信息（这里简化处理）
+      var eggInfo = getEggInfo(eggId);
+
+      if (stats.byRarity[eggInfo.rarity]) {
+        stats.byRarity[eggInfo.rarity].count++;
       }
 
-      var key = egg.id;
-      if (!eggCounts[key]) {
-        eggCounts[key] = { id: egg.id, name: egg.name, count: 0, rarity: egg.rarity };
+      if (!eggCounts[eggId]) {
+        eggCounts[eggId] = { id: eggId, name: eggInfo.name, count: 0, rarity: eggInfo.rarity };
       }
-      eggCounts[key].count++;
+      eggCounts[eggId].count++;
     }
   }
 
   // 统计发现过各稀有度的用户数
   for (var i = 0; i < users.data.length; i++) {
     var user = users.data[i];
-    var eggs = (user.eggStats && user.eggStats.discoveredEggs) ? user.eggStats.discoveredEggs : [];
+    var badges = user.badges || [];
     var raritySet = {};
 
-    for (var j = 0; j < eggs.length; j++) {
-      raritySet[eggs[j].rarity] = true;
+    for (var j = 0; j < badges.length; j++) {
+      var eggId = badges[j].eggId;
+      var eggInfo = getEggInfo(eggId);
+      raritySet[eggInfo.rarity] = true;
     }
 
     for (var rarity in raritySet) {
@@ -401,21 +406,83 @@ async function getEggStats() {
 }
 
 /**
+ * 根据 eggId 获取彩蛋信息（包含奖励）
+ */
+function getEggInfo(eggId) {
+  // 彩蛋配置（需要和 miniprogram/utils/egg-system.js 保持一致）
+  var EGG_CONFIG = {
+    lion_dance: { name: '舞狮少年', rarity: 'common', reward: { coins: 1000 } },
+    lion_talk: { name: '倾听者', rarity: 'common', reward: { coins: 1000 } },
+    blue_screen: { name: '蓝屏幸存者', rarity: 'rare', reward: { coins: 2000 } },
+    time_midnight: { name: '夜猫子', rarity: 'epic', reward: { coins: 5000 } },
+    taskbar_surprise: { name: '探索者', rarity: 'common', reward: { coins: 1000 } },
+    hidden_icon: { name: '寻宝者', rarity: 'rare', reward: { coins: 2000 } },
+    bg_switch: { name: '艺术家', rarity: 'common', reward: { coins: 500 } },
+    konami_code: { name: '上帝之手', rarity: 'legendary', reward: { coins: 10000 } },
+    my_computer: { name: '硬件控', rarity: 'common', reward: { coins: 400 } },
+    browser_click: { name: '冲浪达人', rarity: 'common', reward: { coins: 400 } },
+    time_special: { name: '时刻见证者', rarity: 'rare', reward: { coins: 1500 } },
+    avatar_master: { name: '非主流达人', rarity: 'common', reward: { coins: 800 } },
+    chat_lover: { name: '话痨', rarity: 'rare', reward: { coins: 2500 } },
+    qcio_space_visitor: { name: '踩空间达人', rarity: 'common', reward: { coins: 600 } },
+    start_menu_fan: { name: '菜单控', rarity: 'common', reward: { coins: 500 } },
+    group_chat_party: { name: '群星', rarity: 'rare', reward: { coins: 2000 } },
+    mars_translator: { name: '火星使者', rarity: 'common', reward: { coins: 700 } },
+    network_exchanger: { name: '理财达人', rarity: 'common', reward: { coins: 500 } },
+    recycle_bin_emptyer: { name: '清洁工', rarity: 'rare', reward: { coins: 1500 } },
+    star_explorer: { name: '扫雷高手', rarity: 'rare', reward: { coins: 1500 } },
+    calculator_master: { name: '精算师', rarity: 'common', reward: { coins: 800 } },
+    calendar_time_traveler: { name: '时空旅人', rarity: 'rare', reward: { coins: 1200 } },
+    browser_navigator: { name: '导航大师', rarity: 'rare', reward: { coins: 1000 } },
+    hidden_file_egg_book: { name: '收藏家', rarity: 'common', reward: { coins: 300 } },
+    hidden_file_system_diary: { name: '系统知音', rarity: 'epic', reward: { coins: 500 } },
+    hidden_file_coder_note: { name: '程序员的知音', rarity: 'common', reward: { coins: 1000 } },
+    hidden_file_dev_egg: { name: '彩蛋猎手', rarity: 'common', reward: { coins: 800 } },
+    hidden_file_forgotten: { name: '记忆收藏家', rarity: 'common', reward: { coins: 400 } },
+    hidden_file_youth: { name: '时光旅人', rarity: 'common', reward: { coins: 600 } },
+    hidden_file_summer: { name: '夏日追忆', rarity: 'common', reward: { coins: 700 } },
+    disk_cleanup_master: { name: '清洁达人', rarity: 'rare', reward: { coins: 1200 } },
+    device_manager_expert: { name: '硬件专家', rarity: 'rare', reward: { coins: 1000 } },
+    file_explorer_master: { name: '文件浏览器大师', rarity: 'rare', reward: { coins: 1000 } },
+    c_hidden_dot: { name: 'C盘隐士', rarity: 'common', reward: { coins: 300 } },
+    c_empty_folder: { name: '空文件夹猎人', rarity: 'common', reward: { coins: 200 } },
+    c_temp_nesting: { name: '套娃专家', rarity: 'epic', reward: { coins: 3000 } },
+    c_system_longpress: { name: '配置大师', rarity: 'rare', reward: { coins: 1500 } },
+    c_fonts_spam: { name: '字体收集者', rarity: 'rare', reward: { coins: 2000 } },
+    d_secret_file: { name: 'D盘寻宝者', rarity: 'common', reward: { coins: 300 } },
+    d_readme_click5: { name: '阅读爱好者', rarity: 'common', reward: { coins: 500 } },
+    d_games_click10: { name: '游戏达人', rarity: 'common', reward: { coins: 800 } },
+    d_future_games: { name: '游戏收藏家', rarity: 'epic', reward: { coins: 3000 } },
+    d_music_repeat: { name: '音乐爱好者', rarity: 'common', reward: { coins: 600 } },
+    d_videos_deep: { name: '深潜者', rarity: 'rare', reward: { coins: 1500 } },
+    d_videos_anime: { name: '动漫迷', rarity: 'common', reward: { coins: 500 } },
+    d_videos_drama: { name: '剧迷', rarity: 'common', reward: { coins: 500 } },
+    d_videos_movie: { name: '影迷', rarity: 'common', reward: { coins: 500 } },
+    d_autoexec_long: { name: '批处理专家', rarity: 'rare', reward: { coins: 1200 } },
+    usb_invisible_folder: { name: 'USB隐士', rarity: 'common', reward: { coins: 300 } },
+    usb_file_click7: { name: '文件测试员', rarity: 'common', reward: { coins: 400 } },
+    usb_nesting_10: { name: 'USB套娃大师', rarity: 'epic', reward: { coins: 3000 } }
+  };
+
+  return EGG_CONFIG[eggId] || { name: '未知彩蛋', rarity: 'common', reward: { coins: 0 } };
+}
+
+/**
  * 获取彩蛋排行榜
  */
 async function getEggRankings(limit) {
+  // 获取所有用户数据
   const result = await db.collection('users')
     .field({
       _openid: true,
       nickname: true,
       qcioProfile: true,
-      eggStats: true,
+      badges: true,
       coins: true
     })
-    .orderBy('eggStats.eggsDiscovered', 'desc')
-    .limit(limit)
     .get();
 
+  // 处理数据并按 badges 数量排序
   var list = [];
   for (var i = 0; i < result.data.length; i++) {
     var user = result.data[i];
@@ -427,20 +494,37 @@ async function getEggRankings(limit) {
       nickname = '未知';
     }
 
+    var eggsDiscovered = 0;
+    if (user.badges && Array.isArray(user.badges)) {
+      eggsDiscovered = user.badges.length;
+    }
+
     list.push({
-      rank: i + 1,
+      rank: 0, // 后面排序后再设置
       openid: user._openid,
       nickname: nickname,
       qcioId: (user.qcioProfile && user.qcioProfile.qcio_id) ? user.qcioProfile.qcio_id : null,
       avatar: (user.qcioProfile && user.qcioProfile.avatar) ? user.qcioProfile.avatar : null,
-      eggsDiscovered: (user.eggStats && user.eggStats.eggsDiscovered) ? user.eggStats.eggsDiscovered : 0,
+      eggsDiscovered: eggsDiscovered,
       coins: user.coins || 0
     });
   }
 
+  // 按彩蛋发现数量降序排序
+  list.sort(function(a, b) {
+    return b.eggsDiscovered - a.eggsDiscovered;
+  });
+
+  // 设置排名并限制返回数量
+  var rankedList = [];
+  for (var j = 0; j < Math.min(list.length, limit); j++) {
+    list[j].rank = j + 1;
+    rankedList.push(list[j]);
+  }
+
   return {
     success: true,
-    data: list
+    data: rankedList
   };
 }
 
@@ -453,25 +537,68 @@ async function getEggDiscoveryHistory(data) {
   const rarity = data.rarity;
   const eggId = data.eggId;
 
-  const skip = (page - 1) * limit;
-  var query = db.collection('user_activity_logs').where({ action: 'egg_discovered' });
+  // 获取所有用户的 badges
+  const users = await db.collection('users')
+    .field({
+      _openid: true,
+      badges: true
+    })
+    .get();
 
-  if (rarity) {
-    query = query.where({ 'data.egg.rarity': rarity });
+  // 展开 badges 成单独的记录
+  var records = [];
+  for (var i = 0; i < users.data.length; i++) {
+    var user = users.data[i];
+    var badges = user.badges || [];
+
+    for (var j = 0; j < badges.length; j++) {
+      var badge = badges[j];
+      var eggInfo = getEggInfo(badge.eggId);
+
+      // 过滤条件
+      if (rarity && eggInfo.rarity !== rarity) {
+        continue;
+      }
+      if (eggId && badge.eggId !== eggId) {
+        continue;
+      }
+
+      records.push({
+        _id: badge._id || user._openid + '_' + j,
+        _openid: user._openid,
+        createdAt: badge.discoveredAt,
+        data: {
+          egg: {
+            id: badge.eggId,
+            name: eggInfo.name,
+            rarity: eggInfo.rarity,
+            reward: {
+              coins: eggInfo.reward || 0
+            }
+          }
+        }
+      });
+    }
   }
 
-  if (eggId) {
-    query = query.where({ 'data.egg.id': eggId });
-  }
+  // 按发现时间降序排序
+  records.sort(function(a, b) {
+    var timeA = new Date(a.createdAt).getTime();
+    var timeB = new Date(b.createdAt).getTime();
+    return timeB - timeA;
+  });
 
-  const result = await query.orderBy('createdAt', 'desc').skip(skip).limit(limit).get();
-  const countResult = await query.count();
+  // 分页
+  var total = records.length;
+  var startIndex = (page - 1) * limit;
+  var endIndex = Math.min(startIndex + limit, records.length);
+  var pageRecords = records.slice(startIndex, endIndex);
 
   return {
     success: true,
     data: {
-      list: result.data,
-      total: countResult.total,
+      list: pageRecords,
+      total: total,
       page: page,
       limit: limit
     }
