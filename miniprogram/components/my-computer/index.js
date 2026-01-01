@@ -1102,6 +1102,11 @@ Component({
         console.log("[loadFileExplorerItems] 学习资料路径，过滤后items:", items.map(i => ({ name: i.name, eggId: i.eggId, hidden: i.hidden })));
       }
 
+      // c_temp_nesting彩蛋：套娃目录 - 进入第5层时触发
+      if (path === "C:\\Windows\\Temp\\深层\\更深层\\最深层\\核心层") {
+        this.triggerCDriveEgg(EGG_IDS.C_TEMP_NESTING);
+      }
+
       this.setData({
         fileExplorerItems: items,
       });
@@ -2832,11 +2837,6 @@ Component({
       if (item.isEmptyFolder) {
         this.triggerCDriveEgg(EGG_IDS.C_EMPTY_FOLDER);
         return;
-      }
-
-      // c_temp_nesting彩蛋：套娃目录
-      if (item.isTempNesting && item.nestingLevel === 5) {
-        this.triggerCDriveEgg(EGG_IDS.C_TEMP_NESTING);
       }
 
       // c_fonts_spam彩蛋：Fonts文件夹连点
