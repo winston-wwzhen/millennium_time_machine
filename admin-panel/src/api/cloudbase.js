@@ -24,10 +24,13 @@ async function callCloudFunction(name, data = {}) {
     if (response.data.errcode === 0) {
       const respData = response.data.resp_data  // 注意:微信HTTP API返回的是 resp_data 不是 data
       // resp_data 可能是字符串或对象
-      if (typeof respData === 'string') {
-        return JSON.parse(respData)
+      const parsed = typeof respData === 'string' ? JSON.parse(respData) : respData
+
+      // 如果云函数返回了 success 和 data 字段，直接返回 data 部分
+      if (parsed && parsed.success !== undefined && parsed.data !== undefined) {
+        return parsed.data
       }
-      return respData
+      return parsed
     } else {
       console.error('❌ 云函数错误:', response.data.errcode, response.data.errmsg)
       throw new Error(response.data.errmsg || `云函数调用失败 (${response.data.errcode})`)
