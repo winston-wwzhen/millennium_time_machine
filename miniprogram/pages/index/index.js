@@ -228,6 +228,10 @@ Page({
     showShutdownDialog: false,
     // 欢迎弹窗（时间穿越提示）
     showWelcomeDialog: false,
+    // 动态时间文案
+    welcomeCurrentDate: '',    // 当前真实日期
+    welcomeTargetDate: '',     // 穿越20年后的日期
+    welcomeYearsPassed: '',    // 跨越年数（约20年）
   },
 
   onLoad: function () {
@@ -300,6 +304,7 @@ Page({
     if (app.globalData.initPromise) {
       app.globalData.initPromise.then(() => {
         if (app.globalData.showWelcomeDialog) {
+          this.calculateWelcomeTime();
           this.setData({ showWelcomeDialog: true });
         }
       }).catch(err => {
@@ -308,6 +313,7 @@ Page({
     } else {
       // 降级处理：如果 initPromise 不存在，直接检查
       if (app.globalData.showWelcomeDialog) {
+        this.calculateWelcomeTime();
         this.setData({ showWelcomeDialog: true });
       }
     }
@@ -974,6 +980,29 @@ Page({
       // 即使失败也关闭弹窗，避免重复显示
       this.setData({ showWelcomeDialog: false });
     }
+  },
+
+  // 欢迎弹窗 - 计算动态时间
+  calculateWelcomeTime: function() {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth() + 1; // 0-11 -> 1-12
+    const currentDay = now.getDate();
+
+    // 当前日期（真实）
+    const currentDateStr = `${currentYear}年${currentMonth}月${currentDay}日`;
+
+    // 穿越20年后的日期（2006年同月同日）
+    const targetDateStr = `2006年${currentMonth}月${currentDay}日`;
+
+    // 计算跨越年数（约20年）
+    const yearsPassed = currentYear - 2006;
+
+    this.setData({
+      welcomeCurrentDate: currentDateStr,
+      welcomeTargetDate: targetDateStr,
+      welcomeYearsPassed: yearsPassed
+    });
   },
 
   // 欢迎弹窗 - 阻止事件冒泡
