@@ -249,6 +249,8 @@ Component({
     videoMemoryData: null,
     // USB空文件夹弹窗（Win98风格）
     showEmptyFolderDialog: false,
+    // C盘隐藏文件"."弹窗（Win98风格）
+    showHiddenDotDialog: false,
     // 文件浏览器帮助弹窗（Win98风格）
     showFeHelpDialog: false,
     // 文件浏览器关于弹窗（Win98风格）
@@ -2822,12 +2824,7 @@ Component({
       // c_hidden_dot彩蛋：C:\根目录的隐藏文件"."
       if (item.isHiddenDot) {
         this.triggerCDriveEgg(EGG_IDS.C_HIDDEN_DOT);
-        wx.showModal({
-          title: ".",
-          content: "这是当前目录引用。\n\n也是我藏在这里的彩蛋！",
-          showCancel: false,
-          confirmText: "确定"
-        });
+        this.setData({ showHiddenDotDialog: true });
         return;
       }
 
@@ -4626,6 +4623,13 @@ AI助手本人无法直接将这份文件送达给相关部门，
     closeEmptyFolderDialog() {
       this.setData({
         showEmptyFolderDialog: false
+      });
+    },
+
+    // 关闭C盘隐藏文件"."弹窗
+    closeHiddenDotDialog() {
+      this.setData({
+        showHiddenDotDialog: false
       });
     },
 

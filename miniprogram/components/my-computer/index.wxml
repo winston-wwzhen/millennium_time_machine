@@ -1632,4 +1632,25 @@
       </view>
     </view>
   </view>
+
+  <!-- C盘隐藏文件"."弹窗（Win98风格） -->
+  <view class="win98-dialog-overlay" wx:if="{{showHiddenDotDialog}}" catchtap="closeHiddenDotDialog">
+    <view class="win98-window hidden-dot-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">.</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="closeHiddenDotDialog">×</button>
+        </view>
+      </view>
+      <view class="win98-window-body">
+        <view class="hidden-dot-content">
+          <text class="hidden-dot-message">这是当前目录引用。</text>
+          <text class="hidden-dot-message">也是我藏在这里的彩蛋！</text>
+        </view>
+      </view>
+      <view class="dialog-actions">
+        <button class="win98-btn-std" bindtap="closeHiddenDotDialog">确定</button>
+      </view>
+    </view>
+  </view>
 </view>
