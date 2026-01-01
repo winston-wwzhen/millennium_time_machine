@@ -1374,27 +1374,6 @@
     </view>
   </view>
 
-  <!-- Fonts提示弹窗（Win98风格） -->
-  <view class="win98-dialog-overlay" wx:if="{{showFontsMessageDialog}}" catchtap="closeFontsMessageDialog">
-    <view class="win98-window fonts-message-dialog" catchtap="stopPropagation">
-      <view class="win98-title-bar">
-        <view class="win98-title-icon">📁</view>
-        <view class="win98-title-text">Fonts</view>
-        <view class="win98-title-controls">
-          <button class="win98-btn-close" bindtap="closeFontsMessageDialog">×</button>
-        </view>
-      </view>
-      <view class="win98-window-body">
-        <view class="fonts-message-content">
-          <text class="fonts-message-text">{{fontsMessageContent}}</text>
-        </view>
-      </view>
-      <view class="dialog-actions">
-        <button class="win98-btn-std" bindtap="closeFontsMessageDialog">确定</button>
-      </view>
-    </view>
-  </view>
-
   <!-- 程序向导弹窗（Win98风格 - 手机竖屏优化） -->
   <view class="win98-dialog-overlay" wx:if="{{showInstallerWizard}}" catchtap="closeInstallerWizard">
     <view class="installer-wizard-dialog" catchtap="stopPropagation">

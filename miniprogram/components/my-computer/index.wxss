@@ -2398,38 +2398,6 @@
   border: 2px inset #fff;
 }
 
-/* ==================== Fonts提示弹窗样式 ==================== */
-
-.fonts-message-dialog {
-  width: 320px;
-  max-width: 85%;
-}
-
-.fonts-message-dialog .win98-window-body {
-  padding: 0;
-  flex: unset;
-}
-
-.fonts-message-content {
-  padding: 20px 24px;
-  min-height: 80px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #fff;
-  border: 2px inset #808080;
-  margin: 8px;
-}
-
-.fonts-message-text {
-  font-size: 13px;
-  line-height: 1.8;
-  color: #000;
-  text-align: center;
-  word-wrap: break-word;
-  white-space: pre-wrap;
-}
-
 /* ==================== 禁用文件提示弹窗样式 ==================== */
 
 .disabled-message-dialog {

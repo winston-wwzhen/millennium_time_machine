@@ -227,9 +227,6 @@ Component({
     // USB彩蛋状态
     usbFileClickCount: 0, // USB文件点击次数
     usbNestingLevel: 0, // USB套娃层级
-    // Fonts提示弹窗
-    showFontsMessageDialog: false,
-    fontsMessageContent: '',
     // 禁用文件提示弹窗（Win98风格）
     showDisabledMessageDialog: false,
     disabledMessageContent: '',
@@ -2844,11 +2841,6 @@ Component({
       // c_fonts_spam彩蛋：Fonts文件夹连点
       if (item.isFonts && item.disabled) {
         this.setData({ fontsClickCount: this.data.fontsClickCount + 1 });
-        // 使用Win98风格弹窗显示提示
-        this.setData({
-          showFontsMessageDialog: true,
-          fontsMessageContent: item.message || "无法访问"
-        });
         // 检查是否达到10次
         if (this.data.fontsClickCount >= 10) {
           this.triggerCDriveEgg(EGG_IDS.C_FONTS_SPAM);
@@ -4586,14 +4578,6 @@ AI助手本人无法直接将这份文件送达给相关部门，
         clearTimeout(this.data.autoexecLongPressTimer);
         this.setData({ autoexecLongPressTimer: null });
       }
-    },
-
-    // 关闭Fonts提示弹窗
-    closeFontsMessageDialog() {
-      this.setData({
-        showFontsMessageDialog: false,
-        fontsMessageContent: '',
-      });
     },
 
     // 关闭禁用文件提示弹窗
