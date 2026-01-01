@@ -1,6 +1,6 @@
 <!-- 回收站 - Win98 风格窗口组件 -->
 <view class="recycle-bin-overlay {{show ? 'show' : 'hide'}}" style="{{overlayStyle}}" catchtap="onClose">
-  <view class="win98-window" catchtap="stopPropagation">
+  <view class="win98-window" catchtap="stopPropagation" catchlongpress="stopPropagation" catchtouchmove="stopPropagation">
     <view class="win98-title-bar">
       <view class="win98-title-text">回收站</view>
       <view class="win98-title-controls">

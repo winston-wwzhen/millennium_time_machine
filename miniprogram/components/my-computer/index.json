@@ -1,6 +1,7 @@
 {
   "component": true,
   "usingComponents": {
-    "cmd-console": "../cmd-console/index"
+    "cmd-console": "../cmd-console/index",
+    "egg-discovery-dialog": "../egg-discovery-dialog/index"
   }
 }

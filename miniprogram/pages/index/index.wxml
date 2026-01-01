@@ -38,7 +38,19 @@
   <view class="icon-grid" catchtap="onIconGridTap">
     <block wx:for="{{desktopIcons}}" wx:key="id">
       <view class="desktop-icon" id="{{item.id}}" bindtap="onIconTap" data-path="{{item.path}}">
-        <view class="icon-img">{{item.icon}}</view>
+        <view class="icon-img" wx:if="{{item.isImage}}">
+          <!-- 使用懒加载 + 加载中占位符 -->
+          <image
+            src="{{item.icon}}"
+            style="width: 70rpx; height: 70rpx;"
+            mode="aspectFit"
+            lazy-load="{{true}}"
+            show-menu-by-longpress="{{false}}"
+            bindload="onIconLoad"
+            binderror="onIconError"
+          ></image>
+        </view>
+        <view class="icon-img" wx:else>{{item.icon}}</view>
         <text class="icon-label">{{item.name}}</text>
       </view>
     </block>
@@ -58,7 +70,9 @@
     <view class="agent-bubble {{showMessage ? 'show' : ''}}" wx:if="{{showMessage}}">
       <text>{{agentMessage}}</text>
     </view>
-    <view class="agent-body agent-{{agentMood}}">🦁</view>
+    <view class="agent-body agent-{{agentMood}}">
+      <image src="{{cloudIconUrls.lion}}" style="width: 100%; height: 100%;" mode="aspectFit"></image>
+    </view>
   </view>
 
   <!-- 任务栏 -->
@@ -99,7 +113,7 @@
         </view>
       </view>
       <view class="tray-icon qcio-icon" bindtap="onQcioIconTap">
-        📟
+        <image src="{{cloudIconUrls.qcio}}" style="width: 28rpx; height: 28rpx;" mode="aspectFit"></image>
       </view>
       <view class="system-time" bindtap="onTimeTap">{{systemTime}}</view>
     </view>
@@ -197,7 +211,7 @@
   </view>
 
   <!-- Win98 错误弹窗 -->
-  <view class="win98-overlay" wx:if="{{showErrorDialog}}" bindtap="hideErrorDialog">
+  <view class="win98-overlay" wx:if="{{showErrorDialog}}" bindtap="hideErrorDialog" catchlongtap="stopPropagation">
     <view class="win98-window error-dialog" catchtap="stopPropagation">
       <view class="win98-title-bar">
         <view class="win98-title-text">⚠️ 错误</view>
@@ -223,7 +237,7 @@
   </view>
 
   <!-- 版本过低弹窗（十分动听/慢播未升级） -->
-  <view class="win98-overlay" wx:if="{{showVersionTooLowDialog}}" bindtap="hideVersionTooLowDialog">
+  <view class="win98-overlay" wx:if="{{showVersionTooLowDialog}}" bindtap="hideVersionTooLowDialog" catchlongtap="stopPropagation">
     <view class="win98-window version-low-dialog" catchtap="stopPropagation">
       <view class="win98-title-bar">
         <view class="win98-title-text">⚠️ 版本过低</view>
@@ -348,7 +362,7 @@
   </view>
 
   <!-- 系统信息弹窗遮罩 -->
-  <view class="win98-overlay" wx:if="{{showSystemInfoDialog}}" bindtap="hideSystemInfoDialog">
+  <view class="win98-overlay" wx:if="{{showSystemInfoDialog}}" bindtap="hideSystemInfoDialog" catchlongtap="stopPropagation">
     <view class="win98-window system-info-dialog" catchtap="stopPropagation">
       <view class="win98-title-bar">
         <view class="win98-title-text">📊 系统信息</view>
@@ -398,7 +412,7 @@
   </view>
 
   <!-- 助手设置弹窗遮罩 -->
-  <view class="win98-overlay" wx:if="{{showAgentSettingsDialog}}" bindtap="hideAgentSettingsDialog">
+  <view class="win98-overlay" wx:if="{{showAgentSettingsDialog}}" bindtap="hideAgentSettingsDialog" catchlongtap="stopPropagation">
     <view class="win98-window agent-settings-dialog" catchtap="stopPropagation">
       <view class="win98-title-bar">
         <view class="win98-title-text">🦁 助手设置</view>
@@ -418,7 +432,7 @@
   </view>
 
   <!-- 关于弹窗遮罩 -->
-  <view class="win98-overlay" wx:if="{{showAboutDialog}}" bindtap="hideAboutDialog">
+  <view class="win98-overlay" wx:if="{{showAboutDialog}}" bindtap="hideAboutDialog" catchlongtap="stopPropagation">
     <view class="win98-window about-dialog" catchtap="stopPropagation">
       <view class="win98-title-bar">
         <view class="win98-title-text">❓ 千禧时光机 - 帮助</view>
@@ -496,38 +510,20 @@
     </view>
   </view>
 
-  <!-- 彩蛋发现弹窗 -->
-  <view class="win98-overlay" wx:if="{{showEggDiscoveryDialog}}" bindtap="hideEggDiscoveryDialog">
-    <view class="win98-window egg-discovery-dialog" catchtap="stopPropagation">
-      <view class="win98-title-bar">
-        <view class="win98-title-text">🎉 发现彩蛋！</view>
-        <view class="win98-title-controls">
-          <button class="win98-btn-close" bindtap="hideEggDiscoveryDialog">×</button>
-        </view>
-      </view>
-      <view class="win98-window-body">
-        <view class="egg-discovery-content">
-          <view class="egg-icon-wrapper">
-            <text class="egg-icon-emoji">🥚</text>
-          </view>
-          <view class="egg-discovery-info">
-            <text class="egg-name">{{eggDiscoveryData.name}}</text>
-            <text class="egg-description">"{{eggDiscoveryData.description}}"</text>
-            <view class="egg-rarity-badge rarity-{{eggDiscoveryData.rarity}}">
-              <text class="rarity-text">{{eggDiscoveryData.rarityName}}</text>
-            </view>
-            <text class="egg-reward">奖励: {{eggDiscoveryData.rewardText}}</text>
-          </view>
-        </view>
-        <view class="dialog-actions">
-          <button class="win98-btn-std" bindtap="hideEggDiscoveryDialog">太棒了！</button>
-        </view>
-      </view>
-    </view>
-  </view>
+  <!-- 彩蛋发现弹窗 - 使用通用组件 -->
+  <egg-discovery-dialog
+    show="{{showEggDiscoveryDialog}}"
+    eggName="{{eggDiscoveryData.name}}"
+    eggDescription="{{eggDiscoveryData.description}}"
+    eggRarity="{{eggDiscoveryData.rarity}}"
+    eggRarityName="{{eggDiscoveryData.rarityName}}"
+    eggRewardText="{{eggDiscoveryData.rewardText}}"
+    bind:close="hideEggDiscoveryDialog"
+  >
+  </egg-discovery-dialog>
 
   <!-- Windows 11 风格关机弹窗 -->
-  <view class="win11-overlay {{showShutdownDialog ? 'show' : ''}}" wx:if="{{showShutdownDialog}}" bindtap="onShutdownCancel">
+  <view class="win11-overlay {{showShutdownDialog ? 'show' : ''}}" wx:if="{{showShutdownDialog}}" bindtap="onShutdownCancel" catchlongtap="stopPropagation">
     <view class="win11-dialog" catchtap="stopPropagation">
       <view class="win11-icon">🔌</view>
       <text class="win11-title">关机</text>
@@ -553,7 +549,7 @@
   </view>
 
   <!-- 欢迎弹窗 - 时间穿越提示 -->
-  <view class="win98-overlay" wx:if="{{showWelcomeDialog}}" bindtap="onWelcomeDialogConfirm">
+  <view class="win98-overlay" wx:if="{{showWelcomeDialog}}" bindtap="onWelcomeDialogConfirm" catchlongtap="stopPropagation">
     <view class="win98-window welcome-dialog" catchtap="stopPropagation">
       <view class="win98-title-bar">
         <view class="win98-title-text">⏰ 时间穿越成功</view>
@@ -589,23 +585,23 @@
   </view>
 
   <!-- 十分动听播放器组件 -->
-  <ttplayer show="{{showTTPlayer}}" zIndex="{{ttplayerZIndex}}" bindclose="onCloseTTPlayer"></ttplayer>
+  <ttplayer show="{{showTTPlayer}}" zIndex="{{ttplayerZIndex}}" bindclose="onCloseTTPlayer" catchlongtap="stopPropagation"></ttplayer>
 
   <!-- 慢播视频播放器组件 -->
-  <manbo show="{{showManbo}}" zIndex="{{manboZIndex}}" bindclose="onCloseManbo"></manbo>
+  <manbo show="{{showManbo}}" zIndex="{{manboZIndex}}" bindclose="onCloseManbo" catchlongtap="stopPropagation"></manbo>
 
   <!-- 我的电脑组件 -->
-  <my-computer show="{{showMyComputer}}" zIndex="{{myComputerZIndex}}" bindclose="onCloseMyComputer" bindkonamihalf="onKonamiHalfComplete" bindopenbrowser="onOpenBrowser" bindopendocuments="onOpenDocuments" bindopenttplayer="onOpenTTPlayer" bindopenmanbo="onOpenManbo"></my-computer>
+  <my-computer id="my-computer" show="{{showMyComputer}}" zIndex="{{myComputerZIndex}}" bindclose="onCloseMyComputer" bindkonamihalf="onKonamiHalfComplete" bindopenbrowser="onOpenBrowser" bindopendocuments="onOpenDocuments" bindopenttplayer="onOpenTTPlayer" bindopenmanbo="onOpenManbo" catchlongtap="stopPropagation"></my-computer>
 
   <!-- 网管系统组件 -->
-  <network-neighborhood show="{{showNetworkSystem}}" zIndex="{{networkSystemZIndex}}" bindclose="onCloseNetworkSystem"></network-neighborhood>
+  <network-neighborhood show="{{showNetworkSystem}}" zIndex="{{networkSystemZIndex}}" bindclose="onCloseNetworkSystem" catchlongtap="stopPropagation"></network-neighborhood>
 
   <!-- 我的文档组件 -->
-  <my-documents show="{{showMyDocuments}}" zIndex="{{myDocumentsZIndex}}" bindclose="onCloseMyDocuments"></my-documents>
+  <my-documents show="{{showMyDocuments}}" zIndex="{{myDocumentsZIndex}}" bindclose="onCloseMyDocuments" catchlongtap="stopPropagation"></my-documents>
 
   <!-- 回收站组件 -->
-  <recycle-bin show="{{showRecycleBin}}" zIndex="{{recycleBinZIndex}}" bindclose="onCloseRecycleBin"></recycle-bin>
+  <recycle-bin show="{{showRecycleBin}}" zIndex="{{recycleBinZIndex}}" bindclose="onCloseRecycleBin" catchlongtap="stopPropagation"></recycle-bin>
 
   <!-- CMD 命令提示符组件 -->
-  <cmd-console show="{{showCmdConsole}}" zIndex="{{cmdConsoleZIndex}}" bindclose="closeCmdConsole"></cmd-console>
+  <cmd-console show="{{showCmdConsole}}" zIndex="{{cmdConsoleZIndex}}" bindclose="closeCmdConsole" catchlongtap="stopPropagation"></cmd-console>
 </view>

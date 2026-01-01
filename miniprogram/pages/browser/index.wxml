@@ -329,28 +329,29 @@
             </view>
 
             <view class="calc-keys">
-              <button class="calc-btn clear" bindtap="onCalcClear">C</button>
-              <button class="calc-btn" bindtap="onCalcInput" data-val="/">/</button>
-              <button class="calc-btn" bindtap="onCalcInput" data-val="*">×</button>
-              <button class="calc-btn" bindtap="onCalcBackspace">←</button>
+              <view class="calc-btn clear" bindtap="onCalcClear">C</view>
+              <view class="calc-btn" bindtap="onCalcInput" data-val="/">/</view>
+              <view class="calc-btn" bindtap="onCalcInput" data-val="*">×</view>
+              <view class="calc-btn" bindtap="onCalcBackspace">←</view>
 
-              <button class="calc-btn" bindtap="onCalcInput" data-val="7">7</button>
-              <button class="calc-btn" bindtap="onCalcInput" data-val="8">8</button>
-              <button class="calc-btn" bindtap="onCalcInput" data-val="9">9</button>
-              <button class="calc-btn" bindtap="onCalcInput" data-val="-">-</button>
+              <view class="calc-btn" bindtap="onCalcInput" data-val="7">7</view>
+              <view class="calc-btn" bindtap="onCalcInput" data-val="8">8</view>
+              <view class="calc-btn" bindtap="onCalcInput" data-val="9">9</view>
+              <view class="calc-btn" bindtap="onCalcInput" data-val="-">-</view>
 
-              <button class="calc-btn" bindtap="onCalcInput" data-val="4">4</button>
-              <button class="calc-btn" bindtap="onCalcInput" data-val="5">5</button>
-              <button class="calc-btn" bindtap="onCalcInput" data-val="6">6</button>
-              <button class="calc-btn" bindtap="onCalcInput" data-val="+">+</button>
+              <view class="calc-btn" bindtap="onCalcInput" data-val="4">4</view>
+              <view class="calc-btn" bindtap="onCalcInput" data-val="5">5</view>
+              <view class="calc-btn" bindtap="onCalcInput" data-val="6">6</view>
+              <view class="calc-btn" bindtap="onCalcInput" data-val="+">+</view>
 
-              <button class="calc-btn" bindtap="onCalcInput" data-val="1">1</button>
-              <button class="calc-btn" bindtap="onCalcInput" data-val="2">2</button>
-              <button class="calc-btn" bindtap="onCalcInput" data-val="3">3</button>
-              <button class="calc-btn equals" bindtap="onCalcEqual">=</button>
+              <view class="calc-btn" bindtap="onCalcInput" data-val="1">1</view>
+              <view class="calc-btn" bindtap="onCalcInput" data-val="2">2</view>
+              <view class="calc-btn" bindtap="onCalcInput" data-val="3">3</view>
+              <view class="calc-btn equals" bindtap="onCalcEqual">=</view>
 
-              <button class="calc-btn zero" bindtap="onCalcInput" data-val="0">0</button>
-              <button class="calc-btn" bindtap="onCalcInput" data-val=".">.</button>
+              <view class="calc-btn zero" bindtap="onCalcInput" data-val="0">0</view>
+              <view class="calc-btn" bindtap="onCalcInput" data-val=".">.</view>
+              <view class="calc-btn" bindtap="onCalcInput" data-val="00">00</view>
             </view>
           </view>
         </view>
@@ -465,33 +466,15 @@
     </view>
   </view>
 
-  <!-- 彩蛋发现弹窗 -->
-  <view class="win98-overlay" wx:if="{{showEggDiscoveryDialog}}" bindtap="hideEggDiscoveryDialog">
-    <view class="win98-window egg-discovery-dialog" catchtap="stopPropagation">
-      <view class="win98-title-bar">
-        <view class="win98-title-text">🎉 发现彩蛋！</view>
-        <view class="win98-title-controls">
-          <button class="win98-btn-close" bindtap="hideEggDiscoveryDialog">×</button>
-        </view>
-      </view>
-      <view class="win98-window-body">
-        <view class="egg-discovery-content">
-          <view class="egg-icon-wrapper">
-            <text class="egg-icon-emoji">🥚</text>
-          </view>
-          <view class="egg-discovery-info">
-            <text class="egg-name">{{eggDiscoveryData.name}}</text>
-            <text class="egg-description">"{{eggDiscoveryData.description}}"</text>
-            <view class="egg-rarity-badge rarity-{{eggDiscoveryData.rarity}}">
-              <text class="rarity-text">{{eggDiscoveryData.rarityName}}</text>
-            </view>
-            <text class="egg-reward">奖励: {{eggDiscoveryData.rewardText}}</text>
-          </view>
-        </view>
-        <view class="dialog-actions">
-          <button class="win98-btn-std" bindtap="hideEggDiscoveryDialog">太棒了！</button>
-        </view>
-      </view>
-    </view>
-  </view>
+  <!-- 彩蛋发现弹窗 - 使用通用组件 -->
+  <egg-discovery-dialog
+    show="{{showEggDiscoveryDialog}}"
+    eggName="{{eggDiscoveryData.name}}"
+    eggDescription="{{eggDiscoveryData.description}}"
+    eggRarity="{{eggDiscoveryData.rarity}}"
+    eggRarityName="{{eggDiscoveryData.rarityName}}"
+    eggRewardText="{{eggDiscoveryData.rewardText}}"
+    bind:close="hideEggDiscoveryDialog"
+  >
+  </egg-discovery-dialog>
 </view>

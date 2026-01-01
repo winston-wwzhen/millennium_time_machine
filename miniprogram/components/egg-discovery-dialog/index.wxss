@@ -2,6 +2,20 @@
 .egg-discovery-dialog {
   width: 500rpx;
   max-width: 90%;
+  /* 添加入场动画：从中心放大并带有弹性效果 */
+  animation: popIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* 入场动画：从中心放大 */
+@keyframes popIn {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .egg-discovery-content {
@@ -21,10 +35,39 @@
   justify-content: center;
   margin-bottom: 30rpx;
   box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.3);
+  /* 添加脉冲动画，让图标更显眼 */
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* 脉冲动画：吸引注意力 */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.3);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 6rpx 30rpx rgba(255, 217, 155, 0.5);
+  }
 }
 
 .egg-icon-emoji {
   font-size: 60rpx;
+  /* 添加轻微旋转动画 */
+  animation: wiggle 3s ease-in-out infinite;
+}
+
+/* 轻微摆动动画 */
+@keyframes wiggle {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-5deg);
+  }
+  75% {
+    transform: rotate(5deg);
+  }
 }
 
 .egg-discovery-info {
@@ -151,6 +194,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+  transition: all 0.1s;
+}
+
+.win98-btn-close:active {
+  border: 2rpx solid #404040;
+  border-right-color: #fff;
+  border-bottom-color: #fff;
 }
 
 .win98-window-body {
@@ -165,6 +216,9 @@
   padding: 15rpx 40rpx;
   font-size: 28rpx;
   color: #000;
+  cursor: pointer;
+  transition: all 0.1s;
+  user-select: none;
 }
 
 .win98-btn-std:active {

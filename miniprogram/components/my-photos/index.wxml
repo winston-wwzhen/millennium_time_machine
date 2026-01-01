@@ -1,6 +1,6 @@
 <!-- 我的图片组件 -->
 <view class="my-photos-overlay {{show ? 'show' : 'hide'}}" catchtap="onClose">
-  <view class="win98-window" catchtap="stopPropagation">
+  <view class="win98-window" catchtap="stopPropagation" catchlongpress="stopPropagation" catchtouchmove="stopPropagation">
     <view class="win98-title-bar">
       <view class="win98-title-text">我的图片</view>
       <view class="win98-title-controls">

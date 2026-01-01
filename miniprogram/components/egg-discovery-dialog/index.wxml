@@ -1,10 +1,11 @@
 <!-- 彩蛋发现弹窗 - Win98 风格 -->
-<view class="win98-overlay {{show ? 'show' : 'hide'}}" wx:if="{{show}}" bindtap="onClose">
-  <view class="win98-window egg-discovery-dialog" catchtap="stopPropagation">
+<!-- 移除 overlay 的 bindtap，只允许通过按钮关闭，确保用户不会误触关闭 -->
+<view class="win98-overlay {{show ? 'show' : 'hide'}}" wx:if="{{show}}">
+  <view class="win98-window egg-discovery-dialog" catchtap="stopPropagation" catchlongpress="stopPropagation" catchtouchmove="stopPropagation">
     <view class="win98-title-bar">
       <view class="win98-title-text">🎉 发现彩蛋！</view>
       <view class="win98-title-controls">
-        <button class="win98-btn-close" bindtap="onClose">×</button>
+        <view class="win98-btn-close" bindtap="onClose">×</view>
       </view>
     </view>
     <view class="win98-window-body">
@@ -22,7 +23,7 @@
         </view>
       </view>
       <view class="dialog-actions">
-        <button class="win98-btn-std" bindtap="onClose">太棒了！</button>
+        <view class="win98-btn-std" bindtap="onClose">太棒了！</view>
       </view>
     </view>
   </view>

@@ -30,6 +30,13 @@
               <text class="screen-subtitle">Video Player</text>
               <text class="screen-status">就绪</text>
             </view>
+
+            <!-- 居中播放按钮覆盖层 -->
+            <view wx:if="{{isVideoPlaying}}" class="play-button-overlay" catchtap="onPlayClick">
+              <view class="center-play-button">
+                <text class="center-play-icon">▶</text>
+              </view>
+            </view>
           </view>
 
           <!-- 播放控制 -->

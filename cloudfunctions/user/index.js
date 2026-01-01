@@ -155,7 +155,8 @@ exports.main = async (event, context) => {
           coins: 0,
           netFee: 43200,
           daysUsed: 1,
-          dailyDeducted: true
+          dailyDeducted: true,
+          showWelcomeDialog: true  // 新用户显示欢迎弹窗
         };
       }
     } catch (e) {
@@ -178,7 +179,8 @@ exports.main = async (event, context) => {
         eggStats: true,
         aiHelpLetterOpened: true,  // 添加 AI求救信打开状态
         ttplayerUpgraded: true,   // 十分动听升级状态
-        manboUpgraded: true       // 慢播升级状态
+        manboUpgraded: true,      // 慢播升级状态
+        lastDiskCleanupDate: true // 磁盘清理日期
       }).get();
 
       if (res.data.length === 0) {
@@ -195,7 +197,8 @@ exports.main = async (event, context) => {
         eggStats: res.data[0].eggStats || { totalDiscovered: 0, totalEarned: 0, daysUsed: 0 },
         aiHelpLetterOpened: res.data[0].aiHelpLetterOpened || false,  // 返回 AI求救信打开状态
         ttplayerUpgraded: res.data[0].ttplayerUpgraded || false,     // 返回 十分动听升级状态
-        manboUpgraded: res.data[0].manboUpgraded || false            // 返回 慢播升级状态
+        manboUpgraded: res.data[0].manboUpgraded || false,          // 返回 慢播升级状态
+        lastDiskCleanupDate: res.data[0].lastDiskCleanupDate || ''   // 返回磁盘清理日期
       };
     } catch (e) {
       console.error(e);
@@ -1176,7 +1179,9 @@ exports.main = async (event, context) => {
       }).field({
         coins: true,
         lastDiskCleanupDate: true,
-        diskUsagePercent: true
+        diskUsagePercent: true,
+        totalDiskCleanupCount: true, // 总清理次数
+        badges: true
       }).get();
 
       if (userRes.data.length === 0) {
@@ -1196,8 +1201,12 @@ exports.main = async (event, context) => {
       const cleanupReduction = Math.floor(Math.random() * 11) + 20; // 20-30
       const newDiskUsage = Math.max(60, currentDiskUsage - cleanupReduction);
 
-      // 检查是否需要减少磁盘容量
-      const needsDiskReduction = newDiskUsage < currentDiskUsage;
+      // 检查是否需要减少磁盘容量（需要至少能减少5%才有意义）
+      const needsDiskReduction = (currentDiskUsage - newDiskUsage) >= 5;
+
+      // 更新总清理次数
+      const currentCount = user.totalDiskCleanupCount || 0;
+      const newCount = currentCount + 1;
 
       // 准备返回数据
       const result = {
@@ -1206,8 +1215,12 @@ exports.main = async (event, context) => {
         diskUsage: {
           before: currentDiskUsage,
           after: newDiskUsage
-        }
+        },
+        totalCount: newCount // 返回总清理次数
       };
+
+      // 检查是否达到10次（磁盘清理大师彩蛋）
+      const cleanupMasterEggReached = newCount >= 10 && !user.badges?.some(b => b.eggId === 'disk_cleanup_master');
 
       // 如果今天还没清理过，给予奖励
       if (!alreadyCleanedToday) {
@@ -1217,17 +1230,44 @@ exports.main = async (event, context) => {
         const oldLogReward = Math.floor(Math.random() * 6) + 5; // 5-10
         const totalReward = tempFileReward + cacheFileReward + oldLogReward;
 
-        // 更新用户数据（奖励 + 磁盘容量 + 日期）
+        // 准备更新数据
+        const updateData = {
+          coins: _.inc(totalReward),
+          lastDiskCleanupDate: todayStr,
+          lastDiskUpdateDate: todayStr, // 同步更新，避免getSystemInfo重复增长
+          diskUsagePercent: newDiskUsage,
+          totalDiskCleanupCount: newCount,
+          'eggStats.totalEarned': _.inc(totalReward),
+          lastUpdateTime: db.serverDate()
+        };
+
+        // 如果达到10次彩蛋，添加徽章
+        if (cleanupMasterEggReached) {
+          updateData.badges = _.push({
+            name: '清洁达人',
+            eggId: 'disk_cleanup_master',
+            discoveredAt: db.serverDate()
+          });
+          updateData['eggStats.totalDiscovered'] = _.inc(1);
+
+          // 触发彩蛋事件
+          result.eggEvent = {
+            eggId: 'disk_cleanup_master',
+            name: '磁盘清理大师',
+            description: '你很爱清理系统！',
+            rarity: 'rare',
+            reward: {
+              coins: 1200,
+              badge: '清洁达人'
+            }
+          };
+        }
+
+        // 更新用户数据（奖励 + 磁盘容量 + 日期 + 徽章）
         await db.collection('users').where({
           _openid: openid
         }).update({
-          data: {
-            coins: _.inc(totalReward),
-            lastDiskCleanupDate: todayStr,
-            diskUsagePercent: newDiskUsage,
-            'eggStats.totalEarned': _.inc(totalReward),
-            lastUpdateTime: db.serverDate()
-          }
+          data: updateData
         });
 
         // 记录交易
@@ -1249,6 +1289,24 @@ exports.main = async (event, context) => {
           }
         });
 
+        // 如果触发彩蛋，额外记录彩蛋奖励交易
+        if (cleanupMasterEggReached) {
+          await db.collection('user_transactions').add({
+            data: {
+              _openid: openid,
+              type: 'egg_reward',
+              description: '磁盘清理大师彩蛋',
+              coinsEarned: 1200,
+              balanceAfter: (user.coins || 0) + totalReward + 1200,
+              metadata: {
+                eggId: 'disk_cleanup_master',
+                badge: '清洁达人'
+              },
+              createTime: db.serverDate()
+            }
+          });
+        }
+
         result.hasReward = true;
         result.reward = totalReward;
         result.details = {
@@ -1257,20 +1315,66 @@ exports.main = async (event, context) => {
           oldLogs: oldLogReward
         };
       } else {
-        // 今天已经清理过，只减少磁盘容量，不给奖励
+        // 今天已经清理过，只减少磁盘容量，不给每日奖励
         if (needsDiskReduction) {
+          // 准备更新数据（仍然需要更新清理次数和检查彩蛋）
+          const updateData = {
+            diskUsagePercent: newDiskUsage,
+            lastDiskUpdateDate: todayStr, // 同步更新，避免getSystemInfo重复增长
+            totalDiskCleanupCount: newCount,
+            lastUpdateTime: db.serverDate()
+          };
+
+          // 检查是否达到10次彩蛋（可能在第二次清理时触发）
+          if (cleanupMasterEggReached) {
+            updateData.badges = _.push({
+              name: '清洁达人',
+              eggId: 'disk_cleanup_master',
+              discoveredAt: db.serverDate()
+            });
+            updateData['eggStats.totalDiscovered'] = _.inc(1);
+            updateData.coins = _.inc(1200);
+
+            // 触发彩蛋事件
+            result.eggEvent = {
+              eggId: 'disk_cleanup_master',
+              name: '磁盘清理大师',
+              description: '你很爱清理系统！',
+              rarity: 'rare',
+              reward: {
+                coins: 1200,
+                badge: '清洁达人'
+              }
+            };
+          }
+
           await db.collection('users').where({
             _openid: openid
           }).update({
-            data: {
-              diskUsagePercent: newDiskUsage,
-              lastUpdateTime: db.serverDate()
-            }
+            data: updateData
           });
+
+          // 如果触发彩蛋，记录交易
+          if (cleanupMasterEggReached) {
+            await db.collection('user_transactions').add({
+              data: {
+                _openid: openid,
+                type: 'egg_reward',
+                description: '磁盘清理大师彩蛋',
+                coinsEarned: 1200,
+                balanceAfter: (user.coins || 0) + 1200,
+                metadata: {
+                  eggId: 'disk_cleanup_master',
+                  badge: '清洁达人'
+                },
+                createTime: db.serverDate()
+              }
+            });
+          }
         } else {
-          // 磁盘容量已经是60%，无需减少
+          // 磁盘容量太低，清理效果不明显（<5%）
           result.diskUsage.after = currentDiskUsage;
-          result.message = '磁盘容量已达到最低值(60%)，无法继续清理';
+          result.message = `当前磁盘使用率${currentDiskUsage}%，清理后只能减少到${newDiskUsage}%，效果不明显\n建议等磁盘使用率增长到65%以上再清理`;
         }
       }
 

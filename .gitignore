@@ -24,6 +24,7 @@ Icon
 project.private.config.json
 node_modules/
 miniprogram_npm/
+icon.backup/
 
 # Cloud function node_modules
 cloudfunctions/**/node_modules/

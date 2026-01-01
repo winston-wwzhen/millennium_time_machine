@@ -1,6 +1,7 @@
 // miniprogram/app.js
 const { userApi } = require('./utils/api-client');
 const { preloadCommonData } = require('./utils/cache-manager');
+const imageCacheManager = require('./utils/image-cache');
 
 App({
   onLaunch: function () {
@@ -43,7 +44,13 @@ App({
    */
   preloadData: async function() {
     try {
+      // 预加载常用数据
       await preloadCommonData();
+
+      // 预加载所有桌面图标（不阻塞，静默加载）
+      imageCacheManager.preloadAllDesktopIcons().catch(err => {
+        console.warn('图标预加载失败（不影响使用）:', err);
+      });
     } catch (err) {
       console.error('预加载数据失败:', err);
     }

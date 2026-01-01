@@ -77,6 +77,11 @@ Component({
 
     // 点击播放按钮
     onPlayClick: function () {
+      // 防止重复点击
+      if (this.data.isLoading) {
+        return;
+      }
+
       // 先显示loading状态
       this.setData({
         isLoading: true,
@@ -282,6 +287,21 @@ rmvb格式，350MB就能看一部电影，画质虽然模糊，但那份期待�
           year: "2006",
           icon: "🎥",
           image: baseUrl + "疯狂的石头.jpg"
+        },
+        // 学习资料
+        {
+          name: "日语入门_第1课.mp4",
+          category: "学习资料",
+          year: "2006",
+          icon: "📚",
+          image: baseUrl + "日语学习.jpg"
+        },
+        {
+          name: "英语口语_第1课.mp4",
+          category: "学习资料",
+          year: "2006",
+          icon: "📚",
+          image: baseUrl + "英语学习.jpg"
         },
       ];
 

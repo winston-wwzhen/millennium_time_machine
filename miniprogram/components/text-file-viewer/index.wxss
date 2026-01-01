@@ -115,18 +115,16 @@
   overflow: hidden;
 }
 
-/* 文本内容区域 */
+/* 文本内容区域 - scroll-view */
 .text-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+  height: 600rpx; /* 固定高度，确保 scroll-view 正常工作 */
   padding: 16px;
   margin: 4px;
   background: #fff;
   border: 2px inset #c0c0c0;
   font-size: 12px;
   font-family: 'SimSun', 'Courier New', monospace;
-  overflow-y: auto;
+  box-sizing: border-box;
 }
 
 .preview-title {

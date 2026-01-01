@@ -1,6 +1,6 @@
 <!-- 我的文档组件 -->
 <view class="my-documents-overlay {{show ? 'show' : 'hide'}}" style="{{overlayStyle}}" catchtap="onClose">
-  <view class="win98-window" catchtap="stopPropagation">
+  <view class="win98-window" catchtap="stopPropagation" catchlongpress="stopPropagation" catchtouchmove="stopPropagation">
     <view class="win98-title-bar">
       <view class="win98-title-text">我的文档</view>
       <view class="win98-title-controls">
@@ -11,11 +11,11 @@
     <view class="win98-window-body">
       <!-- 工具栏 -->
       <view class="toolbar">
-        <view class="toolbar-item">文件(F)</view>
-        <view class="toolbar-item">编辑(E)</view>
-        <view class="toolbar-item">查看(V)</view>
-        <view class="toolbar-item">收藏(A)</view>
-        <view class="toolbar-item" bindtap="onHelpTap">帮助(H)</view>
+        <view class="toolbar-item">文件</view>
+        <view class="toolbar-item">编辑</view>
+        <view class="toolbar-item">查看</view>
+        <view class="toolbar-item">收藏</view>
+        <view class="toolbar-item" bindtap="onHelpTap">帮助</view>
       </view>
 
       <view class="toolbar-divider"></view>

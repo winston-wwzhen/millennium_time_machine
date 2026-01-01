@@ -154,6 +154,7 @@
 }
 
 .play-screen {
+  position: relative;
   height: 320rpx;
   background: #000;
   border-radius: 8rpx;
@@ -195,6 +196,49 @@
 .screen-status {
   font-size: 18rpx;
   color: #808080;
+}
+
+/* 居中播放按钮覆盖层 */
+.play-button-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.play-button-overlay:active {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.center-play-button {
+  width: 120rpx;
+  height: 120rpx;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.5);
+  transition: transform 0.2s, background 0.2s;
+}
+
+.center-play-button:active {
+  transform: scale(0.95);
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.center-play-icon {
+  font-size: 50rpx;
+  color: #fff;
+  margin-left: 6rpx; /* 视觉修正，让播放图标更居中 */
+  text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.6);
 }
 
 /* 播放控制 */

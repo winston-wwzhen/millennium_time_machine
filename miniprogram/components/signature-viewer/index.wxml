@@ -1,6 +1,6 @@
 <!-- 非主流签名查看器组件 -->
 <view class="signature-overlay {{show ? 'show' : 'hide'}}" catchtap="onClose">
-  <view class="win98-window" catchtap="stopPropagation">
+  <view class="win98-window" catchtap="stopPropagation" catchlongpress="stopPropagation" catchtouchmove="stopPropagation">
     <view class="win98-title-bar">
       <view class="win98-title-text">{{fileName}} - 记事本</view>
       <view class="win98-title-controls">

@@ -2,5 +2,6 @@
   "navigationBarTitleText": "Millennium Explorer",
   "navigationStyle": "custom",
   "usingComponents": {
+    "egg-discovery-dialog": "../../components/egg-discovery-dialog/index"
   }
 }

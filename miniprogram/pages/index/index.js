@@ -2,9 +2,15 @@
 const { eggSystem, EGG_IDS } = require("../../utils/egg-system");
 const { userApi } = require("../../utils/api-client");
 const { pageErrorHandler } = require("../../utils/error-handler");
+const cloudIcons = require("../../config/cloud-icons");
 
 Page({
   data: {
+    // 云存储图标URL
+    cloudIconUrls: {
+      lion: cloudIcons.getCloudIconUrl('lion.png'),
+      qcio: cloudIcons.getCloudIconUrl('QCIO.png'),
+    },
     // 小狮子位移 (用于 transform，初始为 0)
     agentTranslateX: 0,
     agentTranslateY: 0,
@@ -36,61 +42,71 @@ Page({
       {
         id: "my-computer",
         name: "我的电脑",
-        icon: "💻",
+        icon: cloudIcons.getCloudIconUrl('my-computer.png'),
+        isImage: true,
         path: "/pages/my-computer/index",
       },
       {
         id: "my-documents",
         name: "我的文档",
-        icon: "📁",
+        icon: cloudIcons.getCloudIconUrl('my-documents.png'),
+        isImage: true,
         path: "/pages/my-documents/index",
       },
       {
         id: "qcio",
         name: "QCIO",
-        icon: "📟",
+        icon: cloudIcons.getCloudIconUrl('QCIO.png'),
+        isImage: true,
         path: "/pages/qcio/index",
       },
       {
         id: "ifthen",
         name: "如果当时",
-        icon: "⏳",
+        icon: cloudIcons.getCloudIconUrl('green_gem.png'),
+        isImage: true,
         path: "/pages/ifthen/start",
       },
       {
         id: "network-neighborhood",
         name: "网管系统",
-        icon: "⚙️",
+        icon: cloudIcons.getCloudIconUrl('locked_monitor.png'),
+        isImage: true,
         path: "/pages/network-neighborhood/index",
       },
       {
         id: "browser",
         name: "浏览器",
-        icon: "🌐",
+        icon: cloudIcons.getCloudIconUrl('browser.png'),
+        isImage: true,
         path: "/pages/browser/index",
       },
       {
         id: "ttplayer",
         name: "十分动听",
-        icon: "🎵",
+        icon: cloudIcons.getCloudIconUrl('ttplayer.png'),
+        isImage: true,
         path: "/pages/ttplayer/index",
       },
       {
         id: "avatar",
         name: "非主流相机",
-        icon: "📸",
+        icon: cloudIcons.getCloudIconUrl('avatar.png'),
+        isImage: true,
         path: "/pages/avatar/index",
       },
       {
         id: "recycle-bin",
         name: "回收站",
-        icon: "🗑️",
+        icon: cloudIcons.getCloudIconUrl('recycle-bin.png'),
+        isImage: true,
         path: "/pages/recycle-bin/index",
       },
       {
         id: "manbo",
         name: "慢播",
-        icon: "🎬",
+        icon: cloudIcons.getCloudIconUrl('ifthen.png'),
+        isImage: true,
         path: "/pages/manbo/index",
       },
     ],
@@ -577,6 +593,8 @@ Page({
     if (path && path.includes("my-computer")) {
       this.addLog('open', '我的电脑');
       this.setData({
+        showStartMenu: false,
+        showSubmenu: false,
         showMyComputer: true,
         baseZIndex: this.data.baseZIndex + 10,
         myComputerZIndex: this.data.baseZIndex + 10
@@ -588,6 +606,8 @@ Page({
     if (path && path.includes("my-documents")) {
       this.addLog('open', '我的文档');
       this.setData({
+        showStartMenu: false,
+        showSubmenu: false,
         showMyDocuments: true,
         baseZIndex: this.data.baseZIndex + 10,
         myDocumentsZIndex: this.data.baseZIndex + 10
@@ -599,6 +619,8 @@ Page({
     if (path && path.includes("network-neighborhood")) {
       this.addLog('open', '网管系统');
       this.setData({
+        showStartMenu: false,
+        showSubmenu: false,
         showNetworkSystem: true,
         showNetworkPlugin: true,
         baseZIndex: this.data.baseZIndex + 10,
@@ -611,6 +633,8 @@ Page({
     if (path && path.includes("recycle-bin")) {
       this.addLog('open', '回收站');
       this.setData({
+        showStartMenu: false,
+        showSubmenu: false,
         showRecycleBin: true,
         baseZIndex: this.data.baseZIndex + 10,
         recycleBinZIndex: this.data.baseZIndex + 10
@@ -710,16 +734,26 @@ Page({
         this.addLog('egg', config.name, '首次发现');
       }
 
-      // 显示发现提示
-      wx.showToast({
-        title: isNewDiscovery ? `🎉 ${config.name}` : config.description,
-        icon: "none",
-        duration: 2000,
-      });
+      // 使用彩蛋弹窗显示（与其他彩蛋保持一致）
+      if (isNewDiscovery) {
+        const rarityNames = { common: '普通', rare: '稀有', epic: '史诗', legendary: '传说' };
+        const rewardText = config.reward.coins ? `+${config.reward.coins}时光币` : '';
+
+        this.setData({
+          showEggDiscoveryDialog: true,
+          eggDiscoveryData: {
+            name: config.name,
+            description: config.description,
+            rarity: config.rarity,
+            rarityName: rarityNames[config.rarity],
+            rewardText
+          }
+        });
+      }
     }
   },
 
-  toggleStartMenu: function () {
+  toggleStartMenu: async function () {
     const newShowStartMenu = !this.data.showStartMenu;
     this.setData({
       showStartMenu: newShowStartMenu,
@@ -740,7 +774,7 @@ Page({
       if (newCount >= 20) {
         this.setData({ startMenuEggAchieved: true });
         const { eggSystem, EGG_IDS } = require('../../utils/egg-system');
-        eggSystem.discover(EGG_IDS.START_MENU_FAN);
+        await eggSystem.discover(EGG_IDS.START_MENU_FAN);
       }
     }
   },
@@ -1362,27 +1396,13 @@ Page({
     }
   },
 
-  // 触发上帝模式
+  // 触发上帝模式（传说中的秘籍彩蛋）
   triggerGodMode: async function () {
-    const result = await eggSystem.discover(EGG_IDS.KONAMI_CODE);
-    const isNewDiscovery = result?.isNew || false;
+    // 触发彩蛋发现（会自动显示 Win98 风格弹窗，与其他彩蛋保持一致）
+    await eggSystem.discover(EGG_IDS.KONAMI_CODE);
 
-    this.setData({
-      showGodMode: true,
-      agentMood: "happy",
-      agentMessage: isNewDiscovery
-        ? "🎉 传说中的秘籍！↑↑↓↓←→←→BA"
-        : "上帝模式已激活！",
-      showMessage: true,
-    });
-
-    // 3秒后隐藏消息
-    setTimeout(() => {
-      this.setData({
-        showMessage: false,
-        agentMood: "normal",
-      });
-    }, 3000);
+    // 激活上帝模式效果
+    this.setData({ showGodMode: true });
   },
 
   // 点击网络图标
@@ -1585,6 +1605,33 @@ Page({
     this.setData({ showManbo: false });
   },
 
+  // 显示视频回忆弹窗（从manbo组件触发）
+  onShowVideoMemory: function (e) {
+    const { videoType, videoName } = e.detail;
+
+    // 构造视频item对象
+    const videoItem = {
+      name: videoName,
+      icon: "🎬"
+    };
+
+    // 使用my-computer组件的showVideoMemoryDialog方法
+    // 需要先打开我的电脑组件，然后显示弹窗
+    this.setData({
+      showMyComputer: true,
+      myComputerZIndex: (this.data.manboZIndex || 2000) + 10,
+      showManbo: false // 关闭manbo
+    });
+
+    // 等待my-computer组件渲染后显示弹窗
+    setTimeout(() => {
+      const myComputer = this.selectComponent('#my-computer');
+      if (myComputer && myComputer.showVideoMemoryDialog) {
+        myComputer.showVideoMemoryDialog(videoItem, videoType);
+      }
+    }, 300);
+  },
+
   // 打开十分动听播放器
   onOpenTTPlayer: function () {
     // 让十分动听的z-index高于我的电脑
@@ -1644,6 +1691,7 @@ Page({
   openCmdConsole: function () {
     this.setData({
       showStartMenu: false,
+      showSubmenu: false,  // 关闭子菜单
       showCmdConsole: true,
       baseZIndex: this.data.baseZIndex + 10,
       cmdConsoleZIndex: this.data.baseZIndex + 10,
@@ -1660,6 +1708,22 @@ Page({
       title: "欢迎来到千禧年",
       path: "/pages/index/index",
     };
+  },
+
+  // 图标加载成功回调
+  onIconLoad: function(e) {
+    console.log('[Icon] 图标加载成功:', e.detail.src);
+  },
+
+  // 图标加载失败回调
+  onIconError: function(e) {
+    console.error('[Icon] 图标加载失败:', e.detail.src);
+    // 可以在这里添加降级处理，比如使用默认图标
+    wx.showToast({
+      title: '图标加载失败',
+      icon: 'none',
+      duration: 1000
+    });
   },
 
   // 分享到朋友圈

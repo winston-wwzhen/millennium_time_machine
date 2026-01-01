@@ -1,6 +1,6 @@
 <!-- 彩蛋文件夹组件 -->
 <view class="egg-folder-overlay {{show ? 'show' : 'hide'}}" catchtap="onClose">
-  <view class="win98-window" catchtap="stopPropagation">
+  <view class="win98-window" catchtap="stopPropagation" catchlongpress="stopPropagation" catchtouchmove="stopPropagation">
     <view class="win98-title-bar">
       <view class="win98-title-text">彩蛋</view>
       <view class="win98-title-controls">
@@ -44,12 +44,20 @@
           <view class="file-icon">📜</view>
           <text class="file-label">彩蛋秘籍-第二册.txt</text>
         </view>
+
+        <!-- 彩蛋秘籍第三册（打开C盘彩蛋助手后显示） -->
+        <view wx:if="{{hasOpenedEggHelper}}" class="file-item secret-file-3" bindtap="onSecretFile3Tap">
+          <view class="file-icon">📜</view>
+          <text class="file-label">彩蛋秘籍-第三册.txt</text>
+        </view>
       </view>
     </view>
 
     <!-- 状态栏 -->
     <view class="status-bar">
-      <text>{{showHiddenFiles ? (secretBook2Restored ? '3' : '2') : (secretBook2Restored ? '2' : '1')}} 个对象</text>
+      <text>
+        {{showHiddenFiles ? (secretBook2Restored ? (hasOpenedEggHelper ? '4' : '3') : (hasOpenedEggHelper ? '3' : '2')) : (secretBook2Restored ? (hasOpenedEggHelper ? '3' : '2') : (hasOpenedEggHelper ? '2' : '1'))}} 个对象
+      </text>
     </view>
   </view>
 
@@ -61,4 +69,7 @@
 
   <!-- 彩蛋秘籍第二册查看器 -->
   <text-file-viewer show="{{showSecretViewer2}}" fileName="彩蛋秘籍-第二册.txt" bindclose="onCloseSecretViewer2"></text-file-viewer>
+
+  <!-- 彩蛋秘籍第三册查看器 -->
+  <text-file-viewer show="{{showSecretViewer3}}" fileName="彩蛋秘籍-第三册.txt" bindclose="onCloseSecretViewer3"></text-file-viewer>
 </view>

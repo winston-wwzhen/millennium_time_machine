@@ -14,10 +14,12 @@ Component({
     showTextViewer: false,
     showSecretViewer: false,
     showSecretViewer2: false, // 第二册查看器
+    showSecretViewer3: false, // 第三册查看器
     showViewMenu: false,
     showHiddenFiles: false,
     secretBook2Restored: false, // 第二册是否已还原
-    secretBook1Revealed: false // 第一册是否已显示过
+    secretBook1Revealed: false, // 第一册是否已显示过
+    hasOpenedEggHelper: false // 是否已打开过C盘的彩蛋助手
   },
 
   observers: {
@@ -27,9 +29,12 @@ Component({
         const secretBook2Restored = wx.getStorageSync('eggSecretBook2Restored') || false;
         // 检查第一册是否已显示过
         const secretBook1Revealed = wx.getStorageSync('eggSecretBook1Revealed') || false;
+        // 检查是否已打开过C盘的彩蛋助手
+        const hasOpenedEggHelper = wx.getStorageSync('hasOpenedEggHelper') || false;
         this.setData({
           secretBook2Restored,
           secretBook1Revealed,
+          hasOpenedEggHelper,
           showHiddenFiles: secretBook1Revealed // 如果已显示过，自动显示
         });
       }
@@ -49,9 +54,12 @@ Component({
       const secretBook2Restored = wx.getStorageSync('eggSecretBook2Restored') || false;
       // 检查第一册是否已显示过
       const secretBook1Revealed = wx.getStorageSync('eggSecretBook1Revealed') || false;
+      // 检查是否已打开过C盘的彩蛋助手
+      const hasOpenedEggHelper = wx.getStorageSync('hasOpenedEggHelper') || false;
       this.setData({
         secretBook2Restored,
         secretBook1Revealed,
+        hasOpenedEggHelper,
         showHiddenFiles: secretBook1Revealed // 如果已显示过，自动显示
       });
     }
@@ -108,6 +116,15 @@ Component({
 
     onCloseSecretViewer2: function() {
       this.setData({ showSecretViewer2: false });
+    },
+
+    // 点击彩蛋秘籍第三册文件
+    onSecretFile3Tap: function() {
+      this.setData({ showSecretViewer3: true });
+    },
+
+    onCloseSecretViewer3: function() {
+      this.setData({ showSecretViewer3: false });
     },
 
     updateProgress: function() {

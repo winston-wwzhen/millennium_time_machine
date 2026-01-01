@@ -365,7 +365,7 @@ const EGG_CONFIG = {
     rarity: 'common',
     type: 'action',
     reward: {
-      coins: 0,
+      coins: 300,
       badge: '收藏家'
     }
   },
@@ -390,7 +390,7 @@ const EGG_CONFIG = {
     type: 'action',
     reward: {
       coins: 1000,
-      badge: '寻宝者'
+      badge: '程序员的知音'
     }
   },
   [EGG_IDS.HIDDEN_FILE_DEV_EGG]: {
@@ -402,7 +402,7 @@ const EGG_CONFIG = {
     type: 'action',
     reward: {
       coins: 800,
-      badge: '探索者'
+      badge: '彩蛋猎手'
     }
   },
   [EGG_IDS.HIDDEN_FILE_FORGOTTEN]: {
@@ -414,7 +414,7 @@ const EGG_CONFIG = {
     type: 'action',
     reward: {
       coins: 400,
-      badge: '记忆力好'
+      badge: '记忆收藏家'
     }
   },
   [EGG_IDS.HIDDEN_FILE_YOUTH]: {
@@ -426,7 +426,7 @@ const EGG_CONFIG = {
     type: 'action',
     reward: {
       coins: 600,
-      badge: '怀旧者'
+      badge: '时光旅人'
     }
   },
   [EGG_IDS.HIDDEN_FILE_SUMMER]: {
@@ -438,7 +438,7 @@ const EGG_CONFIG = {
     type: 'action',
     reward: {
       coins: 700,
-      badge: '回忆者'
+      badge: '夏日追忆'
     }
   },
   [EGG_IDS.DISK_CLEANUP_MASTER]: {
