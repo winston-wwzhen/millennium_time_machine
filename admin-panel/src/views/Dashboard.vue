@@ -147,12 +147,17 @@
                 </el-tag>
               </template>
             </el-table-column>
+            <el-table-column prop="system" label="系统" width="150">
+              <template #default="{ row }">
+                {{ getSystemInfo(row) }}
+              </template>
+            </el-table-column>
             <el-table-column prop="data" label="活动详情" min-width="300" show-overflow-tooltip>
               <template #default="{ row }">
                 {{ getActivityDetail(row) }}
               </template>
             </el-table-column>
-            <el-table-column prop="_openid" label="用户ID" width="150">
+            <el-table-column prop="_openid" label="用户ID" width="250">
               <template #default="{ row }">
                 {{ maskOpenid(row._openid) }}
               </template>
@@ -380,42 +385,91 @@ function getActionTagType(action) {
   return types[action] || 'info'
 }
 
-// 获取活动详情
-function getActivityDetail(row) {
-  // 发现彩蛋
+// 获取系统信息
+function getSystemInfo(row) {
+  // 发现彩蛋 - 显示彩蛋名称
   if (row.action === 'egg_discovered') {
-    return `发现彩蛋：${row.data?.egg?.name || '-'} (${row.data?.egg?.rarity || '-'})`
+    return row.data?.egg?.name || '-'
+  }
+  // 访问空间 - 显示空间名称
+  if (row.action === 'visit_space') {
+    return row.data?.targetName || row.target || '未知空间'
+  }
+  // 聊天消息 - 显示聊天系统
+  if (row.action === 'chat') {
+    return '聊天系统'
+  }
+  // 分享 - 显示分享系统
+  if (row.action === 'share') {
+    return '分享系统'
+  }
+  // 兑换 - 显示网管系统
+  if (row.action === 'exchange') {
+    return '网管系统'
+  }
+  // 扣除 - 显示网费系统
+  if (row.action === 'deduct') {
+    return '网费系统'
+  }
+  // 打开/关闭/点击操作 - 显示目标
+  if (['open', 'close', 'click'].includes(row.action)) {
+    return row.target || row.data?.target || '-'
   }
   // 每日登录
   if (row.action === 'daily_login') {
-    return `每日登录奖励`
+    return '登录系统'
   }
-  // 访问空间
+  // 登录/退出
+  if (row.action === 'login' || row.action === 'logout') {
+    return '账户系统'
+  }
+  // 兜底
+  return '-'
+}
+
+// 获取活动详情
+function getActivityDetail(row) {
+  // 发现彩蛋 - 显示稀有度和奖励
+  if (row.action === 'egg_discovered') {
+    const rarity = row.data?.egg?.rarity || '-'
+    const reward = row.data?.reward?.coins ? `+${row.data.reward.coins}时光币` : ''
+    return `稀有度: ${rarity}${reward ? ' | ' + reward : ''}`
+  }
+  // 每日登录 - 显示奖励
+  if (row.action === 'daily_login') {
+    const reward = row.data?.reward || '每日登录'
+    return `${reward}`
+  }
+  // 访问空间 - 显示访客信息
   if (row.action === 'visit_space') {
-    const targetName = row.data?.targetName || row.target || '未知空间'
-    return `访问了 ${targetName} 的空间`
+    return `访问空间`
   }
-  // 聊天消息
+  // 聊天消息 - 显示消息内容
   if (row.action === 'chat') {
-    return `发送消息：${row.data?.message || row.details || '-'}`
+    return row.data?.message || row.details || '-'
   }
-  // 分享
+  // 分享 - 显示分享内容
   if (row.action === 'share') {
-    return `分享了内容`
+    return row.data?.content || row.data?.description || row.details || '分享内容'
   }
-  // 兑换
+  // 兑换 - 显示兑换详情
   if (row.action === 'exchange') {
-    return `兑换：${row.data?.description || row.details || '-'}`
+    return row.data?.description || row.details || '-'
   }
-  // 扣除
+  // 扣除 - 显示扣除详情
   if (row.action === 'deduct') {
-    return `扣除：${row.data?.description || row.details || '-'}`
+    return row.data?.description || row.details || '-'
   }
-  // 打开/关闭/点击操作
+  // 打开/关闭/点击操作 - 显示详细信息
   if (['open', 'close', 'click'].includes(row.action)) {
-    const target = row.target || row.data?.target || '-'
-    const detail = row.details || row.data?.detail || ''
-    return `${target} ${detail ? '- ' + detail : ''}`
+    return row.details || row.data?.detail || row.data?.description || '-'
+  }
+  // 登录/退出
+  if (row.action === 'login') {
+    return '用户登录'
+  }
+  if (row.action === 'logout') {
+    return '用户退出'
   }
   // 有描述直接显示
   if (row.data?.description) {
