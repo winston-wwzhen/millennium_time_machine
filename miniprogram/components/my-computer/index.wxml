@@ -726,7 +726,7 @@
         <!-- 文件列表 -->
         <scroll-view class="file-explorer-content" scroll-y catchlongpress="stopPropagation">
           <view class="file-list {{feIsRefreshing ? 'refreshing' : ''}}" catchlongpress="stopPropagation">
-            <view class="file-item {{item.disabled ? 'disabled' : ''}}" wx:for="{{fileExplorerItems}}" wx:key="name" bindtap="onFileItemTap" catchlongpress="onSystemIniLongPressStart" bindtouchend="onSystemIniLongPressEnd" data-item="{{item}}">
+            <view class="file-item {{item.disabled ? 'disabled' : ''}}" wx:for="{{fileExplorerItems}}" wx:key="name" bindtap="onFileItemTap" catchlongpress="onFileItemLongPressStart" bindtouchend="onFileItemLongPressEnd" data-item="{{item}}">
               <text class="file-icon">{{item.icon}}</text>
               <text class="file-name">{{item.name}}</text>
               <text class="file-rarity" wx:if="{{item.rarity}}">{{item.rarity === 'common' ? '⭐' : item.rarity === 'rare' ? '💎' : item.rarity === 'epic' ? '🌟' : '👑'}}</text>

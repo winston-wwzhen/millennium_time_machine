@@ -1,6 +1,6 @@
 <!-- 日记查看器组件 -->
 <view class="diary-overlay {{show ? 'show' : 'hide'}}" catchtap="onClose">
-  <view class="win98-window" catchtap="stopPropagation" catchlongpress="stopPropagation" catchtouchmove="stopPropagation">
+  <view class="win98-window" catchtap="stopPropagation" catchlongpress="stopPropagation">
     <view class="win98-title-bar">
       <view class="win98-title-text">{{fileName}} - 记事本</view>
       <view class="win98-title-controls">
@@ -8,46 +8,286 @@
       </view>
     </view>
 
-    <!-- 菜单栏 (暂未实现功能，先隐藏) -->
-    <!-- <view class="menu-bar">
-      <text class="menu-item">文件(F)</text>
-      <text class="menu-item">编辑(E)</text>
-      <text class="menu-item">搜索(S)</text>
-      <text class="menu-item">帮助(H)</text>
-    </view> -->
-
     <view class="win98-window-body">
-      <!-- 日志内容区域 -->
+      <!-- 日记内容区域 -->
       <view class="diary-content">
         <text class="diary-title">═══════════════════════════════════════</text>
-        <text class="diary-title">          千禧时光机 - 我的日记</text>
+        <text class="diary-title">          2025年 · 我的青春日记</text>
         <text class="diary-title">═══════════════════════════════════════</text>
 
-        <view wx:if="{{logs.length > 0}}" class="log-list">
-          <view class="log-entry" wx:for="{{logs}}" wx:key="index">
-            <text class="log-date">{{item.dateStr}}</text>
-            <text class="log-time">{{item.timeStr}}</text>
-            <text class="log-action">{{item.actionText}} {{item.target}}</text>
-            <text class="log-details" wx:if="{{item.details}}">{{item.details}}</text>
-          </view>
-        </view>
+        <text class="diary-date">【2025年12月1日 晴】</text>
+        <text class="diary-text">今天开学了，高二下学期。老师说这是关键的一学期，</text>
+        <text class="diary-text">决定我们明年的高考。可是我好像一点都不紧张，</text>
+        <text class="diary-text">满脑子都是上周在网吧看到的那个人。</text>
+        <text class="diary-text">她坐在3号机，扎着马尾，穿着白色的校服，</text>
+        <text class="diary-text">键盘敲得飞快，屏幕上满是火星文。</text>
 
-        <view wx:else class="log-empty">
-          <text class="log-empty-text">暂无操作记录</text>
-          <text class="log-empty-hint">你的每一次操作都会被记录在这里...</text>
-        </view>
+        <text class="diary-line"></text>
 
+        <text class="diary-date">【2025年12月2日 多云】</text>
+        <text class="diary-text">又去网吧了。她没来。</text>
+        <text class="diary-text">网管小哥今天换了发型，染成了金黄色，</text>
+        <text class="diary-text">很非主流。他说这叫"葬爱家族"的发型。</text>
+        <text class="diary-text">我上网查了"葬爱家族"，原来是QQ空间的一个圈子，</text>
+        <text class="diary-text">好多人都在用火星文和非主流签名。</text>
+
+        <text class="diary-line"></text>
+
+        <text class="diary-date">【2025年12月3日 阴】</text>
+        <text class="diary-text">今天她来了！</text>
+        <text class="diary-text">我故意坐在她旁边的机子，假装在玩游戏。</text>
+        <text class="diary-text">偷偷看她的QQ空间，网名是"轻舞飞扬"，</text>
+        <text class="diary-text">空间背景音乐是《飞儿乐团》的《我们的爱》。</text>
+        <text class="diary-text">她的空间好漂亮，全是粉红色的蝴蝶和爱心。</text>
+
+        <text class="diary-line"></text>
+
+        <text class="diary-date">【2025年12月4日 晴】</text>
+        <text class="diary-text">鼓起勇气加了她QQ，还没通过。</text>
+        <text class="diary-text">心里七上八下的，一直在看电脑右下角的时间。</text>
+        <text class="diary-text">网管小哥问我怎么了，我说没事，</text>
+        <text class="diary-text">他笑了笑说："年轻人，慢慢来。"</text>
+        <text class="diary-text">他的话让我觉得莫名地温暖。</text>
+
+        <text class="diary-line"></text>
+
+        <text class="diary-date">【2025年12月5日 晴】</text>
+        <text class="diary-text">她通过我好友了！</text>
+        <text class="diary-text">我激动得手都在抖，不知道该发什么消息。</text>
+        <text class="diary-text">最后发了个"你好"，觉得自己好傻。</text>
+        <text class="diary-text">她回复："你好，你是？"</text>
+        <text class="diary-text">我说我是昨天坐在你旁边的人，她发了个"哦"。</text>
+
+        <text class="diary-line"></text>
+
+        <text class="diary-date">【2025年12月6日 多云】</text>
+        <text class="diary-text">今天在网吧又碰到她了。</text>
+        <text class="diary-text">她主动跟我打招呼，说我的QQ签名好非主流。</text>
+        <text class="diary-text">我说是从网上抄的，她笑了，说她也喜欢。</text>
+        <text class="diary-text">我们聊了很多，关于火星文，关于非主流头像，</text>
+        <text class="diary-text">关于《死神》和《火影》的动画片。</text>
+
+        <text class="diary-line"></text>
+
+        <text class="diary-date">【2025年12月7日 小雨】</text>
+        <text class="diary-text">她告诉我她叫小雨，真的是这个名字！</text>
+        <text class="diary-text">我说这个名字好有意境，她说她妈妈生她的时候在下雨。</text>
+        <text class="diary-text">我告诉了她我的名字，她笑着说："我知道，"</text>
+        <text class="diary-text">"你QQ空间里写了。"</text>
+        <text class="diary-text">原来她看过我的空间，我脸都红了。</text>
+
+        <text class="diary-line"></text>
+
+        <text class="diary-date">【2025年12月8日 晴】</text>
+        <text class="diary-text">三八节，学校放了半天假。</text>
+        <text class="diary-text">我约小雨去网吧，她答应了！</text>
+        <text class="diary-text">我们一起玩QQ农场，偷菜偷得不亦乐乎。</text>
+        <text class="diary-text">她教我怎么用火星文转换器，</text>
+        <text class="diary-text">我的QQ签名变成了"℡﹏ 莪嫒小雨﹏℡"。</text>
+
+        <text class="diary-line"></text>
+
+        <text class="diary-date">【2025年12月9日 多云】</text>
+        <text class="diary-text">小雨给我发了一张她的照片，</text>
+        <text class="diary-text">做了非主流处理，眼睛大大的，睫毛长长的。</text>
+        <text class="diary-text">我说她好看，她说："这是PS过的，"</text>
+        <text class="diary-text">"本人没这么好看。"</text>
+        <text class="diary-text">我说不管怎样都好看，她发了个害羞的表情。</text>
+
+        <text class="diary-line"></text>
+
+        <text class="diary-date">【2025年12月10日 晴】</text>
+        <text class="diary-text">今天在学校碰到小雨了！</text>
+        <text class="diary-text">原来她是隔壁班的，之前居然没注意过。</text>
+        <text class="diary-text">她扎着马尾，穿着校服，看起来很乖巧的样子，</text>
+        <text class="diary-text">跟网上那个非主流女孩完全不一样。</text>
+        <text class="diary-text">我偷偷看了她好久，直到同学提醒我才回过神来。</text>
+
+        <text class="diary-line"></text>
+
+        <text class="diary-date">【2025年12月11日 阴】</text>
+        <text class="diary-text">周末，我和小雨约好了去网吧。</text>
+        <text class="diary-text">她教我做QQ空间，教我装扮模块和背景音乐。</text>
+        <text class="diary-text">我的空间慢慢变得漂亮起来，</text>
+        <text class="diary-text">她夸我有天赋，我心里美滋滋的。</text>
+        <text class="diary-text">网管小哥路过，笑着说："你们俩挺配的。"</text>
+
+        <text class="diary-line"></text>
+
+        <text class="diary-date">【2025年12月12日 晴】</text>
+        <text class="diary-text">小雨说她喜欢周杰伦，</text>
+        <text class="diary-text">我也喜欢，我们有了共同话题。</text>
+        <text class="diary-text">她给我发了《夜曲》的歌词，</text>
+        <text class="diary-text">说这首歌让她想起了一些事情。</text>
+        <text class="diary-text">我问她是什么事，她没有回答，只发了个省略号。</text>
+
+        <text class="diary-line"></text>
+
+        <text class="diary-date">【2025年12月13日 多云】</text>
+        <text class="diary-text">今天小雨没来网吧，</text>
+        <text class="diary-text">网管小哥说她最近都没来，可能是学习太忙了。</text>
+        <text class="diary-text">我一个人上网，看着她的QQ头像灰着，</text>
+        <text class="diary-text">心里空落落的。给她发了消息，没有回复。</text>
+
+        <text class="diary-line"></text>
+
+        <text class="diary-date">【2025年12月14日 阴】</text>
+        <text class="diary-text">小雨终于回复我了，说她感冒了，</text>
+        <text class="diary-text">让我好好上学，不要老想着上网。</text>
+        <text class="diary-text">我说我知道了，让她好好休息。</text>
+        <text class="diary-text">其实我每天都在想她，但我不能说。</text>
+
+        <text class="diary-line"></text>
+
+        <text class="diary-date">【2025年12月15日 晴】</text>
+        <text class="diary-text">一周了，认识小雨整整一周。</text>
+        <text class="diary-text">我决定写一首诗给她，</text>
+        <text class="diary-text">用火星文写，这样比较特别。</text>
+        <text class="diary-text">"℡﹏ 莪の吢，媞屬於沵の﹏℡"</text>
+        <text class="diary-text">希望她能看懂。</text>
+
+        <text class="diary-line"></text>
+
+        <text class="diary-date">【2025年12月16日 多云】</text>
+        <text class="diary-text">小雨说她看懂了我的诗，</text>
+        <text class="diary-text">但是她说我们现在还是学生，要以学习为重。</text>
+        <text class="diary-text">我说我知道，我只是想告诉她我的心情。</text>
+        <text class="diary-text">她发了个抱抱的表情，我高兴了一整天。</text>
+
+        <text class="diary-line"></text>
+
+        <text class="diary-date">【2025年12月17日 小雨】</text>
+        <text class="diary-text">今天真的下雨了，就像小雨的名字一样。</text>
+        <text class="diary-text">我在教室望着窗外，想着她是不是也在看雨。</text>
+        <text class="diary-text">放学的时候看到她撑着一把粉色的小伞，</text>
+        <text class="diary-text">我躲在后面看着她的背影，直到她消失在雨里。</text>
+
+        <text class="diary-line"></text>
+
+        <text class="diary-date">【2025年12月18日 晴】</text>
+        <text class="diary-text">周末，小雨来网吧了！</text>
+        <text class="diary-text">她感冒好了，看起来精神不错。</text>
+        <text class="diary-text">我们玩了一下午的跑跑卡丁车，</text>
+        <text class="diary-text">她技术好差，总是撞墙，我笑得肚子疼。</text>
+        <text class="diary-text">她假装生气地说："不许笑！"</text>
+
+        <text class="diary-line"></text>
+
+        <text class="diary-date">【2025年12月19日 多云】</text>
+        <text class="diary-text">小雨给我发了一首歌，林俊杰的《曹操》。</text>
+        <text class="diary-text">她说这首歌的歌词写得很好，</text>
+        <text class="diary-text">"独自走下长坂坡，月光太温柔，"</text>
+        <text class="diary-text">"曹操不啰嗦，一心要拿荆州。"</text>
+        <text class="diary-text">我听了，确实很好听，循环了一整天。</text>
+
+        <text class="diary-line"></text>
+
+        <text class="diary-date">【2025年12月20日 晴】</text>
+        <text class="diary-text">今天月考成绩出来了，我进步了10名。</text>
+        <text class="diary-text">老师在班上表扬了我，说我最近学习态度端正。</text>
+        <text class="diary-text">其实只有我知道，是因为小雨。</text>
+        <text class="diary-text">她说要以学习为重，我就开始认真上课了。</text>
+
+        <text class="diary-line"></text>
+
+        <text class="diary-date">【2025年12月21日 阴】</text>
+        <text class="diary-text">小雨说她爸妈发现了她偷偷上网，</text>
+        <text class="diary-text">把她的QQ号没收了，一个月不能上网。</text>
+        <text class="diary-text">我心里很难过，但又不知道能做什么。</text>
+        <text class="diary-text">她说可以在学校见面，我点点头。</text>
+
+        <text class="diary-line"></text>
+
+        <text class="diary-date">【2025年12月22日 多云】</text>
+        <text class="diary-text">在学校看到小雨了，她看起来很憔悴，</text>
+        <text class="diary-text">可能是学习压力太大了。</text>
+        <text class="diary-text">我走过去跟她打招呼，她只是淡淡地点了点头。</text>
+        <text class="diary-text">我知道她现在心情不好，没有多说什么。</text>
+
+        <text class="diary-line"></text>
+
+        <text class="diary-date">【2025年12月23日 晴】</text>
+        <text class="diary-text">今天给小雨写了一封信，</text>
+        <text class="diary-text">夹在她班的语文书里。</text>
+        <text class="diary-text">信里写了这半个月来的点点滴滴，</text>
+        <text class="diary-text">写了我对她的感觉，写了我想和她一起努力考上大学。</text>
+        <text class="diary-text">不知道她会不会看到。</text>
+
+        <text class="diary-line"></text>
+
+        <text class="diary-date">【2025年12月24日 阴】</text>
+        <text class="diary-text">小雨看到我的信了！</text>
+        <text class="diary-text">放学的时候她特意等我，</text>
+        <text class="diary-text">说她也喜欢和我在一起的感觉，</text>
+        <text class="diary-text">但是现在真的要以学习为重。</text>
+        <text class="diary-text">我说我知道，我们可以一起努力。</text>
+
+        <text class="diary-line"></text>
+
+        <text class="diary-date">【2025年12月25日 晴】</text>
+        <text class="diary-text">我和小雨约定了，</text>
+        <text class="diary-text">考上同一所大学，然后光明正大地在一起。</text>
+        <text class="diary-text">她想去北京，说北京的大学好。</text>
+        <text class="diary-text">我说好，我就考北京的大学，</text>
+        <text class="diary-text">她在阳光下笑得像朵花一样好看。</text>
+
+        <text class="diary-line"></text>
+
+        <text class="diary-date">【2025年12月26日 多云】</text>
+        <text class="diary-text">开始认真学习了，</text>
+        <text class="diary-text">每天晚自习都坚持到最后一个走。</text>
+        <text class="diary-text">小雨也在努力，我们偶尔会对视一眼，</text>
+        <text class="diary-text">然后各自继续埋头做题。</text>
+        <text class="diary-text">这种感觉真好，为了同一个目标努力。</text>
+
+        <text class="diary-line"></text>
+
+        <text class="diary-date">【2025年12月27日 阴】</text>
+        <text class="diary-text">网管小哥问我怎么好久不去网吧了，</text>
+        <text class="diary-text">我说我要好好学习，考北京的大学。</text>
+        <text class="diary-text">他笑着说："长大了啊，"</text>
+        <text class="diary-text">"记得以后考上了，请我喝可乐。"</text>
+        <text class="diary-text">我说一定。</text>
+
+        <text class="diary-line"></text>
+
+        <text class="diary-date">【2025年12月28日 小雨】</text>
+        <text class="diary-text">又下雨了，小雨在QQ上发了个emo的表情，</text>
+        <text class="diary-text">说她爸妈还是不同意她上网。</text>
+        <text class="diary-text">我说没关系，我们可以写信，</text>
+        <text class="diary-text">就像古人那样，更浪漫。</text>
+        <text class="diary-text">她笑了，说这个主意不错。</text>
+
+        <text class="diary-line"></text>
+
+        <text class="diary-date">【2025年12月29日 晴】</text>
+        <text class="diary-text">给小雨写了第二封信，</text>
+        <text class="diary-text">这次写在一本漂亮的信纸上，</text>
+        <text class="diary-text">上面印着小熊维尼的图案，她最喜欢维尼。</text>
+        <text class="diary-text">信里我写了一首不完整的诗，</text>
+        <text class="diary-text">让她帮我补全，当作我们的秘密。</text>
+
+        <text class="diary-line"></text>
+
+        <text class="diary-date">【2025年12月30日 多云】</text>
+        <text class="diary-text">小雨回信了，她补全了我的诗，</text>
+        <text class="diary-text">写得比我还要好。</text>
+        <text class="diary-text">她说："℡﹏ 莪扪の萿憅，呔濄哆繲﹏℡"</text>
+        <text class="diary-text">我们的青春，太过多彩。</text>
+        <text class="diary-text">是啊，这就是我们的青春，</text>
+        <text class="diary-text">有欢笑，有泪水，有非主流，有梦想。</text>
+
+        <text class="diary-line"></text>
         <text class="diary-footer"></text>
-        <text class="diary-title">───────────────────────────────────────</text>
-        <text class="log-total">   共 {{logs.length}} 条记录</text>
-        <text class="diary-title">───────────────────────────────────────</text>
-        <text class="diary-footer"></text>
+        <text class="diary-hint">✎ 日记到这里就结束了，但青春还在继续...</text>
+        <text class="diary-hint">✎ 那个年代的网恋，纯真而美好</text>
+        <text class="diary-line"></text>
       </view>
     </view>
 
     <!-- 状态栏 -->
     <view class="status-bar">
-      <text>Ln {{logs.length}}, Col 1</text>
+      <text>Ln 30, Col 1</text>
     </view>
   </view>
 </view>

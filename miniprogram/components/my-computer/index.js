@@ -1162,6 +1162,16 @@ Component({
             isSystemIni: true // c_system_longpress彩蛋标记
           },
           { type: "file", name: "win.ini", icon: "📄", content: fileContents['C:\\Windows\\win.ini'], useWin98Dialog: true },
+          // hidden_file_system_diary彩蛋：系统日记.txt（隐藏文件，史诗级）
+          {
+            type: "file",
+            name: "系统日记.txt",
+            icon: "📄",
+            hidden: true,
+            eggId: "hidden_file_system_diary", // 彩蛋ID
+            content: fileContents['C:\\Windows\\系统日记.txt'],
+            useWin98Dialog: true
+          },
           // c_empty_folder彩蛋：空名文件夹（隐藏）
           { type: "folder", name: " ", icon: "📁", hidden: true, isEmptyFolder: true },
         ];
@@ -2645,12 +2655,6 @@ Component({
           // 延迟触发彩蛋
           setTimeout(() => {
             this.triggerCDriveEgg(EGG_IDS.USB_NESTING_10);
-            wx.showModal({
-              title: "终极套娃",
-              content: "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n恭喜你进入了第10层！\n\n你真的很有耐心！\n\n奖励：1000时光币\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
-              showCancel: false,
-              confirmText: "谢谢"
-            });
           }, 500);
         }
 
@@ -2840,9 +2844,10 @@ Component({
 
       // c_fonts_spam彩蛋：Fonts文件夹连点
       if (item.isFonts && item.disabled) {
-        this.setData({ fontsClickCount: this.data.fontsClickCount + 1 });
+        const newCount = this.data.fontsClickCount + 1;
+        this.setData({ fontsClickCount: newCount });
         // 检查是否达到10次
-        if (this.data.fontsClickCount >= 10) {
+        if (newCount >= 10) {
           this.triggerCDriveEgg(EGG_IDS.C_FONTS_SPAM);
           this.setData({ fontsClickCount: 0 }); // 重置计数
         }
@@ -2866,30 +2871,20 @@ Component({
       // d_secret_file彩蛋：D盘根目录的.secret隐藏文件
       if (item.isSecretFile) {
         this.triggerCDriveEgg(EGG_IDS.D_SECRET_FILE);
-        wx.showModal({
-          title: ".secret",
-          content: "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n恭喜你发现了秘密文件！\n\n这里藏着什么秘密呢？\n\n其实是...\n\n老板明天又要提新需求了！\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
-          showCancel: false,
-          confirmText: "确定"
-        });
         return;
       }
 
       // d_readme_click5彩蛋：D盘根目录readme.txt连点5次
       if (item.name === "readme.txt" && this.data.fileExplorerPath === "D:\\") {
-        this.setData({ readmeClickCount: this.data.readmeClickCount + 1 });
+        const newCount = this.data.readmeClickCount + 1;
+        this.setData({ readmeClickCount: newCount });
         // 正常显示文件内容
         if (item.content) {
           this.showFileContent(item);
         }
         // 检查是否达到5次
-        if (this.data.readmeClickCount >= 5) {
+        if (newCount >= 5) {
           this.triggerCDriveEgg(EGG_IDS.D_README_CLICK5);
-          wx.showToast({
-            title: "阅读达人成就达成！+200时光币",
-            icon: "success",
-            duration: 2000
-          });
           this.setData({ readmeClickCount: 0 }); // 重置计数
         }
         return;
@@ -2897,15 +2892,11 @@ Component({
 
       // d_games_click10彩蛋：Games文件夹连点10次
       if (item.name === "Games" && item.type === "folder" && this.data.fileExplorerPath === "D:\\") {
-        this.setData({ gamesClickCount: this.data.gamesClickCount + 1 });
+        const newCount = this.data.gamesClickCount + 1;
+        this.setData({ gamesClickCount: newCount });
         // 检查是否达到10次
-        if (this.data.gamesClickCount >= 10) {
+        if (newCount >= 10) {
           this.triggerCDriveEgg(EGG_IDS.D_GAMES_CLICK10);
-          wx.showToast({
-            title: "游戏狂热成就达成！+500时光币",
-            icon: "success",
-            duration: 2000
-          });
           this.setData({ gamesClickCount: 0 }); // 重置计数
         }
         // 继续进入文件夹
@@ -2920,9 +2911,12 @@ Component({
       // d_music_repeat彩蛋：Music歌曲连点5次
       if (this.data.fileExplorerPath.startsWith("D:\\Music") && item.name.endsWith(".mp3")) {
         // 音乐文件连点计数
+        let newCount;
         if (this.data.lastClickedSong === item.name) {
-          this.setData({ musicSongClickCount: this.data.musicSongClickCount + 1 });
+          newCount = this.data.musicSongClickCount + 1;
+          this.setData({ musicSongClickCount: newCount });
         } else {
+          newCount = 1;
           this.setData({ musicSongClickCount: 1, lastClickedSong: item.name });
         }
 
@@ -2939,13 +2933,8 @@ Component({
         }
 
         // 检查是否达到5次
-        if (this.data.musicSongClickCount >= 5) {
+        if (newCount >= 5) {
           this.triggerCDriveEgg(EGG_IDS.D_MUSIC_REPEAT);
-          wx.showToast({
-            title: "单曲循环成就达成！+300时光币",
-            icon: "success",
-            duration: 2000
-          });
           this.setData({ musicSongClickCount: 0, lastClickedSong: "" }); // 重置计数
         }
         return;
@@ -2962,19 +2951,15 @@ Component({
 
       // usb_file_click7彩蛋：USB普通文件连点7次
       if (this.data.fileExplorerPath.startsWith("USB:\\") && item.type === "file" && !item.name.endsWith(".exe")) {
-        this.setData({ usbFileClickCount: this.data.usbFileClickCount + 1 });
+        const newCount = this.data.usbFileClickCount + 1;
+        this.setData({ usbFileClickCount: newCount });
         // 正常显示文件内容
         if (item.content) {
           this.showFileContent(item);
         }
         // 检查是否达到7次
-        if (this.data.usbFileClickCount >= 7) {
+        if (newCount >= 7) {
           this.triggerCDriveEgg(EGG_IDS.USB_FILE_CLICK7);
-          wx.showToast({
-            title: "执着点击成就达成！+200时光币",
-            icon: "success",
-            duration: 2000
-          });
           this.setData({ usbFileClickCount: 0 }); // 重置计数
         }
         return;
@@ -4530,50 +4515,31 @@ AI助手本人无法直接将这份文件送达给相关部门，
       }
     },
 
-    // system.ini长按开始（c_system_longpress彩蛋）
-    onSystemIniLongPressStart(e) {
+    // 通用长按开始处理（支持system.ini和autoexec.bat）
+    onFileItemLongPressStart(e) {
       const item = e.currentTarget.dataset.item;
+
+      // system.ini长按（c_system_longpress彩蛋）
       if (item.isSystemIni) {
-        // 开始长按计时
         this.setData({ systemLongPressTimer: setTimeout(() => {
           this.triggerCDriveEgg(EGG_IDS.C_SYSTEM_LONGPRESS);
-          wx.showModal({
-            title: "耐心的人",
-            content: "你长按了3秒钟！\n\n这是一个关于系统的配置文件。\n\n奖励你一个彩蛋！",
-            showCancel: false,
-            confirmText: "谢谢"
-          });
+        }, 3000) });
+      }
+
+      // autoexec.bat长按（d_autoexec_long彩蛋）
+      if (item.isAutoexecBat) {
+        this.setData({ autoexecLongPressTimer: setTimeout(() => {
+          this.triggerCDriveEgg(EGG_IDS.D_AUTOEXEC_LONG);
         }, 3000) });
       }
     },
 
-    // system.ini长按结束（取消计时）
-    onSystemIniLongPressEnd() {
+    // 通用长按结束处理（取消计时）
+    onFileItemLongPressEnd() {
       if (this.data.systemLongPressTimer) {
         clearTimeout(this.data.systemLongPressTimer);
         this.setData({ systemLongPressTimer: null });
       }
-    },
-
-    // autoexec.bat长按开始（d_autoexec_long彩蛋）
-    onAutoexecBatLongPressStart(e) {
-      const item = e.currentTarget.dataset.item;
-      if (item.isAutoexecBat) {
-        // 开始长按计时
-        this.setData({ autoexecLongPressTimer: setTimeout(() => {
-          this.triggerCDriveEgg(EGG_IDS.D_AUTOEXEC_LONG);
-          wx.showModal({
-            title: "怀旧达人",
-            content: "你长按了3秒钟！\n\nautoexec.bat是DOS时代的配置文件。\n\nWindows 98之后已经不用了，\n但为了怀旧，还是保留着~",
-            showCancel: false,
-            confirmText: "谢谢"
-          });
-        }, 3000) });
-      }
-    },
-
-    // autoexec.bat长按结束（取消计时）
-    onAutoexecBatLongPressEnd() {
       if (this.data.autoexecLongPressTimer) {
         clearTimeout(this.data.autoexecLongPressTimer);
         this.setData({ autoexecLongPressTimer: null });

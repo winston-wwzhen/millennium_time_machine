@@ -300,6 +300,17 @@ const userApi = {
     return callCloudFunction('user', {
       type: 'markWelcomeDialogShown'
     });
+  },
+
+  /**
+   * 获取彩蛋发现排名
+   * @param {number} limit - 返回的排名数量
+   */
+  getEggRanking(limit = 50) {
+    return callCloudFunction('user', {
+      type: 'getEggRanking',
+      limit
+    });
   }
 };
 

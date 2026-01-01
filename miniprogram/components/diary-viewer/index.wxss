@@ -132,10 +132,37 @@
   font-size: 12px;
   text-align: center;
   white-space: pre;
+  font-weight: bold;
+}
+
+.diary-date {
+  color: #000080;
+  font-weight: bold;
+  font-size: 12px;
+  margin-top: 12px;
+}
+
+.diary-text {
+  color: #000000;
+  font-size: 12px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.diary-line {
+  height: 12px;
 }
 
 .diary-footer {
   height: 8px;
+}
+
+.diary-hint {
+  color: #008000;
+  font-size: 11px;
+  font-style: italic;
+  text-align: center;
 }
 
 .log-list {

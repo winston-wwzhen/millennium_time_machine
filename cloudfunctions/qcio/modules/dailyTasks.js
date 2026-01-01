@@ -13,6 +13,11 @@ async function dailyCheckin(openid, db, _) {
     const now = new Date();
     const today = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}`;
 
+    // 计算昨天的日期
+    const yesterday = new Date(now);
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = `${yesterday.getFullYear()}-${(yesterday.getMonth() + 1).toString().padStart(2, '0')}-${yesterday.getDate().toString().padStart(2, '0')}`;
+
     const dailyTasksCollection = db.collection('qcio_daily_tasks');
 
     // 查询今日任务记录
@@ -28,25 +33,30 @@ async function dailyCheckin(openid, db, _) {
       }
     }
 
-    // 计算连续签到天数和奖励
-    let streak = 1;
+    // 查询昨天是否签到，计算连续签到天数
+    const yesterdayRes = await dailyTasksCollection.where({
+      _openid: openid,
+      date: yesterdayStr
+    }).limit(1).get();
+
+    let streak = 1; // 默认从1开始
+    if (yesterdayRes.data.length > 0 && yesterdayRes.data[0].checkinDone) {
+      // 昨天签到了，连续天数+1
+      streak = (yesterdayRes.data[0].checkinStreak || 0) + 1;
+    }
+    // 如果昨天没签到，streak保持为1（重新开始）
+
+    // 连续签到奖励
     let bonusCoins = 0;
     let bonusQpoints = 0;
-
-    if (res.data.length > 0) {
-      const task = res.data[0];
-      streak = (task.checkinStreak || 0) + 1;
-
-      // 连续签到奖励
-      if (streak === 3) {
-        bonusCoins = 5;
-      } else if (streak === 7) {
-        bonusCoins = 20;
-        bonusQpoints = 3;
-      } else if (streak % 30 === 0) {
-        bonusCoins = 50;
-        bonusQpoints = 10;
-      }
+    if (streak === 3) {
+      bonusCoins = 5;
+    } else if (streak === 7) {
+      bonusCoins = 20;
+      bonusQpoints = 3;
+    } else if (streak % 30 === 0) {
+      bonusCoins = 50;
+      bonusQpoints = 10;
     }
 
     const baseCoins = 10;
@@ -84,6 +94,14 @@ async function dailyCheckin(openid, db, _) {
     let newCoinsBalance = null;
     let newQpointsBalance = null;
 
+    // 计算累计签到天数（查询所有历史签到记录）
+    const totalRes = await dailyTasksCollection.where({
+      _openid: openid,
+      checkinDone: true
+    }).count();
+
+    const totalDays = totalRes.total || 0;
+
     // 添加金币奖励
     if (totalCoins > 0) {
       const txResult = await addTransaction(openid, {
@@ -118,6 +136,7 @@ async function dailyCheckin(openid, db, _) {
       success: true,
       data: {
         streak: streak,
+        totalDays: totalDays,
         coinsEarned: totalCoins,
         qpointsEarned: bonusQpoints,
         reward: {
@@ -149,6 +168,14 @@ async function getDailyTasks(openid, db) {
       date: today
     }).limit(1).get();
 
+    // 计算累计签到天数（查询所有历史签到记录）
+    const totalRes = await dailyTasksCollection.where({
+      _openid: openid,
+      checkinDone: true
+    }).count();
+
+    const totalDays = totalRes.total || 0;
+
     if (res.data.length > 0) {
       const task = res.data[0];
       return {
@@ -156,7 +183,7 @@ async function getDailyTasks(openid, db) {
         data: {
           checkinDone: task.checkinDone || false,
           checkinStreak: task.checkinStreak || 0,
-          totalCheckinDays: task.checkinStreak || 0, // 兼容前端字段名
+          totalCheckinDays: totalDays, // 真实的累计签到天数
           moodLogCount: task.moodLogCount || 0,
           chatCount: task.chatCount || 0,
           // 农场相关任务
@@ -177,7 +204,7 @@ async function getDailyTasks(openid, db) {
       data: {
         checkinDone: false,
         checkinStreak: 0,
-        totalCheckinDays: 0,
+        totalCheckinDays: totalDays, // 真实的累计签到天数
         moodLogCount: 0,
         chatCount: 0,
         // 农场相关任务

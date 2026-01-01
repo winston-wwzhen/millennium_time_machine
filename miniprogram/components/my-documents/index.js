@@ -20,6 +20,9 @@ Component({
     showImageViewer: false,
     showMyPhotos: false,
     showHelp: false,
+    showEmptyFolder: false,
+    emptyFolderTitle: '',
+    emptyFolderType: '',
     userAvatar: '👤',
     imageUrl: '',
     overlayStyle: ''
@@ -129,6 +132,26 @@ Component({
 
     onCloseHelp: function() {
       this.setData({ showHelp: false });
+    },
+
+    onMyMusicTap: function() {
+      this.setData({
+        showEmptyFolder: true,
+        emptyFolderTitle: '我的音乐',
+        emptyFolderType: '音乐'
+      });
+    },
+
+    onMyVideoTap: function() {
+      this.setData({
+        showEmptyFolder: true,
+        emptyFolderTitle: '我的视频',
+        emptyFolderType: '视频'
+      });
+    },
+
+    onCloseEmptyFolder: function() {
+      this.setData({ showEmptyFolder: false });
     }
   }
 });

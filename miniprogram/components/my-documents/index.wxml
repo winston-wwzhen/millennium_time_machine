@@ -26,11 +26,11 @@
           <view class="file-icon">📁</view>
           <text class="file-label">我的图片</text>
         </view>
-        <view class="file-item">
+        <view class="file-item" bindtap="onMyMusicTap">
           <view class="file-icon">📁</view>
           <text class="file-label">我的音乐</text>
         </view>
-        <view class="file-item">
+        <view class="file-item" bindtap="onMyVideoTap">
           <view class="file-icon">📁</view>
           <text class="file-label">我的视频</text>
         </view>
@@ -120,9 +120,7 @@
           <text class="help-text">• 探索更多隐藏功能，发现彩蛋</text>
 
           <text class="help-line"></text>
-          <text class="help-title">─────────────────────────────</text>
           <text class="help-text">   愿这些回忆能温暖你的心...</text>
-          <text class="help-title">─────────────────────────────</text>
           <text class="help-line"></text>
         </view>
       </view>
@@ -130,6 +128,31 @@
       <!-- 状态栏 -->
       <view class="status-bar">
         <text>如有疑问，请联系网管小哥</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空文件夹提示弹窗 -->
+  <view class="empty-folder-overlay {{showEmptyFolder ? 'show' : 'hide'}}" catchtap="onCloseEmptyFolder">
+    <view class="win98-window empty-folder-window" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">{{emptyFolderTitle}}</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="onCloseEmptyFolder">×</button>
+        </view>
+      </view>
+
+      <view class="win98-window-body">
+        <view class="empty-folder-content">
+          <view class="empty-folder-icon">📭</view>
+          <text class="empty-folder-text">此文件夹为空</text>
+          <text class="empty-folder-hint">还没有保存任何{{emptyFolderType}}...</text>
+        </view>
+      </view>
+
+      <!-- 状态栏 -->
+      <view class="status-bar">
+        <text>0 个对象</text>
       </view>
     </view>
   </view>

@@ -1,6 +1,6 @@
 <!-- 非主流签名查看器组件 -->
 <view class="signature-overlay {{show ? 'show' : 'hide'}}" catchtap="onClose">
-  <view class="win98-window" catchtap="stopPropagation" catchlongpress="stopPropagation" catchtouchmove="stopPropagation">
+  <view class="win98-window" catchtap="stopPropagation" catchlongpress="stopPropagation">
     <view class="win98-title-bar">
       <view class="win98-title-text">{{fileName}} - 记事本</view>
       <view class="win98-title-controls">
@@ -87,9 +87,6 @@
         <text class="signature-line">╰↘ 再見，昨天 ╭↙</text>
 
         <text class="signature-line"></text>
-        <text class="signature-title">───────────────────────────────────────</text>
-        <text class="signature-line">           收录了42条经典非主流签名</text>
-        <text class="signature-title">───────────────────────────────────────</text>
         <text class="signature-line"></text>
         <text class="signature-hint">✎ 使用方法：复制喜欢的签名到社交资料</text>
         <text class="signature-hint">✎ 提示：每种签名都代表了那个年代的心情</text>
