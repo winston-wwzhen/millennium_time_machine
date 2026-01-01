@@ -1,6 +1,6 @@
 <!-- 我的电脑 - Win98 风格窗口组件 -->
 <view class="my-computer-overlay {{show ? 'show' : 'hide'}}" style="{{overlayStyle}}" catchtap="onClose">
-  <view class="win98-window" catchtap="stopPropagation">
+  <view class="win98-window" catchtap="stopPropagation" catchlongpress="stopPropagation" catchtouchmove="stopPropagation">
     <view class="win98-title-bar">
       <view class="win98-title-text">我的电脑</view>
       <view class="win98-title-controls">
@@ -9,14 +9,14 @@
     </view>
 
     <!-- 菜单栏 -->
-    <view class="menu-bar">
+    <view class="menu-bar" bindtap="onMenuBarTap">
       <!-- 文件菜单 -->
       <view class="menu-dropdown-wrapper">
         <view class="menu-dropdown-trigger" catchtap="onFileMenuTap">
           <text class="menu-item">文件</text>
         </view>
         <!-- 文件菜单下拉 -->
-        <view class="menu-dropdown-content" wx:if="{{showFileMenu}}" catchtap="onFileMenuTap">
+        <view class="menu-dropdown-content" wx:if="{{showFileMenu}}" catchtap="stopPropagation">
           <view class="menu-dropdown-item" catchtap="onShowSystemProperties">
             <text class="menu-item-icon">🖥️</text>
             <text>系统属性</text>
@@ -42,7 +42,7 @@
           <text class="menu-item">编辑</text>
         </view>
         <!-- 编辑菜单下拉 -->
-        <view class="menu-dropdown-content" wx:if="{{showEditMenu}}" catchtap="onEditMenuTap">
+        <view class="menu-dropdown-content" wx:if="{{showEditMenu}}" catchtap="stopPropagation">
           <view class="menu-dropdown-item menu-disabled">
             <text class="menu-item-icon">↩️</text>
             <text>撤销</text>
@@ -73,7 +73,7 @@
           <text class="menu-item">查看</text>
         </view>
         <!-- 查看菜单下拉 -->
-        <view class="menu-dropdown-content" wx:if="{{showViewMenu}}" catchtap="onViewMenuTap">
+        <view class="menu-dropdown-content" wx:if="{{showViewMenu}}" catchtap="stopPropagation">
           <view class="menu-dropdown-item" catchtap="onRefreshView">
             <text class="menu-item-icon">🔄</text>
             <text>刷新</text>
@@ -103,7 +103,7 @@
           <text class="menu-item">帮助</text>
         </view>
         <!-- 帮助菜单下拉 -->
-        <view class="menu-dropdown-content" wx:if="{{showHelpMenu}}" catchtap="onHelpMenuTap">
+        <view class="menu-dropdown-content" wx:if="{{showHelpMenu}}" catchtap="stopPropagation">
           <view class="menu-dropdown-item" catchtap="onShowHelp">
             <text class="menu-item-icon">❓</text>
             <text>帮助主题</text>
@@ -118,7 +118,7 @@
 
     <view class="win98-window-body" bindtap="onWindowBodyTap">
       <!-- 驱动器列表 -->
-      <view class="drives-grid">
+      <view class="drives-grid {{isRefreshing ? 'refreshing' : ''}}">
         <!-- C盘 - 独占第一行 -->
         <view class="drive-item drive-c">
           <view class="drive-icon" bindtap="onDriveTap" data-drive="C">💾</view>
@@ -128,7 +128,7 @@
             <view class="capacity-bar">
               <view class="capacity-used" style="width: {{diskUsagePercent}}%"></view>
             </view>
-            <text class="capacity-text">{{diskUsageText}}</text>
+            <text class="capacity-text {{diskUsagePercent >= 90 ? 'capacity-warning' : ''}}">{{diskUsageText}}</text>
           </view>
         </view>
 
@@ -579,13 +579,13 @@
       </view>
 
       <!-- 菜单栏 -->
-      <view class="menu-bar" catchtap="closeAllFileExplorerMenus">
+      <view class="menu-bar" bindtap="onFeMenuBarTap">
         <!-- 文件(F) -->
         <view class="menu-dropdown-wrapper">
           <view class="menu-dropdown-trigger" catchtap="toggleFileExplorerMenu" data-menu="File">
             <text class="menu-item menu-small">文件</text>
           </view>
-          <view class="menu-dropdown-content" wx:if="{{feShowFileMenu}}" catchtap="closeAllFileExplorerMenus">
+          <view class="menu-dropdown-content" wx:if="{{feShowFileMenu}}" catchtap="stopPropagation">
             <view class="menu-dropdown-item" catchtap="onFeNewFolder">
               <text class="menu-item-icon">📁</text>
               <text>新建文件夹</text>
@@ -614,7 +614,7 @@
           <view class="menu-dropdown-trigger" catchtap="toggleFileExplorerMenu" data-menu="Edit">
             <text class="menu-item menu-small">编辑</text>
           </view>
-          <view class="menu-dropdown-content" wx:if="{{feShowEditMenu}}" catchtap="closeAllFileExplorerMenus">
+          <view class="menu-dropdown-content" wx:if="{{feShowEditMenu}}" catchtap="stopPropagation">
             <view class="menu-dropdown-item" catchtap="onFeUndo">
               <text class="menu-item-icon">↩️</text>
               <text>撤销</text>
@@ -635,7 +635,7 @@
           <view class="menu-dropdown-trigger" catchtap="toggleFileExplorerMenu" data-menu="View">
             <text class="menu-item menu-small">查看</text>
           </view>
-          <view class="menu-dropdown-content" wx:if="{{feShowViewMenu}}" catchtap="closeAllFileExplorerMenus">
+          <view class="menu-dropdown-content" wx:if="{{feShowViewMenu}}" catchtap="stopPropagation">
             <view class="menu-dropdown-item" catchtap="onFeShowHiddenFiles">
               <text class="menu-item-icon">👁️</text>
               <text>显示所有文件</text>
@@ -668,7 +668,7 @@
           <view class="menu-dropdown-trigger" catchtap="toggleFileExplorerMenu" data-menu="Favorites">
             <text class="menu-item menu-small">收藏</text>
           </view>
-          <view class="menu-dropdown-content" wx:if="{{feShowFavoritesMenu}}" catchtap="closeAllFileExplorerMenus">
+          <view class="menu-dropdown-content" wx:if="{{feShowFavoritesMenu}}" catchtap="stopPropagation">
             <view class="menu-dropdown-item" catchtap="onFeAddToFavorites">
               <text class="menu-item-icon">➕</text>
               <text>添加到收藏夹</text>
@@ -697,7 +697,7 @@
           <view class="menu-dropdown-trigger" catchtap="toggleFileExplorerMenu" data-menu="Help">
             <text class="menu-item menu-small">帮助</text>
           </view>
-          <view class="menu-dropdown-content" wx:if="{{feShowHelpMenu}}" catchtap="closeAllFileExplorerMenus">
+          <view class="menu-dropdown-content" wx:if="{{feShowHelpMenu}}" catchtap="stopPropagation">
             <view class="menu-dropdown-item" catchtap="onFeHelpTopic">
               <text class="menu-item-icon">❓</text>
               <text>帮助主题</text>
@@ -710,9 +710,9 @@
         </view>
       </view>
 
-      <view class="win98-window-body">
+      <view class="win98-window-body" bindtap="onFeWindowBodyTap">
         <!-- 工具栏 -->
-        <view class="file-explorer-toolbar">
+        <view class="file-explorer-toolbar" catchtap="stopPropagation">
           <view class="toolbar-btn" bindtap="onGoBack" wx:if="{{fileExplorerBreadcrumbs.length > 1}}">
             <text class="toolbar-btn-icon">⬆️</text>
             <text class="toolbar-btn-text">向上</text>
@@ -725,7 +725,7 @@
 
         <!-- 文件列表 -->
         <scroll-view class="file-explorer-content" scroll-y>
-          <view class="file-list">
+          <view class="file-list {{feIsRefreshing ? 'refreshing' : ''}}">
             <view class="file-item {{item.disabled ? 'disabled' : ''}}" wx:for="{{fileExplorerItems}}" wx:key="name" bindtap="onFileItemTap" bindlongpress="onSystemIniLongPressStart" bindtouchend="onSystemIniLongPressEnd" data-item="{{item}}">
               <text class="file-icon">{{item.icon}}</text>
               <text class="file-name">{{item.name}}</text>
@@ -876,25 +876,40 @@
     </view>
   </view>
 
-  <!-- 彩蛋发现弹窗 -->
-  <view class="win98-dialog-overlay" wx:if="{{showEggDiscovery}}" catchtap="hideEggDiscovery">
-    <view class="win98-window egg-discovery-dialog {{eggDiscoveryData.rarity}}" catchtap="stopPropagation">
+  <!-- 彩蛋发现弹窗 - 使用通用组件 -->
+  <egg-discovery-dialog
+    show="{{showEggDiscovery}}"
+    eggName="{{eggDiscoveryData.name}}"
+    eggDescription="{{eggDiscoveryData.description}}"
+    eggRarity="{{eggDiscoveryData.rarity}}"
+    eggRarityName="{{eggDiscoveryData.rarityName}}"
+    eggRewardText="{{eggDiscoveryData.rewardText}}"
+    bind:close="hideEggDiscovery"
+  >
+  </egg-discovery-dialog>
+
+  <!-- 彩蛋助手弹窗 -->
+  <view class="win98-dialog-overlay" wx:if="{{showEggHelperDialog}}" catchtap="closeEggHelperDialog">
+    <view class="win98-window egg-helper-dialog" catchtap="stopPropagation">
       <view class="win98-title-bar">
-        <view class="win98-title-text">🎉 发现彩蛋！</view>
-        <view class="win98-title-controls">
-          <button class="win98-btn-close" bindtap="hideEggDiscovery">×</button>
-        </view>
+        <view class="win98-title-text">🥚 彩蛋助手 v1.0</view>
       </view>
       <view class="win98-window-body">
-        <view class="egg-discovery-content">
-          <view class="egg-discovery-icon">🥚</view>
-          <text class="egg-discovery-name">{{eggDiscoveryData.name}}</text>
-          <text class="egg-discovery-description">{{eggDiscoveryData.description}}</text>
-          <text class="egg-discovery-rarity {{eggDiscoveryData.rarity}}">稀有度：{{eggDiscoveryData.rarityName}}</text>
-          <text class="egg-discovery-reward" wx:if="{{eggDiscoveryData.rewardText}}">奖励：{{eggDiscoveryData.rewardText}}</text>
+        <view class="egg-helper-content">
+          <text class="egg-helper-icon">📚</text>
+          <text class="egg-helper-title">发现新版彩蛋秘籍！</text>
+          <text class="egg-helper-message">
+            彩蛋秘籍-第三册已添加到：
+          </text>
+          <text class="egg-helper-path">
+            我的文档\彩蛋\彩蛋秘籍-第三册.txt
+          </text>
+          <text class="egg-helper-hint">
+            查看秘籍获取C盘彩蛋的达成方式！
+          </text>
         </view>
-        <view class="dialog-actions">
-          <button class="win98-btn-std" bindtap="hideEggDiscovery">确定</button>
+        <view class="egg-helper-actions">
+          <view class="win98-btn-std" bindtap="closeEggHelperDialog">确定</view>
         </view>
       </view>
     </view>
@@ -1592,6 +1607,28 @@
 
       <view class="dialog-actions">
         <button class="win98-btn-std" bindtap="closeVideoMemoryDialog">关闭</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- USB空文件夹弹窗（Win98风格） -->
+  <view class="win98-dialog-overlay" wx:if="{{showEmptyFolderDialog}}" catchtap="closeEmptyFolderDialog">
+    <view class="win98-window empty-folder-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">隐形收藏</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="closeEmptyFolderDialog">×</button>
+        </view>
+      </view>
+      <view class="win98-window-body">
+        <view class="empty-folder-content">
+          <text class="empty-folder-message">你发现了一个空名字的文件夹！</text>
+          <text class="empty-folder-message">这里什么都没有，</text>
+          <text class="empty-folder-message">除了一个彩蛋！</text>
+        </view>
+      </view>
+      <view class="dialog-actions">
+        <button class="win98-btn-std" bindtap="closeEmptyFolderDialog">确定</button>
       </view>
     </view>
   </view>

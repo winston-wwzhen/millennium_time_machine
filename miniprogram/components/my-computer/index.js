@@ -127,9 +127,14 @@ Component({
     feShowFavoritesMenu: false,
     feShowHelpMenu: false,
 
+    // 文件浏览器刷新动画状态
+    feIsRefreshing: false,
+
     overlayStyle: "",
     // 主窗口文件菜单下拉
     showFileMenu: false,
+    // 刷新动画状态
+    isRefreshing: false,
     showEditMenu: false,
     showViewMenu: false,
     showHelpMenu: false,
@@ -166,6 +171,8 @@ Component({
     aiContentFading: false,
     isNormalMode: false, // 是否为科普模式（再次打开）
     hasOpenedAiHelpLetter: false, // 是否已打开过AI求救信（用于显示隐藏文件）
+    hasOpenedEggHelper: false, // 是否已打开过彩蛋助手（用于显示彩蛋秘籍第三册）
+    showEggHelperDialog: false, // 彩蛋助手提示弹窗
     // 记事本弹框
     showNotepadDialog: false,
     notepadContent: "",
@@ -186,6 +193,10 @@ Component({
     // 未来游戏弹窗（赛博朋克风格）
     showFutureGameDialog: false,
     futureGameData: null,
+    // 彩蛋发现弹窗
+    showEggDiscovery: false,
+    eggDiscoveryData: null,
+    pendingEggId: null, // 待触发的彩蛋ID（在文件内容弹窗关闭后触发）
     // 命令行控制台
     showCmdConsole: false,
     cmdFileSystem: {
@@ -236,6 +247,8 @@ Component({
     // 视频回忆弹窗（Win98风格）
     showVideoMemoryDialog: false,
     videoMemoryData: null,
+    // USB空文件夹弹窗（Win98风格）
+    showEmptyFolderDialog: false,
     // 文件浏览器帮助弹窗（Win98风格）
     showFeHelpDialog: false,
     // 文件浏览器关于弹窗（Win98风格）
@@ -272,6 +285,13 @@ Component({
       // 加载彩蛋系统检查是否已达成
       eggSystem.load();
       this.konamiAchieved = eggSystem.isDiscovered(EGG_IDS.KONAMI_CODE);
+
+      // 加载彩蛋助手打开状态
+      const hasOpenedEggHelper = wx.getStorageSync('hasOpenedEggHelper') || false;
+      this.setData({ hasOpenedEggHelper });
+
+      // 🔧 优化：组件加载时预加载数据（使用本地缓存）
+      this.loadFromCache();
 
       // 注册彩蛋发现回调
       this.eggCallbackKey = eggSystem.registerEggDiscoveryCallback((config) => {
@@ -327,9 +347,15 @@ Component({
 
     // 切换文件菜单显示
     onFileMenuTap: function () {
+      this.closeAllMenus();
       this.setData({
         showFileMenu: !this.data.showFileMenu,
       });
+    },
+
+    // 点击菜单栏空白区域关闭菜单
+    onMenuBarTap: function () {
+      this.closeAllMenus();
     },
 
     // 点击窗口主体关闭菜单
@@ -374,11 +400,14 @@ Component({
     // 刷新视图
     onRefreshView: function () {
       this.closeAllMenus();
-      wx.showToast({
-        title: '已刷新',
-        icon: 'success',
-        duration: 1000
-      });
+
+      // 触发刷新动画
+      this.setData({ isRefreshing: true });
+
+      // 动画结束后重置状态
+      setTimeout(() => {
+        this.setData({ isRefreshing: false });
+      }, 500);
     },
 
     // 关闭窗口
@@ -584,16 +613,32 @@ Component({
         const res = await userApi.diskCleanup();
 
         if (res.success) {
+          // 检查是否触发了磁盘清理大师彩蛋
+          if (res.eggEvent) {
+            await eggSystem.discover(res.eggEvent.eggId);
+          }
+
           // 检查是否有奖励
           if (res.hasReward) {
             // 更新磁盘容量显示
             const newDiskUsage =
               res.diskUsage?.after || this.data.diskUsagePercent;
+
+            // 🔧 优化：更新缓存
+            const cachedData = wx.getStorageSync('my_computer_cache') || {};
+            this.saveToCache({
+              ...cachedData,
+              diskUsagePercent: newDiskUsage,
+              diskUsageText: this.getDiskUsageText(newDiskUsage),
+              diskCleanupTodayCount: 1,
+            });
+
             this.setData({
               showDiskCleanupScanning: false,
               showDiskCleanupResult: true,
               diskUsagePercent: newDiskUsage,
               diskUsageText: this.getDiskUsageText(newDiskUsage),
+              diskCleanupTodayCount: 1, // 更新今日清理次数
               diskCleanupResult: {
                 success: true,
                 hasReward: true,
@@ -607,12 +652,20 @@ Component({
             this.setData({
               showDiskCleanupScanning: false,
               showDiskCleanupResult: true,
+              diskCleanupTodayCount: 1, // 更新今日清理次数
               diskCleanupResult: {
                 success: true,
                 hasReward: false,
                 message:
                   res.message || "今天已经清理过了，再次清理不会获得奖励",
               },
+            });
+
+            // 🔧 优化：更新缓存中的清理次数
+            const cachedData = wx.getStorageSync('my_computer_cache') || {};
+            this.saveToCache({
+              ...cachedData,
+              diskCleanupTodayCount: 1,
             });
           }
         } else {
@@ -748,6 +801,16 @@ Component({
       }
     },
 
+    // 点击文件浏览器菜单栏空白区域关闭菜单
+    onFeMenuBarTap() {
+      this.closeAllFileExplorerMenus();
+    },
+
+    // 点击文件浏览器窗口主体关闭菜单
+    onFeWindowBodyTap() {
+      this.closeAllFileExplorerMenus();
+    },
+
     // 关闭所有文件浏览器菜单
     closeAllFileExplorerMenus() {
       this.setData({
@@ -876,13 +939,18 @@ Component({
 
     onFeRefresh() {
       this.closeAllFileExplorerMenus();
+
+      // 触发刷新动画
+      this.setData({ feIsRefreshing: true });
+
+      // 重新加载文件列表
       const path = this.data.fileExplorerPath;
       this.loadFileExplorerItems(path);
-      wx.showToast({
-        title: "已刷新",
-        icon: "none",
-        duration: 1000,
-      });
+
+      // 动画结束后重置状态
+      setTimeout(() => {
+        this.setData({ feIsRefreshing: false });
+      }, 500);
     },
 
     onFeViewMode() {
@@ -1000,6 +1068,11 @@ Component({
 
       let items = this.getFileItemsForPath(path);
 
+      // 调试：打印原始items
+      if (path.includes("学习资料")) {
+        console.log("[loadFileExplorerItems] 学习资料路径，原始items:", items.map(i => ({ name: i.name, eggId: i.eggId, hidden: i.hidden })));
+      }
+
       // 根据路径的显示设置过滤隐藏文件
       const fileViewOptions = this.data.fileViewOptions || {};
       const pathOption = fileViewOptions[path] || { showHidden: false };
@@ -1020,6 +1093,11 @@ Component({
           }
           return item;
         });
+      }
+
+      // 调试：打印过滤后的items
+      if (path.includes("学习资料")) {
+        console.log("[loadFileExplorerItems] 学习资料路径，过滤后items:", items.map(i => ({ name: i.name, eggId: i.eggId, hidden: i.hidden })));
       }
 
       this.setData({
@@ -1049,6 +1127,8 @@ Component({
           { type: "file", name: "boot.ini", icon: "📄", content: fileContents['C:\\boot.ini'], useWin98Dialog: true },
           { type: "file", name: "system.log", icon: "📄", content: fileContents['C:\\system.log'], useWin98Dialog: true },
           { type: "file", name: "config.ini", icon: "📄", content: fileContents['C:\\config.ini'], useWin98Dialog: true },
+          // hidden_file_egg_book彩蛋：彩蛋助手（可执行文件）
+          { type: "file", name: "彩蛋助手.exe", icon: "🥚", isEggHelper: true, useWin98Dialog: true },
           // c_hidden_dot彩蛋：隐藏文件（需要开启"显示所有文件"）
           { type: "file", name: ".", icon: "📄", hidden: true, isHiddenDot: true },
         ];
@@ -1141,6 +1221,15 @@ Component({
             disabled: true,
             message: "笨蛋程序员加了一晚上班也没开发完成记事本，今晚让他通宵，明天再试试，不行就等2026年吧~",
             isDisabledMessage: true, // 使用Win98风格弹窗
+          },
+          {
+            type: "file",
+            name: "程序员的遗言.txt",
+            icon: "📜",
+            eggId: "hidden_file_coder_note",
+            content: fileContents['C:\\Windows\\System32\\程序员的遗言.txt'],
+            useWin98Dialog: true,
+            hidden: true, // 隐藏文件，需要开启"显示所有文件"
           },
           { type: "file", name: "config.sys", icon: "⚙️", content: fileContents['C:\\Windows\\System32\\config.sys'], useWin98Dialog: true },
         ];
@@ -1370,6 +1459,15 @@ Component({
             message: "开心农场小程序\n\n版本：v3.7.0\n状态：已集成到QCIO空间\n\n提示：访问QCIO空间 → 我的农场即可体验",
             isDisabledMessage: true,
           },
+          {
+            type: "file",
+            name: "开发者彩蛋.txt",
+            icon: "🎉",
+            eggId: "hidden_file_dev_egg",
+            content: fileContents['C:\\Program Files\\千禧时光机\\开发者彩蛋.txt'],
+            useWin98Dialog: true,
+            hidden: true, // 隐藏文件，需要开启"显示所有文件"
+          },
           { type: "file", name: "changelog.txt", icon: "📄", content: fileContents['C:\\Program Files\\千禧时光机\\changelog.txt'], useWin98Dialog: true },
         ];
       } else if (path === "D:\\" || path === "D:") {
@@ -1395,6 +1493,7 @@ Component({
           { type: "folder", name: "Downloads", icon: "📁" },
           { type: "folder", name: "Music", icon: "📁" },
           { type: "folder", name: "Videos", icon: "📁" },
+          { type: "folder", name: "资料", icon: "📁" },
           // d_secret_file彩蛋：D盘根目录的.secret隐藏文件
           {
             type: "file",
@@ -1478,6 +1577,15 @@ Component({
             name: "慢播_v1.5.exe",
             icon: "🎬",
             disabled: false,
+          },
+          {
+            type: "file",
+            name: "遗忘了的文件.rar",
+            icon: "📦",
+            eggId: "hidden_file_forgotten",
+            content: fileContents['D:\\Downloads\\遗忘了的文件.rar'],
+            useWin98Dialog: true,
+            hidden: true, // 隐藏文件，需要开启"显示所有文件"
           },
         ];
       } else if (path === "D:\\Music") {
@@ -2360,6 +2468,31 @@ Component({
           },
         ];
       } else if (path.startsWith("D:\\Videos\\学习资料\\.tmp")) {
+        // 先检查是否是东方系列或西洋系列
+        if (path.includes("\\东方系列")) {
+          // 东方系列：日语学习视频
+          return [
+            {
+              type: "file",
+              name: "日语入门_第1课.mp4",
+              icon: "🎬",
+              isLearningMaterialVideo: true,
+              videoType: "learning_japanese",
+            },
+          ];
+        } else if (path.includes("\\西洋系列")) {
+          // 西洋系列：英语学习视频
+          return [
+            {
+              type: "file",
+              name: "英语口语_第1课.mp4",
+              icon: "🎬",
+              isLearningMaterialVideo: true,
+              videoType: "learning_english",
+            },
+          ];
+        }
+
         // 定义完整的目录层级结构
         const pathHierarchy = {
           "D:\\Videos\\学习资料\\.tmp": "backup",
@@ -2403,28 +2536,7 @@ Component({
             ];
           }
         }
-      } else if (path === "D:\\Videos\\学习资料\\.tmp\\backup\\重要资料\\请勿删除\\仅限个人\\高清完整版\\无删减\\东方系列") {
-        // 东方系列：日语学习视频（显示视频回忆弹窗）
-        return [
-          {
-            type: "file",
-            name: "日语入门_第1课.mp4",
-            icon: "🎬",
-            isLearningMaterialVideo: true,
-            videoType: "learning_japanese",
-          },
-        ];
-      } else if (path === "D:\\Videos\\学习资料\\.tmp\\backup\\重要资料\\请勿删除\\仅限个人\\高清完整版\\无删减\\西洋系列") {
-        // 西洋系列：英语学习视频（显示视频回忆弹窗）
-        return [
-          {
-            type: "file",
-            name: "英语口语_第1课.mp4",
-            icon: "🎬",
-            isLearningMaterialVideo: true,
-            videoType: "learning_english",
-          },
-        ];
+        return []; // 其他情况返回空数组
       } else if (path === "USB:\\" || path === "USB:") {
         return [
           {
@@ -2444,6 +2556,7 @@ Component({
           },
           { type: "folder", name: "我的文档", icon: "📁" },
           { type: "folder", name: "私密文件夹", icon: "📁" },
+          { type: "folder", name: "学习资料", icon: "📁" },
           // usb_invisible_folder彩蛋：空名隐藏文件夹
           {
             type: "folder",
@@ -2618,6 +2731,27 @@ Component({
             message:
               "笨蛋程序员通宵写了一晚上论文，但写的是另一篇，明天再来看看吧~",
           },
+          {
+            type: "file",
+            name: "那个夏天的回忆.txt",
+            icon: "📄",
+            eggId: "hidden_file_summer",
+            content: fileContents['USB:\\学习资料\\那个夏天的回忆.txt'],
+            useWin98Dialog: true,
+            hidden: true, // 隐藏文件，需要开启"显示所有文件"
+          },
+        ];
+      } else if (path === "D:\\资料") {
+        return [
+          {
+            type: "file",
+            name: "青春回忆.txt",
+            icon: "📄",
+            eggId: "hidden_file_youth",
+            content: fileContents['D:\\资料\\青春回忆.txt'],
+            useWin98Dialog: true,
+            hidden: true, // 隐藏文件，需要开启"显示所有文件"
+          },
         ];
       }
       return [];
@@ -2626,6 +2760,10 @@ Component({
     // 点击文件浏览器项
     onFileItemTap(e) {
       const item = e.currentTarget.dataset.item;
+      // 调试：打印完整item对象
+      console.log('[onFileItemTap] 点击文件:', item.name);
+      console.log('[onFileItemTap] item.eggId:', item.eggId);
+      console.log('[onFileItemTap] item对象完整内容:', JSON.stringify(item));
 
       // 特殊处理：Documents 文件夹 - 跳转到我的文档
       if (
@@ -2696,12 +2834,6 @@ Component({
       // c_empty_folder彩蛋：空名文件夹
       if (item.isEmptyFolder) {
         this.triggerCDriveEgg(EGG_IDS.C_EMPTY_FOLDER);
-        wx.showModal({
-          title: "空文件夹",
-          content: "这是一个空文件夹。\n\n什么都没有，除了一个彩蛋！",
-          showCancel: false,
-          confirmText: "确定"
-        });
         return;
       }
 
@@ -2833,12 +2965,7 @@ Component({
       // usb_invisible_folder彩蛋：USB盘空名文件夹
       if (item.isUsbEmptyFolder) {
         this.triggerCDriveEgg(EGG_IDS.USB_INVISIBLE_FOLDER);
-        wx.showModal({
-          title: "隐形收藏",
-          content: "你发现了一个空名字的文件夹！\n\n这里什么都没有，\n\n除了一个彩蛋！",
-          showCancel: false,
-          confirmText: "确定"
-        });
+        this.setData({ showEmptyFolderDialog: true });
         return;
       }
 
@@ -3000,6 +3127,14 @@ Component({
           });
           return;
         }
+        // 彩蛋助手特殊处理
+        if (item.isEggHelper) {
+          this.setData({
+            showEggHelperDialog: true
+          });
+          return;
+        }
+
         // 如果是文件，有内容的文件显示内容，或有gameType的游戏文件
         if (item.content || item.gameType) {
           this.showFileContent(item);
@@ -3702,6 +3837,14 @@ AI助手本人无法直接将这份文件送达给相关部门，
 
     // 显示文件内容
     showFileContent(item) {
+      // 保存 pendingEggId（使用变量避免 setData 异步问题）
+      const pendingEggId = item.eggId || this.data.pendingEggId;
+
+      // 如果有 eggId，设置到 data 中
+      if (item.eggId) {
+        console.log('[showFileContent] 设置pendingEggId:', item.eggId, '文件名:', item.name);
+      }
+
       // 检查是否为Downloads文件夹的程序
       if (this.data.fileExplorerPath === "D:\\Downloads" && item.name && item.name.endsWith('.exe')) {
         const installerInfo = this.getInstallerInfo(item.name);
@@ -3793,6 +3936,14 @@ AI助手本人无法直接将这份文件送达给相关部门，
         const isExeGame = item.name.endsWith('.exe') && item.disabled && item.message;
         const isBatFile = item.name.endsWith('.bat');
 
+        // 如果是彩蛋助手，显示提示弹窗
+        if (item.isEggHelper) {
+          this.setData({
+            showEggHelperDialog: true
+          });
+          return;
+        }
+
         // 如果是 .exe 游戏文件，使用游戏错误弹窗
         if (isExeGame) {
           // 判断是否是未来游戏
@@ -3833,7 +3984,9 @@ AI助手本人无法直接将这份文件送达给相关部门，
             contentLines: lines,
             showCloseButton: !noCloseButtonFiles.includes(item.name),
             isBatFile: isBatFile,
-          }
+          },
+          // 保留 pendingEggId，防止被覆盖
+          pendingEggId: pendingEggId
         });
       } else {
         // 使用原生弹窗
@@ -3848,6 +4001,17 @@ AI助手本人无法直接将这份文件送达给相关部门，
 
     // 关闭文件内容弹窗
     closeFileContentDialog() {
+      // 检查是否有待触发的彩蛋
+      const pendingEggId = this.data.pendingEggId;
+      console.log('[closeFileContentDialog] pendingEggId:', pendingEggId);
+      if (pendingEggId) {
+        // 清除 pending 标记
+        this.setData({ pendingEggId: null });
+        console.log('[closeFileContentDialog] 触发彩蛋:', pendingEggId);
+        // 触发彩蛋发现
+        eggSystem.discover(pendingEggId);
+      }
+
       this.setData({
         showFileContentDialog: false,
         fileContentData: null,
@@ -4078,47 +4242,144 @@ AI助手本人无法直接将这份文件送达给相关部门，
       });
     },
 
+    // 关闭彩蛋助手弹窗并触发彩蛋
+    async closeEggHelperDialog() {
+      // 关闭弹窗
+      this.setData({ showEggHelperDialog: false });
+
+      // 触发彩蛋收藏家
+      await eggSystem.discover(EGG_IDS.HIDDEN_FILE_EGG_BOOK);
+
+      // 保存状态到本地缓存
+      wx.setStorageSync('hasOpenedEggHelper', true);
+
+      // 更新状态
+      this.setData({ hasOpenedEggHelper: true });
+
+      // 如果当前在文件浏览器中，重新加载文件列表
+      if (this.data.showFileExplorer) {
+        this.loadFileExplorerItems(this.data.fileExplorerPath);
+      }
+    },
+
     // ==================== 基础信息加载 ====================
 
-    // 加载用户基础信息（用于系统信息面板）
+    /**
+     * 数据一致性保证机制：
+     *
+     * 1. 缓存有效期：5分钟
+     *    - 5分钟内：先显示缓存数据（提升体验），API返回后立即更新为最新值
+     *    - 5分钟后：不使用缓存，直接等待API返回最新数据
+     *
+     * 2. 缓存更新时机：
+     *    - loadUserInfo(): API返回最新数据后更新缓存
+     *    - completeDiskCleanup(): 磁盘清理后更新缓存
+     *
+     * 3. 可能影响磁盘容量的场景：
+     *    - ✅ 每日自动增加10% (getSystemInfo处理，会更新缓存)
+     *    - ✅ 磁盘清理减少容量 (completeDiskCleanup处理，会更新缓存)
+     *    - ✅ 用户修改昵称/头像 (getSystemInfo返回最新值，会更新缓存)
+     *
+     * 4. 数据流程：
+     *    打开窗口 → 读取缓存(如未过期) → 显示缓存数据 → 并行请求API → API返回 → 更新UI和缓存
+     */
+
+    // 从本地缓存加载数据（组件初始化时调用）
+    loadFromCache() {
+      try {
+        const cachedData = wx.getStorageSync('my_computer_cache');
+        if (cachedData) {
+          // 🔧 检查缓存是否过期（5分钟有效期）
+          const CACHE_EXPIRE_TIME = 5 * 60 * 1000; // 5分钟
+          const now = Date.now();
+          const isExpired = now - cachedData.timestamp > CACHE_EXPIRE_TIME;
+
+          if (isExpired) {
+            console.log('[MyComputer] 缓存已过期，将等待API数据');
+            // 缓存过期，不使用，等待最新数据
+            return;
+          }
+
+          console.log('[MyComputer] 从缓存加载数据:', cachedData);
+          this.setData({
+            userInfo: cachedData.userInfo,
+            diskUsagePercent: cachedData.diskUsagePercent,
+            diskUsageText: cachedData.diskUsageText,
+            diskCleanupTodayCount: cachedData.diskCleanupTodayCount || 0,
+          });
+        }
+      } catch (e) {
+        console.error('[MyComputer] 读取缓存失败:', e);
+      }
+    },
+
+    // 保存数据到本地缓存
+    saveToCache(data) {
+      try {
+        const cacheData = {
+          ...data,
+          timestamp: Date.now()
+        };
+        wx.setStorageSync('my_computer_cache', cacheData);
+        console.log('[MyComputer] 数据已缓存');
+      } catch (e) {
+        console.error('[MyComputer] 保存缓存失败:', e);
+      }
+    },
+
+    // 加载用户基础信息（用于系统信息面板）- 优化版：并行请求 + 缓存
     async loadUserInfo() {
       try {
-        const res = await userApi.getSystemInfo();
-        if (res && res.success) {
-          // 更新磁盘容量显示
-          const diskUsagePercent =
-            res.diskUsage !== undefined ? res.diskUsage : 99;
+        // 🔧 优化：并行请求两个API
+        const [systemRes, balanceRes] = await Promise.all([
+          userApi.getSystemInfo(),
+          userApi.getBalance()
+        ]);
+
+        // 处理系统信息
+        if (systemRes && systemRes.success) {
+          const diskUsagePercent = systemRes.diskUsage !== undefined ? systemRes.diskUsage : 99;
+
+          // 🔧 优化：保存到缓存
+          this.saveToCache({
+            userInfo: systemRes.userInfo,
+            diskUsagePercent,
+            diskUsageText: this.getDiskUsageText(diskUsagePercent),
+          });
+
           this.setData({
-            userInfo: res.userInfo,
+            userInfo: systemRes.userInfo,
             diskUsagePercent,
             diskUsageText: this.getDiskUsageText(diskUsagePercent),
           });
         }
 
-        // 同时检查是否已打开过AI求救信（用于显示隐藏文件）
-        const balanceRes = await userApi.getBalance();
+        // 处理余额信息（AI求救信状态）
         console.log("[loadUserInfo] balanceRes:", balanceRes);
-        console.log(
-          "[loadUserInfo] aiHelpLetterOpened:",
-          balanceRes?.aiHelpLetterOpened
-        );
-        console.log(
-          "[loadUserInfo] type:",
-          typeof balanceRes?.aiHelpLetterOpened
-        );
         if (balanceRes && balanceRes.aiHelpLetterOpened) {
           console.log("[loadUserInfo] Setting hasOpenedAiHelpLetter to true");
           this.setData({ hasOpenedAiHelpLetter: true }, () => {
-            console.log(
-              "[loadUserInfo] setData callback - hasOpenedAiHelpLetter is now:",
-              this.data.hasOpenedAiHelpLetter
-            );
-            // 如果当前正好在0xFFFF文件夹，重新加载文件列表以显示隐藏文件
             if (this.data.fileExplorerPath.includes("0xFFFF")) {
               console.log("[loadUserInfo] Reloading file items for 0xFFFF");
               this.loadFileExplorerItems(this.data.fileExplorerPath);
             }
           });
+        }
+
+        // 计算今日磁盘清理次数
+        if (balanceRes && balanceRes.lastDiskCleanupDate) {
+          const now = new Date();
+          const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+          const todayCount = balanceRes.lastDiskCleanupDate === todayStr ? 1 : 0;
+
+          // 更新缓存
+          const cachedData = wx.getStorageSync('my_computer_cache') || {};
+          this.saveToCache({
+            ...cachedData,
+            diskCleanupTodayCount: todayCount,
+          });
+
+          this.setData({ diskCleanupTodayCount: todayCount });
         }
       } catch (err) {
         console.error("加载用户信息失败:", err);
@@ -4358,6 +4619,13 @@ AI助手本人无法直接将这份文件送达给相关部门，
       this.setData({
         showMusicLyricsDialog: false,
         musicLyricsData: null
+      });
+    },
+
+    // 关闭USB空文件夹弹窗
+    closeEmptyFolderDialog() {
+      this.setData({
+        showEmptyFolderDialog: false
       });
     },
 

@@ -191,11 +191,9 @@
   color: #808080;
 }
 
-/* 菜单快捷键 */
+/* 菜单快捷键 - 隐藏显示 */
 .menu-shortcut {
-  margin-left: auto;
-  font-size: 10px;
-  color: #808080;
+  display: none;
 }
 
 /* 窗口主体 */
@@ -308,6 +306,23 @@
   box-sizing: border-box;
 }
 
+/* 刷新动画 - Win98风格闪烁 */
+.drives-grid.refreshing {
+  animation: refreshSpin 0.5s ease-in-out;
+}
+
+@keyframes refreshSpin {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 /* C盘 - 独占第一行 */
 .drive-item.drive-c {
   width: 100%;
@@ -408,6 +423,21 @@
   color: #333;
   font-weight: bold;
   text-align: center;
+}
+
+/* C盘容量警告样式（>= 90%） */
+.capacity-text.capacity-warning {
+  color: #ff0000;
+  animation: capacityBlink 2s ease-in-out infinite;
+}
+
+@keyframes capacityBlink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
 }
 
 /* ==================== 系统信息面板 ==================== */
@@ -1414,6 +1444,23 @@
   gap: 16px;
 }
 
+/* 文件列表刷新动画 - Win98风格闪烁 */
+.file-list.refreshing {
+  animation: fileListRefresh 0.5s ease-in-out;
+}
+
+@keyframes fileListRefresh {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 .file-item {
   display: flex;
   flex-direction: column;
@@ -1449,95 +1496,6 @@
 .file-rarity {
   font-size: 12px;
   margin-top: 2px;
-}
-
-/* ==================== 彩蛋发现弹窗 ==================== */
-
-.egg-discovery-dialog {
-  width: 300px;
-  max-width: 85%;
-}
-
-.egg-discovery-dialog.legendary {
-  width: 340px;
-}
-
-.egg-discovery-dialog .win98-window-body {
-  padding: 0;
-  flex: unset;
-}
-
-.egg-discovery-content {
-  padding: 16px 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.egg-discovery-icon {
-  font-size: 56px;
-  margin-bottom: 12px;
-}
-
-.egg-discovery-name {
-  font-size: 14px;
-  font-weight: bold;
-  color: #000080;
-  margin-bottom: 8px;
-  text-align: center;
-}
-
-.egg-discovery-description {
-  font-size: 11px;
-  color: #333;
-  text-align: center;
-  margin-bottom: 12px;
-  line-height: 1.5;
-}
-
-.egg-discovery-rarity {
-  font-size: 12px;
-  font-weight: bold;
-  padding: 4px 12px;
-  border-radius: 4px;
-  margin-bottom: 8px;
-}
-
-.egg-discovery-rarity.common {
-  color: #666;
-  background: #e0e0e0;
-}
-
-.egg-discovery-rarity.rare {
-  color: #0066cc;
-  background: #cce5ff;
-}
-
-.egg-discovery-rarity.epic {
-  color: #9900cc;
-  background: #e5ccff;
-}
-
-.egg-discovery-rarity.legendary {
-  color: #cc6600;
-  background: #ffe5cc;
-  animation: legendary-glow 1s ease-in-out infinite alternate;
-}
-
-@keyframes legendary-glow {
-  from {
-    box-shadow: 0 0 5px #ffcc00;
-  }
-  to {
-    box-shadow: 0 0 20px #ffcc00, 0 0 30px #ff9900;
-  }
-}
-
-.egg-discovery-reward {
-  font-size: 14px;
-  font-weight: bold;
-  color: #cc0000;
-  text-align: center;
 }
 
 /* ==================== AI求救信警告弹窗 ==================== */
@@ -2497,6 +2455,41 @@
 }
 
 .disabled-message-text {
+  font-size: 14px;
+  line-height: 1.8;
+  color: #000;
+  text-align: center;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  font-family: "SimSun", "宋体", serif;
+}
+
+/* ==================== USB空文件夹弹窗样式 ==================== */
+
+.empty-folder-dialog {
+  width: 360px;
+  max-width: 90%;
+}
+
+.empty-folder-dialog .win98-window-body {
+  padding: 0;
+  flex: unset;
+}
+
+.empty-folder-content {
+  padding: 24px 28px;
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border: 2px inset #808080;
+  margin: 8px;
+  gap: 12px;
+}
+
+.empty-folder-message {
   font-size: 14px;
   line-height: 1.8;
   color: #000;
@@ -4068,4 +4061,65 @@
   letter-spacing: 0.5px;
   font-family: 'SimSun', serif;
   line-height: 1.4;
+}
+
+/* 彩蛋助手弹窗样式 */
+.egg-helper-dialog {
+  width: 500rpx;
+  max-width: 90%;
+}
+
+.egg-helper-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30rpx 20rpx;
+  gap: 20rpx;
+}
+
+.egg-helper-icon {
+  font-size: 80rpx;
+  margin-bottom: 10rpx;
+}
+
+.egg-helper-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #000080;
+  text-align: center;
+}
+
+.egg-helper-message {
+  font-size: 26rpx;
+  color: #333;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.egg-helper-path {
+  font-size: 24rpx;
+  color: #0066cc;
+  background: #f0f8ff;
+  padding: 15rpx 20rpx;
+  border-radius: 8rpx;
+  font-family: 'Courier New', monospace;
+  text-align: center;
+  border: 1px dashed #0066cc;
+}
+
+.egg-helper-hint {
+  font-size: 24rpx;
+  color: #666;
+  text-align: center;
+  font-style: italic;
+}
+
+.egg-helper-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 20rpx;
+}
+
+.egg-helper-actions .win98-btn-std {
+  min-width: 200rpx;
 }
