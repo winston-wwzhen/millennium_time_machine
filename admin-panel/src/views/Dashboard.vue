@@ -135,9 +135,9 @@
             </div>
           </template>
           <el-table :data="logs" style="width: 100%" max-height="400" v-loading="logsLoading">
-            <el-table-column prop="createdAt" label="时间" width="150">
+            <el-table-column label="时间" width="150">
               <template #default="{ row }">
-                {{ formatTime(row.createdAt) }}
+                {{ formatTime(row) }}
               </template>
             </el-table-column>
             <el-table-column prop="action" label="操作类型" width="110">
@@ -301,7 +301,9 @@ function formatNetFeeDays(minutes) {
 }
 
 // 格式化时间
-function formatTime(isoString) {
+function formatTime(row) {
+  // 兼容 createTime 和 createdAt 字段
+  const isoString = row.createTime || row.createdAt
   if (!isoString) return '-'
 
   const date = new Date(isoString)

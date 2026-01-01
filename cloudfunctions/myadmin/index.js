@@ -956,7 +956,7 @@ async function getActivityLogs(data) {
     query = query.where(conditions);
   }
 
-  const result = await query.orderBy('createdAt', 'desc').skip(skip).limit(limit).get();
+  const result = await query.orderBy('createTime', 'desc').skip(skip).limit(limit).get();
   const countResult = await query.count();
 
   return {
@@ -975,7 +975,7 @@ async function getActivityLogs(data) {
  */
 async function getRecentActivity(limit) {
   const result = await db.collection('user_activity_logs')
-    .orderBy('createdAt', 'desc')
+    .orderBy('createTime', 'desc')
     .limit(limit)
     .get();
 
