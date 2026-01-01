@@ -74,22 +74,44 @@ app.use('/api', async (req, res) => {
     // 获取 access_token
     const ACCESS_TOKEN = await getAccessToken()
 
-    // 构建请求体：只包含 name 和 query_string
-    const requestBody = {}
-    if (req.body.name) requestBody.name = req.body.name
-    if (req.body.query_string) requestBody.query_string = req.body.query_string
+    // 打印调试信息
+    console.log('📤 API代理请求:', req.method, req.path)
+    console.log('📤 请求体:', req.body)
 
-    // 微信云开发API
-    const url = `${API_BASE}${req.path}?access_token=${ACCESS_TOKEN}&env=${ENV_ID}`
+    // 构建云函数参数字符串
+    let funcDataString = '{}'
+    if (req.body.funcData) {
+      funcDataString = JSON.stringify(req.body.funcData)
+    } else if (req.body.data) {
+      if (typeof req.body.data === 'string') {
+        funcDataString = req.body.data
+      } else {
+        funcDataString = JSON.stringify(req.body.data)
+      }
+    }
+
+    // 微信云开发 HTTP API - 参考小游戏文档格式
+    // URL: POST https://api.weixin.qq.com/tcb/invokecloudfunction?access_token=ACCESS_TOKEN&env=ENV&name=FUNCTION_NAME
+    // Body: JSON string of parameters
+    const requestBody = funcDataString  // 直接传递JSON字符串
+
+    const url = `${API_BASE}${req.path}?access_token=${ACCESS_TOKEN}&env=${ENV_ID}&name=${req.body.name}`
+    console.log('📤 微信API URL:', url.replace(ACCESS_TOKEN, '***'))
+    console.log('📤 发送请求体:', requestBody)
+
     const response = await axios.post(url, requestBody, {
       headers: {
         'Content-Type': 'application/json'
       }
     })
 
+    console.log('📥 微信API响应:', response.data)
     res.json(response.data)
   } catch (error) {
-    console.error('API 代理错误:', error.message)
+    console.error('❌ API 代理错误:', error.message)
+    if (error.response) {
+      console.error('❌ 错误详情:', error.response.data)
+    }
     res.status(500).json({ error: error.message })
   }
 })
@@ -97,7 +119,7 @@ app.use('/api', async (req, res) => {
 // 开发环境代理到Vite
 if (isDev) {
   app.use('/', createProxyMiddleware({
-    target: 'http://localhost:5173',
+    target: 'http://localhost:5175',
     changeOrigin: true,
     ws: true
   }))

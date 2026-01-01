@@ -1,0 +1,12 @@
+{
+  "name": "myadmin",
+  "version": "1.0.0",
+  "description": "管理后台专用云函数",
+  "main": "index.js",
+  "scripts": {},
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

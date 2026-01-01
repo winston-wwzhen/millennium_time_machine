@@ -25,6 +25,18 @@
             <el-icon><Trophy /></el-icon>
             <span>排行榜</span>
           </el-menu-item>
+          <el-menu-item index="/eggs">
+            <el-icon><Star /></el-icon>
+            <span>彩蛋管理</span>
+          </el-menu-item>
+          <el-menu-item index="/chats">
+            <el-icon><ChatDotRound /></el-icon>
+            <span>聊天记录</span>
+          </el-menu-item>
+          <el-menu-item index="/qcio">
+            <el-icon><UserFilled /></el-icon>
+            <span>QCIO管理</span>
+          </el-menu-item>
           <el-menu-item index="/creator">
             <el-icon><Edit /></el-icon>
             <span>内容创作</span>
@@ -60,6 +72,16 @@
 import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessageBox } from 'element-plus'
+import {
+  DataBoard,
+  User,
+  Trophy,
+  Star,
+  ChatDotRound,
+  UserFilled,
+  Edit,
+  Ticket
+} from '@element-plus/icons-vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -73,7 +95,11 @@ const pageTitle = computed(() => {
   const titles = {
     '/dashboard': '数据看板',
     '/users': '用户管理',
+    '/user/detail': '用户详情',
     '/rankings': '排行榜',
+    '/eggs': '彩蛋管理',
+    '/chats': '聊天记录',
+    '/qcio': 'QCIO管理',
     '/creator': '内容创作中心',
     '/cdk': 'CDK管理'
   }

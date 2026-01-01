@@ -24,9 +24,29 @@ const routes = [
         component: () => import('../views/Users.vue')
       },
       {
+        path: 'user/detail',
+        name: 'UserDetail',
+        component: () => import('../views/UserDetail.vue')
+      },
+      {
         path: 'rankings',
         name: 'Rankings',
         component: () => import('../views/Rankings.vue')
+      },
+      {
+        path: 'eggs',
+        name: 'Eggs',
+        component: () => import('../views/Eggs.vue')
+      },
+      {
+        path: 'chats',
+        name: 'Chats',
+        component: () => import('../views/Chats.vue')
+      },
+      {
+        path: 'qcio',
+        name: 'QCIO',
+        component: () => import('../views/QCIO.vue')
       },
       {
         path: 'creator',
