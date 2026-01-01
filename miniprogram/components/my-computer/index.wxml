@@ -710,7 +710,7 @@
         </view>
       </view>
 
-      <view class="win98-window-body" bindtap="onFeWindowBodyTap">
+      <view class="win98-window-body" bindtap="onFeWindowBodyTap" catchlongpress="stopPropagation">
         <!-- 工具栏 -->
         <view class="file-explorer-toolbar" catchtap="stopPropagation">
           <view class="toolbar-btn" bindtap="onGoBack" wx:if="{{fileExplorerBreadcrumbs.length > 1}}">
@@ -724,8 +724,8 @@
         </view>
 
         <!-- 文件列表 -->
-        <scroll-view class="file-explorer-content" scroll-y>
-          <view class="file-list {{feIsRefreshing ? 'refreshing' : ''}}">
+        <scroll-view class="file-explorer-content" scroll-y catchlongpress="stopPropagation">
+          <view class="file-list {{feIsRefreshing ? 'refreshing' : ''}}" catchlongpress="stopPropagation">
             <view class="file-item {{item.disabled ? 'disabled' : ''}}" wx:for="{{fileExplorerItems}}" wx:key="name" bindtap="onFileItemTap" catchlongpress="onSystemIniLongPressStart" bindtouchend="onSystemIniLongPressEnd" data-item="{{item}}">
               <text class="file-icon">{{item.icon}}</text>
               <text class="file-name">{{item.name}}</text>
