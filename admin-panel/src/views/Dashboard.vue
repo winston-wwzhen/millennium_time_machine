@@ -33,9 +33,9 @@
         <el-card shadow="hover" class="stat-card">
           <div class="stat-content">
             <div class="stat-value">{{ formatNumber(stats.chats?.total) || 0 }}</div>
-            <div class="stat-label">聊天总数</div>
+            <div class="stat-label">聊天消息数</div>
             <div class="stat-change up">
-              今日 +{{ stats.chats?.today || 0 }}
+              今日 +{{ stats.chats?.today || 0 }} | 会话 {{ stats.chats?.sessions || 0 }}
             </div>
           </div>
         </el-card>

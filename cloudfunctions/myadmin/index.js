@@ -148,6 +148,35 @@ async function getDashboardStats() {
     todayVisits += qcioUser.todayVisits || 0;
   }
 
+  // 获取空间访问日志统计实际访问数
+  const [totalVisitLogs, todayVisitLogs] = await Promise.all([
+    db.collection('user_activity_logs').where({ action: 'visit_space' }).count(),
+    db.collection('user_activity_logs').where({ action: 'visit_space', createTime: _.gte(todayStart) }).count()
+  ]);
+
+  // 获取聊天历史记录并统计 messages 数组长度
+  const allChatHistory = await db.collection('qcio_chat_history').field({
+    messages: true,
+    timestamp: true
+  }).get();
+
+  let totalMessages = 0;
+  let todayMessages = 0;
+
+  for (var k = 0; k < allChatHistory.data.length; k++) {
+    var chat = allChatHistory.data[k];
+    var msgCount = 0;
+    if (chat.messages && Array.isArray(chat.messages)) {
+      msgCount = chat.messages.length;
+    }
+    totalMessages += msgCount;
+
+    // 统计今天的消息
+    if (chat.timestamp && new Date(chat.timestamp) >= todayStart) {
+      todayMessages += msgCount;
+    }
+  }
+
   const todayNew = todayUsers.total || 0;
   const yesterdayNew = yesterdayUsers.total || 0;
   const growth = yesterdayNew > 0 ? ((todayNew - yesterdayNew) / yesterdayNew * 100).toFixed(1) : 0;
@@ -165,12 +194,14 @@ async function getDashboardStats() {
         todayActive: activeQCIO.total || 0
       },
       chats: {
-        total: totalChats.total || 0,
-        today: todayChats.total || 0
+        total: totalMessages,
+        today: todayMessages,
+        sessions: totalChats.total || 0,
+        todaySessions: todayChats.total || 0
       },
       visits: {
-        total: totalVisits,
-        today: todayVisits
+        total: totalVisitLogs.total || 0,
+        today: todayVisitLogs.total || 0
       },
       eggs: {
         totalDiscovered: totalEggsDiscovered,
@@ -200,16 +231,28 @@ async function getGrowthTrend(days) {
     const results = await Promise.all([
       db.collection('users').where({ createTime: _.gte(dayStart).lt(dayEnd) }).count(),
       db.collection('qcio_users').where({ updateTime: _.gte(dayStart).lt(dayEnd) }).count(),
-      db.collection('qcio_chat_history').where({ timestamp: _.gte(dayStart).lt(dayEnd) }).count(),
       db.collection('user_activity_logs').where({ action: 'visit_space', createTime: _.gte(dayStart).lt(dayEnd) }).count()
     ]);
+
+    // 获取当天的聊天记录并统计消息数
+    const chatHistory = await db.collection('qcio_chat_history')
+      .where({ timestamp: _.gte(dayStart).lt(dayEnd) })
+      .field({ messages: true })
+      .get();
+
+    let dailyMessages = 0;
+    for (var j = 0; j < chatHistory.data.length; j++) {
+      if (chatHistory.data[j].messages && Array.isArray(chatHistory.data[j].messages)) {
+        dailyMessages += chatHistory.data[j].messages.length;
+      }
+    }
 
     trends.push({
       date: (date.getMonth() + 1) + '/' + date.getDate(),
       newUsers: results[0].total || 0,
       activeUsers: results[1].total || 0,
-      newChats: results[2].total || 0,
-      newVisits: results[3].total || 0
+      newChats: dailyMessages,
+      newVisits: results[2].total || 0
     });
   }
 
