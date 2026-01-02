@@ -84,8 +84,14 @@ Page({
     if (options.members) {
       try {
         members = JSON.parse(decodeURIComponent(options.members));
+        // 验证解析结果是数组
+        if (!Array.isArray(members)) {
+          console.warn('Members is not an array, resetting to empty');
+          members = [];
+        }
       } catch (e) {
         console.error('Members parse error:', e);
+        members = []; // 解析失败时使用安全默认值
       }
     }
 

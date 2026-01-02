@@ -3,12 +3,18 @@ const cloud = require("wx-server-sdk");
 const prompts = require("./prompts");
 const { checkContentSafety } = require("./safety");
 const { callGLM } = require("./glm");
+const config = require("./config");
 
 cloud.init({
   env: cloud.DYNAMIC_CURRENT_ENV,
 });
 
 const db = cloud.database();
+
+// API密钥验证
+if (!config.API_KEY) {
+  throw new Error('GLM_API_KEY environment variable is required but not set');
+}
 
 // 不需要历史记录的模式列表（一次性转换类）
 const NO_HISTORY_MODES = ['mars', 'kaomoji', 'abstract', 'human', 'emo', 'mood_log', 'toxic_soup', 'joker', 'poet', 'flirt_master'];

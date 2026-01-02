@@ -255,7 +255,7 @@ Page({
 
     this.updateTime();
     // 每分钟更新一次系统时间
-    setInterval(() => {
+    this.updateTimeTimer = setInterval(() => {
       this.updateTime();
     }, 60000);
 
@@ -337,6 +337,11 @@ Page({
     // 清除小狮子自动说话定时器
     if (this.data.lionTalkTimer) {
       clearTimeout(this.data.lionTalkTimer);
+    }
+
+    // 清除系统时间更新定时器
+    if (this.updateTimeTimer) {
+      clearInterval(this.updateTimeTimer);
     }
   },
 
