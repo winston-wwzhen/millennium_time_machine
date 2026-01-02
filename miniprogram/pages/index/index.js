@@ -133,6 +133,8 @@ Page({
     showAvatar: false, // 非主流相机显示状态
     showCmdConsole: false, // CMD 控制台显示状态
     showEggCollection: false, // 彩蛋大全显示状态
+    showGobang: false, // 五子棋显示状态
+    showMinesweeper: false, // 扫雷显示状态
     eggCollectionFileName: '彩蛋大全.txt', // 彩蛋大全文件名
     // 组件z-index管理（确保后打开的组件显示在上层）
     baseZIndex: 2000,
@@ -144,6 +146,8 @@ Page({
     recycleBinZIndex: 2000,
     avatarZIndex: 2000,
     cmdConsoleZIndex: 2000,
+    gobangZIndex: 2000,
+    minesweeperZIndex: 2000,
     // 网络连接状态
     networkConnected: true, // 默认连接
     networkStatus: "online", // online, offline, connecting
@@ -694,6 +698,32 @@ Page({
         showAvatar: true,
         baseZIndex: this.data.baseZIndex + 10,
         avatarZIndex: this.data.baseZIndex + 10
+      });
+      return;
+    }
+
+    // 五子棋 - 打开组件
+    if (path && path.includes("gobang")) {
+      this.addLog('open', '五子棋');
+      this.setData({
+        showStartMenu: false,
+        showSubmenu: false,
+        showGobang: true,
+        baseZIndex: this.data.baseZIndex + 10,
+        gobangZIndex: this.data.baseZIndex + 10
+      });
+      return;
+    }
+
+    // 扫雷 - 打开组件
+    if (path && path.includes("minesweeper")) {
+      this.addLog('open', '扫雷');
+      this.setData({
+        showStartMenu: false,
+        showSubmenu: false,
+        showMinesweeper: true,
+        baseZIndex: this.data.baseZIndex + 10,
+        minesweeperZIndex: this.data.baseZIndex + 10
       });
       return;
     }
@@ -1824,6 +1854,16 @@ Page({
   // 关闭非主流相机
   onCloseAvatar: function () {
     this.setData({ showAvatar: false });
+  },
+
+  // 关闭五子棋
+  onCloseGobang: function () {
+    this.setData({ showGobang: false });
+  },
+
+  // 关闭扫雷
+  onCloseMinesweeper: function () {
+    this.setData({ showMinesweeper: false });
   },
 
   // 关闭彩蛋大全

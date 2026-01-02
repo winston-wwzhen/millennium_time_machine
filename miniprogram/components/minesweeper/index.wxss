@@ -1,0 +1,599 @@
+/* 组件容器 */
+.minesweeper-component {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 95vw;
+  max-width: 700rpx;
+  max-height: 92vh;
+  z-index: var(--minesweeper-z-index, 2000);
+  overflow: hidden;
+}
+
+/* Win98 窗口样式 */
+.win98-window {
+  background: #c0c0c0;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #808080;
+  border-bottom: 2px solid #808080;
+  box-shadow: 2px 2px 0 #000, inset 1px 1px #dfdfdf;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.minesweeper-window {
+  width: 100%;
+  max-width: 700rpx;
+  max-height: 95vh;
+}
+
+/* 标题栏 */
+.win98-title-bar {
+  background: linear-gradient(90deg, #000080, #1084d0);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4rpx 6rpx 4rpx 10rpx;
+  height: 22px;
+}
+
+.win98-title-text {
+  color: white;
+  font-weight: bold;
+  font-size: 13px;
+  font-family: 'SimSun', 'MS Sans Serif', serif;
+}
+
+.win98-title-controls {
+  display: flex;
+  gap: 2px;
+}
+
+.win98-btn-close {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 16px;
+  height: 14px;
+  background: #c0c0c0;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  font-size: 11px;
+  color: #000;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.win98-btn-close:active {
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
+}
+
+/* 窗口内容 */
+.win98-window-body {
+  padding: 6rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+  overflow-y: auto;
+  box-sizing: border-box;
+  max-height: calc(92vh - 30px);
+}
+
+/* 模式选择器 */
+.mode-selector {
+  padding: 8rpx;
+  background: #c0c0c0;
+  border: 2px inset #fff;
+}
+
+.mode-buttons {
+  display: flex;
+  gap: 6rpx;
+}
+
+.win98-btn {
+  flex: 1;
+  font-size: 12px;
+  color: #000;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #c0c0c0;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  font-family: 'SimSun', serif;
+}
+
+.win98-btn.active {
+  background: #000080;
+  color: white;
+  font-weight: bold;
+}
+
+.win98-btn:active {
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
+  padding-top: 2px;
+  padding-left: 2px;
+}
+
+/* 分数面板 */
+.scoreboard {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+}
+
+.player-card {
+  flex: 1;
+  background: #fff;
+  border: 2px inset #fff;
+  border-radius: 0;
+  padding: 6rpx 4rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 0.6;
+  transition: all 0.2s ease;
+  min-width: 0;
+}
+
+.player-card.active {
+  opacity: 1;
+  box-shadow: inset 1px 1px 0 #000, inset -1px -1px 0 #808080;
+}
+
+.player-card.p1.active {
+  background: #e6f3ff;
+  border-color: #60a5fa;
+}
+
+.player-card.p2.active {
+  background: #ffe6e6;
+  border-color: #f87171;
+}
+
+.player-header {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+  margin-bottom: 4rpx;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.player-name {
+  font-size: 11px;
+  font-weight: bold;
+  font-family: 'SimSun', serif;
+  color: #000;
+  flex: 1;
+  text-align: center;
+}
+
+.turn-badge {
+  font-size: 9px;
+  padding: 2rpx 4rpx;
+  border: 1px solid #808080;
+  background: #c0c0c0;
+  color: #000;
+  opacity: 0;
+  flex-shrink: 0;
+}
+
+.turn-badge.show {
+  opacity: 1;
+}
+
+.player-card.p1 .turn-badge.show {
+  background: #60a5fa;
+  color: white;
+  border-color: #3b82f6;
+}
+
+.player-card.p2 .turn-badge.show {
+  background: #f87171;
+  color: white;
+  border-color: #ef4444;
+}
+
+.player-score {
+  font-size: 28px;
+  font-weight: bold;
+  font-family: 'Courier New', 'MS Serif New', monospace;
+  color: #000;
+  margin: 4rpx 0;
+  min-width: 48px;
+  text-align: center;
+}
+
+.player-label {
+  font-size: 9px;
+  color: #666;
+  font-family: 'SimSun', serif;
+  text-align: center;
+}
+
+/* VS 分隔 */
+.vs-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+}
+
+.vs-text {
+  font-size: 12px;
+  font-weight: bold;
+  color: #808080;
+  font-family: 'Arial', sans-serif;
+}
+
+/* 难度选择栏 */
+.difficulty-bar {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+  padding: 6rpx 4rpx;
+  background: #c0c0c0;
+  border: 2px inset #fff;
+}
+
+.difficulty-label {
+  font-size: 11px;
+  font-family: 'SimSun', serif;
+  color: #000;
+  font-weight: bold;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Win98 下拉选择器 */
+.win98-dropdown {
+  flex: 1;
+  position: relative;
+  min-width: 0;
+}
+
+.dropdown-trigger {
+  background: #fff;
+  border: 2px inset #fff;
+  padding: 4rpx 6rpx;
+  font-size: 11px;
+  font-family: 'SimSun', serif;
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 18px;
+  cursor: pointer;
+}
+
+.dropdown-trigger:active {
+  border: 2px outset #fff;
+}
+
+.dropdown-value {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dropdown-arrow {
+  font-size: 9px;
+  color: #666;
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.dropdown-arrow.open {
+  transform: rotate(180deg);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 0;
+  right: 0;
+  background: #c0c0c0;
+  border: 2px outset #fff;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+  display: none;
+  flex-direction: column;
+  z-index: 100;
+}
+
+.dropdown-menu.show {
+  display: flex;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+  padding: 5px 8rpx;
+  background: #c0c0c0;
+  cursor: pointer;
+}
+
+.dropdown-item:active {
+  background: #000080;
+}
+
+.dropdown-item:active .item-text {
+  color: #fff;
+}
+
+.dropdown-item.selected {
+  background: #000080;
+}
+
+.dropdown-item.selected .item-text {
+  color: #fff;
+  font-weight: bold;
+}
+
+.item-text {
+  flex: 1;
+  font-size: 11px;
+  font-family: 'SimSun', serif;
+  color: #000;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.item-check {
+  font-size: 9px;
+  color: #fff;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+/* Win98 按钮 */
+.win98-btn-std {
+  font-size: 12px;
+  color: #000;
+  height: 24px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #c0c0c0;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  font-family: 'SimSun', serif;
+  cursor: pointer;
+  user-select: none;
+}
+
+.win98-btn-std:active {
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
+  padding-top: 2px;
+  padding-left: 2px;
+}
+
+.restart-btn-small {
+  height: 22px;
+  padding: 0 10px;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+/* 网格容器 */
+.grid-container {
+  background: #c0c0c0;
+  border: 3px inset #fff;
+  padding: 4px;
+  position: relative;
+  transition: all 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.grid-container.grid-hidden {
+  display: none;
+}
+
+.mine-grid {
+  display: grid;
+  gap: 1px;
+  background: #808080;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* 格子样式 */
+.cell {
+  width: 100%;
+  aspect-ratio: 1;
+  background: #c0c0c0;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #808080;
+  border-bottom: 2px solid #808080;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  overflow: hidden;
+}
+
+.cell:active {
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #ffffff;
+  border-bottom: 2px solid #ffffff;
+}
+
+.cell.revealed {
+  border: 1px solid #808080;
+  border-right: none;
+  border-bottom: none;
+  background: #d0d0d0;
+}
+
+/* 地雷颜色 - P1 蓝方 */
+.cell.mine-p1 {
+  background: #60a5fa !important;
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* 地雷颜色 - P2 红方 */
+.cell.mine-p2 {
+  background: #f87171 !important;
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+  0% { transform: scale(0); }
+  100% { transform: scale(1); }
+}
+
+.cell-icon {
+  font-size: 14px;
+}
+
+.cell-num {
+  font-size: 14px;
+  font-weight: bold;
+  font-family: 'Arial', sans-serif;
+}
+
+/* 数字颜色 */
+.num-1 { color: #0000ff; }
+.num-2 { color: #008000; }
+.num-3 { color: #ff0000; }
+.num-4 { color: #000080; }
+.num-5 { color: #800000; }
+.num-6 { color: #008080; }
+.num-7 { color: #000000; }
+.num-8 { color: #808080; }
+
+/* 游戏说明 */
+.game-hint {
+  text-align: center;
+  font-size: 11px;
+  color: #333;
+  padding: 8rpx;
+  font-family: 'SimSun', serif;
+  background: #c0c0c0;
+  border: 2px inset #fff;
+}
+
+.game-hint .highlight {
+  color: #dc2626;
+  font-weight: bold;
+}
+
+/* 游戏结束弹窗 */
+.win98-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.minesweeper-component .win98-overlay {
+  position: fixed;
+  z-index: 10000;
+}
+
+.game-over-dialog {
+  width: 300px;
+  max-width: 90vw;
+}
+
+.game-over-content {
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.result-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  border: 2px outset #fff;
+  background: #c0c0c0;
+}
+
+.result-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #000080;
+  font-family: 'SimSun', serif;
+  text-align: center;
+}
+
+.result-subtitle {
+  font-size: 12px;
+  color: #666;
+  font-family: 'SimSun', serif;
+  text-align: center;
+}
+
+.final-score {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+}
+
+.score-p1 {
+  color: #000080;
+}
+
+.score-p2 {
+  color: #800000;
+}
+
+.score-vs {
+  color: #808080;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: center;
+  padding: 8px 12px 12px;
+  background: #c0c0c0;
+  border-top: 1px solid #808080;
+}

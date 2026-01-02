@@ -171,7 +171,7 @@
   <view class="submenu-popup {{showSubmenu ? 'show' : ''}}" catchtap="stopPropagation">
     <view class="submenu-item" catchtap="onIconTap" data-path="/pages/mars/index">
       <text class="submenu-icon">🪐</text>
-      <text class="submenu-text">火星文转换器</text>
+      <text class="submenu-text">火星文转换</text>
     </view>
     <view class="submenu-item" catchtap="onIconTap" data-path="/pages/translator/index">
       <text class="submenu-icon">💔</text>
@@ -179,11 +179,19 @@
     </view>
     <view class="submenu-item" catchtap="onIconTap" data-path="/pages/star-explorer/index">
       <text class="submenu-icon">💣</text>
-      <text class="submenu-text">葬爱心碎</text>
+      <text class="submenu-text">虚假的扫雷</text>
     </view>
     <view class="submenu-item" catchtap="onIconTap" data-path="/pages/avatar/index">
       <text class="submenu-icon">📸</text>
       <text class="submenu-text">非主流相机</text>
+    </view>
+    <view class="submenu-item" catchtap="onIconTap" data-path="components/gobang">
+      <text class="submenu-icon">🎮</text>
+      <text class="submenu-text">五子棋</text>
+    </view>
+    <view class="submenu-item" catchtap="onIconTap" data-path="components/minesweeper">
+      <text class="submenu-icon">💣</text>
+      <text class="submenu-text">真正的扫雷</text>
     </view>
   </view>
 
@@ -617,6 +625,12 @@
 
   <!-- 非主流相机组件 -->
   <avatar show="{{showAvatar}}" zIndex="{{avatarZIndex}}" bindclose="onCloseAvatar" catchlongtap="stopPropagation"></avatar>
+
+  <!-- 五子棋组件 -->
+  <gobang show="{{showGobang}}" zIndex="{{gobangZIndex}}" bindclose="onCloseGobang" catchlongtap="stopPropagation"></gobang>
+
+  <!-- 扫雷组件 -->
+  <minesweeper show="{{showMinesweeper}}" zIndex="{{minesweeperZIndex}}" bindclose="onCloseMinesweeper" catchlongtap="stopPropagation"></minesweeper>
 
   <!-- CMD 命令提示符组件 -->
   <cmd-console show="{{showCmdConsole}}" zIndex="{{cmdConsoleZIndex}}" bindclose="closeCmdConsole" catchlongtap="stopPropagation"></cmd-console>

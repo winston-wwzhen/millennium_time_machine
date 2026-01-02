@@ -1,0 +1,135 @@
+<view class="minesweeper-component" wx:if="{{show}}" style="z-index: {{zIndex}};" catchtap="stopPropagation" catchlongtap="stopPropagation" catchlongpress="stopPropagation">
+  <!-- Win98 窗口 -->
+  <view class="win98-window minesweeper-window">
+    <!-- 标题栏 -->
+    <view class="win98-title-bar">
+      <view class="win98-title-text">💣 真正的扫雷</view>
+      <view class="win98-btn-close" bindtap="onClose">×</view>
+    </view>
+
+    <!-- 窗口内容 -->
+    <view class="win98-window-body">
+      <!-- 游戏模式选择 -->
+      <view class="mode-selector">
+        <view class="mode-buttons">
+          <button class="win98-btn {{mode === 'pve' ? 'active' : ''}}" bindtap="setMode" data-mode="pve">人机</button>
+          <button class="win98-btn {{mode === 'pvp' ? 'active' : ''}}" bindtap="setMode" data-mode="pvp">双人</button>
+        </view>
+      </view>
+
+      <!-- 玩家分数面板 -->
+      <view class="scoreboard">
+        <!-- P1 蓝方 -->
+        <view class="player-card p1 {{turn === 'p1' ? 'active' : ''}}">
+          <view class="player-header">
+            <text class="player-name">蓝方 (P1)</text>
+            <text class="turn-badge {{turn === 'p1' ? 'show' : ''}}">回合</text>
+          </view>
+          <view class="player-score">{{scores.p1}}</view>
+          <view class="player-label">剩余雷数: {{totalMines - minesFound}}</view>
+        </view>
+
+        <!-- VS 分隔 -->
+        <view class="vs-divider">
+          <text class="vs-text">VS</text>
+        </view>
+
+        <!-- P2 红方/电脑 -->
+        <view class="player-card p2 {{turn === 'p2' ? 'active' : ''}}">
+          <view class="player-header">
+            <text class="player-name">{{mode === 'pve' ? '电脑' : '红方'}} (P2)</text>
+            <text class="turn-badge {{turn === 'p2' ? 'show' : ''}}">回合</text>
+          </view>
+          <view class="player-score">{{scores.p2}}</view>
+          <view class="player-label">领先分: {{scores.p1 > scores.p2 ? scores.p1 - scores.p2 : scores.p2 - scores.p1}}</view>
+        </view>
+      </view>
+
+      <!-- 难度选择 -->
+      <view class="difficulty-bar">
+        <text class="difficulty-label">难度:</text>
+        <view class="win98-dropdown">
+          <view class="dropdown-trigger" bindtap="toggleDropdown">
+            <text class="dropdown-value">{{difficultyNames[difficultyIndex]}}</text>
+            <text class="dropdown-arrow {{showDropdown ? 'open' : ''}}">▾</text>
+          </view>
+          <view class="dropdown-menu {{showDropdown ? 'show' : ''}}" catchtap="stopPropagation">
+            <view
+              class="dropdown-item {{difficultyIndex === 0 ? 'selected' : ''}}"
+              bindtap="selectDifficulty"
+              data-index="0"
+            >
+              <text class="item-text">小 (10x10, 15雷)</text>
+              <text class="item-check" wx:if="{{difficultyIndex === 0}}">✓</text>
+            </view>
+            <view
+              class="dropdown-item {{difficultyIndex === 1 ? 'selected' : ''}}"
+              bindtap="selectDifficulty"
+              data-index="1"
+            >
+              <text class="item-text">中 (16x16, 51雷)</text>
+              <text class="item-check" wx:if="{{difficultyIndex === 1}}">✓</text>
+            </view>
+          </view>
+        </view>
+        <button class="win98-btn-std restart-btn-small" bindtap="restartGame">重置</button>
+      </view>
+
+      <!-- 游戏网格 -->
+      <view class="grid-container">
+        <view class="mine-grid" style="grid-template-columns: repeat({{cols}}, 1fr);">
+          <block wx:for="{{grid}}" wx:key="row" wx:for-item="row">
+            <block wx:for="{{row}}" wx:key="col" wx:for-item="cell">
+              <view
+                class="cell {{cell.isRevealed ? 'revealed' : ''}} {{cell.isMine && cell.isRevealed && cell.owner === 'p1' ? 'mine-p1' : ''}} {{cell.isMine && cell.isRevealed && cell.owner === 'p2' ? 'mine-p2' : ''}}"
+                data-row="{{cell.row}}"
+                data-col="{{cell.col}}"
+                bindtap="onCellTap"
+              >
+                <block wx:if="{{cell.isRevealed}}">
+                  <block wx:if="{{cell.isMine}}">
+                    <text class="cell-icon">💣</text>
+                  </block>
+                  <block wx:elif="{{cell.neighborMines > 0}}">
+                    <text class="cell-num num-{{cell.neighborMines}}">{{cell.neighborMines}}</text>
+                  </block>
+                </block>
+              </view>
+            </block>
+          </block>
+        </view>
+      </view>
+
+      <!-- 游戏说明 -->
+      <view class="game-hint">
+        <text>规则：点击格子。挖到数字换人，</text>
+        <text class="highlight">挖到地雷得分并继续！</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 游戏结束弹窗 -->
+  <view class="win98-overlay" wx:if="{{showGameOver}}" bindtap="hideGameOver" catchlongtap="stopPropagation">
+    <view class="win98-window game-over-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">🏆 游戏结束</view>
+        <view class="win98-btn-close" bindtap="hideGameOver">×</view>
+      </view>
+      <view class="win98-window-body">
+        <view class="game-over-content">
+          <view class="result-icon">{{winnerIcon}}</view>
+          <text class="result-title">{{winnerTitle}}</text>
+          <text class="result-subtitle">{{winnerSubtitle}}</text>
+          <view class="final-score">
+            <text class="score-p1">蓝方: {{scores.p1}}</text>
+            <text class="score-vs"> vs </text>
+            <text class="score-p2">{{mode === 'pve' ? '电脑' : '红方'}}: {{scores.p2}}</text>
+          </view>
+        </view>
+        <view class="dialog-actions">
+          <view class="win98-btn-std" bindtap="restartGame">再来一局</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

@@ -202,6 +202,8 @@ const OPENID = wxContext.OPENID;
 | `miniprogram/utils/api-client.js` | Unified API client for cloud functions (NO cache for balance) |
 | `miniprogram/components/my-computer/` | My computer component with KONAMI_CODE egg |
 | `miniprogram/components/egg-discovery-dialog/` | Win98 style reusable discovery modal |
+| `miniprogram/components/gobang/` | Three-player Gomoku (五子棋) with canvas-based board |
+| `miniprogram/components/minesweeper/` | Real Minesweeper (真正的扫雷) with reverse rules |
 | `cloudfunctions/chat/index.js` | AI chat core with 36 modes |
 | `cloudfunctions/qcio/index.js` | QCIO social features router |
 | `cloudfunctions/user/index.js` | User login, dual currency, easter eggs, transaction history |
@@ -267,6 +269,55 @@ const OPENID = wxContext.OPENID;
   }
 }
 ```
+
+### Desktop Game Components
+
+**Overview**: Two Windows 98-style games accessible from the Start Menu.
+
+#### Three-Player Gomoku (五子棋)
+
+**Location**: `miniprogram/components/gobang/`
+
+**Implementation**: Canvas-based rendering for performance
+
+**Features**:
+- 3 players: Player (Black) vs AI 1 (White) vs AI 2 (Red)
+- 15x15 board with standard Gomoku rules
+- 3 difficulty levels: Easy, Medium, Hard
+- Canvas redraws on component show to prevent rendering issues
+- Active player indicator with smooth transitions
+
+**Key Files**:
+- `gobang/index.wxml` - Game board with canvas element
+- `gobang/index.wxss` - Player badge styling (no scale transform to prevent board shake)
+- `gobang/index.js` - Game logic, canvas rendering, AI decisions
+
+**Important**: The canvas is redrawn every time the component is shown via the observer pattern.
+
+#### Real Minesweeper (真正的扫雷)
+
+**Location**: `miniprogram/components/minesweeper/`
+
+**Implementation**: View-based grid with CSS Grid layout
+
+**Features**:
+- **Reverse Rules**: Hit numbers → switch turns, Hit mines → score + continue
+- 2 modes: PvE (Player vs AI) and PvP (2 players)
+- 2 difficulties: Small (10x10, 15 mines), Medium (16x16, 51 mines)
+- Grid cells use `aspect-ratio: 1` to maintain square shape
+- Game over modal shows final state (grid remains visible)
+- Compact game over dialog for mobile
+
+**Key Files**:
+- `minesweeper/index.wxml` - Grid layout with dynamic columns
+- `minesweeper/index.wxss` - Win98 styling, responsive cells
+- `minesweeper/index.js` - Game logic, AI decision making
+
+**Important**: Unlike gobang, this uses view components instead of canvas. Cells auto-size to fill grid container.
+
+**Menu Integration**:
+- Accessible via Start Menu → 程序 → 五子棋 / 真正的扫雷
+- Uses `catchlongtap="stopPropagation"` to prevent desktop context menu
 
 ## Development Conventions
 

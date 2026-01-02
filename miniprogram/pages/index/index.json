@@ -9,6 +9,8 @@
     "my-documents": "../../components/my-documents/index",
     "recycle-bin": "../../components/recycle-bin/index",
     "avatar": "../../components/avatar/index",
+    "gobang": "../../components/gobang/index",
+    "minesweeper": "../../components/minesweeper/index",
     "cmd-console": "../../components/cmd-console/index",
     "egg-discovery-dialog": "../../components/egg-discovery-dialog/index",
     "text-file-viewer": "../../components/text-file-viewer/index"

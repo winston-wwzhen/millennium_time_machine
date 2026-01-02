@@ -1,0 +1,500 @@
+/* 组件容器 */
+.gobang-component {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90vw;
+  max-width: 700rpx;
+  max-height: 95vh;
+  z-index: var(--gobang-z-index, 2000);
+}
+
+/* Win98 窗口样式 */
+.win98-window {
+  background: #c0c0c0;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  box-shadow: inset 1px 1px #dfdfdf, inset -1px -1px #0a0a0a;
+  display: flex;
+  flex-direction: column;
+}
+
+.gobang-window {
+  width: 100%;
+  max-height: 95vh;
+}
+
+/* 标题栏 */
+.win98-title-bar {
+  background: linear-gradient(90deg, #000080, #1084d0);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4rpx 6rpx 4rpx 10rpx;
+  height: 20px;
+}
+
+.win98-title-text {
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  font-family: 'SimSun', 'Courier New', monospace;
+}
+
+.win98-title-controls {
+  display: flex;
+  gap: 2px;
+}
+
+.win98-title-controls button {
+  all: unset;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 16px;
+  height: 14px;
+  background: #c0c0c0;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  font-size: 10px;
+  color: #000;
+}
+
+.win98-btn-close::after {
+  content: "×";
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* 窗口内容 */
+.win98-window-body {
+  padding: 10rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+  max-height: calc(95vh - 30px);
+  overflow-y: auto;
+}
+
+/* 游戏控制面板 */
+.game-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+/* 玩家状态显示 */
+.player-status {
+  display: flex;
+  justify-content: space-around;
+  gap: 10rpx;
+  padding: 10rpx;
+  background: #fff;
+  border: 2px inset #fff;
+}
+
+.player-badge {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  padding: 8rpx 12rpx;
+  background: #e0e0e0;
+  border-radius: 4rpx;
+  opacity: 0.6;
+  transition: opacity 0.2s, background 0.2s, box-shadow 0.2s;
+  border: 2px solid transparent;
+}
+
+.player-badge.active {
+  opacity: 1;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.player-badge.p1.active {
+  background: #d0d0d0;
+  border: 2px solid #000;
+}
+
+.player-badge.p2.active {
+  background: #fff;
+  border: 2px solid #ccc;
+}
+
+.player-badge.p3.active {
+  background: #ffe0e0;
+  border: 2px solid #ef4444;
+}
+
+.player-dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  border: 1px solid #666;
+  box-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+.player-dot.black {
+  background: radial-gradient(circle at 30% 30%, #666, #000);
+}
+
+.player-dot.white {
+  background: radial-gradient(circle at 30% 30%, #fff, #ddd);
+}
+
+.player-dot.red {
+  background: radial-gradient(circle at 30% 30%, #ff8888, #aa0000);
+}
+
+.player-name {
+  font-size: 22rpx;
+  font-family: 'SimSun', serif;
+  color: #333;
+}
+
+/* 控制按钮区域 */
+.control-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10rpx;
+  padding: 8rpx;
+  background: #e0e0e0;
+  border: 2px inset #fff;
+}
+
+.difficulty-selector {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  flex: 1;
+}
+
+.control-label {
+  font-size: 24rpx;
+  font-family: 'SimSun', serif;
+  color: #333;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.win98-picker {
+  flex: 1;
+  background: #fff;
+  border: 2px inset #fff;
+  padding: 6rpx 10rpx;
+  font-size: 22rpx;
+  font-family: 'SimSun', serif;
+  color: #333;
+}
+
+.difficulty-display {
+  flex: 1;
+  background: #fff;
+  border: 2px inset #fff;
+  padding: 6rpx 10rpx;
+  font-size: 22rpx;
+  font-family: 'SimSun', serif;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 40rpx;
+  cursor: pointer;
+}
+
+.difficulty-display:active {
+  border: 2px outset #fff;
+}
+
+.dropdown-arrow {
+  font-size: 18rpx;
+  color: #666;
+}
+
+/* Win98 下拉选择器 */
+.win98-dropdown {
+  flex: 1;
+  position: relative;
+}
+
+.dropdown-trigger {
+  background: #fff;
+  border: 2px inset #fff;
+  padding: 6rpx 10rpx;
+  font-size: 22rpx;
+  font-family: 'SimSun', serif;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 40rpx;
+  cursor: pointer;
+}
+
+.dropdown-trigger:active {
+  border: 2px outset #fff;
+}
+
+.dropdown-value {
+  flex: 1;
+}
+
+.dropdown-arrow {
+  font-size: 18rpx;
+  color: #666;
+  transition: transform 0.2s ease;
+}
+
+.dropdown-arrow.open {
+  transform: rotate(180deg);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #c0c0c0;
+  border: 2px outset #fff;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+  display: none;
+  flex-direction: column;
+  z-index: 100;
+  max-height: 0;
+  overflow: hidden;
+}
+
+.dropdown-menu.show {
+  display: flex;
+  max-height: 300px;
+  animation: dropdownSlide 0.2s ease-out;
+}
+
+@keyframes dropdownSlide {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 300px;
+  }
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #c0c0c0;
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+.dropdown-item:active {
+  background: #000080;
+}
+
+.dropdown-item:active .item-text {
+  color: #fff;
+}
+
+.dropdown-item.selected {
+  background: linear-gradient(90deg, #000080, #1084d0);
+}
+
+.dropdown-item.selected .item-text {
+  color: #fff;
+  font-weight: bold;
+}
+
+.item-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+.item-dot.easy {
+  background: radial-gradient(circle at 30% 30%, #90EE90, #228B22);
+}
+
+.item-dot.medium {
+  background: radial-gradient(circle at 30% 30%, #FFD700, #FF8C00);
+}
+
+.item-dot.hard {
+  background: radial-gradient(circle at 30% 30%, #FF6B6B, #DC143C);
+}
+
+.item-text {
+  flex: 1;
+  font-size: 22rpx;
+  font-family: 'SimSun', serif;
+  color: #000;
+}
+
+.item-check {
+  font-size: 16rpx;
+  color: #fff;
+  font-weight: bold;
+}
+
+.win98-btn-std {
+  font-size: 12px;
+  color: #000;
+  height: 28px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #c0c0c0;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  font-family: 'SimSun', serif;
+}
+
+.win98-btn-std:active {
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
+  transform: translate(1px, 1px);
+}
+
+.restart-btn {
+  white-space: nowrap;
+}
+
+/* 棋盘容器 */
+.board-container {
+  background: #8b5a2b;
+  border: 4px solid #5d3a1a;
+  border-radius: 4px;
+  padding: 8rpx;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+  position: relative;
+  z-index: 1;
+  transition: all 0.3s ease;
+}
+
+/* 弹窗显示时隐藏棋盘 */
+.board-container.canvas-hidden {
+  display: none;
+}
+
+.game-canvas {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  display: block;
+  border-radius: 2px;
+  background: linear-gradient(135deg, #e8c488 0%, #d4a864 50%, #c99a5c 100%);
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.3);
+  position: relative;
+  z-index: 1;
+  transition: all 0.3s ease;
+}
+
+/* 弹窗显示时模糊canvas */
+.game-canvas.canvas-blur {
+  filter: blur(10px);
+}
+
+/* 游戏结束弹窗 */
+.win98-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* 难度选择弹窗 - 确保在所有内容之上 */
+.gobang-component .win98-overlay {
+  position: fixed;
+  z-index: 10000;
+}
+
+.game-over-dialog {
+  width: 320px;
+  max-width: 90vw;
+}
+
+.game-over-content {
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.winner-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  border: 4px solid #ccc;
+  background: #f0f0f0;
+}
+
+.winner-icon.black {
+  background: #333;
+  border-color: #000;
+  color: #fff;
+}
+
+.winner-icon.white {
+  background: #fff;
+  border-color: #ccc;
+}
+
+.winner-icon.red {
+  background: #ef4444;
+  border-color: #b91c1c;
+  color: #fff;
+}
+
+.winner-icon.draw {
+  background: #ccc;
+  border-color: #999;
+}
+
+.winner-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #000080;
+  font-family: 'SimSun', serif;
+  text-align: center;
+}
+
+.winner-subtitle {
+  font-size: 13px;
+  color: #666;
+  font-family: 'SimSun', serif;
+  text-align: center;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: center;
+  padding: 12px 16px 16px;
+  background: #c0c0c0;
+  border-top: 1px solid #808080;
+}

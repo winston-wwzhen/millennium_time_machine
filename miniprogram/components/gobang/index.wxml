@@ -1,0 +1,111 @@
+<view class="gobang-component" wx:if="{{show}}" style="z-index: {{zIndex}};" catchtap="stopPropagation" catchlongtap="stopPropagation" catchlongpress="stopPropagation">
+  <!-- Win98 窗口 -->
+  <view class="win98-window gobang-window">
+    <!-- 标题栏 -->
+    <view class="win98-title-bar">
+      <view class="win98-title-text">🎮 三人五子棋</view>
+      <view class="win98-title-controls">
+        <button class="win98-btn-close" bindtap="onClose">×</button>
+      </view>
+    </view>
+
+    <!-- 窗口内容 -->
+    <view class="win98-window-body">
+      <!-- 游戏控制面板 -->
+      <view class="game-controls">
+        <!-- 玩家状态显示 -->
+        <view class="player-status">
+          <view class="player-badge {{currentPlayer === 1 ? 'active' : ''}} p1">
+            <view class="player-dot black"></view>
+            <text class="player-name">玩家 (黑)</text>
+          </view>
+          <view class="player-badge {{currentPlayer === 2 ? 'active' : ''}} p2">
+            <view class="player-dot white"></view>
+            <text class="player-name">电脑1 (白)</text>
+          </view>
+          <view class="player-badge {{currentPlayer === 3 ? 'active' : ''}} p3">
+            <view class="player-dot red"></view>
+            <text class="player-name">电脑2 (红)</text>
+          </view>
+        </view>
+
+        <!-- 难度选择和重置按钮 -->
+        <view class="control-buttons">
+          <view class="difficulty-selector">
+            <text class="control-label">难度:</text>
+            <view class="win98-dropdown">
+              <view class="dropdown-trigger" bindtap="toggleDropdown">
+                <text class="dropdown-value">{{difficultyOptions[difficultyIndex]}}</text>
+                <text class="dropdown-arrow {{showDropdown ? 'open' : ''}}">▾</text>
+              </view>
+              <view class="dropdown-menu {{showDropdown ? 'show' : ''}}" catchtap="stopPropagation">
+                <view
+                  class="dropdown-item {{difficultyIndex === 0 ? 'selected' : ''}}"
+                  bindtap="selectDifficulty"
+                  data-index="0"
+                >
+                  <view class="item-dot easy"></view>
+                  <text class="item-text">简单</text>
+                  <text class="item-check" wx:if="{{difficultyIndex === 0}}">✓</text>
+                </view>
+                <view
+                  class="dropdown-item {{difficultyIndex === 1 ? 'selected' : ''}}"
+                  bindtap="selectDifficulty"
+                  data-index="1"
+                >
+                  <view class="item-dot medium"></view>
+                  <text class="item-text">中等</text>
+                  <text class="item-check" wx:if="{{difficultyIndex === 1}}">✓</text>
+                </view>
+                <view
+                  class="dropdown-item {{difficultyIndex === 2 ? 'selected' : ''}}"
+                  bindtap="selectDifficulty"
+                  data-index="2"
+                >
+                  <view class="item-dot hard"></view>
+                  <text class="item-text">困难</text>
+                  <text class="item-check" wx:if="{{difficultyIndex === 2}}">✓</text>
+                </view>
+              </view>
+            </view>
+          </view>
+          <button class="win98-btn-std restart-btn" bindtap="restartGame">重新开始</button>
+        </view>
+      </view>
+
+      <!-- 棋盘区域 -->
+      <view class="board-container {{showGameOver ? 'canvas-hidden' : ''}}">
+        <canvas
+          type="2d"
+          id="gobangCanvas"
+          class="game-canvas {{showGameOver ? 'canvas-blur' : ''}}"
+          bindtouchstart="onCanvasTouchStart"
+          bindtouchmove="onCanvasTouchMove"
+          bindtouchend="onCanvasTouchEnd"
+        ></canvas>
+      </view>
+    </view>
+  </view>
+
+  <!-- 游戏结束弹窗 -->
+  <view class="win98-overlay" wx:if="{{showGameOver}}" bindtap="hideGameOver" catchlongtap="stopPropagation">
+    <view class="win98-window game-over-dialog" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">🏆 游戏结束</view>
+        <view class="win98-title-controls">
+          <button class="win98-btn-close" bindtap="hideGameOver">×</button>
+        </view>
+      </view>
+      <view class="win98-window-body">
+        <view class="game-over-content">
+          <view class="winner-icon {{winnerClass}}">{{winnerIcon}}</view>
+          <text class="winner-title">{{winnerTitle}}</text>
+          <text class="winner-subtitle">{{winnerSubtitle}}</text>
+        </view>
+        <view class="dialog-actions">
+          <button class="win98-btn-std" bindtap="restartGame">再来一局</button>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
