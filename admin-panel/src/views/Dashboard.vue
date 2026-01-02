@@ -34,8 +34,8 @@
           <div class="stat-content">
             <div class="stat-value">{{ formatNumber(stats.chats?.total) || 0 }}</div>
             <div class="stat-label">聊天消息数</div>
-            <div class="stat-change up">
-              今日 +{{ stats.chats?.today || 0 }} | 会话 {{ stats.chats?.sessions || 0 }}
+            <div class="stat-sub">
+              会话数 {{ stats.chats?.sessions || 0 }}
             </div>
           </div>
         </el-card>
@@ -135,7 +135,7 @@
         <el-card shadow="hover">
           <template #header>
             <div class="card-header">
-              <span>每日活动分布（近7天）</span>
+              <span>如果当时每日游玩数据（近7天）</span>
             </div>
           </template>
           <v-chart :option="activityChartOption" style="height: 280px" autoresize />
@@ -176,7 +176,7 @@
                 {{ getActivityDetail(row) }}
               </template>
             </el-table-column>
-            <el-table-column prop="_openid" label="用户ID" width="250">
+            <el-table-column prop="_openid" label="用户ID" width="350">
               <template #default="{ row }">
                 {{ maskOpenid(row._openid) }}
               </template>
@@ -267,16 +267,13 @@ const growthChartOption = computed(() => ({
   ]
 }))
 
-// 活动分布图表配置
+// 活动分布图表配置 - 如果当时每日游玩数据
 const activityChartOption = computed(() => ({
   tooltip: {
-    trigger: 'axis',
-    axisPointer: {
-      type: 'shadow'
-    }
+    trigger: 'axis'
   },
   legend: {
-    data: ['新增聊天', '空间访问']
+    data: ['游玩次数', '分享次数']
   },
   grid: {
     left: '3%',
@@ -293,16 +290,18 @@ const activityChartOption = computed(() => ({
   },
   series: [
     {
-      name: '新增聊天',
-      type: 'bar',
-      data: growthTrend.value.map(d => d.newChats),
-      itemStyle: { color: '#E6A23C' }
+      name: '游玩次数',
+      type: 'line',
+      data: growthTrend.value.map(d => d.ifthenPlays || 0),
+      smooth: true,
+      itemStyle: { color: '#409EFF' }
     },
     {
-      name: '空间访问',
-      type: 'bar',
-      data: growthTrend.value.map(d => d.newVisits),
-      itemStyle: { color: '#909399' }
+      name: '分享次数',
+      type: 'line',
+      data: growthTrend.value.map(d => d.ifthenShares || 0),
+      smooth: true,
+      itemStyle: { color: '#67C23A' }
     }
   ]
 }))

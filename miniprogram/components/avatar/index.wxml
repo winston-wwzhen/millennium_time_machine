@@ -1,5 +1,6 @@
-<!-- 相框 - Win98 风格 -->
-<view class="desktop">
+<!-- 非主流相机 - Win98 风格窗口组件 -->
+<view class="avatar-overlay {{show ? 'show' : 'hide'}}" style="{{overlayStyle}}" catchtap="onClose">
+  <view class="desktop" catchtap="stopPropagation" catchlongpress="stopPropagation" catchtouchmove="stopPropagation">
   <view class="window-frame">
     <!-- 标题栏 -->
     <view class="win98-title-bar">
@@ -502,4 +503,5 @@
     eggRewardText="{{eggDiscoveryData.rewardText}}"
     bindclose="hideEggDiscoveryDialog">
   </egg-discovery-dialog>
+  </view>
 </view>

@@ -1,8 +1,22 @@
 const { eggSystem, EGG_IDS } = require('../../utils/egg-system');
 const { userApi } = require('../../utils/api-client');
+const { CLOUD_BASE_URL } = require('../../config/cloud-icons');
 
-Page({
+Component({
+  properties: {
+    show: {
+      type: Boolean,
+      value: false
+    },
+    zIndex: {
+      type: Number,
+      value: 2000
+    }
+  },
+
   data: {
+    overlayStyle: '',
+
     // 图片相关
     tempImagePath: '',
     selectedBorderId: 0,
@@ -54,8 +68,8 @@ Page({
     // 边框列表
     borderList: [
       { id: 0, name: '原图', src: '', color: '#dddddd' },
-      { id: 2, name: '暗黑赛博', src: '/images/borders/border_cyber.png', color: '#00ff00' },
-      { id: 3, name: 'Win98', src: '/images/borders/border_win98.png', color: '#000080' }
+      { id: 2, name: '暗黑赛博', src: CLOUD_BASE_URL + '/borders/border_cyber.png', color: '#00ff00' },
+      { id: 3, name: 'Win98', src: CLOUD_BASE_URL + '/borders/border_win98.png', color: '#000080' }
     ],
 
     // 贴纸数据
@@ -90,44 +104,71 @@ Page({
     dateStampPosition: 'top-right'
   },
 
-  onLoad() {
-    this.updateDateStampText();
-    // 加载彩蛋系统状态
-    eggSystem.load();
-    // 检查非主流达人彩蛋是否已达成
-    this.setData({
-      avatarEggAchieved: eggSystem.isDiscovered(EGG_IDS.AVATAR_MASTER)
-    });
-
-    // 注册彩蛋发现回调
-    this.eggCallbackKey = eggSystem.setEggDiscoveryCallback((config) => {
-      const rarityNames = {
-        common: '普通',
-        rare: '稀有',
-        epic: '史诗',
-        legendary: '传说'
-      };
-      const reward = config.reward;
-      const rewardText = reward.coins ? `+${reward.coins}时光币` : '';
+  observers: {
+    'show': function(newVal) {
+      if (newVal) {
+        this.addLog('open', '非主流相机');
+      }
+    },
+    'zIndex': function(newVal) {
       this.setData({
-        showEggDiscoveryDialog: true,
-        eggDiscoveryData: {
-          name: config.name,
-          description: config.description,
-          rarity: config.rarity,
-          rarityName: rarityNames[config.rarity],
-          rewardText: rewardText
-        }
+        overlayStyle: `z-index: ${newVal};`
       });
-    });
-  },
-
-  onUnload() {
-    // 清理彩蛋回调
-    if (this.eggCallbackKey) {
-      eggSystem.unregisterEggDiscoveryCallback(this.eggCallbackKey);
     }
   },
+
+  lifetimes: {
+    attached() {
+      this.updateDateStampText();
+      // 加载彩蛋系统状态
+      eggSystem.load();
+      // 检查非主流达人彩蛋是否已达成
+      this.setData({
+        avatarEggAchieved: eggSystem.isDiscovered(EGG_IDS.AVATAR_MASTER)
+      });
+
+      // 注册彩蛋发现回调
+      this.eggCallbackKey = eggSystem.setEggDiscoveryCallback((config) => {
+        const rarityNames = {
+          common: '普通',
+          rare: '稀有',
+          epic: '史诗',
+          legendary: '传说'
+        };
+        const reward = config.reward;
+        const rewardText = reward.coins ? `+${reward.coins}时光币` : '';
+        this.setData({
+          showEggDiscoveryDialog: true,
+          eggDiscoveryData: {
+            name: config.name,
+            description: config.description,
+            rarity: config.rarity,
+            rarityName: rarityNames[config.rarity],
+            rewardText: rewardText
+          }
+        });
+      });
+    },
+
+    detached() {
+      // 清理彩蛋回调
+      if (this.eggCallbackKey) {
+        eggSystem.unregisterEggDiscoveryCallback(this.eggCallbackKey);
+      }
+    }
+  },
+
+  methods: {
+    // 添加操作日志
+    addLog: function(action, target, details) {
+      const { addLog: logAction } = require("../../utils/logger");
+      logAction(action, target, details);
+    },
+
+    // 关闭组件
+    onClose: function() {
+      this.triggerEvent('close');
+    },
 
   // ==================== 菜单操作 ====================
   toggleMenu(e) {
@@ -1004,13 +1045,14 @@ Page({
     }
   },
 
-  // 返回
-  goBack() {
-    wx.navigateBack();
-  },
+    // 返回
+    goBack() {
+      this.onClose();
+    },
 
-  // 关闭彩蛋发现弹窗
-  hideEggDiscoveryDialog: function() {
-    this.setData({ showEggDiscoveryDialog: false });
+    // 关闭彩蛋发现弹窗
+    hideEggDiscoveryDialog: function() {
+      this.setData({ showEggDiscoveryDialog: false });
+    }
   }
 });

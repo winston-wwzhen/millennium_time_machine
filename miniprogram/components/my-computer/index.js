@@ -139,7 +139,16 @@ Component({
     showViewMenu: false,
     showHelpMenu: false,
     // 基础用户信息（用于系统信息面板）
-    userInfo: null,
+    userInfo: {
+      avatarName: '载入中...',
+      qcioAccount: '',
+      level: 1,
+      starsDisplay: '★',
+      qpoints: 0,
+      netFeeDays: 0,
+      coins: 0,
+      eggProgress: '0/20'
+    },
     // 磁盘容量（动态）
     diskUsagePercent: 99,
     diskUsageText: "99% 已用 - 空间不足!",
@@ -288,6 +297,23 @@ Component({
       // 加载彩蛋助手打开状态
       const hasOpenedEggHelper = wx.getStorageSync('hasOpenedEggHelper') || false;
       this.setData({ hasOpenedEggHelper });
+
+      // 🔧 优化：从全局数据预加载用户信息（避免延迟）
+      const app = getApp();
+      if (app.globalData && app.globalData.avatarName) {
+        this.setData({
+          userInfo: {
+            avatarName: app.globalData.avatarName,
+            qcioAccount: app.globalData.qcioAccount || '',
+            level: 1,
+            starsDisplay: '★',
+            qpoints: 0,
+            netFeeDays: 0,
+            coins: 0,
+            eggProgress: '0/20'
+          }
+        });
+      }
 
       // 🔧 优化：组件加载时预加载数据（使用本地缓存）
       this.loadFromCache();

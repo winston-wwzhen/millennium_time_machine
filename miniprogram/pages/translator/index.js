@@ -4,7 +4,7 @@ const { chatApi } = require('../../utils/api-client');
 Page({
   data: {
     inputText: '',
-    resultText: '', // 存放 AI 生成的结果
+    resultText: '', // 存放自动生成的结果
     isLoading: false,
     // 预设一些非主流背景图或装饰，这里保持原样即可
   },

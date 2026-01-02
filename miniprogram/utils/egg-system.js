@@ -43,6 +43,7 @@ const EGG_IDS = {
   BROWSER_NAVIGATOR: 'browser_navigator',           // 浏览器领航员
   // 我的电脑功能新增彩蛋
   HIDDEN_FILE_EGG_BOOK: 'hidden_file_egg_book',           // 彩蛋秘册-第一册
+  HIDDEN_FILE_EGG_BOOK_2: 'hidden_file_egg_book_2',       // 彩蛋秘册-第二册
   HIDDEN_FILE_SYSTEM_DIARY: 'hidden_file_system_diary',   // 系统日记.txt
   HIDDEN_FILE_CODER_NOTE: 'hidden_file_coder_note',       // 程序员的遗言.txt
   HIDDEN_FILE_DEV_EGG: 'hidden_file_dev_egg',             // 开发者彩蛋.txt
@@ -367,6 +368,18 @@ const EGG_CONFIG = {
     reward: {
       coins: 300,
       badge: '收藏家'
+    }
+  },
+  [EGG_IDS.HIDDEN_FILE_EGG_BOOK_2]: {
+    id: EGG_IDS.HIDDEN_FILE_EGG_BOOK_2,
+    name: '彩蛋秘籍第二册',
+    description: '在回收站的深处，你发现了一本神秘的秘籍...',
+    hint: '在回收站30个文件中寻找并恢复它',
+    rarity: 'rare',
+    type: 'action',
+    reward: {
+      coins: 2000,
+      badge: '秘籍守护者'
     }
   },
   [EGG_IDS.HIDDEN_FILE_SYSTEM_DIARY]: {

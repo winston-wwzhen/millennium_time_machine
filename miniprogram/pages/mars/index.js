@@ -135,7 +135,7 @@ Page({
         throw new Error("No reply");
       }
     } catch (err) {
-      console.error("AI调用失败", err);
+      console.error("调用失败", err);
       this.setData({
         outputText: "转换失败：信号被外星人拦截了...",
         statusText: "错误 404: 服务器未响应",

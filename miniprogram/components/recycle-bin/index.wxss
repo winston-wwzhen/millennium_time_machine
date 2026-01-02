@@ -9,6 +9,7 @@
   justify-content: center;
   align-items: center;
   pointer-events: none;
+  box-sizing: border-box;
 }
 
 .recycle-bin-overlay.show {
@@ -30,7 +31,7 @@
   flex-direction: column;
   width: 90%;
   max-width: 600px;
-  height: 620px;
+  height: 520px;
 }
 
 .win98-title-bar {
@@ -143,15 +144,16 @@
   padding: 16px;
   flex: 1;
   overflow-y: auto;
+  align-content: flex-start;
 }
 
 .trash-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 80px;
-  height: 95px;
-  padding: 4px;
+  width: 95px;
+  padding: 6px;
+  box-sizing: border-box;
 }
 
 .trash-item:active {
@@ -159,21 +161,76 @@
 }
 
 .trash-icon {
-  font-size: 40px;
-  margin-bottom: 4px;
+  font-size: 32px;
+  margin-bottom: 2px;
   opacity: 0.7;
 }
 
 .trash-label {
-  font-size: 11px;
+  font-size: 10px;
   color: #000;
   text-align: center;
+  word-break: break-all;
   margin-bottom: 2px;
+  line-height: 1.3;
+  max-height: 13px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
 }
 
 .trash-date {
-  font-size: 9px;
+  font-size: 8px;
   color: #808080;
+  margin-bottom: 3px;
+}
+
+.file-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.action-btn {
+  font-size: 10px;
+  font-family: 'SimSun', sans-serif;
+  line-height: 1.4;
+  padding: 2px 6px;
+  text-align: center;
+  color: #000080;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+}
+
+.action-btn:active {
+  color: #ff0000;
+  text-decoration: underline;
+}
+
+.action-btn.disabled {
+  color: #808080;
+  cursor: default;
+}
+
+.delete-btn {
+  color: #000080;
+}
+
+.delete-btn:active {
+  color: #ff0000;
+}
+
+.restore-btn {
+  color: #000080;
+  font-weight: normal;
+}
+
+.restore-btn:active {
+  color: #ff0000;
 }
 
 .tip-box {
@@ -186,34 +243,6 @@
 
 .tip-text {
   color: #000080;
-}
-
-.win98-button {
-  font-size: 12px;
-  color: #000;
-  height: 26px;
-  padding: 0 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #c0c0c0;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #808080;
-  border-bottom: 1px solid #808080;
-}
-
-.win98-button:active {
-  border-top: 1px solid #808080;
-  border-left: 1px solid #808080;
-  border-right: 1px solid #ffffff;
-  border-bottom: 1px solid #ffffff;
-}
-
-.action-buttons {
-  display: flex;
-  justify-content: center;
-  padding: 8px;
 }
 
 .status-bar {
@@ -336,65 +365,42 @@
   border-bottom: 1px solid #ffffff;
 }
 
-.win98-btn-primary {
-  font-weight: bold;
-}
-
-/* 特殊文件样式（彩蛋秘籍第二册） */
-.trash-item.special-file {
-  background: rgba(255, 215, 0, 0.2);
-  border: 1px dashed #ffd700;
-  cursor: pointer;
-}
-
-.trash-item.special-file:active {
-  background: rgba(255, 215, 0, 0.4);
-}
-
-.trash-item.special-file .trash-icon {
-  opacity: 1;
-  filter: drop-shadow(0 0 5px #ffd700);
-}
-
-/* 还原确认弹窗样式 */
-.restore-dialog {
-  width: 300px;
+/* 确认弹窗样式 */
+.confirm-dialog {
+  width: 320px;
   max-width: 90%;
-  height: 200px;
-  max-height: 400px;
 }
 
-.restore-content {
+.confirm-dialog .win98-window-body {
+  padding: 0;
+  flex: unset;
+}
+
+.confirm-content {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 12px 16px;
-  text-align: center;
+  align-items: flex-start;
+  padding: 20px;
+  gap: 12px;
 }
 
-.restore-icon {
-  font-size: 40px;
-  margin-bottom: 8px;
-  filter: drop-shadow(0 0 10px #ffd700);
+.confirm-icon {
+  font-size: 32px;
+  flex-shrink: 0;
 }
 
-.restore-title {
-  font-size: 13px;
-  font-weight: bold;
-  color: #000080;
-  margin-bottom: 6px;
-  font-family: 'SimSun', serif;
-}
-
-.restore-message {
+.confirm-message {
   font-size: 12px;
   color: #000;
-  margin-bottom: 4px;
+  line-height: 1.6;
   font-family: 'SimSun', serif;
+  flex: 1;
 }
 
-.restore-hint {
-  font-size: 10px;
-  color: #808080;
-  font-family: 'SimSun', serif;
+.confirm-dialog .dialog-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding: 10px;
+  background: #c0c0c0;
+  border-top: 1px solid #808080;
 }

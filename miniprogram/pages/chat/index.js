@@ -2,10 +2,12 @@ const { preventDuplicateBehavior } = require('../../utils/prevent-duplicate');
 const { isNetworkError, setNetworkDisconnected, showDisconnectDialog } = require('../../utils/network');
 const { eggSystem, EGG_IDS } = require('../../utils/egg-system');
 const { userApi, qcioApi, chatApi } = require('../../utils/api-client');
+const { setupCapsulePadding } = require('../../utils/capsule-utils');
 
 Page({
   behaviors: [preventDuplicateBehavior],
   data: {
+    capsulePadding: 44, // 🔧 避开胶囊按钮的动态间距
     // 联系人信息
     contactName: '水晶之恋',
     contactAvatar: 'O',
@@ -42,6 +44,9 @@ Page({
   lastSendTime: 0, // 上次发送时间
 
   onLoad(options) {
+    // 🔧 优化：计算避开胶囊按钮的间距
+    setupCapsulePadding(this, 'capsulePadding');
+
     // 加载彩蛋系统
     eggSystem.load();
     // 检查聊天狂魔彩蛋是否已达成

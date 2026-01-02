@@ -95,20 +95,20 @@ Page({
         name: "非主流相机",
         icon: cloudIcons.getCloudIconUrl('avatar.png'),
         isImage: true,
-        path: "/pages/avatar/index",
+        path: "components/avatar",
       },
       {
         id: "recycle-bin",
         name: "回收站",
         icon: cloudIcons.getCloudIconUrl('recycle-bin.png'),
         isImage: true,
-        path: "/pages/recycle-bin/index",
+        path: "components/recycle-bin",
       },
       {
         id: "egg-collection",
         name: "彩蛋大全",
-        icon: "🥚",
-        isImage: false,
+        icon: cloudIcons.getCloudIconUrl('彩蛋.png'),
+        isImage: true,
         path: "egg-collection",
       },
       {
@@ -127,6 +127,7 @@ Page({
     showNetworkSystem: false, // 网管系统显示状态
     showMyDocuments: false, // 我的文档显示状态
     showRecycleBin: false, // 回收站显示状态
+    showAvatar: false, // 非主流相机显示状态
     showCmdConsole: false, // CMD 控制台显示状态
     showEggCollection: false, // 彩蛋大全显示状态
     eggCollectionFileName: '彩蛋大全.txt', // 彩蛋大全文件名
@@ -138,6 +139,7 @@ Page({
     networkSystemZIndex: 2000,
     myDocumentsZIndex: 2000,
     recycleBinZIndex: 2000,
+    avatarZIndex: 2000,
     cmdConsoleZIndex: 2000,
     // 网络连接状态
     networkConnected: true, // 默认连接
@@ -667,9 +669,17 @@ Page({
       this.addLog('open', '浏览器');
     }
 
-    // 非主流相机 - 打开页面
+    // 非主流相机 - 打开组件
     if (path && path.includes("avatar")) {
       this.addLog('open', '非主流相机');
+      this.setData({
+        showStartMenu: false,
+        showSubmenu: false,
+        showAvatar: true,
+        baseZIndex: this.data.baseZIndex + 10,
+        avatarZIndex: this.data.baseZIndex + 10
+      });
+      return;
     }
 
     // QCIO - 打开页面
@@ -1744,6 +1754,11 @@ Page({
   // 关闭回收站
   onCloseRecycleBin: function () {
     this.setData({ showRecycleBin: false });
+  },
+
+  // 关闭非主流相机
+  onCloseAvatar: function () {
+    this.setData({ showAvatar: false });
   },
 
   // 关闭彩蛋大全

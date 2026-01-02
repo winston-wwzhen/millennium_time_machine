@@ -1,4 +1,4 @@
-<view class="desktop">
+<view class="desktop" style="padding-top: {{capsulePadding}}px;">
   <view class="window-frame chat-main">
     <!-- 标题栏：显示群头像和群名称 -->
     <view class="title-bar chat-title-bar">
@@ -24,7 +24,7 @@
     </view>
 
     <!-- 提示信息 -->
-    <view class="warning-tip">⚠️ 这是AI群聊，成员随机发言，仅供娱乐</view>
+    <view class="warning-tip">⚠️ 这是虚拟群聊，机器人随机发言，仅供娱乐</view>
 
     <!-- 聊天记录区 -->
     <scroll-view class="chat-history" scroll-y="true" scroll-into-view="{{scrollToView}}">

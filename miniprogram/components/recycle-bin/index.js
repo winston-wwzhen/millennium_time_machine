@@ -5,37 +5,40 @@ const { userApi } = require('../../utils/api-client');
 // 垃圾文件数据池
 const TRASH_FILES_POOL = {
   documents: [
-    { name: '旧日记.txt', icon: '📄', isSpecial: false },
-    { name: '未完成作业.doc', icon: '📄', isSpecial: false },
-    { name: 'QQ聊天记录.txt', icon: '📄', isSpecial: false },
-    { name: '备忘录.txt', icon: '📄', isSpecial: false },
-    { name: '考试复习资料.doc', icon: '📄', isSpecial: false },
-    { name: '个人简历.txt', icon: '📄', isSpecial: false },
-    { name: '暗恋日记.txt', icon: '📄', isSpecial: false },
-    { name: '网络账号密码.txt', icon: '📄', isSpecial: false },
-    { name: '编程学习笔记.txt', icon: '📄', isSpecial: false },
-    { name: '游戏攻略.txt', icon: '📄', isSpecial: false },
-  ],
-  specialDocuments: [
-    { name: '彩蛋秘籍第二册.txt', icon: '📜', isSpecial: true }
+    { name: '旧日记.txt', icon: '📄' },
+    { name: '未完成作业.doc', icon: '📄' },
+    { name: 'QQ聊天记录.txt', icon: '📄' },
+    { name: '备忘录.txt', icon: '📄' },
+    { name: '考试复习资料.doc', icon: '📄' },
+    { name: '个人简历.txt', icon: '📄' },
+    { name: '暗恋日记.txt', icon: '📄' },
+    { name: '网络账号密码.txt', icon: '📄' },
+    { name: '编程学习笔记.txt', icon: '📄' },
+    { name: '游戏攻略.txt', icon: '📄' },
+    { name: '暑假作业.doc', icon: '📄' },
+    { name: '高中作文.txt', icon: '📄' },
+    { name: '英语单词本.doc', icon: '📄' },
+    { name: '数学公式.txt', icon: '📄' },
+    { name: '历史笔记.doc', icon: '📄' },
   ],
   music: [
-    { name: '过时的MP3.mp3', icon: '🎵', isSpecial: false },
-    { name: '周杰伦歌曲.mp3', icon: '🎵', isSpecial: false },
-    { name: '网络神曲.wma', icon: '🎵', isSpecial: false },
-    { name: '手机铃声.mp3', icon: '🎵', isSpecial: false },
-    { name: '盗版歌曲.mid', icon: '🎵', isSpecial: false },
-    { name: 'QQ空间背景音乐.mp3', icon: '🎵', isSpecial: false },
-    { name: '彩铃.wma', icon: '🎵', isSpecial: false },
+    { name: '过时的MP3.mp3', icon: '🎵' },
+    { name: '周杰伦歌曲.mp3', icon: '🎵' },
+    { name: '网络神曲.wma', icon: '🎵' },
+    { name: '手机铃声.mp3', icon: '🎵' },
+    { name: '盗版歌曲.mid', icon: '🎵' },
+    { name: 'QQ空间背景音乐.mp3', icon: '🎵' },
+    { name: '彩铃.wma', icon: '🎵' },
+    { name: '韩舞歌曲.mp3', icon: '🎵' },
   ],
   images: [
-    { name: '模糊照片.jpg', icon: '🖼️', isSpecial: false },
-    { name: '非主流自拍.jpg', icon: '🖼️', isSpecial: false },
-    { name: '风景壁纸.bmp', icon: '🖼️', isSpecial: false },
-    { name: 'QQ空间头像.gif', icon: '🖼️', isSpecial: false },
-    { name: '偷拍照片.jpg', icon: '🖼️', isSpecial: false },
-    { name: '网络图片.png', icon: '🖼️', isSpecial: false },
-    { name: '表情包.jpg', icon: '🖼️', isSpecial: false },
+    { name: '模糊照片.jpg', icon: '🖼️' },
+    { name: '非主流自拍.jpg', icon: '🖼️' },
+    { name: '风景壁纸.bmp', icon: '🖼️' },
+    { name: 'QQ空间头像.gif', icon: '🖼️' },
+    { name: '偷拍照片.jpg', icon: '🖼️' },
+    { name: '网络图片.png', icon: '🖼️' },
+    { name: '表情包.jpg', icon: '🖼️' },
   ]
 };
 
@@ -47,53 +50,42 @@ function generateRandomDate() {
   return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 }
 
-// 随机选择文件
-function generateRandomTrash() {
+// 生成30个垃圾文件
+function generate30TrashFiles() {
   const trash = [];
-  // 检查彩蛋秘籍第二册是否已还原
-  const secretBookRestored = wx.getStorageSync('eggSecretBook2Restored') || false;
+  const allFiles = [
+    ...TRASH_FILES_POOL.documents,
+    ...TRASH_FILES_POOL.music,
+    ...TRASH_FILES_POOL.images
+  ];
 
-  // 随机选择1-3个文档
-  const docCount = Math.floor(Math.random() * 3) + 1;
-  for (let i = 0; i < docCount; i++) {
-    const file = TRASH_FILES_POOL.documents[Math.floor(Math.random() * TRASH_FILES_POOL.documents.length)];
+  // 随机选择30个普通文件
+  for (let i = 0; i < 30; i++) {
+    const file = allFiles[Math.floor(Math.random() * allFiles.length)];
     trash.push({
+      id: `trash_${i}`,
       ...file,
-      date: generateRandomDate()
-    });
-  }
-
-  // 20%概率出现彩蛋秘籍第二册（如果还没还原）
-  if (!secretBookRestored && Math.random() < 0.2) {
-    const specialFile = TRASH_FILES_POOL.specialDocuments[0];
-    trash.push({
-      ...specialFile,
-      date: generateRandomDate()
-    });
-  }
-
-  // 随机选择1-2个音乐文件
-  const musicCount = Math.floor(Math.random() * 2) + 1;
-  for (let i = 0; i < musicCount; i++) {
-    const file = TRASH_FILES_POOL.music[Math.floor(Math.random() * TRASH_FILES_POOL.music.length)];
-    trash.push({
-      ...file,
-      date: generateRandomDate()
-    });
-  }
-
-  // 随机选择1-2个图片文件
-  const imgCount = Math.floor(Math.random() * 2) + 1;
-  for (let i = 0; i < imgCount; i++) {
-    const file = TRASH_FILES_POOL.images[Math.floor(Math.random() * TRASH_FILES_POOL.images.length)];
-    trash.push({
-      ...file,
-      date: generateRandomDate()
+      date: generateRandomDate(),
+      isSpecial: false,
+      canDelete: true
     });
   }
 
   // 随机打乱数组
-  return trash.sort(() => Math.random() - 0.5);
+  trash.sort(() => Math.random() - 0.5);
+
+  // 将彩蛋秘籍插入到后面位置（第24个位置，即倒数第7个）
+  const eggBook = {
+    id: 'hidden_file_egg_book_2',
+    name: '彩蛋秘籍第二册.txt',
+    icon: '📕',
+    date: '2006-06-06',
+    isSpecial: true, // 标记为特殊文件，不能删除
+    canRestore: true // 只能恢复
+  };
+  trash.splice(24, 1, eggBook);
+
+  return trash;
 }
 
 Component({
@@ -109,13 +101,18 @@ Component({
   },
 
   data: {
-    hasTrash: true,
-    eggAchieved: false,
+    trashFiles: [],  // 垃圾文件列表
+    deletedCount: 0,  // 已删除文件计数
     showHelpDialog: false,
-    trashFiles: [],
     overlayStyle: '',
-    showRestoreDialog: false, // 还原确认弹窗
-    selectedFile: null, // 选中的文件
+    capsulePadding: 50,  // 胶囊按钮padding
+
+    // 恢复确认弹窗
+    showRestoreDialog: false,
+    restoreFileIndex: -1,
+    restoreFile: {
+      name: ''
+    },
 
     // 彩蛋发现弹窗
     showEggDiscoveryDialog: false,
@@ -132,29 +129,24 @@ Component({
     'show': function(newVal) {
       if (newVal) {
         this.addLog('open', '回收站');
-        // 每次显示时恢复垃圾文件（除非已达成彩蛋）
-        if (!this.data.eggAchieved && !this.data.hasTrash) {
-          this.generateTrash();
-        }
       }
     },
-    'zIndex': function(newVal) {
+    'zIndex, capsulePadding': function(zIndex, capsulePadding) {
       this.setData({
-        overlayStyle: `z-index: ${newVal};`
+        overlayStyle: `z-index: ${zIndex}; padding-top: ${capsulePadding}px;`
       });
     }
   },
 
   lifetimes: {
     attached() {
+      // 计算胶囊按钮padding
+      this.calculateCapsulePadding();
+
       // 加载彩蛋系统状态
       eggSystem.load();
-      // 检查回收站清理者彩蛋是否已达成
-      this.setData({
-        eggAchieved: eggSystem.isDiscovered(EGG_IDS.RECYCLE_BIN_EMPTYER)
-      });
 
-      // 生成初始随机垃圾文件
+      // 生成30个垃圾文件
       this.generateTrash();
 
       // 注册彩蛋发现回调
@@ -183,7 +175,6 @@ Component({
     detached() {
       // 组件卸载时清理彩蛋回调
       if (this.eggCallbackKey) {
-        const { eggSystem } = require('../../utils/egg-system');
         eggSystem.unregisterEggDiscoveryCallback(this.eggCallbackKey);
       }
     }
@@ -196,6 +187,34 @@ Component({
       logAction(action, target, details);
     },
 
+    // 计算胶囊按钮padding
+    calculateCapsulePadding: function() {
+      try {
+        // 获取系统信息
+        const systemInfo = wx.getSystemInfoSync();
+        const statusBarHeight = systemInfo.statusBarHeight || 0;
+
+        // 获取胶囊按钮位置信息
+        const menuButton = wx.getMenuButtonBoundingClientRect();
+
+        // 计算需要的间距：状态栏高度 + 胶囊按钮底部到顶部的距离 + 一些额外间距
+        const capsuleBottom = menuButton.top + menuButton.height;
+        const padding = capsuleBottom + 8; // 加8px额外间距
+
+        this.setData({
+          capsulePadding: padding
+        });
+
+        console.log('[回收站] 胶囊间距:', padding, '状态栏:', statusBarHeight, '胶囊:', menuButton);
+      } catch (e) {
+        // 如果获取失败，使用默认值
+        console.error('[回收站] 获取胶囊信息失败:', e);
+        this.setData({
+          capsulePadding: 50 // 默认50px
+        });
+      }
+    },
+
     // 关闭窗口
     onClose: function() {
       this.triggerEvent('close');
@@ -206,42 +225,116 @@ Component({
       // 空函数，仅用于阻止事件冒泡
     },
 
-    // 生成随机垃圾文件
+    // 生成30个垃圾文件
     generateTrash: function() {
-      const trashFiles = generateRandomTrash();
+      const trashFiles = generate30TrashFiles();
       this.setData({
         trashFiles: trashFiles,
-        hasTrash: true
+        deletedCount: 0
       });
     },
 
-    // 清空回收站
-    emptyRecycleBin: async function() {
-      if (!this.data.hasTrash) {
-        wx.showToast({ title: '回收站已经是空的', icon: 'none' });
+    // 删除单个文件
+    deleteFile: function(e) {
+      const { index } = e.currentTarget.dataset;
+      const file = this.data.trashFiles[index];
+
+      // 特殊文件不能删除
+      if (file.isSpecial) {
+        wx.showModal({
+          title: '提示',
+          content: '这本秘籍承载着重要回忆，无法删除。请选择"恢复"来保存它。',
+          showCancel: false,
+          confirmText: '我知道了'
+        });
         return;
       }
 
-      wx.showLoading({ title: '正在清空...', mask: true });
+      // 删除文件
+      const trashFiles = this.data.trashFiles.filter((_, i) => i !== index);
+      const deletedCount = this.data.deletedCount + 1;
 
-      // 模拟清空操作
-      setTimeout(async () => {
-        this.setData({ hasTrash: false });
-        wx.hideLoading();
+      this.setData({
+        trashFiles,
+        deletedCount
+      });
 
-        wx.showToast({ title: '回收站已清空', icon: 'success' });
+      // 检查是否删除了5个文件，触发彩蛋
+      if (deletedCount === 5) {
+        this.triggerCleanerEgg();
+      }
 
-        // 检查回收站清理者彩蛋
-        try {
-          const result = await userApi.checkRecycleBinEgg();
-          if (result.shouldTrigger && !this.data.eggAchieved) {
-            await eggSystem.discover(EGG_IDS.RECYCLE_BIN_EMPTYER);
-            this.setData({ eggAchieved: true });
-          }
-        } catch (e) {
-          console.error('检查回收站彩蛋失败:', e);
+      wx.showToast({
+        title: '已删除',
+        icon: 'success',
+        duration: 1000
+      });
+    },
+
+    // 恢复文件
+    restoreFile: function(e) {
+      const { index } = e.currentTarget.dataset;
+      const file = this.data.trashFiles[index];
+
+      // 显示Win98风格确认弹窗
+      this.setData({
+        showRestoreDialog: true,
+        restoreFileIndex: index,
+        restoreFile: {
+          name: file.name
         }
-      }, 800);
+      });
+    },
+
+    // 取消恢复
+    onCancelRestore: function() {
+      this.setData({
+        showRestoreDialog: false,
+        restoreFileIndex: -1,
+        restoreFile: { name: '' }
+      });
+    },
+
+    // 确认恢复
+    onConfirmRestore: function() {
+      const { restoreFileIndex } = this.data;
+      const file = this.data.trashFiles[restoreFileIndex];
+
+      // 关闭弹窗
+      this.onCancelRestore();
+
+      // 移除该文件
+      const trashFiles = this.data.trashFiles.filter((_, i) => i !== restoreFileIndex);
+      this.setData({ trashFiles });
+
+      wx.showToast({
+        title: file.isSpecial ? '秘籍已保存到我的文档' : '文件已恢复',
+        icon: 'success',
+        duration: 1500
+      });
+
+      // 如果是彩蛋秘籍第二册，触发发现彩蛋
+      if (file.isSpecial && file.id === 'hidden_file_egg_book_2') {
+        this.triggerEggBookEgg();
+      }
+    },
+
+    // 触发回收站清理者彩蛋
+    triggerCleanerEgg: async function() {
+      try {
+        await eggSystem.discover(EGG_IDS.RECYCLE_BIN_EMPTYER);
+      } catch (e) {
+        console.error('触发回收站清理者彩蛋失败:', e);
+      }
+    },
+
+    // 触发彩蛋秘籍第二册彩蛋
+    triggerEggBookEgg: async function() {
+      try {
+        await eggSystem.discover(EGG_IDS.HIDDEN_FILE_EGG_BOOK_2);
+      } catch (e) {
+        console.error('触发彩蛋秘籍第二册彩蛋失败:', e);
+      }
     },
 
     // 显示帮助弹窗
@@ -261,46 +354,6 @@ Component({
     // 关闭彩蛋发现弹窗
     hideEggDiscoveryDialog: function() {
       this.setData({ showEggDiscoveryDialog: false });
-    },
-
-    // 点击垃圾文件
-    onTrashItemTap: function(e) {
-      const { file, index } = e.currentTarget.dataset;
-
-      // 只处理特殊文件（彩蛋秘籍第二册）
-      if (file && file.isSpecial) {
-        this.setData({
-          selectedFile: file,
-          showRestoreDialog: true
-        });
-      }
-    },
-
-    // 确认还原彩蛋秘籍第二册
-    confirmRestoreSecretBook: function() {
-      wx.showLoading({ title: '正在还原...', mask: true });
-
-      setTimeout(() => {
-        // 保存还原状态到本地存储
-        wx.setStorageSync('eggSecretBook2Restored', true);
-
-        wx.hideLoading();
-        this.setData({ showRestoreDialog: false });
-
-        wx.showToast({
-          title: '✓ 文件已还原到我的文档/彩蛋文件夹',
-          icon: 'success',
-          duration: 2000
-        });
-
-        // 重新生成垃圾文件（移除特殊文件）
-        this.generateTrash();
-      }, 800);
-    },
-
-    // 取消还原
-    cancelRestoreSecretBook: function() {
-      this.setData({ showRestoreDialog: false });
     }
   }
 });

@@ -1,6 +1,6 @@
 /**
  * QCIO 空间 - 心情日志生成器组件
- * 用户选择心情 + 关键词，AI 生成火星文日志
+ * 用户选择心情 + 关键词，自动生成火星文日志
  * 集成经济系统：发布日志奖励金币（每天前3篇）
  */
 const { preventDuplicateBehavior } = require('../../../utils/prevent-duplicate');
@@ -135,7 +135,7 @@ Component({
               throw new Error(saveRes?.message || '保存日志失败');
             }
           } else {
-            throw new Error(result?.message || 'AI生成失败');
+            throw new Error(result?.message || '生成失败');
           }
         } catch (err) {
           console.error('Generate log error:', err);
@@ -157,7 +157,7 @@ Component({
           this.setData({ isGenerating: false });
           wx.hideLoading();
         }
-      }, 3000); // 3秒防重复点击（因为涉及AI生成）
+      }, 3000); // 3秒防重复点击（因为涉及自动生成）
     },
 
     // 保存日志到数据库（使用 API 客户端）

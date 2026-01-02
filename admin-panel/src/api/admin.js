@@ -44,8 +44,8 @@ export async function getGrowthTrend(days = 7) {
         date: `${date.getMonth() + 1}/${date.getDate()}`,
         newUsers: Math.floor(Math.random() * 100),
         activeUsers: Math.floor(Math.random() * 500),
-        newChats: Math.floor(Math.random() * 200),
-        newVisits: Math.floor(Math.random() * 50)
+        ifthenPlays: Math.floor(Math.random() * 30),
+        ifthenShares: Math.floor(Math.random() * 10)
       })
     }
     return trends
@@ -198,6 +198,22 @@ export async function getEggRankings(limit = 20) {
     return result
   } catch (error) {
     console.error('获取彩蛋排行榜失败:', error)
+    throw error
+  }
+}
+
+/**
+ * 获取综合排行榜
+ */
+export async function getRankings(limit = 20) {
+  try {
+    const result = await callCloudFunction('myadmin', {
+      action: 'getRankings',
+      data: { limit }
+    })
+    return result
+  } catch (error) {
+    console.error('获取排行榜失败:', error)
     throw error
   }
 }

@@ -15,7 +15,8 @@
             v-model="searchParams.keyword"
             placeholder="输入昵称搜索"
             clearable
-            @clear="loadUsers"
+            @clear="handleSearch"
+            @keyup.enter="handleSearch"
             style="width: 250px"
           />
         </el-form-item>
@@ -26,43 +27,50 @@
       </el-form>
 
       <!-- 用户列表 -->
-      <el-table :data="users" style="width: 100%" v-loading="loading">
-        <el-table-column prop="_openid" label="OpenID" width="120">
+      <el-table :data="users" style="width: 100%" v-loading="loading" @sort-change="handleSortChange">
+        <el-table-column prop="_openid" label="OpenID" width="350">
           <template #default="{ row }">
-            {{ maskOpenid(row._openid) }}
+            <span class="openid-text">{{ row._openid || '-' }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="nickname" label="昵称" width="150">
+        <el-table-column prop="nickname" label="QCIO昵称" width="180" sortable="custom">
           <template #default="{ row }">
-            {{ row.nickname || row.qcioProfile?.nickname || '-' }}
+            {{ row.qcioUser?.avatarName || row.qcioUser?.nickname || row.nickname || '-' }}
           </template>
         </el-table-column>
-        <el-table-column prop="qcioProfile.qcio_id" label="QCIO ID" width="100">
+        <el-table-column prop="qcio_id" label="QCIO ID" width="120" sortable="custom">
           <template #default="{ row }">
-            {{ row.qcioProfile?.qcio_id || '-' }}
+            {{ row.qcioUser?.qcio_id || '-' }}
           </template>
         </el-table-column>
-        <el-table-column prop="coins" label="时光币" width="100" align="right" sortable>
+        <el-table-column prop="coins" label="时光币" width="130" align="right" sortable="custom">
           <template #default="{ row }">
             {{ formatNumber(row.coins) }}
           </template>
         </el-table-column>
-        <el-table-column prop="netFee" label="网费(分钟)" width="120" align="right" sortable>
+        <el-table-column prop="netFee" label="网费(分钟)" width="140" align="right" sortable="custom">
           <template #default="{ row }">
             {{ formatNumber(row.netFee) }}
           </template>
         </el-table-column>
-        <el-table-column prop="eggStats.eggsDiscovered" label="彩蛋" width="80" align="center" sortable>
+        <el-table-column prop="badges" label="彩蛋" width="90" align="center" sortable="custom">
           <template #default="{ row }">
-            {{ row.eggStats?.eggsDiscovered || 0 }}
+            {{ row.badges?.length || 0 }}
           </template>
         </el-table-column>
-        <el-table-column prop="createTime" label="注册时间" width="170">
+        <el-table-column prop="aiHelpLetterOpened" label="AI求救信" width="110" align="center" sortable="custom">
+          <template #default="{ row }">
+            <el-tag :type="row.aiHelpLetterOpened ? 'success' : 'info'" size="small">
+              {{ row.aiHelpLetterOpened ? '已发现' : '未发现' }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="createTime" label="注册时间" width="180" sortable="custom">
           <template #default="{ row }">
             {{ formatTime(row.createTime) }}
           </template>
         </el-table-column>
-        <el-table-column prop="lastLoginTime" label="最后登录" width="170">
+        <el-table-column prop="lastLoginTime" label="最后登录" width="180" sortable="custom">
           <template #default="{ row }">
             {{ formatTime(row.lastLoginTime) }}
           </template>
@@ -82,8 +90,8 @@
         :total="total"
         layout="total, sizes, prev, pager, next"
         style="margin-top: 20px; justify-content: center"
-        @size-change="loadUsers"
-        @current-change="loadUsers"
+        @size-change="handlePageSizeChange"
+        @current-change="handlePageChange"
       />
     </el-card>
   </div>
@@ -103,16 +111,16 @@ const searchParams = reactive({
   keyword: '',
   page: 1,
   limit: 20,
-  sortBy: 'createTime',
+  sortBy: 'lastLoginTime',
   sortOrder: 'desc'
 })
 
 const loadUsers = async () => {
   loading.value = true
   try {
-    const data = await getUserList(searchParams)
-    users.value = data.list || []
-    total.value = data.total || 0
+    const result = await getUserList(searchParams)
+    users.value = result.list || []
+    total.value = result.total || 0
   } catch (error) {
     console.error('加载用户失败', error)
   } finally {
@@ -131,9 +139,15 @@ const resetSearch = () => {
   loadUsers()
 }
 
-function maskOpenid(openid) {
-  if (!openid) return '-'
-  return openid.substring(0, 8) + '***'
+const handlePageChange = (page) => {
+  searchParams.page = page
+  loadUsers()
+}
+
+const handlePageSizeChange = (pageSize) => {
+  searchParams.page = 1
+  searchParams.limit = pageSize
+  loadUsers()
 }
 
 function formatNumber(num) {
@@ -153,6 +167,17 @@ const viewDetail = (user) => {
   })
 }
 
+const handleSortChange = ({ prop, order }) => {
+  if (order) {
+    searchParams.sortBy = prop
+    searchParams.sortOrder = order === 'ascending' ? 'asc' : 'desc'
+  } else {
+    searchParams.sortBy = 'createTime'
+    searchParams.sortOrder = 'desc'
+  }
+  loadUsers()
+}
+
 onMounted(() => {
   loadUsers()
 })
@@ -163,5 +188,11 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.openid-text {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  word-break: break-all;
 }
 </style>

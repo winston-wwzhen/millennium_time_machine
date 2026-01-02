@@ -1,9 +1,9 @@
-<view class="qcio-container">
+<view class="qcio-container" style="padding-top: {{capsulePadding}}px;">
   <!-- 0. 注册界面 (新用户) -->
   <view class="register-screen" wx:if="{{needsRegister}}">
     <view class="win98-window register-dialog">
       <view class="win98-title-bar">
-        <view class="win98-title-text">QCIO AI模拟空间 - 新用户</view>
+        <view class="win98-title-text">QCIO 模拟空间 - 新用户</view>
         <view class="win98-title-controls">
           <button class="win98-btn-close" bindtap="goBack">×</button>
         </view>
@@ -12,9 +12,9 @@
       <view class="win98-window-body">
         <view class="register-header">
           <view class="big-icon">📟</view>
-          <text class="register-brand">欢迎加入 QCIO AI模拟空间</text>
-          <text class="register-subtitle">体验千禧年代的AI虚拟社交</text>
-          <text class="register-note">✨ AI驱动 • 纯净怀旧 • 免费体验</text>
+          <text class="register-brand">欢迎加入 QCIO 模拟空间</text>
+          <text class="register-subtitle">体验千禧年代的虚拟社交</text>
+          <text class="register-note">✨ 全新体验 • 纯净怀旧 • 免费体验</text>
         </view>
 
         <view class="register-fields" wx:if="{{!isRegistering}}">
@@ -70,7 +70,7 @@
   <view class="login-screen" wx:elif="{{!isLoggedIn}}">
     <view class="win98-window login-dialog">
       <view class="win98-title-bar">
-        <view class="win98-title-text">QCIO AI模拟空间 - 登录</view>
+        <view class="win98-title-text">QCIO 模拟空间 - 登录</view>
         <view class="win98-title-controls">
           <button class="win98-btn-close" bindtap="goBack">×</button>
         </view>
@@ -79,8 +79,8 @@
       <view class="win98-window-body">
         <view class="login-header">
           <view class="big-icon">📟</view>
-          <text class="login-brand">QCIO AI模拟空间</text>
-          <text class="login-subtitle">与AI好友重温千禧记忆</text>
+          <text class="login-brand">QCIO 模拟空间</text>
+          <text class="login-subtitle">与网友重温千禧记忆</text>
         </view>
 
         <view class="login-fields" wx:if="{{!isLoggingIn}}">
@@ -119,7 +119,7 @@
     <view class="win98-window full-panel">
       <!-- 标题栏：移除了注销按钮，仅保留关闭 -->
       <view class="win98-title-bar">
-        <view class="win98-title-text">QCIO AI模拟空间 - {{userProfile.qcio_id}}</view>
+        <view class="win98-title-text">QCIO 模拟空间 - {{userProfile.qcio_id}}</view>
         <view class="win98-title-controls">
           <button class="win98-btn-close" bindtap="goBack">×</button>
         </view>

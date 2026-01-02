@@ -36,6 +36,8 @@ exports.main = async function(event, context) {
         return await getEggStats();
       case 'getEggRankings':
         return await getEggRankings(data.limit || 20);
+      case 'getRankings':
+        return await getRankings(data.limit || 20);
       case 'getEggDiscoveryHistory':
         return await getEggDiscoveryHistory(data);
       case 'getQCIOUserList':
@@ -101,9 +103,9 @@ async function getDashboardStats() {
     db.collection('user_activity_logs').where({ action: 'egg_discovered', createTime: _.gte(todayStart) }).count(),
     db.collection('mood_garden').count(),
     db.collection('ifthen_play_history').count(),
-    db.collection('ifthen_play_history').where({ createdAt: _.gte(todayStart) }).count(),
+    db.collection('ifthen_play_history').where({ createTime: _.gte(todayStart) }).count(),
     db.collection('ifthen_shares').count(),
-    db.collection('ifthen_shares').where({ createdAt: _.gte(todayStart) }).count()
+    db.collection('ifthen_shares').where({ shareTime: _.gte(todayStart) }).count()
   ]);
 
   const totalUsers = results[0];
@@ -120,11 +122,12 @@ async function getDashboardStats() {
   const totalIfthenShares = results[11];
   const todayIfthenShares = results[12];
 
-  // 获取所有用户计算总和（coins, netFee, badges）
+  // 获取所有用户计算总和（coins, netFee, badges, aiHelpLetterOpened）
   const allUsers = await db.collection('users').field({
     coins: true,
     netFee: true,
-    badges: true
+    badges: true,
+    aiHelpLetterOpened: true
   }).get();
 
   let totalCoins = 0;
@@ -139,17 +142,14 @@ async function getDashboardStats() {
     // 彩蛋数据存储在 badges 数组中
     if (user.badges && Array.isArray(user.badges)) {
       totalEggsDiscovered += user.badges.length;
-
-      // 统计AI求救信发现数量 (eggId = 'ai_distress_signal')
-      for (var j = 0; j < user.badges.length; j++) {
-        if (user.badges[j].eggId === 'ai_distress_signal') {
-          aiDistressSignalCount++;
-        }
-      }
+    }
+    // 统计AI求救信发现数量（aiHelpLetterOpened = true）
+    if (user.aiHelpLetterOpened === true) {
+      aiDistressSignalCount++;
     }
   }
 
-  // 获取 QCIO 用户计算访问总和
+  // 获取空间访问统计（累加所有用户的 totalVisits 和 todayVisits）
   const qcioUsers = await db.collection('qcio_users').field({
     totalVisits: true,
     todayVisits: true
@@ -164,16 +164,9 @@ async function getDashboardStats() {
     todayVisits += qcioUser.todayVisits || 0;
   }
 
-  // 获取空间访问日志统计实际访问数
-  const [totalVisitLogs, todayVisitLogs] = await Promise.all([
-    db.collection('user_activity_logs').where({ action: 'visit_space' }).count(),
-    db.collection('user_activity_logs').where({ action: 'visit_space', createTime: _.gte(todayStart) }).count()
-  ]);
-
   // 获取聊天历史记录并统计 messages 数组长度
   const allChatHistory = await db.collection('qcio_chat_history').field({
-    messages: true,
-    timestamp: true
+    messages: true
   }).get();
 
   let totalMessages = 0;
@@ -181,15 +174,20 @@ async function getDashboardStats() {
 
   for (var k = 0; k < allChatHistory.data.length; k++) {
     var chat = allChatHistory.data[k];
-    var msgCount = 0;
     if (chat.messages && Array.isArray(chat.messages)) {
-      msgCount = chat.messages.length;
-    }
-    totalMessages += msgCount;
+      // 统计总消息数
+      totalMessages += chat.messages.length;
 
-    // 统计今天的消息
-    if (chat.timestamp && new Date(chat.timestamp) >= todayStart) {
-      todayMessages += msgCount;
+      // 统计今天的消息数（遍历每条消息的时间戳）
+      for (var m = 0; m < chat.messages.length; m++) {
+        var msg = chat.messages[m];
+        if (msg.timestamp) {
+          var msgTime = new Date(msg.timestamp);
+          if (msgTime >= todayStart) {
+            todayMessages++;
+          }
+        }
+      }
     }
   }
 
@@ -216,8 +214,8 @@ async function getDashboardStats() {
         todaySessions: todayChats.total || 0
       },
       visits: {
-        total: totalVisitLogs.total || 0,
-        today: todayVisitLogs.total || 0
+        total: totalVisits || 0,
+        today: todayVisits || 0
       },
       eggs: {
         totalDiscovered: totalEggsDiscovered,
@@ -254,28 +252,18 @@ async function getGrowthTrend(days) {
     const results = await Promise.all([
       db.collection('users').where({ createTime: _.gte(dayStart).lt(dayEnd) }).count(),
       db.collection('qcio_users').where({ updateTime: _.gte(dayStart).lt(dayEnd) }).count(),
-      db.collection('user_activity_logs').where({ action: 'visit_space', createTime: _.gte(dayStart).lt(dayEnd) }).count()
+      // 统计如果当时每日游玩次数
+      db.collection('ifthen_play_history').where({ createTime: _.gte(dayStart).lt(dayEnd) }).count(),
+      // 统计如果当时每日分享次数
+      db.collection('ifthen_shares').where({ shareTime: _.gte(dayStart).lt(dayEnd) }).count()
     ]);
-
-    // 获取当天的聊天记录并统计消息数
-    const chatHistory = await db.collection('qcio_chat_history')
-      .where({ timestamp: _.gte(dayStart).lt(dayEnd) })
-      .field({ messages: true })
-      .get();
-
-    let dailyMessages = 0;
-    for (var j = 0; j < chatHistory.data.length; j++) {
-      if (chatHistory.data[j].messages && Array.isArray(chatHistory.data[j].messages)) {
-        dailyMessages += chatHistory.data[j].messages.length;
-      }
-    }
 
     trends.push({
       date: (date.getMonth() + 1) + '/' + date.getDate(),
       newUsers: results[0].total || 0,
       activeUsers: results[1].total || 0,
-      newChats: dailyMessages,
-      newVisits: results[2].total || 0
+      ifthenPlays: results[2].total || 0,
+      ifthenShares: results[3].total || 0
     });
   }
 
@@ -291,10 +279,11 @@ async function getUserList(data) {
   const page = data.page || 1;
   const limit = data.limit || 20;
   const keyword = data.keyword || '';
-  const sortBy = data.sortBy || 'createTime';
+  const sortBy = data.sortBy || 'lastLoginTime';
   const sortOrder = data.sortOrder || 'desc';
 
-  const skip = (page - 1) * limit;
+  // 需要内存排序的字段（嵌套字段或数组）
+  const needsMemorySort = ['badges', 'qcio_id', 'nickname'].includes(sortBy);
 
   var query = db.collection('users');
 
@@ -304,14 +293,111 @@ async function getUserList(data) {
     ]));
   }
 
-  const order = sortOrder === 'asc' ? 'asc' : 'desc';
-  const result = await query.orderBy(sortBy, order).skip(skip).limit(limit).get();
-  const countResult = await query.count();
+  // 如果需要内存排序，获取所有符合条件的数据
+  // 否则直接使用数据库分页
+  var result;
+  if (needsMemorySort) {
+    result = await query
+      .field({
+        _openid: true,
+        nickname: true,
+        coins: true,
+        netFee: true,
+        badges: true,
+        createTime: true,
+        lastLoginTime: true,
+        aiHelpLetterOpened: true
+      })
+      .get();
+  } else {
+    const order = sortOrder === 'asc' ? 'asc' : 'desc';
+    const skip = (page - 1) * limit;
+    result = await query
+      .field({
+        _openid: true,
+        nickname: true,
+        coins: true,
+        netFee: true,
+        badges: true,
+        createTime: true,
+        lastLoginTime: true,
+        aiHelpLetterOpened: true
+      })
+      .orderBy(sortBy, order)
+      .skip(skip)
+      .limit(limit)
+      .get();
+  }
+
+  // 获取总数
+  var countQuery = db.collection('users');
+  if (keyword) {
+    countQuery = countQuery.where(_.or([
+      { nickname: db.RegExp({ regexp: keyword, options: 'i' }) }
+    ]));
+  }
+  const countResult = await countQuery.count();
+
+  // 为每个用户关联 QCIO 数据
+  var list = [];
+  for (var i = 0; i < result.data.length; i++) {
+    var user = result.data[i];
+
+    // 尝试通过 _openid 获取 QCIO 用户信息
+    var qcioUser = null;
+    const qcioResult = await db.collection('qcio_users')
+      .where({ _openid: user._openid })
+      .field({
+        qcio_id: true,
+        nickname: true,
+        avatarName: true,
+        level: true,
+        experience: true
+      })
+      .get();
+
+    if (qcioResult.data.length > 0) {
+      qcioUser = qcioResult.data[0];
+    }
+
+    list.push({
+      ...user,
+      qcioUser: qcioUser
+    });
+  }
+
+  // 内存排序
+  if (needsMemorySort) {
+    list.sort(function(a, b) {
+      var valueA, valueB;
+
+      if (sortBy === 'badges') {
+        valueA = (a.badges && Array.isArray(a.badges)) ? a.badges.length : 0;
+        valueB = (b.badges && Array.isArray(b.badges)) ? b.badges.length : 0;
+      } else if (sortBy === 'qcio_id') {
+        valueA = a.qcioUser ? (a.qcioUser.qcio_id || '') : '';
+        valueB = b.qcioUser ? (b.qcioUser.qcio_id || '') : '';
+      } else if (sortBy === 'nickname') {
+        valueA = (a.qcioUser ? (a.qcioUser.avatarName || a.qcioUser.nickname || '') : '').toLowerCase();
+        valueB = (b.qcioUser ? (b.qcioUser.avatarName || b.qcioUser.nickname || '') : '').toLowerCase();
+      } else {
+        return 0;
+      }
+
+      if (valueA < valueB) return sortOrder === 'asc' ? -1 : 1;
+      if (valueA > valueB) return sortOrder === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    // 内存排序后手动分页
+    const skip = (page - 1) * limit;
+    list = list.slice(skip, skip + limit);
+  }
 
   return {
     success: true,
     data: {
-      list: result.data,
+      list: list,
       total: countResult.total,
       page: page,
       limit: limit
@@ -337,14 +423,13 @@ async function getUserDetail(openid) {
   var qcioUser = null;
   var qcioWallet = null;
 
-  if (user.qcioProfile && user.qcioProfile.qcio_id) {
-    const results = await Promise.all([
-      db.collection('qcio_users').where({ qcio_id: user.qcioProfile.qcio_id }).get(),
-      db.collection('qcio_wallet').where({ _openid: openid }).get()
-    ]);
-    if (results[0].data.length > 0) qcioUser = results[0].data[0];
-    if (results[1].data.length > 0) qcioWallet = results[1].data[0];
-  }
+  // 通过 _openid 获取 QCIO 用户信息和钱包
+  const results = await Promise.all([
+    db.collection('qcio_users').where({ _openid: openid }).get(),
+    db.collection('qcio_wallet').where({ _openid: openid }).get()
+  ]);
+  if (results[0].data.length > 0) qcioUser = results[0].data[0];
+  if (results[1].data.length > 0) qcioWallet = results[1].data[0];
 
   const transactionsResult = await db.collection('user_transactions')
     .where({ _openid: openid })
@@ -603,6 +688,171 @@ async function getEggRankings(limit) {
   return {
     success: true,
     data: rankedList
+  };
+}
+
+/**
+ * 获取综合排行榜（等级、金币、彩蛋、如果当时结局）
+ */
+async function getRankings(limit) {
+  // 并行获取所有需要的数据
+  const [qcioUsersData, qcioWalletsData, usersData, ifthenEndingsData] = await Promise.all([
+    db.collection('qcio_users')
+      .field({ _openid: true, nickname: true, avatarName: true, level: true, experience: true })
+      .get(),
+    db.collection('qcio_wallet')
+      .field({ _openid: true, qpoints: true, gold: true })
+      .get(),
+    db.collection('users')
+      .field({ _openid: true, nickname: true, badges: true })
+      .get(),
+    db.collection('ifthen_endings')
+      .field({ _openid: true })
+      .get()
+  ]);
+
+  // 创建索引
+  const qcioWalletsMap = {};
+  for (var i = 0; i < qcioWalletsData.data.length; i++) {
+    qcioWalletsMap[qcioWalletsData.data[i]._openid] = qcioWalletsData.data[i];
+  }
+
+  const usersMap = {};
+  for (var j = 0; j < usersData.data.length; j++) {
+    usersMap[usersData.data[j]._openid] = usersData.data[j];
+  }
+
+  // 1. 等级排行榜
+  var levelRank = [];
+  for (var k = 0; k < qcioUsersData.data.length; k++) {
+    var qcioUser = qcioUsersData.data[k];
+    levelRank.push({
+      _openid: qcioUser._openid,
+      nickname: qcioUser.avatarName || qcioUser.nickname || usersMap[qcioUser._openid]?.nickname || '未知',
+      level: qcioUser.level || 0,
+      experience: qcioUser.experience || 0
+    });
+  }
+  levelRank.sort(function(a, b) { return b.level - a.level; });
+  levelRank = levelRank.slice(0, limit);
+
+  // 2. 金币排行榜
+  var qpointsRank = [];
+  for (var m = 0; m < qcioUsersData.data.length; m++) {
+    var qcioUser2 = qcioUsersData.data[m];
+    var wallet = qcioWalletsMap[qcioUser2._openid];
+    if (wallet) {
+      qpointsRank.push({
+        _openid: qcioUser2._openid,
+        nickname: qcioUser2.avatarName || qcioUser2.nickname || usersMap[qcioUser2._openid]?.nickname || '未知',
+        qpoints: wallet.qpoints || 0,
+        gold: wallet.gold || 0,
+        level: qcioUser2.level || 0
+      });
+    }
+  }
+  qpointsRank.sort(function(a, b) { return b.gold - a.gold; });
+  qpointsRank = qpointsRank.slice(0, limit);
+
+  // 3. 彩蛋发现排行榜
+  var eggsRank = [];
+  for (var n = 0; n < usersData.data.length; n++) {
+    var user = usersData.data[n];
+    var eggCount = (user.badges && Array.isArray(user.badges)) ? user.badges.length : 0;
+
+    // 尝试从 QCIO 用户获取昵称
+    var nickname = user.nickname;
+    if (!nickname) {
+      for (var p = 0; p < qcioUsersData.data.length; p++) {
+        if (qcioUsersData.data[p]._openid === user._openid) {
+          nickname = qcioUsersData.data[p].avatarName || qcioUsersData.data[p].nickname;
+          break;
+        }
+      }
+    }
+    if (!nickname) nickname = '未知';
+
+    eggsRank.push({
+      _openid: user._openid,
+      nickname: nickname,
+      eggCount: eggCount,
+      level: 0
+    });
+
+    // 添加等级信息
+    for (var q = 0; q < qcioUsersData.data.length; q++) {
+      if (qcioUsersData.data[q]._openid === user._openid) {
+        eggsRank[eggsRank.length - 1].level = qcioUsersData.data[q].level || 0;
+        break;
+      }
+    }
+  }
+  eggsRank.sort(function(a, b) { return b.eggCount - a.eggCount; });
+  eggsRank = eggsRank.slice(0, limit);
+
+  // 4. 如果当时结局排行榜 - 需要按 _openid 分组统计结局数量
+  var ifthenMap = {};
+  for (var r = 0; r < ifthenEndingsData.data.length; r++) {
+    var endingData = ifthenEndingsData.data[r];
+    var openid = endingData._openid;
+    if (!openid) continue;
+
+    if (!ifthenMap[openid]) {
+      ifthenMap[openid] = {
+        _openid: openid,
+        endingCount: 0
+      };
+    }
+    ifthenMap[openid].endingCount++;
+  }
+
+  // 计算总用户数（用于百分比）
+  var totalUsers = Object.keys(ifthenMap).length;
+
+  // 转换为数组并补充昵称信息
+  var ifthenRank = [];
+  for (var key in ifthenMap) {
+    var item = ifthenMap[key];
+
+    // 获取昵称
+    var ifthenNickname = usersMap[key]?.nickname;
+    if (!ifthenNickname) {
+      for (var s = 0; s < qcioUsersData.data.length; s++) {
+        if (qcioUsersData.data[s]._openid === key) {
+          ifthenNickname = qcioUsersData.data[s].avatarName || qcioUsersData.data[s].nickname;
+          break;
+        }
+      }
+    }
+    if (!ifthenNickname) ifthenNickname = '未知';
+
+    // 计算百分比（达到该结局数或更多的用户占比）
+    var usersWithThisOrMore = 0;
+    for (var otherKey in ifthenMap) {
+      if (ifthenMap[otherKey].endingCount >= item.endingCount) {
+        usersWithThisOrMore++;
+      }
+    }
+    var percentage = totalUsers > 0 ? Math.round((usersWithThisOrMore / totalUsers) * 100) : 0;
+
+    ifthenRank.push({
+      _openid: key,
+      nickname: ifthenNickname,
+      endingCount: item.endingCount,
+      percentage: percentage
+    });
+  }
+  ifthenRank.sort(function(a, b) { return b.endingCount - a.endingCount; });
+  ifthenRank = ifthenRank.slice(0, limit);
+
+  return {
+    success: true,
+    data: {
+      level: levelRank,
+      qpoints: qpointsRank,
+      eggs: eggsRank,
+      ifthen: ifthenRank
+    }
   };
 }
 

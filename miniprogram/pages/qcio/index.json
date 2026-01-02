@@ -1,7 +1,5 @@
 {
-  "navigationBarTitleText": "QCIO",
-  "navigationBarBackgroundColor": "#000080",
-  "navigationBarTextStyle": "white",
+  "navigationStyle": "custom",
   "usingComponents": {
     "mood-log": "./components/mood-log",
     "step-counter": "./components/step-counter",

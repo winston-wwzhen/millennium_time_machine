@@ -7,10 +7,12 @@ const { isNetworkError, setNetworkDisconnected, showDisconnectDialog } = require
 const { eggSystem, EGG_IDS } = require('../../utils/egg-system');
 const { userApi, qcioApi, chatApi } = require('../../utils/api-client');
 const { qcioContactsCache, qcioProfileCache } = require('../../utils/cache-manager');
+const { setupCapsulePadding } = require('../../utils/capsule-utils');
 
 Page({
   behaviors: [preventDuplicateBehavior],
   data: {
+    capsulePadding: 44, // 🔧 避开胶囊按钮的动态间距
     isLoggedIn: false,    // 是否已登录显示主面板
     isRegistering: false, // 是否正在注册
     isLoggingIn: false,   // 是否正在显示登录进度条
@@ -94,8 +96,17 @@ Page({
    * 生命周期：加载页面时从云端同步状态
    */
   onLoad: function(options) {
-    this.initAccountFromCloud();
-    this.loadAIContacts();
+    // 🔧 优化：计算避开胶囊按钮的间距
+    setupCapsulePadding(this, 'capsulePadding');
+
+    // 🔧 优化：先从缓存加载数据（立即显示）
+    this.loadFromCache();
+
+    // 🔧 优化：并行加载云端数据
+    Promise.all([
+      this.initAccountFromCloud(),
+      this.loadAIContacts()
+    ]);
 
     // 注册彩蛋发现回调
     this.eggCallbackKey = eggSystem.setEggDiscoveryCallback((config) => {
@@ -238,6 +249,49 @@ Page({
   },
 
   /**
+   * 🔧 优化：从本地缓存加载数据（立即显示，提升用户体验）
+   */
+  loadFromCache: function() {
+    try {
+      // 从缓存读取用户资料
+      const cachedProfile = qcioProfileCache.get();
+      if (cachedProfile) {
+        this.setData({
+          userProfile: cachedProfile,
+          isLoadingAccount: false
+        });
+        this.calculateGrowthIcons(cachedProfile.level || 1);
+      }
+
+      // 从缓存读取钱包数据（5分钟有效期）
+      const walletCacheKey = 'qcio_wallet_cache';
+      const cachedWallet = wx.getStorageSync(walletCacheKey);
+      if (cachedWallet && cachedWallet.timestamp) {
+        const CACHE_EXPIRE = 5 * 60 * 1000; // 5分钟
+        const isExpired = Date.now() - cachedWallet.timestamp > CACHE_EXPIRE;
+        if (!isExpired) {
+          this.setData({ wallet: cachedWallet.data });
+        }
+      }
+
+      // 从缓存读取成长值数据（5分钟有效期）
+      const growthCacheKey = 'qcio_growth_cache';
+      const cachedGrowth = wx.getStorageSync(growthCacheKey);
+      if (cachedGrowth && cachedGrowth.timestamp) {
+        const CACHE_EXPIRE = 5 * 60 * 1000; // 5分钟
+        const isExpired = Date.now() - cachedGrowth.timestamp > CACHE_EXPIRE;
+        if (!isExpired) {
+          this.setData({ growthInfo: cachedGrowth.data });
+        }
+      }
+
+      console.log('[QCIO] 从缓存加载数据完成');
+    } catch (e) {
+      console.error('[QCIO] 读取缓存失败:', e);
+    }
+  },
+
+  /**
    * 从云端初始化账号并判断登录态（使用 API 客户端）
    */
   initAccountFromCloud: async function() {
@@ -275,10 +329,11 @@ Page({
             isLoadingAccount: false
           });
           this.calculateGrowthIcons(profile.level || 1);
-          // 加载钱包数据
-          this.loadWalletData();
-          // 加载成长值信息
-          this.loadGrowthInfo();
+          // 🔧 优化：并行加载钱包和成长值数据
+          Promise.all([
+            this.loadWalletData(),
+            this.loadGrowthInfo()
+          ]);
         }
       }
     } catch (err) {
@@ -286,6 +341,38 @@ Page({
       wx.showToast({ title: '由于网络故障拨号失败', icon: 'none' });
     } finally {
       wx.hideLoading();
+    }
+  },
+
+  /**
+   * 🔧 计算避开胶囊按钮的间距（适配不同屏幕）
+   */
+  calculateCapsulePadding: function() {
+    try {
+      // 获取系统信息
+      const systemInfo = wx.getSystemInfoSync();
+      const statusBarHeight = systemInfo.statusBarHeight || 0;
+
+      // 获取胶囊按钮位置信息
+      const menuButton = wx.getMenuButtonBoundingClientRect();
+
+      // 计算需要的间距：状态栏高度 + 胶囊按钮底部到顶部的距离 + 一些额外间距
+      // menuButton.top 是胶囊按钮顶部距离页面顶部的距离
+      // menuButton.height 是胶囊按钮高度
+      const capsuleBottom = menuButton.top + menuButton.height;
+      const padding = capsuleBottom + 8; // 加8px额外间距
+
+      this.setData({
+        capsulePadding: padding
+      });
+
+      console.log('[QCIO] 胶囊间距:', padding, '状态栏:', statusBarHeight, '胶囊:', menuButton);
+    } catch (e) {
+      // 如果获取失败，使用默认值
+      console.error('[QCIO] 获取胶囊信息失败:', e);
+      this.setData({
+        capsulePadding: 50 // 默认50px
+      });
     }
   },
 
@@ -480,16 +567,29 @@ Page({
   },
 
   /**
-   * 从云函数加载完整成长值信息（使用 API 客户端）
+   * 从云函数加载完整成长值信息（支持缓存）
    */
   loadGrowthInfo: async function() {
     try {
       const result = await qcioApi.getLevelInfo();
       if (result && result.success) {
-        this.setData({ growthInfo: result.data });
+        const growthData = result.data;
+        this.setData({ growthInfo: growthData });
+
+        // 🔧 优化：保存到缓存（5分钟有效期）
+        try {
+          wx.setStorageSync('qcio_growth_cache', {
+            data: growthData,
+            timestamp: Date.now()
+          });
+        } catch (e) {
+          console.error('[QCIO] 保存成长值缓存失败:', e);
+        }
       }
+      return result;
     } catch (err) {
       console.error('Load Growth Info Error:', err);
+      return { success: false };
     }
   },
 
@@ -780,18 +880,28 @@ Page({
   },
 
   /**
-   * 从云端加载钱包数据
+   * 从云端加载钱包数据（支持缓存）
    */
   loadWalletData: function() {
-    qcioApi.getWallet().then(result => {
+    return qcioApi.getWallet().then(result => {
       if (result && result.success) {
-        this.setData({
-          wallet: result.data || { coins: 0, qpoints: 0, isVip: false }
-        });
+        const walletData = result.data || { coins: 0, qpoints: 0, isVip: false };
+        this.setData({ wallet: walletData });
+
+        // 🔧 优化：保存到缓存（5分钟有效期）
+        try {
+          wx.setStorageSync('qcio_wallet_cache', {
+            data: walletData,
+            timestamp: Date.now()
+          });
+        } catch (e) {
+          console.error('[QCIO] 保存钱包缓存失败:', e);
+        }
       }
+      return result;
     }).catch(err => {
       console.error('Load Wallet Error:', err);
-      // 保持默认钱包数据
+      return { success: false };
     });
   },
 

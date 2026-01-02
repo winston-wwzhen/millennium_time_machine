@@ -1,4 +1,4 @@
-<view class="desktop">
+<view class="desktop" style="padding-top: {{capsulePadding}}px;">
   <!-- 自定义弹窗 -->
   <view class="custom-modal-overlay" wx:if="{{showEmojiModal}}" catchtap="closeModal">
     <view class="custom-modal" catchtap="stopPropagation">
@@ -36,7 +36,7 @@
     </view> -->
 
     <view style="background:#ffffe0; color:#555; font-size:10px; padding:3px 5px; border-bottom:1px solid #808080; text-align:center; margin-bottom: 2px;">
-       ⚠️ 温馨提示：对方是AI虚拟网友，内容仅供娱乐，请勿当真。
+       ⚠️ 温馨提示：对方是虚拟网友，内容仅供娱乐，请勿当真。
     </view>
 
     <scroll-view class="chat-history" scroll-y="true" scroll-into-view="{{scrollToView}}">

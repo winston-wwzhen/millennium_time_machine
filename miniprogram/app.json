@@ -1,9 +1,7 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/recycle-bin/index",
     "pages/mars/index",
-    "pages/avatar/index",
     "pages/chat/index",
     "pages/group-chat/index",
     "pages/translator/index",
@@ -16,9 +14,7 @@
     "pages/qcio/farm/index",
     "pages/ifthen/start",
     "pages/ifthen/timeline",
-    "pages/ifthen/history",
-    "pages/ttplayer/index",
-    "pages/manbo/index"
+    "pages/ifthen/history"
   ],
   "window": {
     "backgroundColor": "#F6F6F6",

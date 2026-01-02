@@ -816,6 +816,20 @@ async function saveChatHistory(openid, data) {
   try {
     const { contactName, messages } = data;
 
+    // 为每条消息添加 timestamp（如果没有的话）
+    const now = Date.now();
+    var messagesWithTimestamp = [];
+    for (var i = 0; i < messages.length; i++) {
+      var msg = messages[i];
+      if (msg && !msg.timestamp) {
+        // 使用 Object.assign 创建新对象，避免修改原消息
+        var newMsg = Object.assign({}, msg, { timestamp: now });
+        messagesWithTimestamp.push(newMsg);
+      } else {
+        messagesWithTimestamp.push(msg);
+      }
+    }
+
     // 先查询是否已有记录
     const existingRes = await db.collection('qcio_chat_history')
       .where({
@@ -830,7 +844,7 @@ async function saveChatHistory(openid, data) {
         .doc(existingRes.data[0]._id)
         .update({
           data: {
-            messages: messages,
+            messages: messagesWithTimestamp,
             updateTime: db.serverDate()
           }
         });
@@ -840,7 +854,7 @@ async function saveChatHistory(openid, data) {
         data: {
           _openid: openid,
           contact_name: contactName,
-          messages: messages,
+          messages: messagesWithTimestamp,
           updateTime: db.serverDate()
         }
       });
@@ -1043,6 +1057,20 @@ async function saveGroupChatHistory(openid, data) {
   try {
     const { groupName, messages } = data;
 
+    // 为每条消息添加 timestamp（如果没有的话）
+    const now = Date.now();
+    var messagesWithTimestamp = [];
+    for (var i = 0; i < messages.length; i++) {
+      var msg = messages[i];
+      if (msg && !msg.timestamp) {
+        // 使用 Object.assign 创建新对象，避免修改原消息
+        var newMsg = Object.assign({}, msg, { timestamp: now });
+        messagesWithTimestamp.push(newMsg);
+      } else {
+        messagesWithTimestamp.push(msg);
+      }
+    }
+
     // 先查询是否已有记录
     const existingRes = await db.collection('qcio_group_chat_history')
       .where({
@@ -1057,7 +1085,7 @@ async function saveGroupChatHistory(openid, data) {
         .doc(existingRes.data[0]._id)
         .update({
           data: {
-            messages: messages,
+            messages: messagesWithTimestamp,
             updateTime: db.serverDate()
           }
         });
@@ -1067,7 +1095,7 @@ async function saveGroupChatHistory(openid, data) {
         data: {
           _openid: openid,
           group_name: groupName,
-          messages: messages,
+          messages: messagesWithTimestamp,
           updateTime: db.serverDate()
         }
       });

@@ -1,4 +1,5 @@
 {
+  "component": true,
   "usingComponents": {
     "egg-discovery-dialog": "/components/egg-discovery-dialog/index"
   }

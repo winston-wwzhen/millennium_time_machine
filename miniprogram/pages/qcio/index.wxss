@@ -41,6 +41,8 @@ page {
   flex-direction: column;
   overflow: hidden;
   box-sizing: border-box;
+  /* 🔧 避开微信胶囊按钮 - 使用动态计算值 */
+  /* padding-top 在 wxml 中动态设置 */
 }
 
 /* --- 标题栏 (Title Bar) 优化 --- */

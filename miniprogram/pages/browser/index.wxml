@@ -4,8 +4,6 @@
     <view class="title-icon">🌐</view>
     <view class="title-text">千禧浏览器</view>
     <view class="title-controls">
-      <view class="control-btn minimize">_</view>
-      <view class="control-btn maximize">□</view>
       <view class="control-btn close" bindtap="goBack">×</view>
     </view>
   </view>
@@ -234,7 +232,7 @@
           </view>
 
           <view class="tool-footer">
-            <text>【使用说明】本工具采用AI智能转换，支持多种火星文风格</text>
+            <text>【使用说明】本工具采用智能转换，支持多种火星文风格</text>
             <text>推荐使用：QQ空间签名、个性签名、非主流网名</text>
           </view>
         </view>
