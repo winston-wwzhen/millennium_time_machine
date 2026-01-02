@@ -205,8 +205,68 @@ const OPENID = wxContext.OPENID;
 | `cloudfunctions/chat/index.js` | AI chat core with 36 modes |
 | `cloudfunctions/qcio/index.js` | QCIO social features router |
 | `cloudfunctions/user/index.js` | User login, dual currency, easter eggs, transaction history |
+| `cloudfunctions/ifthen/index.js` | If-Then game cloud function: save endings, get history/stats, record shares |
 | `cloudfunctions/init-db/index.js` | Database initialization (32 collections) |
 | `cloudfunctions/clear-db/index.js` | Database clearing for testing |
+
+### 如果当时 Module
+
+**Overview**: Life simulation game where players experience 2006-2026 with event-driven narrative and multiple endings.
+
+**Core Pages**:
+- `miniprogram/pages/ifthen/start.js` | Start page with birth year/gender selection |
+| `miniprogram/pages/ifthen/timeline.js` | Main gameplay with events, choices, and endings |
+| `miniprogram/pages/ifthen/history.js` | Ending collection and play history |
+
+**Data Files**:
+| File | Purpose |
+|------|---------|
+| `miniprogram/data/ifthen-events.js` | 300+ events (year-specific + daily), trigger conditions, attribute effects |
+| `miniprogram/data/ifthen-endings.js` | 100+ endings with conditions (special/good/normal/bad) |
+| `miniprogram/data/ifthen-narratives.js` | Age-based and year-based narrative fragments |
+
+**Game Mechanics**:
+- **Timeline**: 2006-2026 (20 years), players start at age based on birth year
+- **Attributes**: 8 stats (tech_skill, social, wealth, health, happiness, charm, luck, education)
+- **Flags**: Marks player choices (e.g., `corporate_slave`, `entrepreneur`, `qq_space_user`)
+- **Event Types**: Year-specific historical events, daily life events, 90后专属 (90s generation exclusive)
+- **Ending Logic**: Filter by age/birthYear/attributes/flags, then weighted random selection
+
+**Event Structure**:
+```javascript
+{
+  id: 'event_id',
+  year: 2006,              // null for daily events
+  category: 'daily',
+  trigger: {
+    ageRange: [15, 25],
+    gender: null,          // or 'male'/'female'
+    randomChance: 0.1,     // 10% chance
+    birthYearRange: [1990, 2000]  // optional: 90后专属
+  },
+  choices: [
+    { text: '选择A', effects: { wealth: 10, happiness: 5 }, flags: { flag_name: true } }
+  ]
+}
+```
+
+**Ending Structure**:
+```javascript
+{
+  id: 'ending_id',
+  title: '结局名称',
+  type: 'special',         // special/good/normal/bad
+  weight: 10,              // higher = more likely
+  conditions: {
+    ageRange: [22, 35],
+    birthYearRange: [1990, 2000],
+    minAttributes: { social: 85, wealth: 80 },
+    maxAttributes: { health: 50 },
+    requireFlags: ['flag1', 'flag2'],
+    excludeFlags: ['flag3']
+  }
+}
+```
 
 ## Development Conventions
 

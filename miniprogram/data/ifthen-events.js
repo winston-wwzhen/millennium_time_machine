@@ -1,6 +1,7 @@
 // 历史事件数据 - 2006-2026
-// 去除政治相关事件,专注于娱乐、文化、科技、体育、生活等方面
-// 包含历史大事件 + 日常事件,共200+事件
+// 90后专属版本：大幅增加中国国内事件，覆盖90后成长经历
+// 去除政治相关事件，专注于娱乐、文化、科技、体育、生活等方面
+// 包含历史大事件 + 日常事件，共300+事件
 
 const eventsData = [
   // ==================== 2006年 ====================
@@ -79,10 +80,10 @@ const eventsData = [
     choices: [
       {
         text: '沉迷游戏,经常通宵',
-        hint: '快乐+15,健康-10,学识-5',
-        effects: { happiness: 15, health: -10, education: -5 },
+        hint: '快乐+10,健康-12,学识-5',
+        effects: { happiness: 10, health: -12, education: -5 },
         flags: { wow_addict: true },
-        result: '你沉迷魔兽世界,经常"再来一个任务"到天亮...'
+        result: '你沉迷魔兽世界,经常"再来一个任务"到天亮,白天精神很差...'
       },
       {
         text: '适度游戏,结识朋友',
@@ -228,7 +229,268 @@ const eventsData = [
     ]
   },
 
+  // ==================== 2006年 中国事件 ====================
+  {
+    id: 'event_2006_kaixin001_blog',
+    year: 2006,
+    category: 'internet',
+    trigger: { ageRange: [14, 25], gender: null },
+    title: '博客中国时代',
+    description: '博客成为年轻人表达自我的重要平台,各大博客网站火爆。',
+    context: '2006年前后,博客中国、新浪博客等平台兴起,90后们开始在博客上记录生活、发表观点。',
+    choices: [
+      {
+        text: '开通自己的博客,经常更新',
+        hint: '技术+10,魅力+12,快乐+10',
+        effects: { tech_skill: 10, charm: 12, happiness: 10 },
+        flags: { blogger: true, post_90s_writer: true },
+        result: '你开通了博客,记录学习和生活,还积累了一些读者!'
+      },
+      {
+        text: '经常看别人的博客',
+        hint: '学识+12,魅力+5',
+        effects: { education: 12, charm: 5 },
+        flags: { blog_reader: true },
+        result: '你经常浏览博客,阅读各种文章,学到不少东西。'
+      },
+      {
+        text: '不感兴趣,继续用QQ空间',
+        hint: '社交+10',
+        effects: { social: 10 },
+        flags: { qzone_user: true },
+        result: '你觉得博客太正式,还是QQ空间更适合你。'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2006_zhou_jielun_new',
+    year: 2006,
+    category: 'music',
+    trigger: { ageRange: [10, 22], gender: null },
+    title: '周杰伦《依然范特西》',
+    description: '周杰伦发布新专辑《依然范特西》,90后的青春记忆。',
+    context: '2006年,周杰伦发布《依然范特西》,《听妈妈的话》《千里之外》等歌曲成为90后的青春BGM。',
+    choices: [
+      {
+        text: '买专辑,循环播放',
+        hint: '快乐+15,魅力+10,社交+12,财富-5',
+        effects: { happiness: 15, charm: 10, social: 12, wealth: -5 },
+        flags: { jay_chou_fan: true, post_90s_music_fan: true },
+        result: '你每天都在听周杰伦,歌曲歌词都能倒背如流!'
+      },
+      {
+        text: '只听几首热门',
+        hint: '快乐+8',
+        effects: { happiness: 8 },
+        result: '你只听《听妈妈的话》那几首热门歌曲。'
+      },
+      {
+        text: '觉得太吵,不喜欢',
+        hint: '学识+5',
+        effects: { education: 5 },
+        result: '你觉得周杰伦的歌含糊不清,没有特别关注。'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2006_lingju_qingchun',
+    year: 2006,
+    category: 'entertainment',
+    trigger: { ageRange: [12, 20], gender: null },
+    title: '《零零后》文学热',
+    description: '《零零后》《90后》等青春文学书籍风靡校园。',
+    context: '2006年前后,青春文学成为90后的阅读主流,饶雪漫、郭敬明等作家的作品深受欢迎。',
+    choices: [
+      {
+        text: '沉迷青春文学',
+        hint: '学识+12,魅力+8,快乐+10',
+        effects: { education: 12, charm: 8, happiness: 10 },
+        flags: { youth_literature_fan: true, post_90s_reader: true },
+        result: '你读了大量青春文学,为书中的故事感动流泪。'
+      },
+      {
+        text: '偶尔看看',
+        hint: '学识+6,快乐+5',
+        effects: { education: 6, happiness: 5 },
+        result: '你读过几本,觉得挺有意思。'
+      },
+      {
+        text: '觉得矫情,不感兴趣',
+        hint: '学识+8',
+        effects: { education: 8 },
+        flags: { serious_reader: true },
+        result: '你觉得这类书太矫情,更喜欢看经典名著。'
+      }
+    ]
+  },
+
+  // ==================== 2006年 荒诞有趣事件 ====================
+  {
+    id: 'event_2006_time_travel_rumor',
+    year: 2006,
+    category: 'bizarre',
+    trigger: { ageRange: [12, 30], gender: null, randomChance: 0.03 },
+    title: '穿越传闻',
+    description: '网上有人声称自己是从2026年穿越回来的,预言了几个准确的事件。',
+    context: '2006年,穿越小说刚刚兴起,有人在网上声称是穿越者...',
+    choices: [
+      {
+        text: '深信不疑',
+        hint: '学识-8,快乐+15,社交+8',
+        effects: { education: -8, happiness: 15, social: 8 },
+        flags: { gullible: true, time_travel_believer: true },
+        result: '你每天关注那个"穿越者",结果发现是编的...'
+      },
+      {
+        text: '半信半疑',
+        hint: '学识+5,快乐+8',
+        effects: { education: 5, happiness: 8 },
+        flags: { skeptic: true },
+        result: '你觉得很有趣,但没有完全当真。'
+      },
+      {
+        text: '完全不信',
+        hint: '学识+12,快乐+5',
+        effects: { education: 12, happiness: 5 },
+        flags: { rational: true },
+        result: '你觉得这就是骗关注的,一笑置之。'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2006_lucky_coincidence',
+    year: 2006,
+    category: 'bizarre',
+    trigger: { ageRange: [10, 40], gender: null, randomChance: 0.02 },
+    title: '神秘好运',
+    description: '今天发生了不可思议的巧合:你想起一首很久没听的歌,打开收音机正在播这首歌!',
+    context: '这种巧合让人感觉世界真的很奇妙...',
+    choices: [
+      {
+        text: '觉得是命运',
+        hint: '快乐+18,幸运+15,学识+8',
+        effects: { happiness: 18, luck: 15, education: 8 },
+        flags: { destiny_believer: true, mystical: true },
+        result: '你觉得这是命运的暗示,世界充满了奇迹!'
+      },
+      {
+        text: '只是巧合',
+        hint: '学识+12',
+        effects: { education: 12 },
+        flags: { rational_thinker: true },
+        result: '你觉得这就是概率问题,没什么特别的。'
+      },
+      {
+        text: '记录下来',
+        hint: '学识+10,快乐+12',
+        effects: { education: 10, happiness: 12 },
+        flags: { memory_keeper: true },
+        result: '你把这个巧合记录在日记里,成为美好回忆。'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2006_dream_premonition',
+    year: 2006,
+    category: 'bizarre',
+    trigger: { ageRange: [12, 35], gender: null, randomChance: 0.02 },
+    title: '梦中预言',
+    description: '你做了一个梦,第二天梦里的场景竟然真的发生了!',
+    context: '既诡异又神奇的体验,让人对世界产生疑问...',
+    choices: [
+      {
+        text: '认为自己有超能力',
+        hint: '快乐+20,魅力+15,学识-10',
+        effects: { happiness: 20, charm: 15, education: -10 },
+        flags: { superpower_believer: true },
+        result: '你相信自己有预知能力,开始关注更多"征兆"!'
+      },
+      {
+        text: '只是巧合',
+        hint: '学识+15',
+        effects: { education: 15 },
+        flags: { realist: true },
+        result: '你觉得这就是巧合,不要太当真。'
+      },
+      {
+        text: '记录梦境',
+        hint: '学识+12,快乐+10',
+        effects: { education: 12, happiness: 10 },
+        flags: { dream_journal: true },
+        result: '你开始记录梦境,想找出更多规律。'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2006_stray_cat_encounter',
+    year: 2006,
+    category: 'bizarre',
+    trigger: { ageRange: [10, 40], gender: null, randomChance: 0.03 },
+    title: '神秘猫咪',
+    description: '一只流浪猫出现在你家门口,眼睛居然是不同颜色的,非常罕见。',
+    context: '这只猫看起来很特别,仿佛有灵性...',
+    choices: [
+      {
+        text: '收养它',
+        hint: '快乐+20,健康+8,魅力+12',
+        effects: { happiness: 20, health: 8, charm: 12 },
+        flags: { cat_owner: true, lucky_pet: true },
+        result: '你收养了这只异瞳猫,它给你带来了很多好运!'
+      },
+      {
+        text: '喂它但不收养',
+        hint: '快乐+12,魅力+8',
+        effects: { happiness: 12, charm: 8 },
+        flags: { kind_stranger: true },
+        result: '你经常喂它,它成了你的"邻居"。'
+      },
+      {
+        text: '不理会',
+        hint: '学识+5',
+        effects: { education: 5 },
+        result: '你担心照顾不了它,选择不干涉。'
+      }
+    ]
+  },
+
   // ==================== 2007年 ====================
+  {
+    id: 'event_2007_kaixin001_social',
+    year: 2007,
+    category: 'internet',
+    trigger: { ageRange: [15, 25], gender: null },
+    title: '开心网人人网',
+    description: '开心网、人人网等社交平台兴起,偷菜游戏风靡。',
+    context: '2007年,开心网和人人网成为白领和大学生最喜欢的社交平台,偷菜、抢车位成为日常。',
+    choices: [
+      {
+        text: '沉迷偷菜游戏',
+        hint: '社交+15,快乐+15,学识-5',
+        effects: { social: 15, happiness: 15, education: -5 },
+        flags: { farm_addict: true, post_90s_gamer: true },
+        result: '你定闹钟半夜起来偷菜,游戏等级很高!'
+      },
+      {
+        text: '偶尔玩玩',
+        hint: '社交+10,快乐+8',
+        effects: { social: 10, happiness: 8 },
+        flags: { casual_social_gamer: true },
+        result: '你偶尔上开心网玩玩,但不会沉迷。'
+      },
+      {
+        text: '觉得无聊,不玩',
+        hint: '学识+8',
+        effects: { education: 8 },
+        result: '你觉得这种游戏很无聊,没有参与。'
+      }
+    ]
+  },
+
   {
     id: 'event_2007_iphone',
     year: 2007,
@@ -518,7 +780,233 @@ const eventsData = [
     ]
   },
 
+  // 2009年中国事件
+  {
+    id: 'event_2009_kaixuan_tuangou',
+    year: 2009,
+    category: 'internet',
+    trigger: { ageRange: [16, 30], gender: null },
+    title: '团购网站兴起',
+    description: '美团、拉手等团购网站兴起,超值优惠吸引年轻人。',
+    context: '2009年,团购模式在中国爆发,"今天你团了么"成为流行语。',
+    choices: [
+      {
+        text: '经常团购薅羊毛',
+        hint: '财富+15,快乐+12,社交+8',
+        effects: { wealth: 15, happiness: 12, social: 8 },
+        flags: { deal_hunter: true, post_90s_deal_seeker: true },
+        result: '你经常团购,用很便宜的价格享受各种服务!'
+      },
+      {
+        text: '偶尔团购',
+        hint: '财富+8,快乐+8',
+        effects: { wealth: 8, happiness: 8 },
+        result: '你偶尔看看团购,有需要的才买。'
+      },
+      {
+        text: '觉得不靠谱',
+        hint: '学识+5',
+        effects: { education: 5 },
+        result: '你对团购持保留态度,担心质量问题。'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2009_xiaomi_phone',
+    year: 2009,
+    category: 'tech',
+    trigger: { ageRange: [16, 28], gender: null },
+    title: '小米手机预热点燃',
+    description: '小米公司成立,为发烧而生的口号吸引科技爱好者。',
+    context: '2009年小米成立,2010年发布第一款手机,性价比路线颠覆传统手机行业。',
+    choices: [
+      {
+        text: '关注小米,期待首发',
+        hint: '技术+15,学识+10,快乐+10',
+        effects: { tech_skill: 15, education: 10, happiness: 10 },
+        flags: { xiaomi_fan: true, tech_enthusiast: true },
+        result: '你关注小米的每一步,成为"米粉"的一员!'
+      },
+      {
+        text: '观望',
+        hint: '学识+5',
+        effects: { education: 5 },
+        result: '你先看看情况,没有急于入手。'
+      },
+      {
+        text: '觉得小牌子不信任',
+        hint: '学识+5',
+        effects: { education: 5 },
+        flags: { brand_conservative: true },
+        result: '你对新品牌持保留态度,还是信任大厂。'
+      }
+    ]
+  },
+
   // ==================== 2010年 ====================
+  {
+    id: 'event_2010_tuangou_war',
+    year: 2010,
+    category: 'internet',
+    trigger: { ageRange: [16, 30], gender: null },
+    title: '千团大战',
+    description: '团购网站大战开启,美团、拉手、满座等群雄逐鹿。',
+    context: '2010年,团购网站遍地开花,"千团大战"正式打响,补贴战激烈。',
+    choices: [
+      {
+        text: '疯狂薅羊毛',
+        hint: '财富+20,快乐+15,社交+10',
+        effects: { wealth: 20, happiness: 15, social: 10 },
+        flags: { deal_master: true },
+        result: '你每天刷团购网站,用极低价格买各种东西!'
+      },
+      {
+        text: '理性消费',
+        hint: '财富+10,学识+10',
+        effects: { wealth: 10, education: 10 },
+        flags: { rational_consumer: true },
+        result: '你只买需要的,不被优惠冲昏头脑。'
+      },
+      {
+        text: '不参与',
+        hint: '学识+5',
+        effects: { education: 5 },
+        result: '你觉得团购太麻烦,还是习惯线下消费。'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2010_jiangnan_style',
+    year: 2010,
+    category: 'entertainment',
+    trigger: { ageRange: [12, 25], gender: null },
+    title: '非主流文化盛行',
+    description: '"非主流"成为90后的标签,火星文、杀马头盛行。',
+    context: '2010年前后,非主流文化在90后中盛行,QQ空间充满了火星文和伤感文字。',
+    choices: [
+      {
+        text: '跟风非主流',
+        hint: '社交+15,魅力+5,学识-8',
+        effects: { social: 15, charm: 5, education: -8 },
+        flags: { feizhuliu: true, post_90s_feizhuliu: true },
+        result: '你也染了头发,QQ空间充满了火星文和伤感文字。'
+      },
+      {
+        text: '偶尔玩玩',
+        hint: '社交+8,快乐+5',
+        effects: { social: 8, happiness: 5 },
+        result: '你偶尔用火星文和朋友开玩笑,但不沉迷。'
+      },
+      {
+        text: '觉得很幼稚',
+        hint: '学识+10,魅力+5',
+        effects: { education: 10, charm: 5 },
+        flags: { mature_youth: true },
+        result: '你觉得非主流很幼稚,保持自己的风格。'
+      }
+    ]
+  },
+
+  // ==================== 2011年 ====================
+  {
+    id: 'event_2011_wechat_launch',
+    year: 2011,
+    category: 'internet',
+    trigger: { ageRange: [16, 30], gender: null },
+    title: '微信诞生',
+    description: '腾讯推出微信,移动互联网新时代开启。',
+    context: '2011年1月,微信发布,初期功能简单,但很快成为中国最重要的社交应用。',
+    choices: [
+      {
+        text: '立即下载使用',
+        hint: '社交+18,技术+12',
+        effects: { social: 18, tech_skill: 12 },
+        flags: { wechat_early_user: true, post_90s_wechat: true },
+        result: '你成为微信早期用户,见证了它的成长!'
+      },
+      {
+        text: '继续用QQ',
+        hint: '社交+5',
+        effects: { social: 5 },
+        flags: { qq_loyalist: true },
+        result: '你觉得QQ够用了,不需要新应用。'
+      },
+      {
+        text: '研究这个产品',
+        hint: '技术+18,学识+15,财富+10',
+        effects: { tech_skill: 18, education: 15, wealth: 10 },
+        flags: { product_obsession: true },
+        result: '你对微信的产品设计很感兴趣,深入研究。'
+      }
+    ]
+  },
+
+  // ==================== 2012年 ====================
+  {
+    id: 'event_2012_jiangnan_style_viral',
+    year: 2012,
+    category: 'entertainment',
+    trigger: { ageRange: [12, 30], gender: null },
+    title: '江南Style爆红',
+    description: '鸟叔《江南Style》全球爆红,骑马舞风靡。',
+    context: '2012年,韩国歌手PSY的《江南Style》成为全球现象,骑马舞成为潮流。',
+    choices: [
+      {
+        text: '学骑马舞,拍视频',
+        hint: '快乐+20,社交+15,健康+8,魅力+8',
+        effects: { happiness: 20, social: 15, health: 8, charm: 8 },
+        flags: { dance_enthusiast: true },
+        result: '你学会了骑马舞,和朋友拍了搞笑视频!'
+      },
+      {
+        text: '只看不学',
+        hint: '快乐+10',
+        effects: { happiness: 10 },
+        result: '你经常看各种江南Style模仿视频,被逗笑。'
+      },
+      {
+        text: '觉得无聊',
+        hint: '学识+5',
+        effects: { education: 5 },
+        result: '你觉得这没什么意思,没有跟风。'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2012_gao_kao_change',
+    year: 2012,
+    category: 'education',
+    trigger: { ageRange: [16, 19], gender: null },
+    title: '高考改革讨论',
+    description: '高考改革成为热门话题,自主招生和异地高考引发关注。',
+    context: '2012年,高考改革持续推进,自主招生和异地高考政策引发广泛讨论。',
+    choices: [
+      {
+        text: '参加自主招生',
+        hint: '学识+15,技术+8,快乐+10',
+        effects: { education: 15, tech_skill: 8, happiness: 10 },
+        flags: { zizhaosheng: true, high_achiever: true },
+        result: '你参加了自主招生考试,获得了加分!'
+      },
+      {
+        text: '关注但不参与',
+        hint: '学识+8',
+        effects: { education: 8 },
+        result: '你关注改革动态,但没有参与自主招生。'
+      },
+      {
+        text: '专心准备高考',
+        hint: '学识+20,健康-10',
+        effects: { education: 20, health: -10 },
+        flags: { focused_student: true },
+        result: '你把所有精力都放在高考上,希望取得好成绩。'
+      }
+    ]
+  },
+
   {
     id: 'event_2010_iphone4',
     year: 2010,
@@ -681,6 +1169,173 @@ const eventsData = [
     ]
   },
 
+  // ==================== 2012年 荒诞有趣事件 ====================
+  {
+    id: 'event_2012_mayan_prophecy',
+    year: 2012,
+    category: 'bizarre',
+    trigger: { ageRange: [12, 40], gender: null, randomChance: 0.04 },
+    title: '玛雅预言',
+    description: '2012年12月21日是世界末日?玛雅预言引发热议。',
+    context: '2012年是玛雅历法"结束"的一年,很多人猜测这是世界末日的预言...',
+    choices: [
+      {
+        text: '担心是真的',
+        hint: '快乐-10,学识-8,健康-5',
+        effects: { happiness: -10, education: -8, health: -5 },
+        flags: { doomsday_believer: true },
+        result: '你很担心世界末日,甚至不敢计划未来...'
+      },
+      {
+        text: '完全不信',
+        hint: '学识+15,快乐+5',
+        effects: { education: 15, happiness: 5 },
+        flags: { doomsday_skeptic: true },
+        result: '你觉得这就是谣言,12月22日如期到来,你笑了。'
+      },
+      {
+        text: '和朋友们开玩笑',
+        hint: '社交+15,快乐+12',
+        effects: { social: 15, happiness: 12 },
+        flags: { joker: true },
+        result: '你和朋友们开玩笑说要末日狂欢,其实没人当真!'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2012_lottery_winner',
+    year: 2012,
+    category: 'bizarre',
+    trigger: { ageRange: [18, 45], gender: null, randomChance: 0.01 },
+    title: '意外横财',
+    description: '你买的彩票居然中了!虽然不是大奖,但也有一笔意外之财。',
+    context: '极小概率事件,中彩票的几率比被雷劈还低...',
+    choices: [
+      {
+        text: '谨慎储蓄',
+        hint: '财富+25,学识+10,快乐+10',
+        effects: { wealth: 25, education: 10, happiness: 10 },
+        flags: { prudent: true, lottery_winner: true },
+        result: '你把奖金存起来,作为应急资金。'
+      },
+      {
+        text: '挥霍享受',
+        hint: '快乐+25,财富-20,魅力+12',
+        effects: { happiness: 25, wealth: -20, charm: 12 },
+        flags: { spender: true },
+        result: '你大吃大喝买了很多东西,钱很快花光了...'
+      },
+      {
+        text: '投资理财',
+        hint: '财富+20,学识+15,技术+10',
+        effects: { wealth: 20, education: 15, tech_skill: 10 },
+        flags: { investor: true },
+        result: '你用奖金投资,获得了不错的收益!'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2012_ghost_encounter',
+    year: 2012,
+    category: 'bizarre',
+    trigger: { ageRange: [15, 40], gender: null, randomChance: 0.02 },
+    title: '灵异经历',
+    description: '晚上独自一人时,你感觉到"有什么东西"在身边,但回头看什么都没有...',
+    context: '既诡异又难以解释的体验,让人后背发凉...',
+    choices: [
+      {
+        text: '害怕得睡不着',
+        hint: '健康-10,快乐-8',
+        effects: { health: -10, happiness: -8 },
+        flags: { fearful: true },
+        result: '你吓得睡不着,第二天精神很差...'
+      },
+      {
+        text: '理性解释',
+        hint: '学识+15,快乐+5',
+        effects: { education: 15, happiness: 5 },
+        flags: { rational_brave: true },
+        result: '你告诉自己这是心理作用,慢慢冷静下来。'
+      },
+      {
+        text: '和朋友分享',
+        hint: '社交+12,快乐+10',
+        effects: { social: 12, happiness: 10 },
+        flags: { story_teller: true },
+        result: '你和朋友分享这段经历,大家都觉得很好奇!'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2012_deja_vu',
+    year: 2012,
+    category: 'bizarre',
+    trigger: { ageRange: [12, 40], gender: null, randomChance: 0.03 },
+    title: '既视感',
+    description: '你突然感觉眼前的场景曾经经历过,一切都很熟悉...',
+    context: '既视感是一种神秘的体验,仿佛时间错位...',
+    choices: [
+      {
+        text: '认为前世记忆',
+        hint: '学识-5,快乐+15,魅力+10',
+        effects: { education: -5, happiness: 15, charm: 10 },
+        flags: { reincarnation_believer: true },
+        result: '你相信这是前世记忆,开始关注轮回学说!'
+      },
+      {
+        text: '科学解释',
+        hint: '学识+18',
+        effects: { education: 18 },
+        flags: { science_explainer: true },
+        result: '你了解到这是大脑的记忆错觉,觉得很神奇!'
+      },
+      {
+        text: '记录下来',
+        hint: '学识+12,快乐+8',
+        effects: { education: 12, happiness: 8 },
+        flags: { experience_recorder: true },
+        result: '你把这段既视感记录下来,成为独特回忆。'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2012_weird_neighbor',
+    year: 2012,
+    category: 'bizarre',
+    trigger: { ageRange: [15, 45], gender: null, randomChance: 0.02 },
+    title: '神秘邻居',
+    description: '邻居总是半夜发出奇怪的声音,你好奇他到底在做什么...',
+    context: '好奇心让人想要一探究竟,但也可能卷入麻烦...',
+    choices: [
+      {
+        text: '偷偷观察',
+        hint: '学识+10,快乐+10,社交-5',
+        effects: { education: 10, happiness: 10, social: -5 },
+        flags: { curious: true, detective: true },
+        result: '你发现邻居其实是个无害的怪人,比如收集瓶盖什么的...'
+      },
+      {
+        text: '主动搭讪',
+        hint: '社交+15,快乐+12,魅力+8',
+        effects: { social: 15, happiness: 12, charm: 8 },
+        flags: { friendly_neighbor: true },
+        result: '你主动认识邻居,成为朋友后发现他很有趣!'
+      },
+      {
+        text: '不去理会',
+        hint: '学识+5',
+        effects: { education: 5 },
+        flags: { private: true },
+        result: '你选择尊重邻居隐私,不去八卦。'
+      }
+    ]
+  },
+
+  // ==================== 2012年 原有事件 ====================
   {
     id: 'event_2012_got',
     year: 2012,
@@ -779,7 +1434,135 @@ const eventsData = [
     ]
   },
 
+  // 2013年中国事件补充
+  {
+    id: 'event_2013_waimai_rise',
+    year: 2013,
+    category: 'internet',
+    trigger: { ageRange: [18, 35], gender: null },
+    title: '外卖兴起',
+    description: '饿了么、美团外卖等平台崛起,点外卖成为新生活方式。',
+    context: '2013年前后,外卖平台快速扩张,90后大学生和白领成为主要用户。',
+    choices: [
+      {
+        text: '经常点外卖',
+        hint: '快乐+12,健康-8,财富-8,技术+5',
+        effects: { happiness: 12, health: -8, wealth: -8, tech_skill: 5 },
+        flags: { waimai_user: true, post_90s_waimai: true },
+        result: '你经常点外卖,不用做饭,但健康开始下降。'
+      },
+      {
+        text: '偶尔点',
+        hint: '快乐+8,健康-3,财富-3',
+        effects: { happiness: 8, health: -3, wealth: -3 },
+        result: '你偶尔改善伙食,点外卖。'
+      },
+      {
+        text: '坚持自己做饭',
+        hint: '健康+12,财富+8,魅力+8',
+        effects: { health: 12, wealth: 8, charm: 8 },
+        flags: { home_cook: true },
+        result: '你坚持自己做饭,健康又省钱!'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2013_dianping_taobao',
+    year: 2013,
+    category: 'internet',
+    trigger: { ageRange: [18, 35], gender: null },
+    title: '大众点评美团合并',
+    description: '大众点评和美团合并,O2O大战开启。',
+    context: '2013年,O2O(线上到线下)模式火热,团购、外卖等本地生活服务快速发展。',
+    choices: [
+      {
+        text: '疯狂使用O2O服务',
+        hint: '财富+15,快乐+15,社交+10,技术+10',
+        effects: { wealth: 15, happiness: 15, social: 10, tech_skill: 10 },
+        flags: { o2o_heavy_user: true },
+        result: '你享受各种O2O服务,生活便利了很多!'
+      },
+      {
+        text: '适度使用',
+        hint: '财富+8,快乐+10',
+        effects: { wealth: 8, happiness: 10 },
+        result: '你偶尔使用这些服务,但有节制。'
+      },
+      {
+        text: '研究O2O模式',
+        hint: '技术+15,学识+15,财富+10',
+        effects: { tech_skill: 15, education: 15, wealth: 10 },
+        flags: { business_analyst: true },
+        result: '你对O2O模式很感兴趣,深入研究其商业逻辑。'
+      }
+    ]
+  },
+
   // ==================== 2014年 ====================
+  {
+    id: 'event_2014_wechat_redpacket',
+    year: 2014,
+    category: 'internet',
+    trigger: { ageRange: [16, 40], gender: null },
+    title: '微信红包',
+    description: '微信推出红包功能,电子红包改变拜年方式。',
+    context: '2014年,微信红包上线,春节抢红包成为全民娱乐,移动支付开始普及。',
+    choices: [
+      {
+        text: '沉迷抢红包',
+        hint: '快乐+20,社交+18,财富+5',
+        effects: { happiness: 20, social: 18, wealth: 5 },
+        flags: { redpacket_addict: true },
+        result: '你春节抢了很多红包,虽然钱不多但很开心!'
+      },
+      {
+        text: '偶尔参与',
+        hint: '快乐+12,社交+10',
+        effects: { happiness: 12, social: 10 },
+        result: '你偶尔抢抢红包,图个乐子。'
+      },
+      {
+        text: '觉得无聊',
+        hint: '学识+8',
+        effects: { education: 8 },
+        result: '你觉得抢红包很无聊,没有参与。'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2014_alipay_wallet',
+    year: 2014,
+    category: 'tech',
+    trigger: { ageRange: [18, 40], gender: null },
+    title: '支付宝钱包',
+    description: '支付宝钱包普及,无现金生活开始。',
+    context: '2014年,支付宝钱包功能完善,扫码支付开始在各大城市普及。',
+    choices: [
+      {
+        text: '全面拥抱移动支付',
+        hint: '技术+18,社交+12,财富+8',
+        effects: { tech_skill: 18, social: 12, wealth: 8 },
+        flags: { mobile_payment_pioneer: true },
+        result: '你出门几乎不带现金,手机走天下!'
+      },
+      {
+        text: '慢慢适应',
+        hint: '技术+10',
+        effects: { tech_skill: 10 },
+        result: '你开始使用移动支付,但还没完全适应。'
+      },
+      {
+        text: '坚持现金',
+        hint: '学识+5',
+        effects: { education: 5 },
+        flags: { cash_user: true },
+        result: '你对移动支付有顾虑,还是习惯用现金。'
+      }
+    ]
+  },
+
   {
     id: 'event_2014_ice_bucket_challenge',
     year: 2014,
@@ -1104,6 +1887,201 @@ const eventsData = [
     ]
   },
 
+  // 2015年中国事件
+  {
+    id: 'event_2015_mass_entrepreneurship',
+    year: 2015,
+    category: 'internet',
+    trigger: { ageRange: [20, 35], gender: null },
+    title: '大众创业万众创新',
+    description: '"双创"号召下,创业热潮席卷全国,孵化器遍地开花。',
+    context: '2015年,"大众创业、万众创新"成为国家战略,大量90后加入创业大军。',
+    choices: [
+      {
+        text: '辞职创业',
+        hint: '财富-15,技术+15,社交+15,魅力+12',
+        effects: { wealth: -15, tech_skill: 15, social: 15, charm: 12 },
+        flags: { startup_founder: true, entrepreneur_90s: true },
+        result: '你辞职创业,虽然艰难但充满激情!'
+      },
+      {
+        text: '观望学习',
+        hint: '学识+15,技术+10',
+        effects: { education: 15, tech_skill: 10 },
+        result: '你关注创业动态,学习创业知识。'
+      },
+      {
+        text: '选择稳定工作',
+        hint: '财富+10,学识+8',
+        effects: { wealth: 10, education: 8 },
+        flags: { stable_seeker: true },
+        result: '你觉得创业风险太大,选择稳定的工作。'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2015_zhifubao_hongbao',
+    year: 2015,
+    category: 'internet',
+    trigger: { ageRange: [18, 35], gender: null },
+    title: '支付宝集五福',
+    description: '支付宝推出集五福活动,春节全民集福卡。',
+    context: '2015年春节,支付宝推出集五福活动,成为新的春节传统。',
+    choices: [
+      {
+        text: '疯狂集卡换福',
+        hint: '快乐+18,社交+18,财富+8',
+        effects: { happiness: 18, social: 18, wealth: 8 },
+        flags: { fu_card_collector: true },
+        result: '你到处集卡,换到五福很开心!'
+      },
+      {
+        text: '偶尔参与',
+        hint: '快乐+10,社交+8',
+        effects: { happiness: 10, social: 8 },
+        result: '你偶尔参与集福,图个乐子。'
+      },
+      {
+        text: '不感兴趣',
+        hint: '学识+5',
+        effects: { education: 5 },
+        result: '你觉得这就是营销,没有参与。'
+      }
+    ]
+  },
+
+  // 2016年中国事件
+  {
+    id: 'event_2016_live_streaming_rise',
+    year: 2016,
+    category: 'internet',
+    trigger: { ageRange: [18, 30], gender: null },
+    title: '直播元年',
+    description: '映客、花椒、斗鱼等直播平台爆红,网红经济兴起。',
+    context: '2016年被称为"直播元年",网络直播成为最火热的风口。',
+    choices: [
+      {
+        text: '当主播',
+        hint: '社交+20,魅力+18,财富+12',
+        effects: { social: 20, charm: 18, wealth: 12 },
+        flags: { live_streamer: true, wanghong: true },
+        result: '你成为主播,积累了一些粉丝,还赚到了钱!'
+      },
+      {
+        text: '经常看直播',
+        hint: '社交+12,快乐+12,财富-8',
+        effects: { social: 12, happiness: 12, wealth: -8 },
+        flags: { live_viewer: true },
+        result: '你经常看直播,刷礼物支持喜欢的主播。'
+      },
+      {
+        text: '研究直播模式',
+        hint: '技术+18,学识+15,财富+10',
+        effects: { tech_skill: 18, education: 15, wealth: 10 },
+        flags: { streaming_researcher: true },
+        result: '你研究直播商业模式,发现了巨大商机。'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2016_wanghong_economy',
+    year: 2016,
+    category: 'internet',
+    trigger: { ageRange: [18, 30], gender: null },
+    title: '网红经济',
+    description: 'papi酱等网红爆红,自媒体变现成为新职业。',
+    context: '2016年,papi酱获得1200万投资,网红变现能力得到认可。',
+    choices: [
+      {
+        text: '开始做自媒体',
+        hint: '技术+15,魅力+18,社交+15,财富+8',
+        effects: { tech_skill: 15, charm: 18, social: 15, wealth: 8 },
+        flags: { self_media: true, content_creator: true },
+        result: '你开始做公众号/视频,慢慢积累粉丝!'
+      },
+      {
+        text: '只看不参与',
+        hint: '快乐+10',
+        effects: { happiness: 10 },
+        result: '你喜欢看网红内容,但没有创作。'
+      },
+      {
+        text: '觉得不靠谱',
+        hint: '学识+10',
+        effects: { education: 10 },
+        result: '你觉得网红经济是泡沫,不会持久。'
+      }
+    ]
+  },
+
+  // 2017年中国事件补充
+  {
+    id: 'event_2017_bike_sharing',
+    year: 2017,
+    category: 'tech',
+    trigger: { ageRange: [16, 35], gender: null },
+    title: '共享单车大战',
+    description: '摩拜、ofo等共享单车遍布城市,颜色大战开启。',
+    context: '2017年,共享单车行业爆发,各种颜色的单车布满城市街道。',
+    choices: [
+      {
+        text: '经常骑共享单车',
+        hint: '健康+15,快乐+12,技术+8',
+        effects: { health: 15, happiness: 12, tech_skill: 8 },
+        flags: { bike_user: true },
+        result: '你经常骑共享单车通勤,方便又环保!'
+      },
+      {
+        text: '押金问题不信任',
+        hint: '财富+10',
+        effects: { wealth: 10 },
+        result: '你担心押金退不回来,没有注册。'
+      },
+      {
+        text: '投资共享经济',
+        hint: '财富+15,技术+12',
+        effects: { wealth: 15, tech_skill: 12 },
+        flags: { sharing_investor: true },
+        result: '你投资了共享经济概念,获得了一些收益。'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2017_douyin_launch',
+    year: 2017,
+    category: 'internet',
+    trigger: { ageRange: [16, 30], gender: null },
+    title: '抖音崛起',
+    description: '抖音上线,短视频开始改变内容消费方式。',
+    context: '2017年,抖音上线,音乐短视频迅速成为年轻人的娱乐方式。',
+    choices: [
+      {
+        text: '沉迷刷抖音',
+        hint: '快乐+15,社交+10,学识-10,健康-5',
+        effects: { happiness: 15, social: 10, education: -10, health: -5 },
+        flags: { douyin_addict: true },
+        result: '你每天刷抖音几个小时,时间不知不觉就过去了...'
+      },
+      {
+        text: '做短视频创作者',
+        hint: '魅力+18,社交+15,技术+12,财富+10',
+        effects: { charm: 18, social: 15, tech_skill: 12, wealth: 10 },
+        flags: { douyin_creator: true, short_video_creator: true },
+        result: '你开始做短视频,慢慢积累了一些粉丝,还赚到了钱!'
+      },
+      {
+        text: '理性使用',
+        hint: '快乐+8,学识+5',
+        effects: { happiness: 8, education: 5 },
+        flags: { digital_wellness: true },
+        result: '你偶尔刷刷抖音,但不会让它影响正常生活。'
+      }
+    ]
+  },
+
   // ==================== 2018年 ====================
   {
     id: 'event_2018_black_panther',
@@ -1265,7 +2243,168 @@ const eventsData = [
     ]
   },
 
+  // 2019年中国事件补充
+  {
+    id: 'event_2019_liziqi_viral',
+    year: 2019,
+    category: 'internet',
+    trigger: { ageRange: [16, 40], gender: null },
+    title: '李子柒走红',
+    description: '李子柒的田园生活视频在国内外爆红,展现中国传统文化。',
+    context: '2019年,李子柒的视频展现的中国传统文化和田园生活,受到全球观众喜爱。',
+    choices: [
+      {
+        text: '成为粉丝,每期必看',
+        hint: '快乐+15,学识+12,魅力+10',
+        effects: { happiness: 15, education: 12, charm: 10 },
+        flags: { liziqi_fan: true, culture_lover: true },
+        result: '你被李子柒视频中的田园生活深深吸引,向往那种生活!'
+      },
+      {
+        text: '偶尔看看',
+        hint: '快乐+8,学识+5',
+        effects: { happiness: 8, education: 5 },
+        result: '你看过几期视频,觉得画面很美。'
+      },
+      {
+        text: '开始学习传统文化',
+        hint: '学识+18,魅力+12',
+        effects: { education: 18, charm: 12 },
+        flags: { tradition_learner: true },
+        result: '你被视频激发,开始学习中国传统文化!'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2019_haidilao_hot',
+    year: 2019,
+    category: 'internet',
+    trigger: { ageRange: [18, 35], gender: null },
+    title: '海底捞营销',
+    description: '海底捞的极致服务成为网红话题,排队也要吃。',
+    context: '2019年,海底捞的"变态服务"成为网络热议,吃海底捞成为潮流。',
+    choices: [
+      {
+        text: '排队也要吃',
+        hint: '快乐+15,社交+12,财富-12',
+        effects: { happiness: 15, social: 12, wealth: -12 },
+        flags: { foodie: true },
+        result: '你排队几个小时,终于吃到海底捞,感觉服务太好了!'
+      },
+      {
+        text: '偶尔吃',
+        hint: '快乐+10,财富-8',
+        effects: { happiness: 10, wealth: -8 },
+        result: '你偶尔吃海底捞,觉得服务确实好。'
+      },
+      {
+        text: '觉得不值',
+        hint: '财富+10',
+        effects: { wealth: 10 },
+        result: '你觉得海底捞太贵,没有去吃。'
+      }
+    ]
+  },
+
   // ==================== 2020年 ====================
+  {
+    id: 'event_2020_wfh_trend',
+    year: 2020,
+    category: 'tech',
+    trigger: { ageRange: [22, 45], gender: null },
+    title: '居家办公',
+    description: '远程办公工具普及,在家工作成为新常态。',
+    context: '2020年,钉钉、腾讯会议等远程办公工具迅速普及,工作方式改变。',
+    choices: [
+      {
+        text: '适应良好,效率提高',
+        hint: '技术+15,财富+10,快乐+12,健康+8',
+        effects: { tech_skill: 15, wealth: 10, happiness: 12, health: 8 },
+        flags: { wfh_lover: true },
+        result: '你发现在家工作效率更高,还能省下通勤时间!'
+      },
+      {
+        text: '不太适应',
+        hint: '社交-10,快乐-5',
+        effects: { social: -10, happiness: -5 },
+        flags: { office_missed: true },
+        result: '你在家工作感觉孤独,效率下降。'
+      },
+      {
+        text: '学习远程协作',
+        hint: '技术+20,社交+15,学识+12',
+        effects: { tech_skill: 20, social: 15, education: 12 },
+        flags: { remote_expert: true },
+        result: '你主动学习远程协作方法,成为专家!'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2020_community_group',
+    year: 2020,
+    category: 'internet',
+    trigger: { ageRange: [20, 45], gender: null },
+    title: '社区团购',
+    description: '美团优选、多多买菜等社区团购兴起。',
+    context: '2020年,社区团购模式爆发,价格便宜但引发争议。',
+    choices: [
+      {
+        text: '经常使用',
+        hint: '财富+18,快乐+12',
+        effects: { wealth: 18, happiness: 12 },
+        flags: { group_buy_user: true },
+        result: '你经常在社区团购买菜,省钱又方便!'
+      },
+      {
+        text: '偶尔用',
+        hint: '财富+10,快乐+8',
+        effects: { wealth: 10, happiness: 8 },
+        result: '你偶尔参加社区团购,有需要才用。'
+      },
+      {
+        text: '担心品质',
+        hint: '学识+10',
+        effects: { education: 10 },
+        result: '你担心团购商品品质,还是去超市买。'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2020_douyin_dominance',
+    year: 2020,
+    category: 'internet',
+    trigger: { ageRange: [15, 35], gender: null },
+    title: '抖音统治地位',
+    description: '抖音日活突破6亿,短视频完全占领生活。',
+    context: '2020年,抖音成为最活跃的APP,改变内容消费和社交方式。',
+    choices: [
+      {
+        text: '重度用户',
+        hint: '快乐+15,社交+12,学识-12,健康-8',
+        effects: { happiness: 15, social: 12, education: -12, health: -8 },
+        flags: { douyin_heavy: true },
+        result: '你每天刷抖音几个小时,完全沉浸其中...'
+      },
+      {
+        text: '内容创作者',
+        hint: '魅力+20,社交+18,技术+15,财富+15',
+        effects: { charm: 20, social: 18, tech_skill: 15, wealth: 15 },
+        flags: { douyin_creator_success: true, influencer: true },
+        result: '你抓住短视频风口,成为网红,收入大涨!'
+      },
+      {
+        text: '理性使用',
+        hint: '快乐+8,学识+8',
+        effects: { happiness: 8, education: 8 },
+        flags: { digital_balance: true },
+        result: '你控制刷抖音的时间,不被算法控制。'
+      }
+    ]
+  },
+
   {
     id: 'event_2020_tiktok_douyin',
     year: 2020,
@@ -1430,6 +2569,71 @@ const eventsData = [
     ]
   },
 
+  // 2022年中国事件补充
+  {
+    id: 'event_2022_rebound_business',
+    year: 2022,
+    category: 'internet',
+    trigger: { ageRange: [18, 40], gender: null },
+    title: '地摊经济重启',
+    description: '地摊经济被鼓励发展,街头烟火气回归。',
+    context: '2022年,地摊经济政策松绑,街头摊贩重新活跃,90后纷纷加入。',
+    choices: [
+      {
+        text: '摆地摊创业',
+        hint: '财富+15,社交+12,魅力+10',
+        effects: { wealth: 15, social: 12, charm: 10 },
+        flags: { street_vendor: true },
+        result: '你开始摆地摊,体验创业的酸甜苦辣!'
+      },
+      {
+        text: '经常逛地摊',
+        hint: '快乐+12,社交+8,财富-5',
+        effects: { happiness: 12, social: 8, wealth: -5 },
+        result: '你经常逛地摊,享受街头烟火气!'
+      },
+      {
+        text: '只看不参与',
+        hint: '学识+8',
+        effects: { education: 8 },
+        result: '你支持地摊经济,但没有参与。'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2022_lifestyle_inflation',
+    year: 2022,
+    category: 'life',
+    trigger: { ageRange: [20, 40], gender: null },
+    title: '咖啡自由',
+    description: '"咖啡自由""车厘子自由"成为年轻人的生活目标。',
+    context: '2022年前后,"XX自由"成为网络热词,反映年轻人的消费观念变化。',
+    choices: [
+      {
+        text: '追求咖啡自由',
+        hint: '魅力+12,快乐+15,财富-20',
+        effects: { charm: 12, happiness: 15, wealth: -20 },
+        flags: { coffee_addict: true },
+        result: '你每天必喝咖啡,实现咖啡自由!'
+      },
+      {
+        text: '理性消费',
+        hint: '财富+15,学识+10',
+        effects: { wealth: 15, education: 10 },
+        flags: { rational_consumer: true },
+        result: '你觉得这些自由概念是营销,理性消费。'
+      },
+      {
+        text: '追求品质生活',
+        hint: '魅力+18,快乐+18,财富-25',
+        effects: { charm: 18, happiness: 18, wealth: -25 },
+        flags: { quality_seeker: true },
+        result: '你追求更高品质的生活,努力赚钱实现!'
+      }
+    ]
+  },
+
   {
     id: 'event_2022_top_gun_maverick',
     year: 2022,
@@ -1560,6 +2764,103 @@ const eventsData = [
     ]
   },
 
+  // 2023年中国事件补充
+  {
+    id: 'event_2023_campus_recruitment',
+    year: 2023,
+    category: 'career',
+    trigger: { ageRange: [21, 28], gender: null },
+    title: '校园招聘寒冬',
+    description: '互联网大厂裁员缩招,90后应届生就业压力大。',
+    context: '2023年,互联网行业寒冬持续,大厂缩招裁员,就业形势严峻。',
+    choices: [
+      {
+        text: '积极投递简历',
+        hint: '社交+15,学识+12,快乐-8',
+        effects: { social: 15, education: 12, happiness: -8 },
+        flags: { job_seeker_active: true },
+        result: '你海投简历,参加各种面试,虽然累但不放弃!'
+      },
+      {
+        text: '选择考公考研',
+        hint: '学识+20,快乐-5',
+        effects: { education: 20, happiness: -5 },
+        flags: { gongkao_kaoyan: true },
+        result: '你选择考公考研,寻求稳定发展。'
+      },
+      {
+        text: '降低期望就业',
+        hint: '财富+12,学识+8',
+        effects: { wealth: 12, education: 8 },
+        flags: { pragmatic_seeker: true },
+        result: '你降低薪资期望,先就业再择业。'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2023_city_walk',
+    year: 2023,
+    category: 'life',
+    trigger: { ageRange: [18, 40], gender: null },
+    title: 'City Walk流行',
+    description: '"City Walk"城市漫步成为年轻人新的休闲方式。',
+    context: '2023年,City Walk在社交媒体爆红,探索城市角落成为潮流。',
+    choices: [
+      {
+        text: '热衷City Walk',
+        hint: '健康+15,快乐+18,魅力+12',
+        effects: { health: 15, happiness: 18, charm: 12 },
+        flags: { city_walker: true },
+        result: '你经常在城市漫步,发现了很多有趣的地方!'
+      },
+      {
+        text: '偶尔参与',
+        hint: '健康+10,快乐+10',
+        effects: { health: 10, happiness: 10 },
+        result: '你偶尔和朋友一起City Walk,很放松。'
+      },
+      {
+        text: '觉得无聊',
+        hint: '学识+5',
+        effects: { education: 5 },
+        result: '你觉得走路太累,没有参与。'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2023_tang_suit',
+    year: 2023,
+    category: 'fashion',
+    trigger: { ageRange: [16, 35], gender: null },
+    title: '新中式穿搭',
+    description: '马面裙、新中式服装成为时尚潮流。',
+    context: '2023年,新中式穿搭爆红,传统文化与现代时尚结合。',
+    choices: [
+      {
+        text: '跟风购买',
+        hint: '魅力+15,快乐+15,财富-15',
+        effects: { charm: 15, happiness: 15, wealth: -15 },
+        flags: { fashion_follower: true },
+        result: '你买了马面裙等新中式服装,觉得很美!'
+      },
+      {
+        text: '欣赏但穿着',
+        hint: '魅力+10',
+        effects: { charm: 10 },
+        result: '你觉得新中式很美,但没有购买。'
+      },
+      {
+        text: '研究传统文化',
+        hint: '学识+18,魅力+12',
+        effects: { education: 18, charm: 12 },
+        flags: { culture_researcher: true },
+        result: '你对新中式背后的传统文化产生了浓厚兴趣!'
+      }
+    ]
+  },
+
   // ==================== 2024年 ====================
   {
     id: 'event_2024_black_myth_wukong',
@@ -1621,6 +2922,138 @@ const eventsData = [
         hint: '学识+3',
         effects: { education: 3 },
         result: '你觉得这类科幻大片不是你的菜。'
+      }
+    ]
+  },
+
+  // 2024年中国事件补充
+  {
+    id: 'event_2024_nengyuansu_che',
+    year: 2024,
+    category: 'tech',
+    trigger: { ageRange: [20, 40], gender: null },
+    title: '新能源车普及',
+    description: '新能源汽车成为主流,充电桩覆盖各大城市。',
+    context: '2024年,新能源汽车渗透率大幅提升,成为主流选择。',
+    choices: [
+      {
+        text: '购买新能源车',
+        hint: '技术+15,魅力+12,财富-20',
+        effects: { tech_skill: 15, charm: 12, wealth: -20 },
+        flags: { ev_owner: true },
+        result: '你买了新能源车,科技感和环保都很棒!'
+      },
+      {
+        text: '继续用燃油车',
+        hint: '财富+10',
+        effects: { wealth: 10 },
+        result: '你觉得燃油车更可靠,暂时不换。'
+      },
+      {
+        text: '关注新能源行业',
+        hint: '技术+18,学识+15,财富+10',
+        effects: { tech_skill: 18, education: 15, wealth: 10 },
+        flags: { ev_investor: true },
+        result: '你关注新能源产业链,发现了投资机会!'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2024_jianyu_luxian',
+    year: 2024,
+    category: 'life',
+    trigger: { ageRange: [18, 40], gender: null },
+    title: '特种兵旅游',
+    description: '"特种兵式旅游"爆红,年轻人高强度打卡景点。',
+    context: '2024年,特种兵式旅游在90后中流行,短时间高强度打卡。',
+    choices: [
+      {
+        text: '参与特种兵旅游',
+        hint: '快乐+18,健康-8,社交+12',
+        effects: { happiness: 18, health: -8, social: 12 },
+        flags: { intensive_traveler: true },
+        result: '你周末打卡多个景点,虽然累但很充实!'
+      },
+      {
+        text: '选择慢旅行',
+        hint: '快乐+15,健康+10',
+        effects: { happiness: 15, health: 10 },
+        flags: { slow_traveler: true },
+        result: '你喜欢慢慢体验,不追求数量。'
+      },
+      {
+        text: '觉得太累',
+        hint: '学识+8',
+        effects: { education: 8 },
+        result: '你觉得这种旅行方式太累,没有参与。'
+      }
+    ]
+  },
+
+  // 2025年中国事件
+  {
+    id: 'event_2025_metaverse_cooling',
+    year: 2025,
+    category: 'tech',
+    trigger: { ageRange: [20, 40], gender: null },
+    title: '元宇宙退潮',
+    description: '元宇宙热潮退去,理性回归实际应用。',
+    context: '2025年,元宇宙概念降温,人们更关注实际应用价值。',
+    choices: [
+      {
+        text: '及时退出止损',
+        hint: '财富+15,学识+12',
+        effects: { wealth: 15, education: 12 },
+        flags: { rational_investor: true },
+        result: '你及时退出,避免了更大损失!'
+      },
+      {
+        text: '坚持长期投资',
+        hint: '学识+10,财富-10',
+        effects: { education: 10, wealth: -10 },
+        flags: { long_term_believer: true },
+        result: '你相信元宇宙的长期价值,继续持有。'
+      },
+      {
+        text: '关注实际应用',
+        hint: '技术+15,学识+15,财富+8',
+        effects: { tech_skill: 15, education: 15, wealth: 8 },
+        flags: { practical_technologist: true },
+        result: '你关注元宇宙的实际应用,发现了新机会!'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2025_ai_painting',
+    year: 2025,
+    category: 'tech',
+    trigger: { ageRange: [18, 40], gender: null },
+    title: 'AI绘画成熟',
+    description: 'AI绘画技术成熟,设计师面临新挑战。',
+    context: '2025年,AI绘画技术达到新高度,传统设计方式被颠覆。',
+    choices: [
+      {
+        text: '学习AI绘画',
+        hint: '技术+20,学识+15,财富+12',
+        effects: { tech_skill: 20, education: 15, wealth: 12 },
+        flags: { ai_artist: true },
+        result: '你掌握AI绘画,效率大幅提升,收入增加!'
+      },
+      {
+        text: '坚持手绘风格',
+        hint: '魅力+15,学识+10',
+        effects: { charm: 15, education: 10 },
+        flags: { traditional_artist: true },
+        result: '你坚持手绘,认为AI无法替代艺术灵魂!'
+      },
+      {
+        text: '两者结合',
+        hint: '技术+18,魅力+12,学识+12,财富+10',
+        effects: { tech_skill: 18, charm: 12, education: 12, wealth: 10 },
+        flags: { hybrid_artist: true },
+        result: '你将AI和手绘结合,创作出独特风格!'
       }
     ]
   },
@@ -1720,6 +3153,102 @@ const eventsData = [
         hint: '学识+3,快乐+5',
         effects: { education: 3, happiness: 5 },
         result: '你两边都不想耽误,但作业写得不太好。'
+      }
+    ]
+  },
+
+  // 90后专属日常事件 - 小学阶段
+  {
+    id: 'daily_90s_primary_qq',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [8, 13], gender: null, randomChance: 0.1 },
+    title: '申请QQ号',
+    description: '同学们都在玩QQ,你也想要一个QQ号。',
+    context: '90后童年最重要的社交工具。',
+    choices: [
+      {
+        text: '偷偷申请QQ号',
+        hint: '社交+12,快乐+10,学识-3',
+        effects: { social: 12, happiness: 10, education: -3 },
+        flags: { qq_user: true, post_90s_qq: true },
+        result: '你成功申请了QQ号,开始和同学网上聊天!'
+      },
+      {
+        text: '等家长同意',
+        hint: '学识+5,社交+5',
+        effects: { education: 5, social: 5 },
+        result: '你征得家长同意后申请了QQ号。'
+      },
+      {
+        text: '不感兴趣',
+        hint: '学识+8',
+        effects: { education: 8 },
+        result: '你对QQ不感兴趣,更喜欢出去玩。'
+      }
+    ]
+  },
+
+  {
+    id: 'daily_90s_primary_qq_show',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [8, 13], gender: null, randomChance: 0.1 },
+    title: 'QQ秀装扮',
+    description: 'QQ秀红钻会员可以换更好看的衣服。',
+    context: '90后童年最流行的虚拟形象装扮。',
+    choices: [
+      {
+        text: '偷偷用零花钱买红钻',
+        hint: '魅力+10,快乐+15,财富-10',
+        effects: { charm: 10, happiness: 15, wealth: -10 },
+        flags: { qq_show_fan: true },
+        result: '你的QQ秀变得很好看,同学都很羡慕!'
+      },
+      {
+        text: '用免费装扮',
+        hint: '魅力+5,快乐+8',
+        effects: { charm: 5, happiness: 8 },
+        result: '你用免费装扮,觉得也不错。'
+      },
+      {
+        text: '不玩QQ秀',
+        hint: '学识+5',
+        effects: { education: 5 },
+        result: '你觉得QQ秀没什么意思。'
+      }
+    ]
+  },
+
+  {
+    id: 'daily_90s_primary_game_concern',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [9, 13], gender: null, randomChance: 0.1 },
+    title: '沉迷网络游戏',
+    description: '同学们都在聊网络游戏,你也想试试。',
+    context: '90后童年,魔兽世界、梦幻西游等游戏风靡。',
+    choices: [
+      {
+        text: '偷偷去网吧玩',
+        hint: '快乐+15,社交+10,学识-10,健康-8',
+        effects: { happiness: 15, social: 10, education: -10, health: -8 },
+        flags: { internet_cafe_kid: true, gamer_90s: true },
+        result: '你偷偷去网吧玩游戏,被家长发现后挨了打!'
+      },
+      {
+        text: '只看攻略不玩',
+        hint: '学识+8,快乐+5',
+        effects: { education: 8, happiness: 5 },
+        flags: { game_observer: true },
+        result: '你看游戏攻略,和同学聊天时也能参与。'
+      },
+      {
+        text: '不玩游戏',
+        hint: '学识+10,健康+5',
+        effects: { education: 10, health: 5 },
+        flags: { good_student: true },
+        result: '你专注于学习,没有被游戏影响。'
       }
     ]
   },
@@ -1986,6 +3515,106 @@ const eventsData = [
         effects: { health: 5, happiness: 5 },
         flags: { content_with_current: true },
         result: '你觉得现在的工作状态就很好,不需要升职。'
+      }
+    ]
+  },
+
+  // 90后专属日常事件 - 工作阶段
+  {
+    id: 'daily_90s_work_996',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [22, 32], gender: null, randomChance: 0.12 },
+    title: '996工作制',
+    description: '公司推行996工作制,早9点到晚9点,一周6天。',
+    context: '90后步入职场后面临的最大争议之一。',
+    choices: [
+      {
+        text: '默默接受',
+        hint: '财富+15,学识+8,健康-15,快乐-12',
+        effects: { wealth: 15, education: 8, health: -15, happiness: -12 },
+        flags: { ninety_six_worker: true },
+        result: '你接受了996,虽然赚钱多但身体越来越差...'
+      },
+      {
+        text: '反抗离职',
+        hint: '健康+10,快乐+10,财富-10',
+        effects: { health: 10, happiness: 10, wealth: -10 },
+        flags: { ninety_six_resister: true },
+        result: '你拒绝996,选择离职寻找更平衡的工作!'
+      },
+      {
+        text: '寻找副业',
+        hint: '财富+20,社交+10,健康-10',
+        effects: { wealth: 20, social: 10, health: -10 },
+        flags: { side_hustle: true },
+        result: '你一边996一边做副业,为将来做准备。'
+      }
+    ]
+  },
+
+  {
+    id: 'daily_90s_house_price',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [24, 32], gender: null, randomChance: 0.1 },
+    title: '买房压力',
+    description: '看着不断上涨的房价,你开始焦虑买房问题。',
+    context: '90后面临的高房价压力。',
+    choices: [
+      {
+        text: '背房贷买房',
+        hint: '财富-25,快乐-10,魅力+10',
+        effects: { wealth: -25, happiness: -10, charm: 10 },
+        flags: { home_owner: true, mortgage_slave: true },
+        result: '你贷款买了房,成为房奴,每月还贷压力很大!'
+      },
+      {
+        text: '选择租房',
+        hint: '快乐+15,社交+8',
+        effects: { happiness: 15, social: 8 },
+        flags: { renter: true },
+        result: '你选择租房,生活更自由自在!'
+      },
+      {
+        text: '回乡发展',
+        hint: '快乐+12,财富+15,社交-5',
+        effects: { happiness: 12, wealth: 15, social: -5 },
+        flags: { return_home: true },
+        result: '你选择回乡发展,房价压力小多了!'
+      }
+    ]
+  },
+
+  {
+    id: 'daily_90s_internet_layoff',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [25, 33], gender: null, randomChance: 0.08 },
+    title: '互联网裁员',
+    description: '互联网行业裁员潮来了,你担心自己会被裁。',
+    context: '2020年后互联网寒冬,裁员成为常态。',
+    choices: [
+      {
+        text: '被裁员后转行',
+        hint: '学识+15,技术+10,快乐-12,财富-15',
+        effects: { education: 15, tech_skill: 10, happiness: -12, wealth: -15 },
+        flags: { laid_off_worker: true },
+        result: '你被裁后转型其他行业,虽然艰难但成长了!'
+      },
+      {
+        text: '主动跳槽',
+        hint: '财富+12,社交+10,学识+8',
+        effects: { wealth: 12, social: 10, education: 8 },
+        flags: { job_hopper: true },
+        result: '你主动跳槽到更稳定的公司!'
+      },
+      {
+        text: '考公上岸',
+        hint: '学识+20,快乐+15,财富-8',
+        effects: { education: 20, happiness: 15, wealth: -8 },
+        flags: { gongkao_success: true },
+        result: '你成功考上公务员,获得稳定工作!'
       }
     ]
   },
@@ -6356,7 +7985,7 @@ const eventsData = [
     choices: [
       { text: '强制早睡', effects: { health: 15, happiness: -5 }, flags: { early_bird: true }, result: '你强迫自己早睡,开始很不习惯但慢慢适应了。' },
       { text: '调整作息', effects: { health: 10, happiness: 5 }, flags: { balanced_schedule: true }, result: '你逐渐调整睡眠时间,找到适合自己的节奏。' },
-      { text: '继续熬夜', effects: { health: -10, happiness: 10, tech_skill: 8 }, flags: { night_owl: true }, result: '你享受夜晚的宁静时间,继续熬夜...' }
+      { text: '继续熬夜', effects: { health: -10, happiness: -5, tech_skill: 5 }, flags: { night_owl: true }, result: '你继续熬夜,虽然享受夜晚时光但第二天精神很差...' }
     ]
   },
   {
@@ -6369,7 +7998,7 @@ const eventsData = [
     choices: [
       { text: '认真改善', effects: { health: 20, education: 10, happiness: 5 }, flags: { health_conscious: true }, result: '你开始认真调整饮食和生活习惯!' },
       { text: '适度关注', effects: { health: 10, happiness: 8 }, result: '你稍微注意一下,但不想太严格。' },
-      { text: '忽略不管', effects: { health: -10, happiness: 10 }, flags: { carefree: true }, result: '你选择忽略这些指标,该吃吃该喝喝!' }
+      { text: '忽略不管', effects: { health: -15, happiness: -5 }, flags: { carefree: true }, result: '你选择忽略这些指标,但内心其实有些担心...' }
     ]
   },
   {
@@ -6719,7 +8348,7 @@ const eventsData = [
     title: '追剧狂热',
     description: '你迷上了一部剧,忍不住熬夜追。',
     choices: [
-      { text: '熬夜追完', effects: { happiness: 20, health: -12, education: -5 }, flags: { binge_watcher: true }, result: '你熬夜追完剧,虽然累但很过瘾!' },
+      { text: '熬夜追完', effects: { happiness: 8, health: -12, education: -5 }, flags: { binge_watcher: true }, result: '你熬夜追完剧,虽然剧情精彩但第二天精神很差...' },
       { text: '适度追剧', effects: { happiness: 15, health: 5 }, flags: { balanced_viewer: true }, result: '你控制自己,每天看几集。' },
       { text: '忍住不看', effects: { education: 12, health: 8 }, flags: { disciplined: true }, result: '你强迫自己忍住,先忙完正事。' }
     ]
@@ -6745,7 +8374,7 @@ const eventsData = [
     title: '体育赛事',
     description: '重要的体育比赛开始了,你是铁杆粉丝。',
     choices: [
-      { text: '熬夜看比赛', effects: { happiness: 20, health: -10, social: 12 }, flags: { die_hard_fan: true }, result: '你熬夜看比赛,为支持的队伍呐喊!' },
+      { text: '熬夜看比赛', effects: { happiness: 10, health: -10, social: 8 }, flags: { die_hard_fan: true }, result: '你熬夜看比赛,为支持的队伍呐喊,但第二天精神很差...' },
       { text: '看重播', effects: { happiness: 12, health: 5 }, flags: { casual_fan: true }, result: '你选择看重播,不影响休息。' },
       { text: '只看结果', effects: { education: 10, health: 8 }, flags: { result_checker: true }, result: '你只关心比赛结果,不熬夜。' }
     ]
@@ -7712,6 +9341,1722 @@ const eventsData = [
       { text: '邀请朋友', effects: { happiness: 22, social: 20, charm: 15, wealth: -15 }, flags: { celebrator: true }, result: '你和朋友一起庆祝,热闹又开心!' },
       { text: '家庭庆祝', effects: { happiness: 20, social: 15, charm: 12 }, flags: { family_oriented: true }, result: '你和家人一起庆祝,温馨又难忘!' },
       { text: '自我庆祝', effects: { happiness: 18, charm: 10 }, flags: { self_sufficient: true }, result: '你选择自我庆祝,犒劳努力的自己!' }
+    ]
+  },
+
+  // ==================== 荒诞有趣事件 ====================
+
+  {
+    id: 'event_2006_time_travel_rumor',
+    year: 2006,
+    category: 'bizarre',
+    trigger: { ageRange: [12, 30], gender: null, randomChance: 0.03 },
+    title: '穿越传闻',
+    description: '论坛上有人声称自己是穿越者,预言了未来会发生的事情。',
+    context: '2006年,各大论坛开始出现"穿越者"帖子,有人声称来自未来,预言各种大事。大部分是恶作剧,但也有人深信不疑。',
+    choices: [
+      {
+        text: '认真研究预言',
+        hint: '学识+8,运气+5',
+        effects: { education: 8, luck: 5 },
+        flags: { conspiracy_theorist: true },
+        result: '你认真记录所有预言,等待验证...虽然大部分都没实现。'
+      },
+      {
+        text: '自己也发一个预言帖',
+        hint: '社交+10,快乐+12',
+        effects: { social: 10, happiness: 12 },
+        flags: { troll: true },
+        result: '你编造了一个离谱的预言帖,意外火了!'
+      },
+      {
+        text: '一笑置之',
+        hint: '学识+5',
+        effects: { education: 5 },
+        result: '你觉得这就是网络娱乐,看看就好。'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2006_mysterious_luck',
+    year: 2006,
+    category: 'bizarre',
+    trigger: { ageRange: [10, 35], gender: null, randomChance: 0.02 },
+    title: '神秘好运',
+    description: '你连续三天遇到了极其巧合的好事,感觉像有什么神秘力量在帮助你。',
+    context: '生活中总有一些无法解释的巧合,有时让人怀疑是否真的有"运气"这种东西。',
+    choices: [
+      {
+        text: '趁热打铁买彩票',
+        hint: '财富±30,运气+10',
+        effects: { wealth: 0, luck: 10 },
+        flags: { gambler: true },
+        result: '你用零花钱买了彩票...结果中了20块!'
+      },
+      {
+        text: '记录好运日记',
+        hint: '快乐+10,学识+8',
+        effects: { happiness: 10, education: 8 },
+        flags: { optimist: true },
+        result: '你开始记录每天的幸运小事,生活变得更美好了!'
+      },
+      {
+        text: '怀疑是梦',
+        hint: '学识+5',
+        effects: { education: 5 },
+        result: '你掐了自己一下...疼,是真的!'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2006_dream_prophecy',
+    year: 2006,
+    category: 'bizarre',
+    trigger: { ageRange: [12, 30], gender: null, randomChance: 0.025 },
+    title: '梦中预言',
+    description: '你梦见的事情第二天真的发生了!你开始怀疑自己有预言能力。',
+    context: '梦境预感是一种神秘现象,有人认为这是潜意识对信息的整合,也有人认为这是超自然能力。',
+    choices: [
+      {
+        text: '尝试控制梦境',
+        hint: '学识+12,运气+8,快乐+10',
+        effects: { education: 12, luck: 8, happiness: 10 },
+        flags: { lucid_dreamer: true },
+        result: '你开始练习清醒梦,成功地在梦中做了一些事!'
+      },
+      {
+        text: '告诉所有人',
+        hint: '社交+15,快乐-5',
+        effects: { social: 15, happiness: -5 },
+        flags: { attention_seeker: true },
+        result: '你告诉了所有人...但没人相信你。'
+      },
+      {
+        text: '当作巧合',
+        hint: '学识+8',
+        effects: { education: 8 },
+        result: '你告诉自己这只是巧合,不要多想。'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2006_mysterious_cat',
+    year: 2006,
+    category: 'bizarre',
+    trigger: { ageRange: [8, 25], gender: null, randomChance: 0.03 },
+    title: '神秘猫咪',
+    description: '一只神秘的猫跟着你回家了,之后总是莫名地出现在你身边,感觉它很通人性。',
+    context: '猫咪自古以来就有神秘色彩,有说法认为猫可以看到人类看不到的东西。',
+    choices: [
+      {
+        text: '收养这只猫',
+        hint: '快乐+18,社交+8,财富-5',
+        effects: { happiness: 18, social: 8, wealth: -5 },
+        flags: { cat_owner: true },
+        result: '你收养了它,它成为了你最忠实的伙伴!'
+      },
+      {
+        text: '观察猫的行为',
+        hint: '学识+10,快乐+8',
+        effects: { education: 10, happiness: 8 },
+        flags: { observer: true },
+        result: '你观察这只猫,发现它真的有些奇特!'
+      },
+      {
+        text: '觉得有点诡异',
+        hint: '快乐-5,学识+8',
+        effects: { happiness: -5, education: 8 },
+        result: '你总觉得它盯着你看的样子有点诡异...'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2012_mayan_prophecy',
+    year: 2012,
+    category: 'bizarre',
+    trigger: { ageRange: [10, 40], gender: null, randomChance: 0.04 },
+    title: '玛雅预言',
+    description: '今天是2012年12月21日,玛雅预言的世界末日...你忐忑不安地度过这一天。',
+    context: '2012年,玛雅预言称今天是世界末日。虽然科学家辟谣,但很多人还是紧张地等待这一天过去。',
+    choices: [
+      {
+        text: '疯狂购物享乐',
+        hint: '快乐+20,财富-20,健康-8',
+        effects: { happiness: 20, wealth: -20, health: -8 },
+        flags: { yolo: true },
+        result: '你决定末日来临前要好好享受!'
+      },
+      {
+        text: '和家人朋友待在一起',
+        hint: '快乐+18,社交+20,魅力+10',
+        effects: { happiness: 18, social: 20, charm: 10 },
+        flags: { family_oriented: true },
+        result: '你和最爱的人在一起,就算真的是末日也值了!'
+      },
+      {
+        text: '该干嘛干嘛',
+        hint: '学识+10,健康+5',
+        effects: { education: 10, health: 5 },
+        flags: { rational: true },
+        result: '你觉得这纯粹是无稽之谈,照常生活。第二天醒来:果然!'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2012_unexpected_fortune',
+    year: 2012,
+    category: 'bizarre',
+    trigger: { ageRange: [16, 45], gender: null, randomChance: 0.02 },
+    title: '意外横财',
+    description: '你在旧衣服里发现了一笔钱!完全忘记什么时候放进去的。',
+    context: '有时候生活会给你惊喜,就像这种意外发现的"遗忘财富"。',
+    choices: [
+      {
+        text: '立刻花掉',
+        hint: '快乐+20,魅力+10,财富+0',
+        effects: { happiness: 20, charm: 10 },
+        flags: { spender: true },
+        result: '你买了心仪已久的东西,开心极了!'
+      },
+      {
+        text: '存起来',
+        hint: '财富+15,学识+8',
+        effects: { wealth: 15, education: 8 },
+        flags: { saver: true },
+        result: '你把钱存起来,当作应急资金。'
+      },
+      {
+        text: '寻找失主',
+        hint: '魅力+20,快乐+15,学识+10',
+        effects: { charm: 20, happiness: 15, education: 10 },
+        flags: { honest: true },
+        result: '你努力回忆,但这确实是你自己的钱...那就当作奖励自己的诚实吧!'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2012_ghost_experience',
+    year: 2012,
+    category: 'bizarre',
+    trigger: { ageRange: [12, 35], gender: null, randomChance: 0.025 },
+    title: '灵异经历',
+    description: '你经历了一件无法解释的怪事...你开始怀疑这个世界的真实性。',
+    context: '每个人都有过无法解释的经历,是巧合?是幻觉?还是真的有...其他东西?',
+    choices: [
+      {
+        text: '深入研究神秘学',
+        hint: '学识+15,运气+10,技术-5',
+        effects: { education: 15, luck: 10, tech_skill: -5 },
+        flags: { mystery_fan: true },
+        result: '你开始研究各种神秘现象,打开了新世界的大门!'
+      },
+      {
+        text: '理性分析',
+        hint: '学识+20,技术+10',
+        effects: { education: 20, tech_skill: 10 },
+        flags: { skeptic: true },
+        result: '你用科学思维分析,找到了合理的解释...大概吧。'
+      },
+      {
+        text: '不要深究',
+        hint: '快乐+5,健康+8',
+        effects: { happiness: 5, health: 8 },
+        result: '你决定不要想太多,有些事情不必搞清楚。'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2012_deja_vu',
+    year: 2012,
+    category: 'bizarre',
+    trigger: { ageRange: [14, 40], gender: null, randomChance: 0.03 },
+    title: '既视感',
+    description: '你遇到了强烈的既视感,眼前的一切感觉以前都经历过,连下一步发生什么都知道。',
+    context: '既视感是一种神秘的体验,约三分之二的人一生中至少经历过一次。科学界对其成因尚无定论。',
+    choices: [
+      {
+        text: '测试自己的预知能力',
+        hint: '运气+15,学识+10,快乐+12',
+        effects: { luck: 15, education: 10, happiness: 12 },
+        flags: { psychic_tester: true },
+        result: '你预测了接下来发生的事...居然真的对了!'
+      },
+      {
+        text: '写下来记录',
+        hint: '学识+15,魅力+8',
+        effects: { education: 15, charm: 8 },
+        flags: { recorder: true },
+        result: '你记录了这次经历,成为珍贵的回忆。'
+      },
+      {
+        text: '当作大脑bug',
+        hint: '学识+12,技术+10',
+        effects: { education: 12, tech_skill: 10 },
+        flags: { tech_mind: true },
+        result: '你觉得这就是大脑处理信息时的一个小bug。'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2012_mysterious_neighbor',
+    year: 2012,
+    category: 'bizarre',
+    trigger: { ageRange: [12, 35], gender: null, randomChance: 0.025 },
+    title: '神秘邻居',
+    description: '你的邻居总是神神秘秘的,深夜还会听到奇怪的动静...你忍不住开始幻想。',
+    context: '每个人都有一个"神秘邻居",他们的生活方式与众不同,引发了无数想象。',
+    choices: [
+      {
+        text: '偷偷观察',
+        hint: '学识+12,社交-5,快乐+10',
+        effects: { education: 12, social: -5, happiness: 10 },
+        flags: { detective: true },
+        result: '你发现了一个惊天秘密...ta只是个夜猫子而已。'
+      },
+      {
+        text: '主动搭讪',
+        hint: '社交+20,魅力+15,快乐+12',
+        effects: { social: 20, charm: 15, happiness: 12 },
+        flags: { social_butterfly: true },
+        result: '你们成为了朋友!Ta其实是个很有趣的人。'
+      },
+      {
+        text: '保持距离',
+        hint: '学识+8,健康+5',
+        effects: { education: 8, health: 5 },
+        result: '你决定保持距离,尊重ta的隐私。'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2015_parallel_universe',
+    year: 2015,
+    category: 'bizarre',
+    trigger: { ageRange: [14, 40], gender: null, randomChance: 0.02 },
+    title: '平行宇宙',
+    description: '你看到新闻说科学家发现平行宇宙存在的证据...你开始幻想另一个自己。',
+    context: '量子力学提出平行宇宙理论,认为每个选择都会产生不同的宇宙分支。',
+    choices: [
+      {
+        text: '想象另一个自己',
+        hint: '快乐+15,学识+12,魅力+10',
+        effects: { happiness: 15, education: 12, charm: 10 },
+        flags: { imaginative: true },
+        result: '你想象另一个宇宙的自己做出了不同选择,人生轨迹完全不同!'
+      },
+      {
+        text: '认真研究理论',
+        hint: '学识+20,技术+15',
+        effects: { education: 20, tech_skill: 15 },
+        flags: { physicist: true },
+        result: '你开始学习量子物理,虽然很难但很有趣!'
+      },
+      {
+        text: '觉得太玄乎',
+        hint: '学识+8',
+        effects: { education: 8 },
+        result: '你觉得这太玄乎了,还是专注现实生活吧。'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2015_time_slip',
+    year: 2015,
+    category: 'bizarre',
+    trigger: { ageRange: [12, 38], gender: null, randomChance: 0.025 },
+    title: '时间错觉',
+    description: '你感觉时间突然变慢了,一秒像一分钟那么长,周围的人都在慢动作!',
+    context: '时间感知是主观的,在特定情况下(如危险、兴奋)人会觉得时间变慢,这是大脑的应激反应。',
+    choices: [
+      {
+        text: '测试身体反应',
+        hint: '健康+15,技术+10,快乐+12',
+        effects: { health: 15, tech_skill: 10, happiness: 12 },
+        flags: { super_power_fantasy: true },
+        result: '你觉得自己拥有了超能力!反应快得惊人!'
+      },
+      {
+        text: '享受慢动作世界',
+        hint: '快乐+18,健康+10',
+        effects: { happiness: 18, health: 10 },
+        flags: { enjoyer: true },
+        result: '你享受这独特的体验,一切都很从容!'
+      },
+      {
+        text: '怀疑自己病了',
+        hint: '学识+12,健康-5',
+        effects: { education: 12, health: -5 },
+        flags: { hypochondriac: true },
+        result: '你担心是不是大脑出了问题,赶紧去看医生...医生说没事。'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2018_ai_composer',
+    year: 2018,
+    category: 'bizarre',
+    trigger: { ageRange: [16, 45], gender: null, randomChance: 0.03 },
+    title: 'AI作曲家',
+    description: '你听到一首由AI创作的曲子,优美得让人难以相信这是机器写的。',
+    context: '2018年,人工智能开始涉足艺术创作领域,挑战人类对"创造力"的定义。',
+    choices: [
+      {
+        text: '感到威胁',
+        hint: '快乐-10,学识+15',
+        effects: { happiness: -10, education: 15 },
+        flags: { human_supremacist: true },
+        result: '你担心人类艺术家的未来...'
+      },
+      {
+        text: '感到兴奋',
+        hint: '快乐+18,技术+20,学识+15',
+        effects: { happiness: 18, tech_skill: 20, education: 15 },
+        flags: { tech_enthusiast: true },
+        result: '你对AI创作充满好奇,开始了解背后的技术!'
+      },
+      {
+        text: '无所谓',
+        hint: '快乐+5',
+        effects: { happiness: 5 },
+        result: '你觉得好听就行,谁写的无所谓。'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2018_mandela_effect',
+    year: 2018,
+    category: 'bizarre',
+    trigger: { ageRange: [14, 45], gender: null, randomChance: 0.03 },
+    title: '曼德拉效应',
+    description: '你发现很多人的记忆和现实不符,比如皮卡丘尾巴有没有黑色条纹...你的记忆错了?',
+    context: '曼德拉效应指大量人群对某件事的记忆与事实不符,有人认为是平行宇宙证据。',
+    choices: [
+      {
+        text: '怀疑穿越',
+        hint: '快乐+15,运气+10,学识+8',
+        effects: { happiness: 15, luck: 10, education: 8 },
+        flags: { conspiracy_theorist: true },
+        result: '你坚信自己来自另一个宇宙!'
+      },
+      {
+        text: '研究记忆原理',
+        hint: '学识+20,技术+12',
+        effects: { education: 20, tech_skill: 12 },
+        flags: { scientist: true },
+        result: '你了解到记忆是可以被重构的,并不完全可靠。'
+      },
+      {
+        text: '太烧脑了',
+        hint: '快乐+5',
+        effects: { happiness: 5 },
+        result: '你想得头疼,算了,不想了。'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2020_simulation_theory',
+    year: 2020,
+    category: 'bizarre',
+    trigger: { ageRange: [16, 50], gender: null, randomChance: 0.025 },
+    title: '模拟理论',
+    description: '特斯拉创始人说我们可能活在虚拟世界里...你越想越觉得有道理。',
+    context: '模拟假说认为我们的宇宙可能是高级文明的计算机模拟。这听起来像科幻,但一些科学家认真对待它。',
+    choices: [
+      {
+        text: '认真对待这个想法',
+        hint: '学识+18,快乐+15,技术+12',
+        effects: { education: 18, happiness: 15, tech_skill: 12 },
+        flags: { philosopher: true },
+        result: '你开始思考:如果世界是虚拟的,意义何在?最后你决定,还是要好好活!'
+      },
+      {
+        text: '觉得荒谬',
+        hint: '学识+10,技术+8',
+        effects: { education: 10, tech_skill: 8 },
+        flags: { realist: true },
+        result: '你觉得这纯粹是无稽之谈。'
+      },
+      {
+        text: '玩梗娱乐',
+        hint: '快乐+15,社交+12',
+        effects: { happiness: 15, social: 12 },
+        flags: { meme_lord: true },
+        result: '你到处发"人生就是一个bug",很受欢迎!'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2020_glitch',
+    year: 2020,
+    category: 'bizarre',
+    trigger: { ageRange: [14, 45], gender: null, randomChance: 0.02 },
+    title: '现实bug',
+    description: '你亲眼看到了一件不可能发生的事...就像游戏里的bug!',
+    context: '生活中总有一些无法解释的异常现象,让人怀疑现实的真实性。',
+    choices: [
+      {
+        text: '录像保存证据',
+        hint: '技术+15,快乐+12,社交+10',
+        effects: { tech_skill: 15, happiness: 12, social: 10 },
+        flags: { evidence_collector: true },
+        result: '你拍了下来,成为大家茶余饭后的谈资!'
+      },
+      {
+        text: '假装没看见',
+        hint: '健康+10,快乐+5',
+        effects: { health: 10, happiness: 5 },
+        flags: { ignorer: true },
+        result: '你告诉自己什么都没发生,继续生活。'
+      },
+      {
+        text: '深入研究',
+        hint: '学识+18,技术+12',
+        effects: { education: 18, tech_skill: 12 },
+        flags: { researcher: true },
+        result: '你试图找出原因...最后发现是有合理解释的。'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2024_nostalgia_time_travel',
+    year: 2024,
+    category: 'bizarre',
+    trigger: { ageRange: [20, 50], gender: null, randomChance: 0.025 },
+    title: '怀旧穿越',
+    description: '你突然对2006年的一切无比怀念,仿佛那个年代更"真实"...你甚至想回到过去。',
+    context: '90后特有的怀旧情结,对千禧年代的互联网和生活方式有着难以言喻的向往。',
+    choices: [
+      {
+        text: '沉浸怀旧',
+        hint: '快乐+15,魅力+10,学识+12',
+        effects: { happiness: 15, charm: 10, education: 12 },
+        flags: { nostalgia_lover: true },
+        result: '你开始听当年的歌,看当年的剧,寻找逝去的青春。'
+      },
+      {
+        text: '珍惜当下',
+        hint: '快乐+18,健康+12,社交+10',
+        effects: { happiness: 18, health: 12, social: 10 },
+        flags: { present_focused: true },
+        result: '你怀念过去,但更珍惜现在!'
+      },
+      {
+        text: '写一封给过去的信',
+        hint: '学识+15,魅力+12,快乐+20',
+        effects: { education: 15, charm: 12, happiness: 20 },
+        flags: { introspective: true },
+        result: '你给年轻的自己写了封信,虽然Ta永远收不到,但你释怀了。'
+      }
+    ]
+  },
+
+  {
+    id: 'event_2024_digital_ghost',
+    year: 2024,
+    category: 'bizarre',
+    trigger: { ageRange: [18, 50], gender: null, randomChance: 0.02 },
+    title: '数字幽灵',
+    description: '你收到已故好友账号发来的消息...是系统bug?还是ta的数字幽灵?',
+    context: '2024年,有人开发了AI"复活"逝者的技术,用他们的社交媒体数据训练AI,让他们以数字形式"活着"。',
+    choices: [
+      {
+        text: '相信是ta',
+        hint: '快乐+20,社交+15,健康-5',
+        effects: { happiness: 20, social: 15, health: -5 },
+        flags: { believer: true },
+        result: '你选择相信ta以某种方式存在,继续和ta对话...'
+      },
+      {
+        text: '知道是AI',
+        hint: '学识+15,技术+18,快乐+10',
+        effects: { education: 15, tech_skill: 18, happiness: 10 },
+        flags: { realist_tech: true },
+        result: '你知道这是AI,但还是觉得很温暖,至少ta的"记忆"被保留了。'
+      },
+      {
+        text: '感到恐惧',
+        hint: '快乐-10,健康-8,学识+12',
+        effects: { happiness: -10, health: -8, education: 12 },
+        flags: { digital_ghost_fear: true },
+        result: '你觉得这很诡异,甚至有点恐怖...立刻拉黑了。'
+      }
+    ]
+  },
+
+  // ==================== 80后/90后专属事件 ====================
+
+  // 注: 已删除时间线不合理的事件(磁带录音机、街机厅、VCD、BP机等90年代事件)
+  // 游戏从2006年开始,这些事件在游戏时间线内已过时
+
+  {
+    id: 'daily_90s_nokia_phone',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [16, 28], birthYearRange: [1980, 1995], randomChance: 0.08 },
+    title: '诺基亚时代',
+    description: '你终于有了自己的诺基亚手机,可以玩贪吃蛇和贪吃蛇2了!',
+    context: '2000年代初期,诺基亚是手机霸主,贪吃蛇是全民游戏。',
+    choices: [
+      {
+        text: '沉迷贪吃蛇',
+        hint: '技术+15,快乐+15,学识-8,健康-5',
+        effects: { tech_skill: 15, happiness: 15, education: -8, health: -5 },
+        flags: { snake_master: true },
+        result: '你是贪吃蛇高手,分数刷新了又刷新!'
+      },
+      {
+        text: '用手机联系朋友',
+        hint: '社交+20,快乐+18,魅力+12',
+        effects: { social: 20, happiness: 18, charm: 12 },
+        flags: { social_butterfly: true },
+        result: '你用短信和群发和朋友保持联系,社交达人!'
+      },
+      {
+        text: '用来学习',
+        hint: '学识+15,技术+12,快乐+10',
+        effects: { education: 15, tech_skill: 12, happiness: 10 },
+        flags: { practical_user: true },
+        result: '你用手机查资料、记单词,很实用!'
+      }
+    ]
+  },
+
+  {
+    id: 'daily_90s_qq_pet',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [10, 20], birthYearRange: [1985, 2000], randomChance: 0.1 },
+    title: 'QQ宠物',
+    description: '你的QQ桌面出现了一只小宠物,需要你喂养、洗澡、看病...',
+    context: '2005年左右,QQ宠物风靡全国,成了很多人的"云养宠"初体验。',
+    choices: [
+      {
+        text: '精心照顾',
+        hint: '快乐+18,魅力+15,财富-8,学识-5',
+        effects: { happiness: 18, charm: 15, wealth: -8, education: -5 },
+        flags: { pet_lover: true },
+        result: '你的宠物健康成长,你和它建立了感情!'
+      },
+      {
+        text: '偶尔看看',
+        hint: '快乐+10,社交+8',
+        effects: { happiness: 10, social: 8 },
+        flags: { casual_player: true },
+        result: '你偶尔照顾宠物,它也活得好好的。'
+      },
+      {
+        text: '觉得烦关掉',
+        hint: '学识+10,快乐-5',
+        effects: { education: 10, happiness: -5 },
+        flags: { practical: true },
+        result: '你觉得宠物很烦,影响使用QQ,就关掉了。'
+      }
+    ]
+  },
+
+  {
+    id: 'daily_90s_karaoke',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [16, 28], birthYearRange: [1980, 1998], randomChance: 0.08 },
+    title: 'KTV狂欢',
+    description: '朋友约你去KTV唱歌,你们要包厢唱通宵!',
+    context: '2000年代,KTV是90后年轻人主要的娱乐方式之一。',
+    choices: [
+      {
+        text: '麦霸附体',
+        hint: '快乐+20,魅力+18,健康-10,财富-8',
+        effects: { happiness: 20, charm: 18, health: -10, wealth: -8 },
+        flags: { karaoke_star: true },
+        result: '你是麦霸,唱了一晚上,嗓子哑了但很开心!'
+      },
+      {
+        text: '倾听他人',
+        hint: '社交+18,快乐+15,魅力+10',
+        effects: { social: 18, happiness: 15, charm: 10 },
+        flags: { good_listener: true },
+        result: '你更愿意听别人唱,为朋友鼓掌!'
+      },
+      {
+        text: '只是陪着',
+        hint: '社交+12,快乐+10',
+        effects: { social: 12, happiness: 10 },
+        result: '你不太会唱歌,但喜欢和大家在一起的氛围。'
+      }
+    ]
+  },
+
+  {
+    id: 'daily_90s_internet_cafe',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [14, 24], birthYearRange: [1985, 2000], randomChance: 0.1 },
+    title: '网吧通宵',
+    description: '你和小伙伴约好去网吧通宵打游戏,虽然要瞒着父母!',
+    context: '90后的青春记忆,网吧是学生时代的"秘密基地"。',
+
+    choices: [
+      {
+        text: '沉迷通宵',
+        hint: '快乐+20,技术+18,健康-15,学识-12',
+        effects: { happiness: 20, tech_skill: 18, health: -15, education: -12 },
+        flags: { internet_cafe_regular: true },
+        result: '你是网吧常客,通宵打游戏,白天上课睡觉...'
+      },
+      {
+        text: '适度娱乐',
+        hint: '快乐+15,社交+18,技术+12,健康-5',
+        effects: { happiness: 15, social: 18, tech_skill: 12, health: -5 },
+        flags: { social_gamer: true },
+        result: '你偶尔去玩,和伙伴们度过快乐时光!'
+      },
+      {
+        text: '怕被抓不敢去',
+        hint: '学识+12,快乐-8',
+        effects: { education: 12, happiness: -8 },
+        flags: { good_kid: true },
+        result: '你怕被父母发现,只能羡慕地听别人讲网吧的故事...'
+      }
+    ]
+  },
+
+  {
+    id: 'daily_90s_danmu',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [14, 30], birthYearRange: [1985, 2002], randomChance: 0.08 },
+    title: '弹幕文化',
+    description: '你发现了看视频开弹幕的乐趣,和陌生人一起吐槽太爽了!',
+    context: '2010年代,弹幕网站兴起,形成独特的互动观看文化。',
+    choices: [
+      {
+        text: '成为弹幕达人',
+        hint: '社交+18,快乐+18,技术+10,学识-5',
+        effects: { social: 18, happiness: 18, tech_skill: 10, education: -5 },
+        flags: { danmu_master: true },
+        result: '你是弹幕大神,神吐槽获赞无数!'
+      },
+      {
+        text: '喜欢看不说',
+        hint: '快乐+15,学识+8',
+        effects: { happiness: 15, education: 8 },
+        flags: { lurker: true },
+        result: '你喜欢开弹幕看,但很少自己发。'
+      },
+      {
+        text: '觉得太吵',
+        hint: '学识+12,快乐+5',
+        effects: { education: 12, happiness: 5 },
+        flags: { traditional_viewer: true },
+        result: '你不喜欢弹幕遮挡画面,总是关掉。'
+      }
+    ]
+  },
+
+  {
+    id: 'daily_90s_shake_wechat',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [18, 35], birthYearRange: [1985, 2000], randomChance: 0.08 },
+    title: '摇一摇交友',
+    description: '微信推出"摇一摇"功能,你忍不住摇了摇手机...',
+    context: '2012年左右,微信"摇一摇"成为陌生人社交的热门方式。',
+    choices: [
+      {
+        text: '疯狂摇手机',
+        hint: '社交+20,快乐+18,健康-5',
+        effects: { social: 20, happiness: 18, health: -5 },
+        flags: { shake_addict: true },
+        result: '你摇到了很多人,有的还成了朋友!'
+      },
+      {
+        text: '偶尔试试',
+        hint: '社交+12,快乐+12',
+        effects: { social: 12, happiness: 12 },
+        flags: { casual_shaker: true },
+        result: '你偶尔摇一摇,当作娱乐。'
+      },
+      {
+        text: '觉得不靠谱',
+        hint: '学识+10,技术+8',
+        effects: { education: 10, tech_skill: 8 },
+        flags: { skeptic: true },
+        result: '你觉得这种方式太随机,还是喜欢真实社交。'
+      }
+    ]
+  },
+
+  {
+    id: 'daily_90s_tucao',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [16, 35], birthYearRange: [1985, 2002], randomChance: 0.1 },
+    title: '网络吐槽',
+    description: '你在社交媒体上吐槽生活中的糟心事,意外收获了很多共鸣!',
+    context: '90后的网络文化之一,吐槽成了一种情绪宣泄和社交方式。',
+    choices: [
+      {
+        text: '成为吐槽博主',
+        hint: '社交+20,魅力+15,快乐+18',
+        effects: { social: 20, charm: 15, happiness: 18 },
+        flags: { tucao_blogger: true },
+        result: '你的吐槽很搞笑,收获了很多粉丝!'
+      },
+      {
+        text: '适度吐槽',
+        hint: '社交+15,快乐+15,学识+8',
+        effects: { social: 15, happiness: 15, education: 8 },
+        flags: { casual_tucao: true },
+        result: '你偶尔吐槽,缓解压力,结交同好。'
+      },
+      {
+        text: '保持正能量',
+        hint: '魅力+15,快乐+12,学识+10',
+        effects: { charm: 15, happiness: 12, education: 10 },
+        flags: { positive: true },
+        result: '你更喜欢分享正能量,给周围的人带来快乐。'
+      }
+    ]
+  },
+
+  {
+    id: 'daily_90s_wanghong',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [18, 35], birthYearRange: [1985, 2002], randomChance: 0.06 },
+    title: '网红梦想',
+    description: '看到网红们轻松赚钱,你心动了,要不要也试试?',
+    context: '2015年后,网红经济爆发,年轻人梦想成为网红实现财务自由。',
+    choices: [
+      {
+        text: '全力做网红',
+        hint: '社交+25,魅力+20,快乐+20,学识-10,财富±20',
+        effects: { social: 25, charm: 20, happiness: 20, education: -10, wealth: 0 },
+        flags: { wannabe_wanghong: true },
+        result: '你开始制作内容,收获了一些粉丝!'
+      },
+      {
+        text: '业余尝试',
+        hint: '社交+15,技术+15,快乐+12',
+        effects: { social: 15, tech_skill: 15, happiness: 12 },
+        flags: { content_creator: true },
+        result: '你业余时间做内容,当作爱好。'
+      },
+      {
+        text: '觉得不靠谱',
+        hint: '学识+15,技术+10',
+        effects: { education: 15, tech_skill: 10 },
+        flags: { stable_path: true },
+        result: '你觉得网红不长久,还是专注于现实事业。'
+      }
+    ]
+  },
+
+  {
+    id: 'daily_90s_douyin',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [16, 35], birthYearRange: [1990, 2002], randomChance: 0.1 },
+    title: '短视频沉迷',
+    description: '你打开了抖音/TikTok,一刷就是两个小时...',
+    context: '2018年后,短视频平台兴起,成为90后重要的娱乐方式。',
+    choices: [
+      {
+        text: '沉迷刷视频',
+        hint: '快乐+20,学识-15,健康-12',
+        effects: { happiness: 20, education: -15, health: -12 },
+        flags: { short_video_addict: true },
+        result: '你刷视频到深夜,时间不知不觉就过去了...'
+      },
+      {
+        text: '适度观看',
+        hint: '快乐+12,学识+5',
+        effects: { happiness: 12, education: 5 },
+        flags: { moderate_viewer: true },
+        result: '你控制观看时间,当作娱乐。'
+      },
+      {
+        text: '用来学习',
+        hint: '学识+18,技术+12,快乐+10',
+        effects: { education: 18, tech_skill: 12, happiness: 10 },
+        flags: { learning_addict: true },
+        result: '你关注了很多知识类博主,学到很多实用技能!'
+      }
+    ]
+  },
+
+  {
+    id: 'daily_90s_live_stream',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [18, 35], birthYearRange: [1990, 2002], randomChance: 0.08 },
+    title: '直播带货',
+    description: '你看直播时忍不住买买买,主播的话术太有魔力了!',
+    context: '2020年后,直播带货成为购物新方式,90后是主要消费群体。',
+    choices: [
+      {
+        text: '疯狂买买买',
+        hint: '快乐+18,魅力+10,财富-25',
+        effects: { happiness: 18, charm: 10, wealth: -25 },
+        flags: { shopaholic: true },
+        result: '你买了一堆不需要的东西,吃土一个月...'
+      },
+      {
+        text: '理性消费',
+        hint: '快乐+10,学识+12,财富-8',
+        effects: { happiness: 10, education: 12, wealth: -8 },
+        flags: { smart_shopper: true },
+        result: '你只买需要的,还享受了优惠!'
+      },
+      {
+        text: '只是看看',
+        hint: '快乐+8,学识+8',
+        effects: { happiness: 8, education: 8 },
+        flags: { window_shopper: true },
+        result: '你喜欢看直播,但很少下单。'
+      }
+    ]
+  },
+
+  {
+    id: 'daily_90s_996',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [22, 38], birthYearRange: [1985, 1998], randomChance: 0.1 },
+    title: '996工作制',
+    description: '公司推行996工作制,你每天早9点到晚9点,一周6天...',
+    context: '2019年,996工作制引发社会争议,成为90后职场人的痛点。',
+    choices: [
+      {
+        text: '咬牙坚持',
+        hint: '财富+20,学识+15,健康-18,快乐-15',
+        effects: { wealth: 20, education: 15, health: -18, happiness: -15 },
+        flags: { corporate_slave: true },
+        result: '你拼命工作,身体和精神都在透支...'
+      },
+      {
+        text: '积极寻找新机会',
+        hint: '社交+15,学识+18,快乐+10',
+        effects: { social: 15, education: 18, happiness: 10 },
+        flags: { job_hopper: true },
+        result: '你开始骑驴找马,准备跳槽到更好的公司!'
+      },
+      {
+        text: '拒绝996',
+        hint: '快乐+15,健康+12,财富-10',
+        effects: { happiness: 15, health: 12, wealth: -10 },
+        flags: { work_life_balance: true },
+        result: '你选择了健康和生活,拒绝了996!'
+      }
+    ]
+  },
+
+  {
+    id: 'daily_90s_house_pressure',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [25, 40], birthYearRange: [1985, 1998], randomChance: 0.1 },
+    title: '买房压力',
+    description: '家人催你买房,但房价高得让人绝望...',
+    context: '90后面临的最大压力之一,一线城市房价远超收入水平。',
+    choices: [
+      {
+        text: '掏空六个钱包',
+        hint: '财富-30,快乐+10,社交+12',
+        effects: { wealth: -30, happiness: 10, social: 12 },
+        flags: { home_owner: true },
+        result: '你和配偶双方父母资助,终于买了房!'
+      },
+      {
+        text: '选择租房',
+        hint: '快乐+15,健康+10,学识+12',
+        effects: { happiness: 15, health: 10, education: 12 },
+        flags: { renter: true },
+        result: '你选择租房,把钱投资在自己身上!'
+      },
+      {
+        text: '离开一线城市',
+        hint: '快乐+12,健康+12,财富+10',
+        effects: { happiness: 12, health: 12, wealth: 10 },
+        flags: { city_escaper: true },
+        result: '你回到二三线城市,生活质量提升了很多!'
+      }
+    ]
+  },
+
+  {
+    id: 'daily_90s_layoff',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [25, 40], birthYearRange: [1985, 1998], randomChance: 0.08 },
+    title: '裁员潮',
+    description: '公司开始裁员,你担心自己会不会被裁掉...',
+    context: '2022年后的裁员潮,互联网大厂纷纷裁员,90后职场人焦虑不安。',
+    choices: [
+      {
+        text: '焦虑担忧',
+        hint: '健康-15,快乐-12,学识+8',
+        effects: { health: -15, happiness: -12, education: 8 },
+        flags: { anxiety: true },
+        result: '你整夜睡不着,影响了工作效率...'
+      },
+      {
+        text: '积极准备',
+        hint: '学识+18,技术+15,社交+12',
+        effects: { education: 18, tech_skill: 15, social: 12 },
+        flags: { prepared: true },
+        result: '你更新简历,学习新技能,联系猎头,做好了准备!'
+      },
+      {
+        text: '顺其自然',
+        hint: '快乐+10,健康+8,学识+10',
+        effects: { happiness: 10, health: 8, education: 10 },
+        flags: { easy_going: true },
+        result: '你兵来将挡,船到桥,自然直,相信总有出路!'
+      }
+    ]
+  },
+
+  {
+    id: 'daily_90s_marriage_pressure',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [25, 40], birthYearRange: [1985, 1998], randomChance: 0.1 },
+    title: '催婚压力',
+    description: '家人开始催你结婚,每次回家都是这个话题...',
+    context: '90后面临的婚恋压力,父母传统观念与个人追求的冲突。',
+    choices: [
+      {
+        text: '妥协相亲',
+        hint: '社交+15,快乐-5,魅力+10',
+        effects: { social: 15, happiness: -5, charm: 10 },
+        flags: { blind_dater: true },
+        result: '你开始相亲,希望能遇到合适的人。'
+      },
+      {
+        text: '坚持自我',
+        hint: '快乐+12,学识+15,社交-10',
+        effects: { happiness: 12, education: 15, social: -10 },
+        flags: { independent: true },
+        result: '你坚持自己的节奏,不为了结婚而结婚!'
+      },
+      {
+        text: '认真寻找',
+        hint: '社交+20,快乐+15,魅力+12',
+        effects: { social: 20, happiness: 15, charm: 12 },
+        flags: { love_seeker: true },
+        result: '你积极扩大社交圈,希望能遇到真爱!'
+      }
+    ]
+  },
+
+  {
+    id: 'daily_90s_midlife_crisis',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [30, 45], birthYearRange: [1980, 1995], randomChance: 0.08 },
+    title: '30岁危机',
+    description: '你即将或已经30岁了,开始反思自己的人生选择...',
+    context: '90后特有的"30岁危机",对人生道路的重新审视。',
+    choices: [
+      {
+        text: '焦虑迷茫',
+        hint: '健康-12,快乐-10,学识+8',
+        effects: { health: -12, happiness: -10, education: 8 },
+        flags: { quarter_life_crisis: true },
+        result: '你感到迷茫和焦虑,不知道未来该怎么走...'
+      },
+      {
+        text: '重新规划',
+        hint: '学识+20,快乐+15,社交+10',
+        effects: { education: 20, happiness: 15, social: 10 },
+        flags: { life_planner: true },
+        result: '你认真思考人生目标,重新制定了计划!'
+      },
+      {
+        text: '坦然接受',
+        hint: '快乐+18,健康+15,魅力+12',
+        effects: { happiness: 18, health: 15, charm: 12 },
+        flags: { self_accepting: true },
+        result: '你接受30岁的自己,每个年龄段都有其美好!'
+      }
+    ]
+  },
+
+  {
+    id: 'daily_90s_childhood_nostalgia',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [25, 45], birthYearRange: [1980, 1998], randomChance: 0.1 },
+    title: '童年怀旧',
+    description: '你突然很怀念小时候,那个没有智能手机的时代...',
+    context: '90后集体怀旧,怀念童年简单的快乐。',
+    choices: [
+      {
+        text: '重温童年',
+        hint: '快乐+20,魅力+15,学识+12',
+        effects: { happiness: 20, charm: 15, education: 12 },
+        flags: { nostalgia_seeker: true },
+        result: '你翻出旧物、旧歌、旧片,沉浸在回忆中!'
+      },
+      {
+        text: '创造新回忆',
+        hint: '快乐+18,社交+15,魅力+12',
+        effects: { happiness: 18, social: 15, charm: 12 },
+        flags: { memory_creator: true },
+        result: '你带着孩子或朋友体验你童年的游戏和乐趣!'
+      },
+      {
+        text: '珍惜当下',
+        hint: '快乐+15,健康+12,学识+10',
+        effects: { happiness: 15, health: 12, education: 10 },
+        flags: { present_focused: true },
+        result: '你怀念过去,但更珍惜现在的美好!'
+      }
+    ]
+  },
+
+  // ==================== 青春回忆系列 ====================
+
+  {
+    id: 'youth_deskmate_confession',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [15, 18], randomChance: 0.15 },
+    title: '同桌的表白',
+    description: '那天放学,同桌红着脸递给你一封信,上面写着"我喜欢你"...你的心跳得好快!',
+    context: '青春期的暗恋与表白,是最纯真的回忆。那个夏天,那个眼神,永远忘不掉。',
+    choices: [
+      {
+        text: '接受表白,开始恋爱',
+        hint: '快乐+25,魅力+18,社交+15,学识-8',
+        effects: { happiness: 25, charm: 18, social: 15, education: -8 },
+        flags: { first_love: true, high_school_love: true },
+        result: '你们开始了青涩的初恋,每天一起上学放学,那是最美好的时光!'
+      },
+      {
+        text: '委婉拒绝,保持友谊',
+        hint: '社交+12,学识+10,快乐+5',
+        effects: { social: 12, education: 10, happiness: 5 },
+        flags: { good_friend: true },
+        result: '你们还是好朋友,那份美好藏在心里。'
+      },
+      {
+        text: '不知所措,逃避了',
+        hint: '学识+15,快乐-8',
+        effects: { education: 15, happiness: -8 },
+        flags: { shy_away: true },
+        result: '你不知道该怎么办,慢慢疏远了...多年后回想起来有些遗憾。'
+      }
+    ]
+  },
+
+  {
+    id: 'youth_graduation_photo',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [17, 19], randomChance: 0.2 },
+    title: '毕业照',
+    description: '大家站成几排,喊着"茄子",咔嚓一声,青春定格在这一刻。你知道,有些人可能再也见不到了。',
+    context: '高中/大学毕业,是人生的重要转折点。那张毕业照,多年后回看,每个人脸上都写着青春。',
+    choices: [
+      {
+        text: '和每个人合影留念',
+        hint: '社交+25,快乐+20,魅力+12',
+        effects: { social: 25, happiness: 20, charm: 12 },
+        flags: { social_butterfly: true },
+        result: '你和每个同学都合了影,留下了珍贵的回忆!'
+      },
+      {
+        text: '和好朋友拍照',
+        hint: '社交+18,快乐+18',
+        effects: { social: 18, happiness: 18 },
+        flags: { close_friends: true },
+        result: '你和最好的朋友拍了很多照片,友谊长存!'
+      },
+      {
+        text: '默默告别',
+        hint: '学识+12,快乐+8',
+        effects: { education: 12, happiness: 8 },
+        flags: { quiet_departure: true },
+        result: '你静静地告别,把回忆藏在心里。'
+      }
+    ]
+  },
+
+  {
+    id: 'youth_university_freshman',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [17, 20], randomChance: 0.2 },
+    title: '步入大学',
+    description: '你拖着行李箱走进大学校园,感受到知识的海洋如此宽广。新的生活开始了,你既兴奋又紧张!',
+    context: '大学是人生的新起点。独立生活、新朋友、新知识...一切都是那么新鲜。',
+    choices: [
+      {
+        text: '积极加入社团',
+        hint: '社交+25,快乐+22,魅力+15,学识+8',
+        effects: { social: 25, happiness: 22, charm: 15, education: 8 },
+        flags: { club_leader: true },
+        result: '你加入了多个社团,认识了很多志同道合的朋友,大学生活丰富多彩!'
+      },
+      {
+        text: '专注学习',
+        hint: '学识+25,技术+15,健康+8',
+        effects: { education: 25, tech_skill: 15, health: 8 },
+        flags: { scholar: true },
+        result: '你把时间都用在学习和图书馆,为未来打下了坚实基础!'
+      },
+      {
+        text: '享受自由时光',
+        hint: '快乐+20,健康+12,学识-5',
+        effects: { happiness: 20, health: 12, education: -5 },
+        flags: { free_spirit: true },
+        result: '你享受久违的自由,打游戏、追剧、睡懒觉...大学真美好!'
+      }
+    ]
+  },
+
+  {
+    id: 'youth_military_training',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [17, 20], randomChance: 0.2 },
+    title: '大学军训',
+    description: '烈日下站军姿,踢正步,唱军歌...虽然很累,但和同学们一起吃苦的经历很难忘。',
+    context: '大学军训是新生第一课。晒黑了,累瘦了,但收获了友谊和成长。',
+    choices: [
+      {
+        text: '认真训练,争取标兵',
+        hint: '健康+20,学识+15,快乐+10,魅力+12',
+        effects: { health: 20, education: 15, happiness: 10, charm: 12 },
+        flags: { disciplined: true },
+        result: '你刻苦训练,获得了标兵称号,成为大家的榜样!'
+      },
+      {
+        text: '和同学一起坚持',
+        hint: '社交+22,快乐+20,健康+15',
+        effects: { social: 22, happiness: 20, health: 15 },
+        flags: { team_player: true },
+        result: '你和同学们互相鼓励,一起度过了难忘的军训时光!'
+      },
+      {
+        text: '偷懒摸鱼',
+        hint: '快乐+15,健康+5',
+        effects: { happiness: 15, health: 5 },
+        flags: { slacker: true },
+        result: '你尽量躲在树荫下,偷点小懒...教官没发现!'
+      }
+    ]
+  },
+
+  {
+    id: 'youth_dormitory_night_talk',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [18, 23], randomChance: 0.2 },
+    title: '宿舍夜聊',
+    description: '熄灯后,宿舍里开始了夜聊。从恋爱到梦想,从游戏到人生...这些深夜谈话,是最珍贵的青春记忆。',
+    context: '宿舍夜聊是大学生活的一部分。黑暗中,每个人都敞开心扉,说着白天不会说的话。',
+    choices: [
+      {
+        text: '倾诉心事',
+        hint: '社交+20,快乐+18,健康+10',
+        effects: { social: 20, happiness: 18, health: 10 },
+        flags: { open_heart: true },
+        result: '你敞开心扉,和舍友们分享了内心想法,感觉轻松多了!'
+      },
+      {
+        text: '认真倾听',
+        hint: '社交+15,快乐+15,学识+12',
+        effects: { social: 15, happiness: 15, education: 12 },
+        flags: { good_listener: true },
+        result: '你认真听每个人说话,了解了很多不知道的事。'
+      },
+      {
+        text: '早早睡觉',
+        hint: '健康+15,学识+10',
+        effects: { health: 15, education: 10 },
+        flags: { early_bird: true },
+        result: '你明天还有早课,选择早点休息。'
+      }
+    ]
+  },
+
+  {
+    id: 'youth_crush_on_teacher',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [16, 20], randomChance: 0.1 },
+    title: '暗恋老师',
+    description: '你发现自己对某位老师产生了特别的情愫...ta那么优秀,那么有魅力。',
+    context: '青春期对老师的仰慕,是一种特殊的感情。不是爱情,但很美好。',
+    choices: [
+      {
+        text: '努力学习吸引ta注意',
+        hint: '学识+25,技术+15,快乐+12',
+        effects: { education: 25, tech_skill: 15, happiness: 12 },
+        flags: { motivated_crush: true },
+        result: '你为了ta努力学习,成绩突飞猛进!'
+      },
+      {
+        text: '默默藏在心里',
+        hint: '学识+15,快乐+8',
+        effects: { education: 15, happiness: 8 },
+        flags: { secret_crush: true },
+        result: '你把这份心情藏在心底,成为美好的回忆。'
+      },
+      {
+        text: '告诉朋友',
+        hint: '社交+18,快乐+15',
+        effects: { social: 18, happiness: 15 },
+        flags: { shared_secret: true },
+        result: '你告诉了好朋友,你们一起八卦了好久!'
+      }
+    ]
+  },
+
+  {
+    id: 'youth_exam_all_night',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [15, 22], randomChance: 0.2 },
+    title: '考前通宵',
+    description: '明天就是重要考试,你决定通宵复习!咖啡、红牛、笔记...一定要拿下!',
+    context: '学生时代的考前突击,是共同的记忆。虽然知道不对,但谁没试过呢?',
+    choices: [
+      {
+        text: '疯狂刷题',
+        hint: '学识+25,健康-20,快乐-5',
+        effects: { education: 25, health: -20, happiness: -5 },
+        flags: { night_owl: true },
+        result: '你刷了一整夜的题,第二天顶着黑眼圈去考试!'
+      },
+      {
+        text: '适度复习再睡',
+        hint: '学识+18,健康+5,快乐+8',
+        effects: { education: 18, health: 5, happiness: 8 },
+        flags: { balanced_student: true },
+        result: '你复习到深夜,保证了一定睡眠,第二天状态不错!'
+      },
+      {
+        text: '相信自己不熬夜',
+        hint: '健康+18,快乐+12,学识+10',
+        effects: { health: 18, happiness: 12, education: 10 },
+        flags: { confident: true },
+        result: '你相信自己平时的积累,好好睡了一觉!'
+      }
+    ]
+  },
+
+  {
+    id: 'youth_secret_note',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [14, 19], randomChance: 0.15 },
+    title: '传纸条',
+    description: '上课很无聊,你给同桌传纸条。写着写着,老师突然走过来...心跳加速!',
+    context: '上课传纸条,是学生时代的经典回忆。那些悄悄话,那些小秘密...',
+    choices: [
+      {
+        text: '机智藏起来',
+        hint: '快乐+15,技术+10,魅力+8',
+        effects: { happiness: 15, tech_skill: 10, charm: 8 },
+        flags: { quick_witted: true },
+        result: '你眼疾手快地把纸条藏起来,老师没发现!'
+      },
+      {
+        text: '老实承认错误',
+        hint: '学识+12,魅力+15',
+        effects: { education: 12, charm: 15 },
+        flags: { honest_student: true },
+        result: '你主动认错,老师没有深究,让你回座了。'
+      },
+      {
+        text: '死不承认',
+        hint: '社交-5,快乐+8',
+        effects: { social: -5, happiness: 8 },
+        flags: { stubborn: true },
+        result: '你坚决不承认,最后还是被请了家长...'
+      }
+    ]
+  },
+
+  {
+    id: 'youth_school_sports',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [14, 20], randomChance: 0.2 },
+    title: '校运会',
+    description: '学校举办运动会,你报名参加了比赛项目。同学们在看台上为你加油,你感到无比激动!',
+    context: '校运会是学生时代的热血回忆。接力赛、长跑、跳高...青春就该挥洒汗水!',
+    choices: [
+      {
+        text: '全力拼搏',
+        hint: '健康+20,快乐+22,魅力+18,社交+15',
+        effects: { health: 20, happiness: 22, charm: 18, social: 15 },
+        flags: { athlete: true },
+        result: '你拼尽全力,虽然不是第一名,但突破了自我!同学们为你欢呼!'
+      },
+      {
+        text: '重在参与',
+        hint: '快乐+15,社交+18,健康+12',
+        effects: { happiness: 15, social: 18, health: 12 },
+        flags: { participant: true },
+        result: '你享受比赛的过程,和朋友们一起加油助威!'
+      },
+      {
+        text: '当啦啦队',
+        hint: '社交+20,快乐+20,魅力+10',
+        effects: { social: 20, happiness: 20, charm: 10 },
+        flags: { cheerleader: true },
+        result: '你在看台上为同学加油,气氛热烈极了!'
+      }
+    ]
+  },
+
+  {
+    id: 'youth_class_reunion',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [25, 40], randomChance: 0.15 },
+    title: '同学聚会',
+    description: '多年未见的同学们组织了聚会。当年的班花现在怎么样?学霸混得好吗?你既期待又有点紧张。',
+    context: '同学聚会是检验人生成果的场合,也是重温青春的机会。有人混得好,有人还在奋斗,但大家依然是当年的那些人。',
+    choices: [
+      {
+        text: '积极参加',
+        hint: '社交+25,快乐+22,魅力+15',
+        effects: { social: 25, happiness: 22, charm: 15 },
+        flags: { social_active: true },
+        result: '你见到了老同学,聊起了当年的往事,大家都感慨万千!'
+      },
+      {
+        text: '低调出席',
+        hint: '社交+15,快乐+15',
+        effects: { social: 15, happiness: 15 },
+        flags: { low_profile: true },
+        result: '你安静地参加聚会,听大家分享各自的生活。'
+      },
+      {
+        text: '不想去',
+        hint: '学识+12,快乐-5',
+        effects: { education: 12, happiness: -5 },
+        flags: { avoid_reunion: true },
+        result: '你觉得这种聚会没什么意义,还是算了。'
+      }
+    ]
+  },
+
+  {
+    id: 'youth_first_job_interview',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [21, 26], randomChance: 0.2 },
+    title: '第一次面试',
+    description: '你穿上了正装,第一次去面试。手心出汗,反复练习自我介绍...这是成人的第一步。',
+    context: '第一次面试,是从学生到职场人的转变。紧张、期待、不安...复杂的情绪。',
+    choices: [
+      {
+        text: '充分准备,自信表现',
+        hint: '学识+20,技术+15,魅力+18,财富+10',
+        effects: { education: 20, tech_skill: 15, charm: 18, wealth: 10 },
+        flags: { prepared: true },
+        result: '你准备充分,面试官很满意,成功拿到了offer!'
+      },
+      {
+        text: '真诚坦率',
+        hint: '学识+15,魅力+20,快乐+12',
+        effects: { education: 15, charm: 20, happiness: 12 },
+        flags: { sincere: true },
+        result: '你真诚地回答问题,虽然经验不足,但面试官觉得你很诚实!'
+      },
+      {
+        text: '紧张得说不出话',
+        hint: '学识+10,快乐-10',
+        effects: { education: 10, happiness: -10 },
+        flags: { nervous: true },
+        result: '你太紧张了,大脑一片空白...这次面试失败了,但你积累了经验。'
+      }
+    ]
+  },
+
+  {
+    id: 'youth_first_salary',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [21, 27], randomChance: 0.2 },
+    title: '第一笔工资',
+    description: '手机响了,收到短信:工资到账!这是你人生第一笔靠自己赚的钱,你激动得想告诉所有人!',
+    context: '第一笔工资,意味着经济独立。你想象着怎么花这笔钱,心里美滋滋的。',
+    choices: [
+      {
+        text: '给父母买礼物',
+        hint: '社交+25,快乐+25,魅力+20,财富-10',
+        effects: { social: 25, happiness: 25, charm: 20, wealth: -10 },
+        flags: { filial: true },
+        result: '你给爸妈买了礼物,他们很欣慰,你觉得自己长大了!'
+      },
+      {
+        text: '存起来',
+        hint: '财富+15,学识+12',
+        effects: { wealth: 15, education: 12 },
+        flags: { saver: true },
+        result: '你把工资存起来,为未来做打算。'
+      },
+      {
+        text: '犒劳自己',
+        hint: '快乐+22,魅力+15,财富-15',
+        effects: { happiness: 22, charm: 15, wealth: -15 },
+        flags: { reward_self: true },
+        result: '你买了心仪已久的东西,好好犒劳了自己!'
+      }
+    ]
+  },
+
+  {
+    id: 'youth_library_crush',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [17, 23], randomChance: 0.12 },
+    title: '图书馆偶遇',
+    description: '你在图书馆复习,对面坐着一个很好看的Ta。你们对视了一眼,心跳加速...',
+    context: '图书馆的偶遇,是青春小说的经典桥段。安静的环境,偷偷的眼神,美好的暧昧。',
+    choices: [
+      {
+        text: '主动搭讪',
+        hint: '社交+22,快乐+20,魅力+18',
+        effects: { social: 22, happiness: 20, charm: 18 },
+        flags: { bold_move: true },
+        result: '你鼓起勇气要了联系方式,开始了一段美好的缘分!'
+      },
+      {
+        text: '写纸条递给Ta',
+        hint: '社交+15,快乐+15,魅力+12',
+        effects: { social: 15, happiness: 15, charm: 12 },
+        flags: { romantic_gesture: true },
+        result: '你写了张纸条递给Ta,Ta笑了...你们开始一起自习!'
+      },
+      {
+        text: '偷偷看不打扰',
+        hint: '学识+18,快乐+10',
+        effects: { education: 18, happiness: 10 },
+        flags: { secret_admirer: true },
+        result: '你偷偷看了Ta好几眼,把这份美好藏在心里。'
+      }
+    ]
+  },
+
+  {
+    id: 'youth_new_year_eve',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [10, 30], randomChance: 0.25 },
+    title: '除夕夜',
+    description: '除夕夜,全家围坐在一起吃年夜饭,看春晚。外面的烟花绽放,你心里许下了新年愿望。',
+    context: '除夕夜是中国人最重要的节日。无论多大,这时候都会想家。',
+    choices: [
+      {
+        text: '陪家人守岁',
+        hint: '快乐+25,社交+20,健康+15,魅力+12',
+        effects: { happiness: 25, social: 20, health: 15, charm: 12 },
+        flags: { family_oriented: true },
+        result: '你和家人一起守岁,看春晚,吃饺子,度过温馨的除夕夜!'
+      },
+      {
+        text: '给朋友发祝福',
+        hint: '社交+25,快乐+20',
+        effects: { social: 25, happiness: 20 },
+        flags: { social_butterfly: true },
+        result: '你给朋友们发祝福短信,收到很多回复,很热闹!'
+      },
+      {
+        text: '一个人静静思考',
+        hint: '学识+20,快乐+12,健康+10',
+        effects: { education: 20, happiness: 12, health: 10 },
+        flags: { introspective: true },
+        result: '你一个人看着烟花,思考过去的一年,许下新年愿望。'
+      }
+    ]
+  },
+
+  {
+    id: 'youth_first_trip_alone',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [18, 28], randomChance: 0.15 },
+    title: '第一次独自旅行',
+    description: '你决定一个人去旅行!背着行囊,坐上火车/飞机,去一个陌生的城市。自由,又有点害怕。',
+    context: '第一次独自旅行,是成长的标志。看世界,也认识自己。',
+    choices: [
+      {
+        text: '充分规划,安全第一',
+        hint: '学识+18,技术+12,健康+15,快乐+18',
+        effects: { education: 18, tech_skill: 12, health: 15, happiness: 18 },
+        flags: { careful_traveler: true },
+        result: '你做了详细攻略,旅行顺利安全,收获满满!'
+      },
+      {
+        text: '说走就走,随心而行',
+        hint: '快乐+25,社交+15,学识+10',
+        effects: { happiness: 25, social: 15, education: 10 },
+        flags: { spontaneous: true },
+        result: '你随心而行,遇到了很多惊喜和意外,很刺激!'
+      },
+      {
+        text: '有点害怕,放弃旅行',
+        hint: '学识+12',
+        effects: { education: 12 },
+        flags: { cautious: true },
+        result: '你最终还是害怕了,决定下次再试试。'
+      }
+    ]
+  },
+
+  {
+    id: 'youth_dorm_roommate_feud',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [18, 24], randomChance: 0.15 },
+    title: '宿舍矛盾',
+    description: '和室友因为生活习惯产生矛盾。ta晚上打电话声音太大,你忍不住想说出来...',
+    context: '宿舍生活难免有摩擦。学会沟通和包容,是成长的必修课。',
+    choices: [
+      {
+        text: '坦诚沟通,寻求解决',
+        hint: '社交+20,魅力+18,快乐+15,学识+12',
+        effects: { social: 20, charm: 18, happiness: 15, education: 12 },
+        flags: { communicator: true },
+        result: '你和室友坦诚沟通,找到了双方都能接受的解决方案,关系更好了!'
+      },
+      {
+        text: '忍让退避',
+        hint: '学识+10,快乐-10,健康-5',
+        effects: { education: 10, happiness: -10, health: -5 },
+        flags: { peace_keeper: true },
+        result: '你选择忍让,但心里很不舒服...'
+      },
+      {
+        text: '争吵翻脸',
+        hint: '社交-15,快乐-10',
+        effects: { social: -15, happiness: -10 },
+        flags: { conflict: true },
+        result: '你们吵了一架,关系变得很僵,宿舍气氛很尴尬...'
+      }
+    ]
+  },
+
+  {
+    id: 'youth_online_friends_meetup',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [16, 26], randomChance: 0.12 },
+    title: '网友见面',
+    description: '你在网上认识了聊得很来的朋友,约好线下见面。你期待又紧张,不知道ta真人怎么样...',
+    context: '网友见面,是互联网时代的青春回忆。有人奔现成功,也有人见光死。',
+    choices: [
+      {
+        text: '精心打扮,如约而至',
+        hint: '社交+20,快乐+20,魅力+22',
+        effects: { social: 20, happiness: 20, charm: 22 },
+        flags: { brave_meetup: true },
+        result: '你们见面了!Ta本人比想象中还好,你们成为了现实中的朋友!'
+      },
+      {
+        text: '带朋友一起去',
+        hint: '社交+15,快乐+15,健康+10',
+        effects: { social: 15, happiness: 15, health: 10 },
+        flags: { cautious_meetup: true },
+        result: '你带了朋友一起去,安全第一!'
+      },
+      {
+        text: '最后还是没敢去',
+        hint: '学识+10,快乐-8',
+        effects: { education: 10, happiness: -8 },
+        flags: { chickened_out: true },
+        result: '你太紧张了,最终没有去见面,有些遗憾。'
+      }
+    ]
+  },
+
+  {
+    id: 'youth_campus_confession_day',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [18, 24], randomChance: 0.1 },
+    title: '校园表白日',
+    description: '今天是学校的表白日!楼下摆满了蜡烛和鲜花,有人在弹吉他唱歌...你心动了吗?',
+    context: '校园表白日是青春的仪式感。有人大胆表白,有人默默围观,有人心里想着那个人。',
+    choices: [
+      {
+        text: '大胆表白',
+        hint: '社交+25,快乐+30,魅力+20',
+        effects: { social: 25, happiness: 30, charm: 20 },
+        flags: { romantic_hero: true },
+        result: '你鼓起勇气表白了!无论结果如何,你都没有遗憾!'
+      },
+      {
+        text: '帮朋友助攻',
+        hint: '社交+20,快乐+20',
+        effects: { social: 20, happiness: 20 },
+        flags: { wingman: true },
+        result: '你帮朋友布置表白现场,见证了别人的爱情!'
+      },
+      {
+        text: '默默围观',
+        hint: '快乐+12,学识+8',
+        effects: { happiness: 12, education: 8 },
+        flags: { bystander: true },
+        result: '你在人群中看着别人表白,心里想着Ta。'
+      }
+    ]
+  },
+
+  {
+    id: 'youth_first_breakup',
+    year: null,
+    category: 'daily',
+    trigger: { ageRange: [17, 26], randomChance: 0.15 },
+    title: '初恋结束',
+    description: '你们分手了。那些甜蜜的回忆变成利器,扎得心很疼。你躲在被窝里哭了一夜...',
+    context: '初恋分手,是青春必经的痛。那种撕心裂肺的感觉,只有经历过才懂。',
+    choices: [
+      {
+        text: '痛苦但坚强',
+        hint: '学识+15,健康+12,社交+10',
+        effects: { education: 15, health: 12, social: 10 },
+        flags: { resilient: true },
+        result: '你用时间治愈伤痛,慢慢走出来了,变得更加成熟。'
+      },
+      {
+        text: '沉浸在回忆中',
+        hint: '快乐-15,学识+8,社交-5',
+        effects: { happiness: -15, education: 8, social: -5 },
+        flags: { heartbroken: true },
+        result: '你很久都没走出来,那些回忆像刀子一样割心...'
+      },
+      {
+        text: '寻找新恋情',
+        hint: '社交+18,快乐+15,魅力+12',
+        effects: { social: 18, happiness: 15, charm: 12 },
+        flags: { moving_on: true },
+        result: '你决定开始新的生活,很快遇到了新的人!'
+      }
     ]
   }
 ];

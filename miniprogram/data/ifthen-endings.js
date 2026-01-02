@@ -102,6 +102,254 @@ const endingsData = [
     }
   },
 
+  // ===== 90后专属结局 =====
+  {
+    id: 'ending_90s_douyin_celebrity',
+    title: '抖音顶流',
+    description: '你是90后抓住短视频风口的成功者。从默默无闻到千万粉丝，你的视频记录了90后的成长。李佳琦、薇娅都只是过客，你才是真正的带货王。年收入破亿，你证明了90后可以靠自己的方式成功。',
+    icon: '📱',
+    type: 'special',
+    typeText: '90后传奇',
+    weight: 12,
+    conditions: {
+      ageRange: [22, 35],
+      minAttributes: {
+        social: 90,
+        charm: 85,
+        wealth: 80
+      },
+      requireFlags: ['douyin_creator_success', 'influencer'],
+      excludeFlags: []
+    }
+  },
+
+  {
+    id: 'ending_90s_gongkao_success',
+    title: '上岸成功',
+    description: '在互联网裁员潮中，你选择了考公。每天12小时刷题，终于成功上岸。父母说这是铁饭碗，你觉得这是上岸。虽然工资不如互联网，但你拥有了稳定和安全感。这或许不是最热血的结局，但是最安稳的。',
+    icon: '📝',
+    type: 'good',
+    typeText: '90后安稳',
+    weight: 15,
+    conditions: {
+      ageRange: [24, 32],
+      minAttributes: {
+        education: 75,
+        happiness: 70
+      },
+      requireFlags: ['gongkao_success'],
+      excludeFlags: []
+    }
+  },
+
+  {
+    id: 'ending_90s_tech_entrepreneur',
+    title: '90后创业者',
+    description: '大学期间就开始创业，经历了O2O、共享经济、短视频多个风口。虽然失败了三次，但第四次成功了。你的公司被阿里收购，你套现几千万。90后创业者的标签，终于不只是失败者。',
+    icon: '🚀',
+    type: 'special',
+    typeText: '90后传奇',
+    weight: 10,
+    conditions: {
+      ageRange: [25, 35],
+      minAttributes: {
+        tech_skill: 85,
+        wealth: 75,
+        social: 70
+      },
+      requireFlags: ['startup_founder', 'entrepreneur_90s'],
+      excludeFlags: []
+    }
+  },
+
+  {
+    id: 'ending_90s_freelancer',
+    title: '数字游民',
+    description: '你拒绝了996，成为了一名自由职业者。设计、写作、编程...你靠技能养活自己。在泰国清迈的咖啡馆办公，在大理的民宿住一个月，你是90后中最自由的那一拨人。',
+    icon: '🌴',
+    type: 'good',
+    typeText: '90后自由',
+    weight: 12,
+    conditions: {
+      ageRange: [24, 32],
+      minAttributes: {
+        happiness: 80,
+        tech_skill: 70,
+        charm: 65
+      },
+      requireFlags: ['freelancer', 'ninety_six_resister'],
+      excludeFlags: ['workaholic']
+    }
+  },
+
+  {
+    id: 'ending_90s_mortgage_slave',
+    title: '90后房奴',
+    description: '你掏空六个钱包，在一线城市买了房。每月房贷一万五，不敢辞职不敢生病。但看着房价涨了，你觉得自己是对的。这就是90后的命运吗？或许吧，至少你有了自己的家。',
+    icon: '🏠',
+    type: 'normal',
+    typeText: '90后现实',
+    weight: 15,
+    conditions: {
+      ageRange: [26, 35],
+      minAttributes: {
+        wealth: 40
+      },
+      requireFlags: ['home_owner', 'mortgage_slave'],
+      excludeFlags: []
+    }
+  },
+
+  {
+    id: 'ending_90s_laid_off_return_home',
+    title: '裁员后回乡',
+    description: '互联网大厂裁员名单中有你的名字。拿着N+1赔偿，你回到了老家小城。发现这里生活成本很低，父母身体健康。也许这不是失败，而是另一种开始。小城的生活也有它的美好。',
+    icon: '🏘️',
+    type: 'normal',
+    typeText: '90后现实',
+    weight: 12,
+    conditions: {
+      ageRange: [26, 33],
+      minAttributes: {
+        happiness: 50
+      },
+      requireFlags: ['laid_off_worker', 'return_home'],
+      excludeFlags: []
+    }
+  },
+
+  {
+    id: 'ending_90s_qq_childhood',
+    title: 'QQ童年',
+    description: '你从小学就开始用QQ，见证了QQ空间、QQ农场、QQ秀的时代。虽然现在用微信，但QQ号依然是你最珍贵的数字资产。那些年的QQ签名、空间说说，是你90后青春最真实的见证。',
+    icon: '🐧',
+    type: 'normal',
+    typeText: '90后回忆',
+    weight: 15,
+    conditions: {
+      ageRange: [20, 30],
+      minAttributes: {
+        social: 60,
+        happiness: 65
+      },
+      requireFlags: ['post_90s_qq'],
+      excludeFlags: []
+    }
+  },
+
+  {
+    id: 'ending_90s_feizhuliu_youth',
+    title: '非主流青春',
+    description: '初中时你玩过非主流，QQ空间充满火星文和伤感文字。现在回想起来，那是最中二的青春，也是最真实的90后记忆。谁没有过那段时期呢？那时的我们，用独特的方式表达自我。',
+    icon: '🎭',
+    type: 'normal',
+    typeText: '90后回忆',
+    weight: 12,
+    conditions: {
+      ageRange: [18, 28],
+      minAttributes: {
+        charm: 50,
+        happiness: 60
+      },
+      requireFlags: ['post_90s_feizhuliu'],
+      excludeFlags: []
+    }
+  },
+
+  {
+    id: 'ending_90s_waimai_generation',
+    title: '外卖一代',
+    description: '你是典型的90后外卖一代。三餐靠外卖，生活靠快递。虽然妈妈说这样不健康，但你已经习惯了。这就是90后的生活方式吧，忙碌、便捷、有点不健康。但至少，你还活着。',
+    icon: '🍜',
+    type: 'normal',
+    typeText: '90后生活',
+    weight: 15,
+    conditions: {
+      ageRange: [22, 32],
+      minAttributes: {
+        happiness: 55,
+        health: 45
+      },
+      requireFlags: ['post_90s_waimai'],
+      excludeFlags: ['health_freak']
+    }
+  },
+
+  {
+    id: 'ending_90s_single_by_choice',
+    title: '主动单身',
+    description: '90后的你选择单身。父母催婚，但你不想将就。你一个人租房、做饭、旅行，享受独处的自由。也许未来会改变，但现在，你觉得单身也挺好。这是90后的态度，不妥协的生活方式。',
+    icon: '👤',
+    type: 'good',
+    typeText: '90后选择',
+    weight: 12,
+    conditions: {
+      ageRange: [26, 35],
+      minAttributes: {
+        happiness: 70,
+        charm: 60
+      },
+      requireFlags: ['single_by_choice'],
+      excludeFlags: ['in_relationship']
+    }
+  },
+
+  {
+    id: 'ending_90s_dream_chaser',
+    title: '追梦少年',
+    description: '90后的你还在追梦。音乐、绘画、写作...你的梦想也许不能养活自己，但你还在坚持。白天上班，晚上追梦。也许永远不会成功，但至少你试过。这或许就是90后的浪漫主义吧。',
+    icon: '✨',
+    type: 'good',
+    typeText: '90后梦想',
+    weight: 10,
+    conditions: {
+      ageRange: [22, 32],
+      minAttributes: {
+        happiness: 75,
+        charm: 70
+      },
+      requireFlags: ['dream_chaser'],
+      excludeFlags: ['workaholic']
+    }
+  },
+
+  {
+    id: 'ending_90s_ninetysix_survivor',
+    title: '996幸存者',
+    description: '你在996工作制中坚持了下来，身体没垮，精神没崩。虽然健康受损，但财富积累了不少。你用健康换来了金钱，这是90后的无奈选择。至少你活下来了，还在继续战斗。',
+    icon: '💪',
+    type: 'normal',
+    typeText: '90后奋斗',
+    weight: 12,
+    conditions: {
+      ageRange: [26, 35],
+      minAttributes: {
+        wealth: 70,
+        health: 40
+      },
+      requireFlags: ['ninety_six_worker'],
+      excludeFlags: []
+    }
+  },
+
+  {
+    id: 'ending_90s_remember_youth',
+    title: '致青春',
+    description: '你保存了90后青春的所有记忆：周杰伦的歌、QQ空间说说、偷菜游戏、非主流照片...2026年的你回看这些，虽然觉得中二，但也很珍贵。那是属于90后的青春，再也不会有的时光。',
+    icon: '📸',
+    type: 'good',
+    typeText: '90后情怀',
+    weight: 15,
+    conditions: {
+      ageRange: [20, 35],
+      minAttributes: {
+        happiness: 70
+      },
+      requireFlags: ['jay_chou_fan', 'post_90s_qq'],
+      excludeFlags: []
+    }
+  },
+
   // ===== 好结局 =====
   {
     id: 'ending_tech_expert',
@@ -1710,6 +1958,446 @@ const endingsData = [
         luck: 90
       },
       requireFlags: ['ai_adopter', 'ar_enthusiast'],
+      excludeFlags: []
+    }
+  },
+
+  // ===== 80后/90后专属结局 =====
+
+  {
+    id: 'ending_90s_douyin_celebrity',
+    title: '抖音顶流',
+    description: '你从2018年开始做抖音,通过短视频记录生活、分享知识。五年后粉丝破千万,成为平台顶流创作者。广告代言、带货直播收入丰厚,你证明了90后可以在新媒体时代实现自我价值。',
+    icon: '🎬',
+    type: 'special',
+    typeText: '90后传奇',
+    weight: 12,
+    conditions: {
+      ageRange: [22, 35],
+      birthYearRange: [1990, 2002],
+      minAttributes: {
+        social: 85,
+        charm: 80,
+        happiness: 70
+      },
+      requireFlags: ['tiktok_creator', 'influencer'],
+      excludeFlags: []
+    }
+  },
+
+  {
+    id: 'ending_90s_tech_entrepreneur',
+    title: '创业先锋',
+    description: '大学毕业后你没有选择稳定工作,而是加入了创业大军。经过多次失败,你终于找到了方向,创办的公司成功融资。你代表了90后敢闯敢拼的精神。',
+    icon: '🚀',
+    type: 'special',
+    typeText: '90后传奇',
+    weight: 10,
+    conditions: {
+      ageRange: [25, 38],
+      birthYearRange: [1988, 1998],
+      minAttributes: {
+        tech_skill: 80,
+        wealth: 70,
+        education: 75
+      },
+      requireFlags: ['entrepreneur'],
+      excludeFlags: ['corporate_slave']
+    }
+  },
+
+  {
+    id: 'ending_90s_freelancer',
+    title: '自由职业者',
+    description: '你厌倦了996,选择了自由职业。做设计、写文案、拍视频...虽然收入不稳定,但你拥有了时间自由。你在家乡的小城市买了房,过着自己喜欢的生活。',
+    icon: '🏝️',
+    type: 'good',
+    typeText: '90后生活',
+    weight: 15,
+    conditions: {
+      ageRange: [25, 40],
+      birthYearRange: [1990, 2000],
+      minAttributes: {
+        happiness: 75,
+        tech_skill: 65
+      },
+      requireFlags: ['work_life_balance', 'content_creator'],
+      excludeFlags: ['corporate_slave']
+    }
+  },
+
+  {
+    id: 'ending_90s_slash_youth',
+    title: '斜杠青年',
+    description: '你不是朝九晚五的打工人,而是拥有多重身份的斜杠青年。程序员/摄影师/博主/咖啡师...你用多元的方式定义成功,活出了90后的精彩。',
+    icon: '🎭',
+    type: 'good',
+    typeText: '90后生活',
+    weight: 12,
+    conditions: {
+      ageRange: [23, 35],
+      birthYearRange: [1990, 2002],
+      minAttributes: {
+        social: 70,
+        charm: 70,
+        tech_skill: 60
+      },
+      requireFlags: ['content_creator', 'tech_enthusiast'],
+      excludeFlags: ['corporate_slave']
+    }
+  },
+
+  {
+    id: 'ending_90s_digital_nomad',
+    title: '数字游民',
+    description: '你卖掉了大城市的房子,带着电脑开始了边旅行边工作的生活。在大理、在清迈、在巴厘岛...你用互联网打破了地理限制,过上了很多人向往的自由生活。',
+    icon: '🌴',
+    type: 'special',
+    typeText: '90后传奇',
+    weight: 8,
+    conditions: {
+      ageRange: [25, 38],
+      birthYearRange: [1990, 2000],
+      minAttributes: {
+        happiness: 80,
+        tech_skill: 75,
+        wealth: 60
+      },
+      requireFlags: ['remote_worker', 'travel_enthusiast'],
+      excludeFlags: ['home_owner', 'corporate_slave']
+    }
+  },
+
+  {
+    id: 'ending_90s_full_time_child',
+    title: '全职儿女',
+    description: '你辞掉工作回到家里,全职照顾父母,由父母提供经济支持。这不是啃老,而是两代人之间的新型契约关系。你享受家庭时光,父母也得到悉心照料。',
+    icon: '👨‍👩‍👧‍👦',
+    type: 'normal',
+    typeText: '90后选择',
+    weight: 10,
+    conditions: {
+      ageRange: [25, 40],
+      birthYearRange: [1990, 1998],
+      minAttributes: {
+        happiness: 65,
+        social: 55
+      },
+      requireFlags: ['family_oriented'],
+      excludeFlags: ['workaholic', 'corporate_slave']
+    }
+  },
+
+  {
+    id: 'ending_90s_city_escaper',
+    title: '逃离北上广',
+    description: '你在北京上海奋斗了十年,最终还是选择回到家乡。虽然收入少了,但生活质量提高了。你终于有时间陪父母、和朋友聚会,不再为房贷焦虑。这是你自己的选择。',
+    icon: '🏠',
+    type: 'normal',
+    typeText: '90后选择',
+    weight: 15,
+    conditions: {
+      ageRange: [28, 40],
+      birthYearRange: [1988, 1998],
+      minAttributes: {
+        happiness: 70,
+        health: 65
+      },
+      requireFlags: ['city_escaper', 'family_oriented'],
+      excludeFlags: []
+    }
+  },
+
+  {
+    id: 'ending_90s_house_slave',
+    title: '房奴三十年',
+    description: '你掏空六个钱包,在一线城市买了房。从此每月房贷占去收入的大半,不敢辞职、不敢消费、不敢生病。你拥有了房子,却失去了自由。这是90后的普遍困境。',
+    icon: '🏦',
+    type: 'normal',
+    typeText: '90后现实',
+    weight: 18,
+    conditions: {
+      ageRange: [28, 45],
+      birthYearRange: [1985, 1998],
+      minAttributes: {
+        wealth: 50
+      },
+      maxAttributes: {
+        happiness: 50
+      },
+      requireFlags: ['home_owner'],
+      excludeFlags: ['wealth_inherited']
+    }
+  },
+
+  {
+    id: 'ending_90s_corporate_slave',
+    title: '996幸存者',
+    description: '你在互联网大厂工作了十年,经历过无数996。身体透支、头发稀疏、体检报告异常...但你拿到了股票期权,实现了财务自由。这笔财富是用健康换来的,值得吗?',
+    icon: '💼',
+    type: 'normal',
+    typeText: '90后代价',
+    weight: 15,
+    conditions: {
+      ageRange: [30, 42],
+      birthYearRange: [1985, 1995],
+      minAttributes: {
+        wealth: 75
+      },
+      maxAttributes: {
+        health: 45,
+        happiness: 50
+      },
+      requireFlags: ['corporate_slave'],
+      excludeFlags: ['work_life_balance']
+    }
+  },
+
+  {
+    id: 'ending_90s_laid_off',
+    title: '35岁危机',
+    description: '你35岁那年,公司优化人员,你成了"被优化"的对象。投了上百份简历,面试机会寥寥。你最终接受了降薪一半的工作,从大厂光环中坠落。这是90后中年危机的真实写照。',
+    icon: '📉',
+    type: 'bad',
+    typeText: '90后困境',
+    weight: 12,
+    conditions: {
+      ageRange: [32, 45],
+      birthYearRange: [1985, 1995],
+      maxAttributes: {
+        wealth: 45,
+        happiness: 45
+      },
+      requireFlags: ['corporate_slave', 'job_hopper'],
+      excludeFlags: ['entrepreneur', 'business_owner']
+    }
+  },
+
+  {
+    id: 'ending_90s_marriage_pressure',
+    title: '被催婚的最后',
+    description: '父母年迈,催婚从未停止。你尝试过相亲,但始终没有遇到对的人。最后你选择了单身,虽然偶尔孤独,但至少是自己的选择。这是90后对传统婚恋观念的反叛。',
+    icon: '💔',
+    type: 'normal',
+    typeText: '90后选择',
+    weight: 10,
+    conditions: {
+      ageRange: [30, 45],
+      birthYearRange: [1985, 1998],
+      minAttributes: {
+        independence: true
+      },
+      maxAttributes: {
+        happiness: 55
+      },
+      requireFlags: ['independent', 'missed_love'],
+      excludeFlags: ['in_relationship', 'married']
+    }
+  },
+
+  {
+    id: 'ending_90s_lie_flat',
+    title: '躺平一代',
+    description: '你看透了内卷的本质,选择了躺平。不买房、不结婚、不生娃,低欲望生活。虽然被社会批评,但你找到了内心的平静。这是90后对高压社会的无声反抗。',
+    icon: '🛌',
+    type: 'normal',
+    typeText: '90后态度',
+    weight: 10,
+    conditions: {
+      ageRange: [25, 40],
+      birthYearRange: [1990, 2000],
+      minAttributes: {
+        happiness: 60
+      },
+      maxAttributes: {
+        wealth: 50
+      },
+      requireFlags: ['easy_going', 'renter'],
+      excludeFlags: ['home_owner', 'corporate_slave', 'workaholic']
+    }
+  },
+
+  {
+    id: 'ending_90s_nostalgia_seeker',
+    title: '怀旧收藏家',
+    description: '你疯狂收藏80后/90后的童年记忆:磁带、CD、Game Boy、诺基亚手机、QQ秀截图...这些旧物承载着你的青春。你在快节奏的时代里,用怀旧对抗焦虑。',
+    icon: '📼',
+    type: 'normal',
+    typeText: '90后情怀',
+    weight: 8,
+    conditions: {
+      ageRange: [28, 45],
+      birthYearRange: [1985, 1998],
+      minAttributes: {
+        happiness: 65,
+        charm: 60
+      },
+      requireFlags: ['nostalgia_seeker', 'memory_keeper'],
+      excludeFlags: []
+    }
+  },
+
+  {
+    id: 'ending_80s_reform_beneficiary',
+    title: '时代红利',
+    description: '作为80后,你赶上了改革开放最好的时代。2000年上大学,2008年买房,2010年创业。每一步都踏准了节奏,你感慨:个人奋斗固然重要,但时代机遇同样不可或缺。',
+    icon: '🌟',
+    type: 'special',
+    typeText: '80后传奇',
+    weight: 10,
+    conditions: {
+      ageRange: [38, 50],
+      birthYearRange: [1980, 1989],
+      minAttributes: {
+        wealth: 85,
+        happiness: 75,
+        education: 70
+      },
+      requireFlags: ['home_owner', 'business_owner'],
+      excludeFlags: ['laid_off']
+    }
+  },
+
+  {
+    id: 'ending_80s_sandwich_generation',
+    title: '夹心层',
+    description: '上有年迈父母,下有年幼子女,中间还有房贷车贷。你是典型的80后夹心层,压力山大但从不放弃。你咬牙扛起责任,是家庭的顶梁柱。',
+    icon: '🥪',
+    type: 'normal',
+    typeText: '80后现实',
+    weight: 15,
+    conditions: {
+      ageRange: [35, 50],
+      birthYearRange: [1980, 1989],
+      minAttributes: {
+        health: 55,
+        social: 60
+      },
+      maxAttributes: {
+        happiness: 55
+      },
+      requireFlags: ['home_owner', 'family_oriented'],
+      excludeFlags: ['wealthy']
+    }
+  },
+
+  {
+    id: 'ending_90s_lucky_gamer',
+    title: '电竞冠军',
+    description: '你从小就热爱游戏,家人说你不务正业。但你坚持了下来,2015年后电竞行业爆发,你成为职业选手,带领队伍获得了世界冠军。当年那些质疑的声音都变成了赞叹。',
+    icon: '🎮',
+    type: 'special',
+    typeText: '90后传奇',
+    weight: 5,
+    conditions: {
+      ageRange: [20, 30],
+      birthYearRange: [1992, 2002],
+      minAttributes: {
+        tech_skill: 85,
+        luck: 80,
+        charm: 70
+      },
+      requireFlags: ['gamer', 'esports_pro'],
+      excludeFlags: ['corporate_slave']
+    }
+  },
+
+  {
+    id: 'ending_90s_crypto_winner',
+    title: '币圈暴富',
+    description: '2017年你买入的比特币,2021年卖在了最高点。你实现了财务自由,辞掉了996的工作。朋友说你运气好,但你知道,这是敢于承担风险的结果。',
+    icon: '₿',
+    type: 'special',
+    typeText: '90后传奇',
+    weight: 4,
+    conditions: {
+      ageRange: [25, 40],
+      birthYearRange: [1990, 2000],
+      minAttributes: {
+        wealth: 90,
+        luck: 85
+      },
+      requireFlags: ['crypto_investor', 'risk_taker'],
+      excludeFlags: ['risk_avoider']
+    }
+  },
+
+  {
+    id: 'ending_90s_crypto_loser',
+    title: '币圈爆仓',
+    description: '你听信了朋友的推荐,all in了某个山寨币。结果项目跑路,你赔光了积蓄还背上了债。你发誓再也不碰虚拟货币了,但为时已晚。',
+    icon: '📉',
+    type: 'bad',
+    typeText: '90后教训',
+    weight: 8,
+    conditions: {
+      ageRange: [22, 40],
+      birthYearRange: [1990, 2002],
+      maxAttributes: {
+        wealth: 30,
+        happiness: 35
+      },
+      requireFlags: ['crypto_investor'],
+      excludeFlags: ['value_investor']
+    }
+  },
+
+  {
+    id: 'ending_90s_p2p_victim',
+    title: 'P2P踩雷',
+    description: '2018年P2P爆雷潮,你的投资血本无归。那是你准备用来买房的首付,现在全没了。你痛恨自己的贪婪,也痛恨这个混乱的时代。',
+    icon: '💸',
+    type: 'bad',
+    typeText: '90后教训',
+    weight: 10,
+    conditions: {
+      ageRange: [25, 40],
+      birthYearRange: [1988, 1998],
+      maxAttributes: {
+        wealth: 40,
+        happiness: 40
+      },
+      requireFlags: ['p2p_investor'],
+      excludeFlags: []
+    }
+  },
+
+  {
+    id: 'ending_90s_antifan',
+    title: '非主流回忆',
+    description: '你曾经是个非主流:杀马特发型、火星文签名、QQ空间伤感文字...现在回看那些照片,你尴尬得想删掉,但那也是你青春的一部分啊!',
+    icon: '🎸',
+    type: 'normal',
+    typeText: '90后回忆',
+    weight: 8,
+    conditions: {
+      ageRange: [25, 40],
+      birthYearRange: [1990, 2000],
+      minAttributes: {
+        happiness: 60,
+        charm: 55
+      },
+      requireFlags: ['mars_user', 'nostalgia_seeker'],
+      excludeFlags: []
+    }
+  },
+
+  {
+    id: 'ending_90s_qzone_curator',
+    title: 'QQ空间守夜人',
+    description: '你的QQ空间记录了从2006年到2026年的全部时光。非主流说说、 emo日志、访客记录...这是你的数字日记本。你定期回去翻看,每次都感慨万千。',
+    icon: '📝',
+    type: 'normal',
+    typeText: '90后回忆',
+    weight: 8,
+    conditions: {
+      ageRange: [26, 42],
+      birthYearRange: [1990, 2000],
+      minAttributes: {
+        happiness: 65,
+        social: 60
+      },
+      requireFlags: ['qq_space_user', 'memory_keeper'],
       excludeFlags: []
     }
   }
