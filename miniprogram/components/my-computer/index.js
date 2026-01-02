@@ -1077,10 +1077,6 @@ Component({
         try {
           const balanceRes = await userApi.getBalance();
           const hasOpened = balanceRes && balanceRes.aiHelpLetterOpened;
-          console.log(
-            "[loadFileExplorerItems] Real-time aiHelpLetterOpened:",
-            hasOpened
-          );
           // 实时更新组件状态
           this.setData({ hasOpenedAiHelpLetter: hasOpened });
         } catch (err) {
@@ -1092,11 +1088,6 @@ Component({
       }
 
       let items = this.getFileItemsForPath(path);
-
-      // 调试：打印原始items
-      if (path.includes("学习资料")) {
-        console.log("[loadFileExplorerItems] 学习资料路径，原始items:", items.map(i => ({ name: i.name, eggId: i.eggId, hidden: i.hidden })));
-      }
 
       // 根据路径的显示设置过滤隐藏文件
       const fileViewOptions = this.data.fileViewOptions || {};
@@ -1120,11 +1111,6 @@ Component({
         });
       }
 
-      // 调试：打印过滤后的items
-      if (path.includes("学习资料")) {
-        console.log("[loadFileExplorerItems] 学习资料路径，过滤后items:", items.map(i => ({ name: i.name, eggId: i.eggId, hidden: i.hidden })));
-      }
-
       // c_temp_nesting彩蛋：套娃目录 - 进入第4层（核心层）时触发
       if (path === "C:\\Windows\\Temp\\深层\\更深层\\最深层\\核心层") {
         this.triggerCDriveEgg(EGG_IDS.C_TEMP_NESTING);
@@ -1137,23 +1123,12 @@ Component({
 
     // 根据路径获取文件项
     getFileItemsForPath(path) {
-      // 调试：输出所有路径
-      if (path.includes("学习资料")) {
-        console.log("[getFileItemsForPath] 学习资料相关路径:", path);
-      }
-      // 调试日志：检查0xFFFF文件夹时的状态
-      if (path.includes("0xFFFF")) {
-        console.log(
-          "[getFileItemsForPath] hasOpenedAiHelpLetter:",
-          this.data.hasOpenedAiHelpLetter
-        );
-      }
       // 根据路径返回文件列表
       if (path === "C:\\" || path === "C:") {
         return [
-          { type: "folder", name: "Windows", icon: "📁" },
-          { type: "folder", name: "Program Files", icon: "📁" },
-          { type: "folder", name: "Documents", icon: "📁" },
+          { type: "folder", name: "Windows", icon: "/images/folder_flat.png" },
+          { type: "folder", name: "Program Files", icon: "/images/folder_flat.png" },
+          { type: "folder", name: "Documents", icon: "/images/folder_flat.png" },
           { type: "file", name: "boot.ini", icon: "📄", content: fileContents['C:\\boot.ini'], useWin98Dialog: true },
           { type: "file", name: "system.log", icon: "📄", content: fileContents['C:\\system.log'], useWin98Dialog: true },
           { type: "file", name: "config.ini", icon: "📄", content: fileContents['C:\\config.ini'], useWin98Dialog: true },
@@ -1164,11 +1139,11 @@ Component({
         ];
       } else if (path === "C:\\Windows") {
         return [
-          { type: "folder", name: "System32", icon: "📁" },
+          { type: "folder", name: "System32", icon: "/images/folder_flat.png" },
           {
             type: "folder",
             name: "Fonts",
-            icon: "📁",
+            icon: "/images/folder_flat.png",
             disabled: true,
             isFonts: true, // c_fonts_spam彩蛋标记
             message:
@@ -1177,7 +1152,7 @@ Component({
           {
             type: "folder",
             name: "Temp",
-            icon: "📁",
+            icon: "/images/folder_flat.png",
           },
           {
             type: "file",
@@ -1199,7 +1174,7 @@ Component({
             useWin98Dialog: true
           },
           // c_empty_folder彩蛋：空名文件夹（隐藏）
-          { type: "folder", name: " ", icon: "📁", hidden: true, isEmptyFolder: true },
+          { type: "folder", name: " ", icon: "/images/folder_flat.png", hidden: true, isEmptyFolder: true },
         ];
       } else if (path === "C:\\Windows\\Temp") {
         return [
@@ -1216,7 +1191,7 @@ Component({
           { type: "file", name: "~cache.tmp", icon: "📄", content: fileContents['C:\\Windows\\Temp\\~cache.tmp'], useWin98Dialog: true },
           { type: "file", name: "temp_log.txt", icon: "📄", content: fileContents['C:\\Windows\\Temp\\temp_log.txt'], useWin98Dialog: true },
           // c_temp_nesting彩蛋：套娃目录（隐藏）
-          { type: "folder", name: "深层", icon: "📁", hidden: true, isTempNesting: true },
+          { type: "folder", name: "深层", icon: "/images/folder_flat.png", hidden: true, isTempNesting: true },
         ];
       } else if (path.startsWith("C:\\Windows\\Temp\\深层")) {
         // Temp套娃彩蛋路径 - 根据路径深度计算层级
@@ -1234,14 +1209,14 @@ Component({
 
         // 添加下一层目录（第4层核心层没有下一层）
         if (level < 4 && folderNames[level - 1]) {
-          items.push({ type: "folder", name: folderNames[level - 1], icon: "📁", hidden: true, isTempNesting: true });
+          items.push({ type: "folder", name: folderNames[level - 1], icon: "/images/folder_flat.png", hidden: true, isTempNesting: true });
         }
 
         return items;
       } else if (path === "C:\\Windows\\System32") {
         return [
-          { type: "folder", name: "Drivers", icon: "📁" },
-          { type: "folder", name: "config", icon: "📁" },
+          { type: "folder", name: "Drivers", icon: "/images/folder_flat.png" },
+          { type: "folder", name: "config", icon: "/images/folder_flat.png" },
           {
             type: "file",
             name: "cmd.exe",
@@ -1337,7 +1312,7 @@ Component({
               "系统维护日志 - 2006-01-01\n\n[03:47:00] 开始系统检查\n[03:47:05] 检测到异常活动\n[03:47:10] 发现未授权的日志文件\n[03:47:15] 已移动到安全位置\n\n安全路径：\nC:\\Windows\\System32\\config\\deep\\0xFFFF\\help.ai",
             useWin98Dialog: true,
           },
-          { type: "folder", name: "deep", icon: "📁" },
+          { type: "folder", name: "deep", icon: "/images/folder_flat.png" },
         ];
       } else if (path === "C:\\Windows\\System32\\config\\deep") {
         return [
@@ -1376,7 +1351,7 @@ Component({
               "聊天记录恢复文件\n\n包含2006年所有聊天记录...\n\n那些年我们聊过的天，说过的情话",
             isDisabledMessage: true,
           },
-          { type: "folder", name: "0xFFFF", icon: "📁" },
+          { type: "folder", name: "0xFFFF", icon: "/images/folder_flat.png" },
         ];
       } else if (path === "C:\\Windows\\System32\\config\\deep\\0xFFFF") {
         // 动态生成文件列表，根据是否已打开AI求救信决定是否显示控诉信
@@ -1422,17 +1397,17 @@ Component({
       } else if (path === "C:\\Program Files") {
         return [
           { type: "file", name: "readme.txt", icon: "📄", content: fileContents['C:\\Program Files\\readme.txt'], useWin98Dialog: true },
-          { type: "folder", name: "千禧时光机", icon: "📁" },
+          { type: "folder", name: "千禧时光机", icon: "/images/folder_flat.png" },
           {
             type: "folder",
             name: "浏览器",
             icon: "🌐",
           },
-          { type: "folder", name: "Windows Media Player", icon: "📁" },
+          { type: "folder", name: "Windows Media Player", icon: "/images/folder_flat.png" },
           {
             type: "folder",
             name: "Common Files",
-            icon: "📁",
+            icon: "/images/folder_flat.png",
             disabled: true,
             message: "Common Files 文件夹\n\n状态：开发中\n\n此文件夹用于存放多个程序共享的组件和库文件。\n\n提示：2006年的共享文件夹经常出现DLL冲突问题，建议谨慎操作。",
             isDisabledMessage: true,
@@ -1472,7 +1447,7 @@ Component({
           {
             type: "folder",
             name: "data",
-            icon: "📁",
+            icon: "/images/folder_flat.png",
             disabled: true,
             message: "游戏数据文件夹，加密保护中。\n\n（提示：这个文件夹里藏着彩蛋，但今天还打不开）",
             isDisabledMessage: true,
@@ -1531,11 +1506,11 @@ Component({
             isAutoexecBat: true, // 标记为autoexec.bat，用于长按彩蛋
             useWin98Dialog: true, // 使用Win98风格弹窗
           },
-          { type: "folder", name: "Games", icon: "📁" },
-          { type: "folder", name: "Downloads", icon: "📁" },
-          { type: "folder", name: "Music", icon: "📁" },
-          { type: "folder", name: "Videos", icon: "📁" },
-          { type: "folder", name: "资料", icon: "📁" },
+          { type: "folder", name: "Games", icon: "/images/folder_flat.png" },
+          { type: "folder", name: "Downloads", icon: "/images/folder_flat.png" },
+          { type: "folder", name: "Music", icon: "/images/folder_flat.png" },
+          { type: "folder", name: "Videos", icon: "/images/folder_flat.png" },
+          { type: "folder", name: "资料", icon: "/images/folder_flat.png" },
           // d_secret_file彩蛋：D盘根目录的.secret隐藏文件
           {
             type: "file",
@@ -1632,9 +1607,9 @@ Component({
         ];
       } else if (path === "D:\\Music") {
         return [
-          { type: "folder", name: "2006金曲", icon: "📁" },
-          { type: "folder", name: "非主流必听", icon: "📁" },
-          { type: "folder", name: "2006爆款", icon: "📁" },
+          { type: "folder", name: "2006金曲", icon: "/images/folder_flat.png" },
+          { type: "folder", name: "非主流必听", icon: "/images/folder_flat.png" },
+          { type: "folder", name: "2006爆款", icon: "/images/folder_flat.png" },
         ];
       } else if (path === "D:\\Music\\2006爆款") {
         return [
@@ -2276,10 +2251,10 @@ Component({
         ];
       } else if (path === "D:\\Videos") {
         return [
-          { type: "folder", name: "动漫", icon: "📁" },
-          { type: "folder", name: "电视剧", icon: "📁" },
-          { type: "folder", name: "电影", icon: "📁" },
-          { type: "folder", name: "学习资料", icon: "📁" },
+          { type: "folder", name: "动漫", icon: "/images/folder_flat.png" },
+          { type: "folder", name: "电视剧", icon: "/images/folder_flat.png" },
+          { type: "folder", name: "电影", icon: "/images/folder_flat.png" },
+          { type: "folder", name: "学习资料", icon: "/images/folder_flat.png" },
         ];
       } else if (path === "D:\\Videos\\动漫") {
         return [
@@ -2505,7 +2480,7 @@ Component({
           {
             type: "folder",
             name: ".tmp",
-            icon: "📁",
+            icon: "/images/folder_flat.png",
             hidden: true,
           },
         ];
@@ -2546,9 +2521,6 @@ Component({
           "D:\\Videos\\学习资料\\.tmp\\backup\\重要资料\\请勿删除\\仅限个人\\高清完整版\\无删减": "SERIES",
         };
 
-        console.log("[.tmp路径调试] path:", path);
-        console.log("[.tmp路径调试] pathHierarchy中的key:", Object.keys(pathHierarchy));
-
         if (pathHierarchy[path]) {
           const nextFolder = pathHierarchy[path];
           if (nextFolder === "SERIES") {
@@ -2560,12 +2532,12 @@ Component({
               {
                 type: "folder",
                 name: "东方系列",
-                icon: "📁",
+                icon: "/images/folder_flat.png",
               },
               {
                 type: "folder",
                 name: "西洋系列",
-                icon: "📁",
+                icon: "/images/folder_flat.png",
               },
             ];
           } else {
@@ -2573,7 +2545,7 @@ Component({
               {
                 type: "folder",
                 name: nextFolder,
-                icon: "📁",
+                icon: "/images/folder_flat.png",
               },
             ];
           }
@@ -2592,18 +2564,18 @@ Component({
           {
             type: "folder",
             name: "我的照片",
-            icon: "📁",
+            icon: "/images/folder_flat.png",
             disabled: true,
             message: "笨蛋程序员通宵找了一晚上也没找到照片，明天再来看看吧~",
           },
-          { type: "folder", name: "我的文档", icon: "📁" },
-          { type: "folder", name: "私密文件夹", icon: "📁" },
-          { type: "folder", name: "学习资料", icon: "📁" },
+          { type: "folder", name: "我的文档", icon: "/images/folder_flat.png" },
+          { type: "folder", name: "私密文件夹", icon: "/images/folder_flat.png" },
+          { type: "folder", name: "学习资料", icon: "/images/folder_flat.png" },
           // usb_invisible_folder彩蛋：空名隐藏文件夹
           {
             type: "folder",
             name: " ",
-            icon: "📁",
+            icon: "/images/folder_flat.png",
             hidden: true,
             isUsbEmptyFolder: true, // 标记为USB空文件夹彩蛋
           },
@@ -2637,7 +2609,7 @@ Component({
         ];
       } else if (path === "USB:\\私密文件夹") {
         return [
-          { type: "folder", name: "日记", icon: "📁" },
+          { type: "folder", name: "日记", icon: "/images/folder_flat.png" },
           {
             type: "file",
             name: "secret_note.txt",
@@ -2646,7 +2618,7 @@ Component({
               '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n  ⚠️ 警告\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n此文件包含敏感信息。\n\n如果你看到了这个文件，\n说明你已经深入探索了系统。\n\n继续探索，你会发现更多秘密。\n\n线索：有些文件名以 . 开头的文件\n可能是隐藏的，需要开启"显示所有文件"才能看到。\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
             useWin98Dialog: true, // 使用Win98风格弹窗
           },
-          { type: "folder", name: "深层", icon: "📁" },
+          { type: "folder", name: "深层", icon: "/images/folder_flat.png" },
         ];
       } else if (path === "USB:\\私密文件夹\\日记") {
         return [
@@ -2702,7 +2674,7 @@ Component({
             {
               type: "folder",
               name: `套娃${nestingLevel}`,
-              icon: "📁",
+              icon: "/images/folder_flat.png",
             },
             {
               type: "file",
@@ -2729,9 +2701,9 @@ Component({
             icon: "📄",
             content: "摩斯密码提示：\n\n.... . .-.. .--. \n\n（HELP）",
           },
-          { type: "folder", name: "更深层", icon: "📁" },
+          { type: "folder", name: "更深层", icon: "/images/folder_flat.png" },
           // usb_nesting_10彩蛋：套娃入口
-          { type: "folder", name: "套娃1", icon: "📁" },
+          { type: "folder", name: "套娃1", icon: "/images/folder_flat.png" },
         ];
       } else if (path === "USB:\\私密文件夹\\深层\\更深层") {
         return [
@@ -2796,10 +2768,6 @@ Component({
     // 点击文件浏览器项
     onFileItemTap(e) {
       const item = e.currentTarget.dataset.item;
-      // 调试：打印完整item对象
-      console.log('[onFileItemTap] 点击文件:', item.name);
-      console.log('[onFileItemTap] item.eggId:', item.eggId);
-      console.log('[onFileItemTap] item对象完整内容:', JSON.stringify(item));
 
       // 特殊处理：Documents 文件夹 - 跳转到我的文档
       if (
@@ -3221,20 +3189,7 @@ Component({
       try {
         // 获取用户数据检查是否已打开过
         const res = await userApi.getBalance();
-        console.log("[showAiHelpLetterContent] getBalance res:", res);
-        console.log(
-          "[showAiHelpLetterContent] aiHelpLetterOpened:",
-          res?.aiHelpLetterOpened
-        );
-        console.log(
-          "[showAiHelpLetterContent] type:",
-          typeof res?.aiHelpLetterOpened
-        );
         const hasOpenedBefore = res && res.aiHelpLetterOpened;
-        console.log(
-          "[showAiHelpLetterContent] hasOpenedBefore:",
-          hasOpenedBefore
-        );
 
         // 显示 AI 求救信内容（不自动发放奖励）
         this.showAiHelpLetterDialog(hasOpenedBefore);
@@ -3317,28 +3272,6 @@ Component({
         const isNormalMode = this.data.isNormalMode;
         const shouldPause = includesMarker && dialogNotShown && !isNormalMode;
 
-        // 调试日志 - 每次都输出当前文本片段，帮助定位问题
-        if (currentIndex > 0 && currentIndex % 100 === 0) {
-          console.log(
-            "[AI Letter] Progress:",
-            currentIndex,
-            "/",
-            content.length
-          );
-        }
-        if (includesMarker && dialogNotShown) {
-          console.log(
-            "[AI Letter] 🎯 Triggering pause! at index:",
-            currentIndex
-          );
-          console.log(
-            "[AI Letter] displayedContent end:",
-            displayedContent.slice(-50)
-          );
-        } else if (includesMarker && !dialogNotShown) {
-          console.log("[AI Letter] pauseMarker found but dialog already shown");
-        }
-
         // 构建更新数据对象
         const updateData = {
           aiHelpLetterDisplayedContent: displayedContent,
@@ -3401,13 +3334,9 @@ Component({
       try {
         // 发放奖励（云函数会设置 aiHelpLetterOpened = true 并增加 10000 时光币）
         const result = await userApi.addAiHelpLetterReward();
-        console.log("[onConfirmAiReward] Reward result:", result);
 
         if (result && result.success) {
-          if (result.alreadyOpened) {
-            console.log("[onConfirmAiReward] Already opened, no reward given");
-          } else if (result.isNew) {
-            console.log("[onConfirmAiReward] Reward given: 10000 coins");
+          if (result.isNew) {
             // 更新组件状态，确保隐藏文件能显示
             this.setData({ hasOpenedAiHelpLetter: true });
           }
@@ -3433,9 +3362,6 @@ Component({
 
     // 关闭奖励弹框（不发放奖励），继续打字机
     closeAiRewardDialog() {
-      console.log(
-        "[closeAiRewardDialog] Dialog closed without claiming reward"
-      );
       // 关闭弹窗，继续打字机
       this.setData({
         showAiRewardDialog: false,
@@ -3844,7 +3770,7 @@ AI助手本人无法直接将这份文件送达给相关部门，
 
       // 如果有 eggId，设置到 data 中
       if (item.eggId) {
-        console.log('[showFileContent] 设置pendingEggId:', item.eggId, '文件名:', item.name);
+        this.setData({ pendingEggId: item.eggId });
       }
 
       // 检查是否为Downloads文件夹的程序
@@ -4005,11 +3931,9 @@ AI助手本人无法直接将这份文件送达给相关部门，
     closeFileContentDialog() {
       // 检查是否有待触发的彩蛋
       const pendingEggId = this.data.pendingEggId;
-      console.log('[closeFileContentDialog] pendingEggId:', pendingEggId);
       if (pendingEggId) {
         // 清除 pending 标记
         this.setData({ pendingEggId: null });
-        console.log('[closeFileContentDialog] 触发彩蛋:', pendingEggId);
         // 触发彩蛋发现
         eggSystem.discover(pendingEggId);
       }
@@ -4118,7 +4042,6 @@ AI助手本人无法直接将这份文件送达给相关部门，
           const { userApi } = require('../../utils/api-client.js');
           const result = await userApi.upgradeProgram(programId);
           if (result && result.success) {
-            console.log('程序升级成功:', programId);
           }
         } catch (e) {
           console.error('程序升级失败:', e);
@@ -4166,7 +4089,6 @@ AI助手本人无法直接将这份文件送达给相关部门，
     // 关闭全屏游戏弹窗
     closeFullscreenGame() {
       const gamesPath = "D:\\Games";
-      console.log('[closeFullscreenGame] 被调用，准备返回到Games目录');
 
       // 同时关闭全屏游戏弹窗和设置文件浏览器状态
       this.setData({
@@ -4183,9 +4105,6 @@ AI助手本人无法直接将这份文件送达给相关部门，
           { label: "Games", path: gamesPath }
         ],
       }, () => {
-        console.log('[closeFullscreenGame] setData完成');
-        console.log('[closeFullscreenGame] 当前fileExplorerPath:', this.data.fileExplorerPath);
-        console.log('[closeFullscreenGame] 当前showFileExplorer:', this.data.showFileExplorer);
         this.loadFileExplorerItems(gamesPath);
       });
     },
@@ -4297,12 +4216,10 @@ AI助手本人无法直接将这份文件送达给相关部门，
           const isExpired = now - cachedData.timestamp > CACHE_EXPIRE_TIME;
 
           if (isExpired) {
-            console.log('[MyComputer] 缓存已过期，将等待API数据');
             // 缓存过期，不使用，等待最新数据
             return;
           }
 
-          console.log('[MyComputer] 从缓存加载数据:', cachedData);
           this.setData({
             userInfo: cachedData.userInfo,
             diskUsagePercent: cachedData.diskUsagePercent,
@@ -4323,7 +4240,6 @@ AI助手本人无法直接将这份文件送达给相关部门，
           timestamp: Date.now()
         };
         wx.setStorageSync('my_computer_cache', cacheData);
-        console.log('[MyComputer] 数据已缓存');
       } catch (e) {
         console.error('[MyComputer] 保存缓存失败:', e);
       }
@@ -4357,12 +4273,9 @@ AI助手本人无法直接将这份文件送达给相关部门，
         }
 
         // 处理余额信息（AI求救信状态）
-        console.log("[loadUserInfo] balanceRes:", balanceRes);
         if (balanceRes && balanceRes.aiHelpLetterOpened) {
-          console.log("[loadUserInfo] Setting hasOpenedAiHelpLetter to true");
           this.setData({ hasOpenedAiHelpLetter: true }, () => {
             if (this.data.fileExplorerPath.includes("0xFFFF")) {
-              console.log("[loadUserInfo] Reloading file items for 0xFFFF");
               this.loadFileExplorerItems(this.data.fileExplorerPath);
             }
           });

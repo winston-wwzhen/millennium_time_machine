@@ -78,7 +78,7 @@
   <!-- 任务栏 -->
   <view class="taskbar" bindtap="onTaskbarTap">
     <view class="start-button {{showStartMenu ? 'active' : ''}}" bindtap="toggleStartMenu" catchtap="toggleStartMenu">
-      <image class="win-logo" src="../../images/borders/border_win98.png" mode="aspectFit"></image>
+      <text class="win-logo">🪟</text>
       <text>Start</text>
     </view>
 
@@ -451,7 +451,8 @@
               <text class="about-feature">• 双击桌面图标打开程序</text>
               <text class="about-feature">• 右键点击桌面打开菜单（刷新、系统信息等）</text>
               <text class="about-feature">• 拖动小狮子助手到任意位置</text>
-              <text class="about-feature">• 点击/长按小狮子触发彩蛋</text>
+              <text class="about-feature">• 点击/长按小狮子触发互动</text>
+              <text class="about-feature">• 小狮子会时不时主动和你说话</text>
               <text class="about-feature">• 点击任务栏时间查看日历</text>
             </view>
           </view>
@@ -459,8 +460,9 @@
           <view class="about-section">
             <text class="about-section-title">📟 QCIO 社交系统</text>
             <view class="about-features">
-              <text class="about-feature">• 网友随机分配</text>
+              <text class="about-feature">• 5位数字账号，随机分配20个好友</text>
               <text class="about-feature">• 空间访问、留言、心情日志</text>
+              <text class="about-feature">• 36种AI聊天模式（火星文、非主流等）</text>
               <text class="about-feature">• 等级系统和成长值</text>
               <text class="about-feature">• 每日签到和等级奖励</text>
             </view>
@@ -470,37 +472,45 @@
             <text class="about-section-title">💰 双代币系统</text>
             <view class="about-features">
               <text class="about-feature">• 💎 时光币：发现彩蛋获得</text>
-              <text class="about-feature">• 🌐 网费：特殊功能消耗</text>
-              <text class="about-feature">• 在网管系统兑换网费</text>
+              <text class="about-feature">• 🌐 网费：AI功能消耗（初始30天）</text>
+              <text class="about-feature">• 每日登录自动扣除1天网费</text>
+              <text class="about-feature">• 在网管系统兑换网费（1000币=1天）</text>
             </view>
           </view>
 
           <view class="about-section">
-            <text class="about-section-title">🎮 游戏功能</text>
+            <text class="about-section-title">🎮 娱乐功能</text>
             <view class="about-features">
-              <text class="about-feature">• 火星文翻译器</text>
-              <text class="about-feature">• 非主流相机</text>
-              <text class="about-feature">• 农场系统（种植收获）</text>
+              <text class="about-feature">• 火星文翻译器 - 经典非主流工具</text>
+              <text class="about-feature">• 非主流相机 - 生成2006风格头像</text>
+              <text class="about-feature">• 心情农场 - 种植收获时光币</text>
+              <text class="about-feature">• 浏览器工具 - 计算器日历等</text>
             </view>
           </view>
 
           <view class="about-section">
             <text class="about-section-title">🥚 彩蛋收集</text>
             <view class="about-features">
-              <text class="about-feature">• 大量隐藏彩蛋等你发现</text>
-              <text class="about-feature">• 在"我的文档"中查看彩蛋大全</text>
+              <text class="about-feature">• 20个隐藏彩蛋分布在各处</text>
+              <text class="about-feature">• 我的文档 → 彩蛋文件夹查看彩蛋大全</text>
               <text class="about-feature">• 显示隐藏文件查看彩蛋秘籍</text>
+              <text class="about-feature">• 收集徽章，解锁稀有度奖励</text>
             </view>
           </view>
 
           <view class="about-section">
-            <text class="about-section-title">⚙️ 其他功能</text>
+            <text class="about-section-title">⚙️ 系统功能</text>
             <view class="about-features">
-              <text class="about-feature">• 我的电脑：浏览虚拟文件</text>
-              <text class="about-feature">• 我的文档：彩蛋秘籍</text>
-              <text class="about-feature">• 网管系统：代币管理</text>
-              <text class="about-feature">• 设置：蓝屏彩蛋</text>
+              <text class="about-feature">• 我的电脑：浏览虚拟文件系统</text>
+              <text class="about-feature">• 我的文档：照片、音乐、视频收藏</text>
+              <text class="about-feature">• 网管系统：代币管理和网费充值</text>
+              <text class="about-feature">• 回收站：删除文件触发彩蛋</text>
             </view>
+          </view>
+
+          <view class="about-section">
+            <text class="about-section-title">🎁 寻找彩蛋</text>
+            <text class="welcome-tip">哪怕只是点点桌面的小狮子，或者去我的电脑里瞎逛，里面埋藏了无数的彩蛋，等待着那个好奇心还没过期的你。</text>
           </view>
         </scroll-view>
         <view class="dialog-actions">
@@ -555,7 +565,7 @@
         <view class="win98-title-text">⏰ 时间穿越成功</view>
       </view>
       <view class="win98-window-body">
-        <scroll-view class="welcome-content" scroll-y>
+        <scroll-view class="welcome-content" scroll-y show-scrollbar="{{false}}">
           <text class="welcome-title">现在的北京时间是 {{welcomeCurrentDate}}。</text>
           <text class="welcome-subtitle">但在这台电脑里，时钟已经被回拨了整整 7305 天。</text>
 

@@ -243,8 +243,7 @@ page {
 }
 
 .win-logo {
-  width: 36rpx;
-  height: 36rpx;
+  font-size: 36rpx;
   margin-right: 10rpx;
 }
 
@@ -1649,7 +1648,6 @@ page {
   flex-direction: column;
   gap: 8px;
   max-height: 70vh;
-  overflow-y: auto;
   word-wrap: break-word;
   word-break: break-word;
   box-sizing: border-box;
@@ -1804,3 +1802,9 @@ page {
   transform: translateY(1px);
 }
 
+/* 欢迎弹窗滚动条隐藏 */
+.welcome-content::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}

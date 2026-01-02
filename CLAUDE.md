@@ -177,8 +177,9 @@ Uses WeChat `msgSecCheck` API for content moderation:
 - **Volume Toggle** (system tray): Click speaker icon to toggle mute/unmute
 - **Dynamic Z-Index Management**: Last opened desktop component appears on top (baseZIndex starts at 2000)
 - **My Documents Help Window**: Accessible via "帮助(H)" menu item
+- **Folder Icons**: Uses `folder_flat.png` for consistent styling across my-computer and my-documents
 
-**Helper**: Draggable lion assistant with random interaction messages, easter egg triggers
+**Helper**: Draggable lion assistant with random interaction messages, auto-talks every 8-15 seconds, easter egg triggers
 
 ### Data Isolation Pattern
 

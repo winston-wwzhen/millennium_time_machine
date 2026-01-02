@@ -727,7 +727,8 @@
         <scroll-view class="file-explorer-content" scroll-y catchlongpress="stopPropagation">
           <view class="file-list {{feIsRefreshing ? 'refreshing' : ''}}" catchlongpress="stopPropagation">
             <view class="file-item {{item.disabled ? 'disabled' : ''}}" wx:for="{{fileExplorerItems}}" wx:key="name" bindtap="onFileItemTap" catchlongpress="onFileItemLongPressStart" bindtouchend="onFileItemLongPressEnd" data-item="{{item}}">
-              <text class="file-icon">{{item.icon}}</text>
+              <text class="file-icon" wx:if="{{item.icon.length < 20}}">{{item.icon}}</text>
+              <image class="file-icon image-folder" src="{{item.icon}}" mode="aspectFit" wx:else></image>
               <text class="file-name">{{item.name}}</text>
               <text class="file-rarity" wx:if="{{item.rarity}}">{{item.rarity === 'common' ? '⭐' : item.rarity === 'rare' ? '💎' : item.rarity === 'epic' ? '🌟' : '👑'}}</text>
             </view>

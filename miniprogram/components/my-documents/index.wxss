@@ -149,6 +149,12 @@
   margin-bottom: 4px;
 }
 
+/* 图片类型的文件夹图标 */
+.file-icon.image-folder {
+  width: 40px;
+  height: 40px;
+}
+
 .file-label {
   font-size: 11px;
   color: #000;

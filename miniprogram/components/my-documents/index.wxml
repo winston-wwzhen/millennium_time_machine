@@ -23,15 +23,15 @@
       <!-- 文件夹列表 -->
       <view class="files-grid">
         <view class="file-item" bindtap="onMyPhotosTap">
-          <view class="file-icon">📁</view>
+          <image class="file-icon image-folder" src="/images/folder_flat.png" mode="aspectFit"></image>
           <text class="file-label">我的图片</text>
         </view>
         <view class="file-item" bindtap="onMyMusicTap">
-          <view class="file-icon">📁</view>
+          <image class="file-icon image-folder" src="/images/folder_flat.png" mode="aspectFit"></image>
           <text class="file-label">我的音乐</text>
         </view>
         <view class="file-item" bindtap="onMyVideoTap">
-          <view class="file-icon">📁</view>
+          <image class="file-icon image-folder" src="/images/folder_flat.png" mode="aspectFit"></image>
           <text class="file-label">我的视频</text>
         </view>
         <view class="file-item" bindtap="onDiaryTap">
@@ -47,7 +47,7 @@
           <text class="file-label">头像.bmp</text>
         </view>
         <view class="file-item" bindtap="onEggFolderTap">
-          <view class="file-icon">📁</view>
+          <image class="file-icon image-folder" src="/images/folder_flat.png" mode="aspectFit"></image>
           <text class="file-label">彩蛋</text>
         </view>
       </view>

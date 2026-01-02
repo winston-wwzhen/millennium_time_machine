@@ -5,7 +5,7 @@
       <!-- 标题栏 -->
       <view class="title-bar">
         <view class="title-left" catchtouchstart="onDragStart" catchtouchmove="onDragMove" catchtouchend="onDragEnd">
-          <image class="app-icon" src="/images/borders/border_win98.png" mode="aspectFit"></image>
+          <text class="app-icon">🎬</text>
           <text class="app-name">慢播 3.0</text>
         </view>
         <view class="title-controls">

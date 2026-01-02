@@ -22,6 +22,9 @@ Page({
     isDancing: false, // 小狮子跳舞状态
     showBlueScreen: false, // 蓝屏彩蛋状态
     isMidnightEgg: false, // 午夜彩蛋状态（小狮子发光）
+
+    // 小狮子自动说话定时器
+    lionTalkTimer: null,
     showHiddenIcon: false, // 隐藏图标彩蛋状态
     konamiHalfCompleted: false, // Konami Code 前半部分完成状态
     showGodMode: false, // 上帝模式状态
@@ -116,7 +119,7 @@ Page({
         name: "慢播",
         icon: cloudIcons.getCloudIconUrl('ifthen.png'),
         isImage: true,
-        path: "/pages/manbo/index",
+        path: "component://manbo",
       },
     ],
     showStartMenu: false,
@@ -256,6 +259,9 @@ Page({
       this.updateTime();
     }, 60000);
 
+    // 启动小狮子自动说话定时器（每隔8-15秒随机说话）
+    this.startLionAutoTalk();
+
     // 加载网络状态
     this.loadNetworkStatus();
 
@@ -326,6 +332,11 @@ Page({
     const { eggSystem } = require('../../utils/egg-system');
     if (this.eggCallbackKey) {
       eggSystem.unregisterEggDiscoveryCallback(this.eggCallbackKey);
+    }
+
+    // 清除小狮子自动说话定时器
+    if (this.data.lionTalkTimer) {
+      clearTimeout(this.data.lionTalkTimer);
     }
   },
 
@@ -1181,6 +1192,55 @@ Page({
 
     const randomIndex = Math.floor(Math.random() * moods.length);
     const selected = moods[randomIndex];
+
+    this.setData({
+      agentMood: selected.mood,
+      agentMessage: selected.message,
+      showMessage: true,
+    });
+
+    // 3秒后隐藏消息
+    setTimeout(() => {
+      this.setData({ showMessage: false });
+    }, 3000);
+  },
+
+  // 启动小狮子自动说话
+  startLionAutoTalk: function() {
+    // 设置定时器，每隔8-15秒随机说话
+    const scheduleNextTalk = () => {
+      const randomInterval = Math.floor(Math.random() * 7000) + 8000; // 8000-15000ms
+      const timer = setTimeout(() => {
+        this.lionAutoTalk();
+        scheduleNextTalk(); // 递归调用，实现循环
+      }, randomInterval);
+      this.setData({ lionTalkTimer: timer });
+    };
+    scheduleNextTalk();
+  },
+
+  // 小狮子自动说话（与点击互动类似，但使用不同的消息集）
+  lionAutoTalk: function() {
+    // 如果当前正在显示消息，则跳过（避免消息重叠）
+    if (this.data.showMessage) {
+      return;
+    }
+
+    const autoTalkMessages = [
+      { mood: "happy", message: "今天天气不错呢~", icon: "😊" },
+      { mood: "sleepy", message: "好无聊啊...", icon: "😴" },
+      { mood: "normal", message: "系统运行正常~", icon: "🤖" },
+      { mood: "happy", message: "要不要去我的电脑逛逛？", icon: "🥺" },
+      { mood: "surprised", message: "记得去签到哦！", icon: "✨" },
+      { mood: "normal", message: "Win98 系统运行中...", icon: "💻" },
+      { mood: "sleepy", message: "等你陪玩呢...", icon: "💤" },
+      { mood: "happy", message: "发现有趣的东西了吗？", icon: "🎁" },
+      { mood: "normal", message: "CPU温度正常...", icon: "🌡️" },
+      { mood: "happy", message: "千禧时光机 v1.0~", icon: "⚡" },
+    ];
+
+    const randomIndex = Math.floor(Math.random() * autoTalkMessages.length);
+    const selected = autoTalkMessages[randomIndex];
 
     this.setData({
       agentMood: selected.mood,

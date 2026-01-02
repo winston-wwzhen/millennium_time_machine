@@ -300,7 +300,7 @@ const EGG_CONFIG = {
     id: EGG_IDS.RECYCLE_BIN_EMPTYER,
     name: '回收站清理者',
     description: '你真的很爱清理回收站...',
-    hint: '在回收站页面清空回收站5次',
+    hint: '在回收站页面删除5个文件',
     rarity: 'rare',
     type: 'action',
     reward: {
