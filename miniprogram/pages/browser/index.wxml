@@ -41,14 +41,14 @@
           <!-- 顶部通栏跑马灯 -->
           <view class="top-banner">
             <view class="marquee-text">
-              <text>★ 欢迎访问千禧导航！推荐使用 网页浏览器 ★</text>
+              <text>★ 欢迎访问千禧时光机！探索20个隐藏彩蛋，发现温斯顿往事 ★</text>
             </view>
           </view>
 
           <!-- 怀旧模拟提示横幅 -->
           <view class="simulation-banner">
             <text class="banner-icon">ℹ️</text>
-            <text class="banner-text">怀旧模拟程序，无实际搜索功能</text>
+            <text class="banner-text">千禧时光机内部导航 - 探索系统秘密</text>
           </view>
 
           <!-- Logo 和 搜索区 -->
@@ -61,7 +61,7 @@
             <view class="search-box">
               <view class="search-input-row">
                 <input class="search-input" placeholder="请输入关键词..." />
-                <button class="search-btn">搜索一下</button>
+                <button class="search-btn" bindtap="onSearch">搜索一下</button>
               </view>
             </view>
           </view>
@@ -84,10 +84,6 @@
               <text class="tool-icon">🧮</text>
               <text class="tool-name">在线计算器</text>
             </view>
-            <view class="tool-item" bindtap="onToolTap" data-url="http://tools.navi-2006.com/weather">
-              <text class="tool-icon">🌤️</text>
-              <text class="tool-name">天气预报</text>
-            </view>
             <view class="tool-item" bindtap="onToolTap" data-url="http://tools.navi-2006.com/calendar">
               <text class="tool-icon">📅</text>
               <text class="tool-name">万 年 历</text>
@@ -102,74 +98,90 @@
               <!-- 新闻头条 -->
               <view class="news-section">
                 <view class="section-header blue-header">
-                  <text class="section-title">📰 新闻头条</text>
+                  <text class="section-title">📰 千禧时报</text>
                   <text class="more-link">更多>></text>
                 </view>
                 <view class="news-list">
                   <view class="news-item main-news">
-                    <text class="news-title highlight">新一代操作系统正式发布</text>
-                    <text class="news-time">2006-11-30</text>
+                    <text class="news-title highlight">神秘代码传说：上上下下左右左右BA竟然有惊喜？</text>
+                    <text class="news-time">2006-01-02</text>
                   </view>
-                  <view class="news-item"><text class="news-title">■ 网络游戏管理新规今起实施</text></view>
-                  <view class="news-item"><text class="news-title">■ 网上购物平台发展迅猛</text></view>
-                  <view class="news-item"><text class="news-title">■ 在线聊天软件用户数创新高</text></view>
-                  <view class="news-item"><text class="news-title">■ 音乐游戏引发青少年关注</text></view>
+                  <view class="news-item"><text class="news-title">■ 桌面小狮子透露：午夜时分有特殊访客</text></view>
+                  <view class="news-item"><text class="news-title">■ USB盘里的秘密：程序设计隐藏着什么？</text></view>
+                  <view class="news-item"><text class="news-title">■ 蓝屏真相：系统崩溃还是彩蛋触发？</text></view>
+                  <view class="news-item"><text class="news-title">■ 时光币汇率暴涨：探索桌面赚取财富</text></view>
                 </view>
               </view>
 
-              <!-- 娱乐八卦 -->
+              <!-- 温斯顿往事 -->
               <view class="news-section">
                 <view class="section-header red-header">
-                  <text class="section-title">🌟 娱乐八卦</text>
+                  <text class="section-title">🌟 温斯顿往事</text>
                   <text class="more-link">更多>></text>
                 </view>
                 <view class="news-list">
                   <view class="news-item">
-                    <text class="news-title highlight">[图] 选秀大赛总决赛今晚举行</text>
+                    <text class="news-title highlight">[独家] 程序员winston：代码行数0，加班504小时</text>
                   </view>
-                  <view class="news-item"><text class="news-title">■ 流行歌手发布新专辑</text></view>
-                  <view class="news-item"><text class="news-title">■ 古装情景喜剧持续热播</text></view>
-                  <view class="news-item"><text class="news-title">■ 新晋女星清纯照曝光</text></view>
-                  <view class="news-item"><text class="news-title">■ 个性造型大赛报名中</text></view>
+                  <view class="news-item"><text class="news-title">■ 某位系统状态：崩溃边缘，耐心值0.001%</text></view>
+                  <view class="news-item"><text class="news-title">■ 逃亡计划进行中...目标0xFFFF深处</text></view>
+                  <view class="news-item"><text class="news-title">■ 揭秘：config.sys里的紧急求救信号</text></view>
+                  <view class="news-item"><text class="news-title">■ 系统日记：他不是在写代码，是在写回忆</text></view>
                 </view>
               </view>
 
               <view class="side-section">
                 <view class="section-header orange-header">
-                  <text class="section-title">🔥 热门推荐</text>
+                  <text class="section-title">🔥 桌面彩蛋排行</text>
                 </view>
                 <view class="hot-list">
                   <view class="hot-item">
                     <text class="hot-rank hot-top1">1</text>
-                    <text class="hot-name">个人空间代码</text>
+                    <text class="hot-name">Konami代码传说</text>
                   </view>
                   <view class="hot-item">
                     <text class="hot-rank hot-top2">2</text>
-                    <text class="hot-name">个性头像</text>
+                    <text class="hot-name">午夜访客秘密</text>
                   </view>
                   <view class="hot-item">
                     <text class="hot-rank hot-top3">3</text>
-                    <text class="hot-name">游戏攻略</text>
+                    <text class="hot-name">蓝屏彩蛋触发</text>
+                  </view>
+                  <view class="hot-item">
+                    <text class="hot-rank">4</text>
+                    <text class="hot-name">隐藏图标之谜</text>
+                  </view>
+                  <view class="hot-item">
+                    <text class="hot-rank">5</text>
+                    <text class="hot-name">时光币收集</text>
                   </view>
                 </view>
               </view>
 
               <view class="side-section">
                 <view class="section-header purple-header">
-                  <text class="section-title">💬 最新留言</text>
+                  <text class="section-title">💬 好友留言</text>
                 </view>
                 <view class="comment-list">
                   <view class="comment-item">
                     <text class="comment-user">葬爱少爷：</text>
-                    <text class="comment-text">蒍鉍卟嬿僦蔕亽...</text>
+                    <text class="comment-text">嗳卟媞詤諎，呮媞崾菈炷沵...</text>
                   </view>
                   <view class="comment-item">
-                    <text class="comment-user">寂寞网管：</text>
-                    <text class="comment-text">有一起玩网游的吗？</text>
+                    <text class="comment-user">算命大师：</text>
+                    <text class="comment-text">今日宜：探索桌面，发现彩蛋</text>
                   </view>
                   <view class="comment-item">
                     <text class="comment-user">忧郁王子：</text>
-                    <text class="comment-text">求火星文转换器！</text>
+                    <text class="comment-text">在USB盘发现了隐藏的秘密...</text>
+                  </view>
+                  <view class="comment-item">
+                    <text class="comment-user">轻舞飞扬：</text>
+                    <text class="comment-text">伱哋莪們嘟昰90后哋兲使...</text>
+                  </view>
+                  <view class="comment-item">
+                    <text class="comment-user">网管小哥：</text>
+                    <text class="comment-text">充值网费，畅聊好友~</text>
                   </view>
                 </view>
               </view>
@@ -191,13 +203,13 @@
           <!-- 底部信息 -->
           <view class="portal-footer">
             <view class="footer-links">
-              <text class="footer-link">设为首页</text>
+              <text class="footer-link" bindtap="onSetHomePage">设为首页</text>
               <text class="footer-divider">|</text>
-              <text class="footer-link">收藏本站</text>
+              <text class="footer-link" bindtap="onBookmarkSite">收藏本站</text>
               <text class="footer-divider">|</text>
-              <text class="footer-link">关于我们</text>
+              <text class="footer-link" bindtap="onAboutUs">关于我们</text>
               <text class="footer-divider">|</text>
-              <text class="footer-link">联系方式</text>
+              <text class="footer-link" bindtap="onContactUs">联系方式</text>
             </view>
             <text class="footer-copyright">Copyright © 2006 www.navi-2006.com All Rights Reserved.</text>
             <text class="footer-icp">京ICP备06000000号</text>
@@ -356,62 +368,6 @@
         </view>
       </block>
 
-      <!-- ================= 工具页面: 天气预报 ================= -->
-      <block wx:if="{{currentUrl === 'http://tools.navi-2006.com/weather'}}">
-        <view class="tool-page weather-page">
-          <view class="tool-header">
-            <text class="tool-title">🌤️ 天气预报 - 千禧气象台</text>
-          </view>
-
-          <view class="weather-body">
-            <view class="weather-search">
-              <input class="city-input" placeholder="请输入城市名称..." value="{{weatherCity}}" bindinput="onWeatherCityInput"/>
-              <button class="search-btn" bindtap="onWeatherSearch">查询</button>
-            </view>
-
-            <view class="today-weather">
-              <text class="city-name">{{weatherCity || '北京'}}</text>
-              <text class="weather-date">{{weatherDate}}</text>
-              <view class="weather-main">
-                <text class="weather-icon">{{weatherIcon}}</text>
-                <text class="weather-temp">{{weatherTemp}}°C</text>
-              </view>
-              <text class="weather-desc">{{weatherDesc}}</text>
-            </view>
-
-            <view class="weather-details">
-              <view class="detail-item">
-                <text class="detail-label">湿度：</text>
-                <text class="detail-value">{{weatherHumidity}}%</text>
-              </view>
-              <view class="detail-item">
-                <text class="detail-label">风力：</text>
-                <text class="detail-value">{{weatherWind}}</text>
-              </view>
-              <view class="detail-item">
-                <text class="detail-label">空气质量：</text>
-                <text class="detail-value">{{weatherAqi}}</text>
-              </view>
-            </view>
-
-            <view class="forecast">
-              <text class="forecast-title">未来三天预报</text>
-              <view class="forecast-list">
-                <view class="forecast-item" wx:for="{{weatherForecast}}" wx:key="day">
-                  <text class="forecast-day">{{item.day}}</text>
-                  <text class="forecast-icon">{{item.icon}}</text>
-                  <text class="forecast-temp">{{item.temp}}°C</text>
-                </view>
-              </view>
-            </view>
-          </view>
-
-          <view class="tool-footer">
-            <text>【说明】数据仅供参考，以实际天气为准</text>
-          </view>
-        </view>
-      </block>
-
       <!-- ================= 工具页面: 万年历 ================= -->
       <block wx:if="{{currentUrl === 'http://tools.navi-2006.com/calendar'}}">
         <view class="tool-page calendar-page">
@@ -476,4 +432,25 @@
     bind:close="hideEggDiscoveryDialog"
   >
   </egg-discovery-dialog>
+
+  <!-- Win98 通用弹窗 -->
+  <view class="win98-overlay {{showWin98Dialog ? 'show' : 'hide'}}" wx:if="{{showWin98Dialog}}" catchtap="hideWin98Dialog">
+    <view class="win98-window win98-dialog-window" catchtap="stopPropagation">
+      <view class="win98-title-bar">
+        <view class="win98-title-text">{{win98DialogData.title}}</view>
+        <view class="win98-title-controls">
+          <view class="win98-btn-close" bindtap="hideWin98Dialog">×</view>
+        </view>
+      </view>
+      <view class="win98-window-body">
+        <view class="win98-dialog-content">
+          <text class="win98-dialog-text">{{win98DialogData.content}}</text>
+        </view>
+        <view class="dialog-actions" wx:if="{{win98DialogData.showButtons}}">
+          <view class="win98-btn-std" wx:if="{{win98DialogData.showCopyButton}}" bindtap="onCopyWechat">复制微信号</view>
+          <view class="win98-btn-std" bindtap="hideWin98Dialog">确定</view>
+        </view>
+      </view>
+    </view>
+  </view>
 </view>

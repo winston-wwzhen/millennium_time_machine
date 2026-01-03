@@ -850,28 +850,28 @@ Component({
     // === 文件(F)菜单 ===
     onFeNewFolder() {
       this.closeAllFileExplorerMenus();
-      wx.showToast({
-        title: "笨蛋程序员还没开发完成，明天再来看看吧~",
-        icon: "none",
-        duration: 2000,
+      this.setData({
+        showDisabledMessageDialog: true,
+        disabledMessageTitle: "新建文件夹",
+        disabledMessageContent: "笨蛋程序员还没开发完成，\n明天再来看看吧~",
       });
     },
 
     onFeRename() {
       this.closeAllFileExplorerMenus();
-      wx.showToast({
-        title: "系统文件禁止重命名，就像2006年不能改QQ号一样",
-        icon: "none",
-        duration: 2000,
+      this.setData({
+        showDisabledMessageDialog: true,
+        disabledMessageTitle: "重命名",
+        disabledMessageContent: "系统文件禁止重命名，\n就像2006年不能改QQ号一样",
       });
     },
 
     onFeDelete() {
       this.closeAllFileExplorerMenus();
-      wx.showToast({
-        title: "回收站已满，明天再删吧",
-        icon: "none",
-        duration: 2000,
+      this.setData({
+        showDisabledMessageDialog: true,
+        disabledMessageTitle: "删除",
+        disabledMessageContent: "回收站已满，\n明天再删吧",
       });
     },
 
@@ -909,28 +909,28 @@ Component({
     // === 编辑(E)菜单 ===
     onFeUndo() {
       this.closeAllFileExplorerMenus();
-      wx.showToast({
-        title: "时光不能倒流，就像2006年回不去一样...",
-        icon: "none",
-        duration: 2000,
+      this.setData({
+        showDisabledMessageDialog: true,
+        disabledMessageTitle: "撤销",
+        disabledMessageContent: "时光不能倒流，\n就像2006年回不去一样...",
       });
     },
 
     onFeSelectAll() {
       this.closeAllFileExplorerMenus();
-      wx.showToast({
-        title: "全选了也不会复制的，别白费力气了",
-        icon: "none",
-        duration: 2000,
+      this.setData({
+        showDisabledMessageDialog: true,
+        disabledMessageTitle: "全选",
+        disabledMessageContent: "全选了也不会复制的，\n别白费力气了",
       });
     },
 
     onFeInvertSelection() {
       this.closeAllFileExplorerMenus();
-      wx.showToast({
-        title: "反向选择也没用，真的",
-        icon: "none",
-        duration: 2000,
+      this.setData({
+        showDisabledMessageDialog: true,
+        disabledMessageTitle: "反向选择",
+        disabledMessageContent: "反向选择也没用，\n真的",
       });
     },
 
@@ -953,12 +953,12 @@ Component({
       // 重新加载文件列表
       this.loadFileExplorerItems(path);
 
-      wx.showToast({
-        title: fileViewOptions[path].showHidden
-          ? "已显示隐藏文件"
-          : "已隐藏隐藏文件",
-        icon: "none",
-        duration: 1500,
+      // 显示Win98风格提示
+      const isShowing = fileViewOptions[path].showHidden;
+      this.setData({
+        showDisabledMessageDialog: true,
+        disabledMessageTitle: "显示/隐藏文件",
+        disabledMessageContent: isShowing ? "已显示隐藏文件" : "已隐藏隐藏文件",
       });
     },
 
@@ -980,29 +980,29 @@ Component({
 
     onFeViewMode() {
       this.closeAllFileExplorerMenus();
-      wx.showToast({
-        title: "笨蛋程序员只做了一种视图，凑合用吧",
-        icon: "none",
-        duration: 2000,
+      this.setData({
+        showDisabledMessageDialog: true,
+        disabledMessageTitle: "查看模式",
+        disabledMessageContent: "笨蛋程序员只做了一种视图，\n凑合用吧",
       });
     },
 
     // === 收藏(A)菜单 ===
     onFeAddToFavorites() {
       this.closeAllFileExplorerMenus();
-      wx.showToast({
-        title: "收藏夹功能暂未开放，请使用记忆",
-        icon: "none",
-        duration: 2000,
+      this.setData({
+        showDisabledMessageDialog: true,
+        disabledMessageTitle: "添加到收藏夹",
+        disabledMessageContent: "收藏夹功能暂未开放，\n请使用记忆",
       });
     },
 
     onFeOrganizeFavorites() {
       this.closeAllFileExplorerMenus();
-      wx.showToast({
-        title: "你的收藏乱得像2006年的QQ空间",
-        icon: "none",
-        duration: 2000,
+      this.setData({
+        showDisabledMessageDialog: true,
+        disabledMessageTitle: "整理收藏夹",
+        disabledMessageContent: "你的收藏乱得像2006年的QQ空间",
       });
     },
 
@@ -2721,23 +2721,22 @@ Component({
             type: "file",
             name: "程序设计入门.pdf",
             icon: "📄",
-            disabled: true,
-            message:
-              "笨蛋程序员加了一晚上班也没开发完成PDF阅读器，今晚让他通宵，明天再来看看",
+            content: "══════════════════════════════════════\n         程序设计入门\n══════════════════════════════════════\n\n第一章：C语言基础\n\n1.1 第一个程序\n\n#include <stdio.h>\n\nint main() {\n    printf(\"Hello, World!\\n\");\n    return 0;\n}\n\n1.2 变量与数据类型\n\nint age = 18;\nfloat height = 1.75;\nchar grade = 'A';\n\n1.3 循环结构\n\nfor (int i = 0; i < 10; i++) {\n    printf(\"第%d次循环\\n\", i);\n}\n\n────────────────────────────────────────\n\n作者注：\n\n这是2006年的C语言教材。\n\n那时候我们还在用 Turbo C 2.0，\n蓝底白字的编辑器，\n编译出错时滴滴答答的声音...\n\n现在的年轻人可能想象不到，\n那时候写代码需要从头开始手写。\n\n但正因为如此，\n我们才真正理解了程序的每一行。\n\n────────────────────────────────────────\n\n笨蛋程序员说：\n\n其实我当年的毕业设计就是用C写的，\n老师给了我90分，\n说我有天赋...\n\n结果现在我在写小程序，\n这就是命运的安排吧~",
+            useWin98Dialog: true,
           },
           {
             type: "file",
             name: "英语单词.txt",
             icon: "📄",
-            content: "英语单词本\n\nabandon - 放弃\nability - 能力\n...",
+            content: "英语单词本\n\nabandon - 放弃\nability - 能力\nabsorb - 吸收\nabstract - 抽象的\nacademy - 学院\naccelerate - 加速\naccept - 接受\naccess - 接近\naccident - 事故\naccomplish - 完成\n\n（单词本未完，待续...）\n\n笨蛋程序员说：背单词太痛苦了，还是去打游戏吧~",
+            useWin98Dialog: true,
           },
           {
             type: "file",
             name: "毕业论文.doc",
             icon: "📄",
-            disabled: true,
-            message:
-              "笨蛋程序员通宵写了一晚上论文，但写的是另一篇，明天再来看看吧~",
+            content: "══════════════════════════════════════\n           毕业论文\n══════════════════════════════════════\n\n题目：基于Web的社交网络系统设计\n\n学院：计算机科学与技术学院\n专业：软件工程\n班级：0601班\n学号：20060001\n姓名：张三\n指导教师：李教授\n\n────────────────────────────────────────\n\n摘要\n\n本文设计了一个基于Web的社交网络系统，\n实现了用户注册、好友管理、空间装扮、\n即时通讯等功能。\n\n系统采用B/S架构，\n使用ASP.NET + SQL Server 2000开发。\n\n关键词：社交网络；Web2.0；ASP.NET\n\n────────────────────────────────────────\n\n目录\n\n第一章 绪论\n  1.1 研究背景\n  1.2 研究意义\n  1.3 论文结构\n\n第二章 需求分析\n  2.1 功能需求\n  2.2 性能需求\n\n第三章 系统设计\n  3.1 总体设计\n  3.2 数据库设计\n  3.3 模块设计\n\n第四章 系统实现\n  4.1 用户模块\n  4.2 好友模块\n  4.3 空间模块\n\n第五章 测试\n  5.1 功能测试\n  5.2 性能测试\n\n第六章 总结\n\n────────────────────────────────────────\n\n作者注：\n\n这是2006年的毕业论文。\n\n那时候还没有微信，\n我们用QQ空间、人人网、开心网。\n\n那时候的社交网络还很原始，\n但我们的热情很高。\n\n现在看来，\n当年的设计确实很简单，\n但那是我们的青春啊。\n\n────────────────────────────────────────\n\n答辩回忆：\n\n老师问：\"你这个系统有什么创新？\"\n\n我答：\"实现了QQ空间的核心功能，\n        而且有自己的特色。\"\n\n老师说：\"不错，给你优秀。\"\n\n那天我很开心，\n因为我知道，\n这是大学四年的总结。\n\n────────────────────────────────────────\n\n笨蛋程序员说：\n\n其实这是我帮室友写的，\n他请我吃了一顿KFC，\n说我是他的救星。\n\n现在想想，\n当年的KFC真好吃啊~",
+            useWin98Dialog: true,
           },
           {
             type: "file",
@@ -2746,7 +2745,7 @@ Component({
             eggId: "hidden_file_summer",
             content: fileContents['USB:\\学习资料\\那个夏天的回忆.txt'],
             useWin98Dialog: true,
-            hidden: true, // 隐藏文件，需要开启"显示所有文件"
+            hidden: true,
           },
         ];
       } else if (path === "D:\\资料") {
@@ -3025,19 +3024,12 @@ Component({
       if (this.data.fileExplorerPath === "D:\\Downloads" && item.name && item.name.endsWith('.exe')) {
         // 如果是禁用的文件（已安装）
         if (item.disabled) {
-          if (item.isDisabledMessage) {
-            this.setData({
-              showDisabledMessageDialog: true,
-              disabledMessageContent: item.message || "无法访问",
-              disabledMessageTitle: item.name,
-            });
-          } else {
-            wx.showToast({
-              title: item.message || "无法访问",
-              icon: "none",
-              duration: 2000,
-            });
-          }
+          // 统一使用Win98风格弹窗
+          this.setData({
+            showDisabledMessageDialog: true,
+            disabledMessageContent: item.message || "无法访问",
+            disabledMessageTitle: item.name,
+          });
         } else {
           // 可安装的程序，显示安装向导
           this.showFileContent(item);
@@ -3053,20 +3045,12 @@ Component({
 
       // 如果是禁用的项
       if (item.disabled) {
-        // 检查是否使用Win98风格弹窗
-        if (item.isDisabledMessage) {
-          this.setData({
-            showDisabledMessageDialog: true,
-            disabledMessageContent: item.message || "无法访问",
-            disabledMessageTitle: item.name,
-          });
-        } else {
-          wx.showToast({
-            title: item.message || "无法访问",
-            icon: "none",
-            duration: 2000,
-          });
-        }
+        // 统一使用Win98风格弹窗
+        this.setData({
+          showDisabledMessageDialog: true,
+          disabledMessageContent: item.message || "无法访问",
+          disabledMessageTitle: item.name,
+        });
         return;
       }
 
@@ -3109,9 +3093,10 @@ Component({
         if (item.content || item.gameType) {
           this.showFileContent(item);
         } else {
-          wx.showToast({
-            title: "无法打开此文件",
-            icon: "none",
+          this.setData({
+            showDisabledMessageDialog: true,
+            disabledMessageTitle: item.name || "文件",
+            disabledMessageContent: "无法打开此文件",
           });
         }
       }
@@ -3385,10 +3370,10 @@ Component({
         data: mpName,
         success: () => {
           this.setData({ mpCopied: true });
-          wx.showToast({
-            title: "已复制",
-            icon: "success",
-            duration: 1500,
+          this.setData({
+            showDisabledMessageDialog: true,
+            disabledMessageTitle: "复制",
+            disabledMessageContent: "已复制到剪贴板",
           });
 
           // 2秒后重置复制状态
@@ -3397,10 +3382,10 @@ Component({
           }, 2000);
         },
         fail: () => {
-          wx.showToast({
-            title: "复制失败",
-            icon: "none",
-            duration: 1500,
+          this.setData({
+            showDisabledMessageDialog: true,
+            disabledMessageTitle: "复制失败",
+            disabledMessageContent: "复制到剪贴板失败",
           });
         },
       });
@@ -3917,12 +3902,19 @@ AI助手本人无法直接将这份文件送达给相关部门，
           pendingEggId: pendingEggId
         });
       } else {
-        // 使用原生弹窗
-        wx.showModal({
-          title: item.name,
-          content: item.content || "文件内容为空",
-          showCancel: false,
-          confirmText: "关闭",
+        // 即使没有useWin98Dialog标记，也使用Win98风格弹窗
+        const fallbackLines = (item.content || "文件内容为空").split('\n');
+        this.setData({
+          showFileContentDialog: true,
+          fileContentData: {
+            title: item.name,
+            content: item.content || "文件内容为空",
+            contentLines: fallbackLines,
+            showCloseButton: true,
+            isBatFile: false,
+          },
+          // 保留 pendingEggId，防止被覆盖
+          pendingEggId: pendingEggId
         });
       }
     },

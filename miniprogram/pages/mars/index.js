@@ -44,26 +44,7 @@ Page({
     });
 
     // 注册彩蛋发现回调
-    this.eggCallbackKey = eggSystem.setEggDiscoveryCallback((config) => {
-      const rarityNames = {
-        common: '普通',
-        rare: '稀有',
-        epic: '史诗',
-        legendary: '传说'
-      };
-      const reward = config.reward;
-      const rewardText = reward.coins ? `+${reward.coins}时光币` : '';
-      this.setData({
-        showEggDiscoveryDialog: true,
-        eggDiscoveryData: {
-          name: config.name,
-          description: config.description,
-          rarity: config.rarity,
-          rarityName: rarityNames[config.rarity],
-          rewardText: rewardText
-        }
-      });
-    });
+    this.registerEggDiscoveryCallback();
   },
 
   // 监听输入
@@ -188,6 +169,40 @@ Page({
   // 关闭彩蛋发现弹窗
   hideEggDiscoveryDialog: function() {
     this.setData({ showEggDiscoveryDialog: false });
+  },
+
+  // 注册彩蛋发现回调（提取为独立方法，便于在 onLoad 和 onShow 中复用）
+  registerEggDiscoveryCallback: function() {
+    // 先取消旧回调（如果存在）
+    if (this.eggCallbackKey) {
+      eggSystem.unregisterEggDiscoveryCallback(this.eggCallbackKey);
+    }
+    // 注册新回调
+    this.eggCallbackKey = eggSystem.setEggDiscoveryCallback((config) => {
+      const rarityNames = {
+        common: '普通',
+        rare: '稀有',
+        epic: '史诗',
+        legendary: '传说'
+      };
+      const reward = config.reward;
+      const rewardText = reward.coins ? `+${reward.coins}时光币` : '';
+      this.setData({
+        showEggDiscoveryDialog: true,
+        eggDiscoveryData: {
+          name: config.name,
+          description: config.description,
+          rarity: config.rarity,
+          rarityName: rarityNames[config.rarity],
+          rewardText: rewardText
+        }
+      });
+    });
+  },
+
+  onShow: function() {
+    // 重新注册彩蛋回调（防止从其他页面返回后回调丢失）
+    this.registerEggDiscoveryCallback();
   },
 
   onUnload: function() {

@@ -66,10 +66,16 @@ const gameEngine = {
     const age = this.userState.age;
     const gender = this.userState.gender;
 
+    // 获取已触发的事件ID列表（用于排除重复事件）
+    const triggeredEventIds = this.userState.history.events.map(e => e.eventId);
+
     // 从事件数据中筛选符合条件的事件
     const yearSpecificEvents = eventsData.filter(event => {
       // 检查年份 - 必须匹配当前年份
       if (event.year !== currentYear) return false;
+
+      // 【关键修复】排除已触发过的年份特定事件
+      if (triggeredEventIds.includes(event.id)) return false;
 
       // 检查年龄范围
       if (event.trigger.ageRange) {
@@ -100,6 +106,7 @@ const gameEngine = {
     });
 
     // 筛选日常事件(year为null的事件，包含 daily 类别)
+    // 注意：日常事件可以重复触发，所以不检查 triggeredEventIds
     const lifeEvents = eventsData.filter(event => {
       // 检查年份 - 必须为null(日常事件)
       if (event.year !== null) return false;
@@ -151,6 +158,8 @@ const gameEngine = {
 
   // 应用选择的效果
   applyChoice: function(choice) {
+    const currentEvent = this.getCurrentEvent();
+
     // 更新属性
     if (choice.effects) {
       for (let attr in choice.effects) {
@@ -172,9 +181,16 @@ const gameEngine = {
     // 记录历史
     this.userState.history.choices.push({
       year: this.userState.currentYear,
-      eventId: this.getCurrentEvent().id,
+      eventId: currentEvent.id,
       choice: choice.text,
-      eventTitle: this.getCurrentEvent().title
+      eventTitle: currentEvent.title
+    });
+
+    // 【关键修复】记录已触发的事件（用于防止重复触发）
+    this.userState.history.events.push({
+      eventId: currentEvent.id,
+      year: this.userState.currentYear,
+      age: this.userState.age
     });
 
     return choice.result || '';

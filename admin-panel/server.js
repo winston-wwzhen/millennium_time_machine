@@ -119,7 +119,7 @@ app.use('/api', async (req, res) => {
 // 开发环境代理到Vite
 if (isDev) {
   app.use('/', createProxyMiddleware({
-    target: 'http://localhost:5175',
+    target: 'http://localhost:5179',
     changeOrigin: true,
     ws: true
   }))

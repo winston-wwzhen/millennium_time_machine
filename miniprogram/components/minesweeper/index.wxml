@@ -9,14 +9,6 @@
 
     <!-- 窗口内容 -->
     <view class="win98-window-body">
-      <!-- 游戏模式选择 -->
-      <view class="mode-selector">
-        <view class="mode-buttons">
-          <button class="win98-btn {{mode === 'pve' ? 'active' : ''}}" bindtap="setMode" data-mode="pve">人机</button>
-          <button class="win98-btn {{mode === 'pvp' ? 'active' : ''}}" bindtap="setMode" data-mode="pvp">双人</button>
-        </view>
-      </view>
-
       <!-- 玩家分数面板 -->
       <view class="scoreboard">
         <!-- P1 蓝方 -->
@@ -34,10 +26,10 @@
           <text class="vs-text">VS</text>
         </view>
 
-        <!-- P2 红方/电脑 -->
+        <!-- P2 电脑 -->
         <view class="player-card p2 {{turn === 'p2' ? 'active' : ''}}">
           <view class="player-header">
-            <text class="player-name">{{mode === 'pve' ? '电脑' : '红方'}} (P2)</text>
+            <text class="player-name">电脑 (P2)</text>
             <text class="turn-badge {{turn === 'p2' ? 'show' : ''}}">回合</text>
           </view>
           <view class="player-score">{{scores.p2}}</view>
@@ -123,11 +115,12 @@
           <view class="final-score">
             <text class="score-p1">蓝方: {{scores.p1}}</text>
             <text class="score-vs"> vs </text>
-            <text class="score-p2">{{mode === 'pve' ? '电脑' : '红方'}}: {{scores.p2}}</text>
+            <text class="score-p2">电脑: {{scores.p2}}</text>
           </view>
         </view>
         <view class="dialog-actions">
-          <view class="win98-btn-std" bindtap="restartGame">再来一局</view>
+          <button class="win98-btn-std share-btn" open-type="share">分享</button>
+          <view class="win98-btn-std" bindtap="restartGame">再来</view>
         </view>
       </view>
     </view>

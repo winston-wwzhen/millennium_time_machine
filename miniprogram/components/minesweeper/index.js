@@ -20,7 +20,6 @@ Component({
 
   data: {
     // 游戏模式
-    mode: 'pve', // 'pve' 人机 or 'pvp' 双人
     difficulties: ['small', 'medium'],
     difficultyIndex: 1, // 0:小, 1:中
     difficultyNames: ['小 (10x10)', '中 (16x16)'],
@@ -155,18 +154,12 @@ Component({
       return count;
     },
 
-    // 设置游戏模式
-    setMode(mode) {
-      this.setData({ mode: mode });
-      this.initGame();
-    },
-
     // 处理格子点击
     onCellTap(e) {
       if (!this.data.gameActive || this.data.gameOver) return;
 
-      // PvE模式下，AI回合禁止玩家点击
-      if (this.data.mode === 'pve' && this.data.turn === 'p2') return;
+      // AI回合禁止玩家点击
+      if (this.data.turn === 'p2') return;
       if (this.data.aiThinking) return;
 
       const { row, col } = e.currentTarget.dataset;
@@ -224,8 +217,8 @@ Component({
 
       // 挖到地雷奖励：继续回合！不切换
 
-      // 如果是PvE且当前是AI回合，AI继续
-      if (this.data.mode === 'pve' && this.data.turn === 'p2' && this.data.gameActive) {
+      // 如果当前是AI回合，AI继续
+      if (this.data.turn === 'p2' && this.data.gameActive) {
         setTimeout(() => this.aiTurn(), 600);
       }
     },
@@ -271,8 +264,8 @@ Component({
       const newTurn = this.data.turn === 'p1' ? 'p2' : 'p1';
       this.setData({ turn: newTurn });
 
-      // 如果是PvE且轮到AI
-      if (this.data.mode === 'pve' && newTurn === 'p2' && this.data.gameActive) {
+      // 如果轮到AI
+      if (newTurn === 'p2' && this.data.gameActive) {
         setTimeout(() => this.aiTurn(), 600);
       }
     },
@@ -440,6 +433,34 @@ Component({
     // 阻止冒泡
     stopPropagation() {
       // 空函数，用于阻止事件冒泡
+    },
+
+    // ==================== 分享相关 ====================
+
+    /**
+     * 分享给好友配置
+     * 由 button open-type="share" 触发
+     */
+    onShareAppMessage() {
+      const { scores, difficulties, difficultyIndex, winnerTitle } = this.data;
+      const diffKey = difficulties[difficultyIndex];
+      const diffNames = { small: '小 (10x10)', medium: '中 (16x16)' };
+
+      // 确定胜负结果
+      let resultText = '';
+      if (winnerTitle.includes('蓝方')) {
+        resultText = '蓝方获胜！';
+      } else if (winnerTitle.includes('电脑')) {
+        resultText = '电脑获胜！';
+      } else {
+        resultText = '平局！';
+      }
+
+      return {
+        title: `${resultText} 蓝方${scores.p1} vs 电脑${scores.p2}`,
+        path: '/pages/index/index',
+        imageUrl: '' // 使用默认截图
+      };
     }
   }
 });

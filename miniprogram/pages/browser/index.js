@@ -75,17 +75,6 @@ Page({
     calcLastResult: '',
     calcCount: 0,           // 计算器使用次数（彩蛋计数）
 
-    // --- 天气预报 ---
-    weatherCity: '',
-    weatherDate: '',
-    weatherTemp: 25,
-    weatherIcon: '☀️',
-    weatherDesc: '晴朗',
-    weatherHumidity: 45,
-    weatherWind: '东南风 3级',
-    weatherAqi: '良',
-    weatherForecast: [],
-
     // --- 万年历 ---
     calendarYear: 2006,
     calendarMonth: 1,
@@ -112,6 +101,15 @@ Page({
       rarity: '',
       rarityName: '',
       rewardText: ''
+    },
+
+    // Win98 通用弹窗
+    showWin98Dialog: false,
+    win98DialogData: {
+      title: '',
+      content: '',
+      showButtons: true,
+      showCopyButton: false
     }
   },
 
@@ -126,6 +124,20 @@ Page({
     });
 
     // 注册彩蛋发现回调（使用 Win98 风格弹窗）
+    this.registerEggDiscoveryCallback();
+
+    // 初始化万年历
+    this.initCalendar();
+  },
+
+  // 注册彩蛋发现回调（提取为独立方法，便于在 onLoad 和 onShow 中复用）
+  registerEggDiscoveryCallback: function() {
+    const { eggSystem } = require('../../utils/egg-system');
+    // 先取消旧回调（如果存在）
+    if (this.eggCallbackKey) {
+      eggSystem.unregisterEggDiscoveryCallback(this.eggCallbackKey);
+    }
+    // 注册新回调
     this.eggCallbackKey = eggSystem.setEggDiscoveryCallback((config) => {
       const rarityNames = {
         common: '普通',
@@ -146,11 +158,11 @@ Page({
         }
       });
     });
+  },
 
-    // 初始化天气预报
-    this.initWeather();
-    // 初始化万年历
-    this.initCalendar();
+  onShow: function() {
+    // 重新注册彩蛋回调（防止从其他页面返回后回调丢失）
+    this.registerEggDiscoveryCallback();
   },
 
   onUnload: function () {
@@ -923,58 +935,6 @@ Page({
     }
   },
 
-  // --- 天气预报事件 ---
-  onWeatherCityInput: function(e) {
-    this.setData({ weatherCity: e.detail.value });
-  },
-
-  onWeatherSearch: function() {
-    this.generateWeatherData();
-  },
-
-  initWeather: function() {
-    const now = new Date();
-    const dateStr = `${now.getMonth() + 1}月${now.getDate()}日`;
-    this.setData({ weatherDate: dateStr });
-    this.generateWeatherData();
-  },
-
-  generateWeatherData: function() {
-    const weathers = [
-      { icon: '☀️', desc: '晴朗' },
-      { icon: '⛅', desc: '多云' },
-      { icon: '☁️', desc: '阴天' },
-      { icon: '🌧️', desc: '小雨' },
-      { icon: '⛈️', desc: '雷阵雨' },
-      { icon: '🌤️', desc: '晴转多云' }
-    ];
-
-    const randomWeather = weathers[Math.floor(Math.random() * weathers.length)];
-    const temp = Math.floor(Math.random() * 20) + 15; // 15-35度
-
-    // 生成未来三天
-    const forecast = [];
-    const days = ['明天', '后天', '大后天'];
-    for (let i = 0; i < 3; i++) {
-      const fw = weathers[Math.floor(Math.random() * weathers.length)];
-      forecast.push({
-        day: days[i],
-        icon: fw.icon,
-        temp: Math.floor(Math.random() * 15) + 15
-      });
-    }
-
-    this.setData({
-      weatherIcon: randomWeather.icon,
-      weatherDesc: randomWeather.desc,
-      weatherTemp: temp,
-      weatherHumidity: Math.floor(Math.random() * 40) + 30,
-      weatherWind: ['东南风', '西北风', '南风', '北风'][Math.floor(Math.random() * 4)] + ' ' + (Math.floor(Math.random() * 3) + 1) + '级',
-      weatherAqi: ['优', '良', '轻度污染'][Math.floor(Math.random() * 3)],
-      weatherForecast: forecast
-    });
-  },
-
   // --- 万年历事件 ---
   onCalendarPrevMonth: function() {
     let month = this.data.calendarMonth - 1;
@@ -1144,6 +1104,99 @@ Page({
   // 关闭彩蛋发现弹窗
   hideEggDiscoveryDialog: function() {
     this.setData({ showEggDiscoveryDialog: false });
+  },
+
+  // ==================== 搜索事件处理 ====================
+
+  // 搜索一下
+  onSearch: function() {
+    this.setData({
+      showWin98Dialog: true,
+      win98DialogData: {
+        title: '搜索功能',
+        content: '┏━━━━━━━━━━━━━━━━━┓\n┃   🔍 搜索引擎   ┃\n┗━━━━━━━━━━━━━━━━━┛\n\n⚠️ 功能开发中...\n\n💡 程序员winston正在努力\n   敲代码实现搜索功能~\n\n📊 当前进度：\n   [████░░░░] 40%\n\n⏰ 预计上线：007开发中\n\n敬请期待！🎉',
+        showButtons: true,
+        showCopyButton: false
+      }
+    });
+  },
+
+  // ==================== 底部链接事件处理 ====================
+
+  // 设为首页
+  onSetHomePage: function() {
+    this.setData({
+      showWin98Dialog: true,
+      win98DialogData: {
+        title: '设为首页',
+        content: '✨ 操作成功！✨\n\n╔══════════════════════╗\n║  千禧导航已设为首页  ║\n╚══════════════════════╝\n\n🏠 下次访问即可直接进入\n📲 随时回到2006年~',
+        showButtons: true,
+        showCopyButton: false
+      }
+    });
+  },
+
+  // 收藏本站
+  onBookmarkSite: function() {
+    this.setData({
+      showWin98Dialog: true,
+      win98DialogData: {
+        title: '收藏本站',
+        content: '⭐ 收藏成功！⭐\n\n╔══════════════════════╗\n║  千禧导航已收藏    ║\n╚══════════════════════╝\n\n💝 永不失联，随时回来\n🌈 2006年的回忆等你~',
+        showButtons: true,
+        showCopyButton: false
+      }
+    });
+  },
+
+  // 关于我们
+  onAboutUs: function() {
+    this.setData({
+      showWin98Dialog: true,
+      win98DialogData: {
+        title: '关于千禧时光机',
+        content: '┌─────────────────────┐\n│  🕰️ 千禧时光机 🕰️  │\n└─────────────────────┘\n\n我们是一群怀旧的孩子 💫\n想带你们回到2006年\n\n✿ 那年的QQ空间还在装扮\n✿ 那年的火星文还很流行  \n✿ 那年的我们还很年轻\n\n💭 时光回不去了\n💭 但记忆永远都在\n\n❤️ 我们做这个小程序\n❤️ 不为别的\n❤️ 只为了给那些怀念2006年的你\n❤️ 一个可以回去的地方\n\n┌─────────────────────┐\n│  —— 千禧时光机团队  │\n└─────────────────────┘',
+        showButtons: true,
+        showCopyButton: false
+      }
+    });
+  },
+
+  // 联系方式
+  onContactUs: function() {
+    this.setData({
+      showWin98Dialog: true,
+      win98DialogData: {
+        title: '联系方式',
+        content: '┌─────────────────────┐\n│   👨‍💻 winston 👨‍💻   │\n└─────────────────────┘\n\n📱 微信号：wwzhen0122\n\n💬 添加好友，直接沟通\n🤝 期待与你相遇！\n\n┏━━━━━━━━━━━━━━━━━┓\n┃  点击下方按钮复制  ┃\n┗━━━━━━━━━━━━━━━━━┛',
+        showButtons: true,
+        showCopyButton: true
+      }
+    });
+  },
+
+  // 复制微信号
+  onCopyWechat: function() {
+    wx.setClipboardData({
+      data: 'wwzhen0122',
+      success: () => {
+        wx.showToast({ title: '微信号已复制', icon: 'success' });
+        this.setData({
+          showWin98Dialog: true,
+          win98DialogData: {
+            title: '复制成功',
+            content: '✅ 微信号已复制！\n\n╔══════════════════════╗\n║  wwzhen0122         ║\n╚══════════════════════╝\n\n📲 打开微信添加好友吧~\n💬 期待与你的交流！',
+            showButtons: true,
+            showCopyButton: false
+          }
+        });
+      }
+    });
+  },
+
+  // 隐藏Win98弹窗
+  hideWin98Dialog: function() {
+    this.setData({ showWin98Dialog: false });
   },
 
   // 阻止事件冒泡

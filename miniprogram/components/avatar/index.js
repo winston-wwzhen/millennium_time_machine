@@ -128,6 +128,25 @@ Component({
       });
 
       // 注册彩蛋发现回调
+      this.registerEggDiscoveryCallback();
+    },
+
+    detached() {
+      // 清理彩蛋回调
+      if (this.eggCallbackKey) {
+        eggSystem.unregisterEggDiscoveryCallback(this.eggCallbackKey);
+      }
+    }
+  },
+
+  methods: {
+    // 注册彩蛋发现回调（提取为独立方法，便于在 attached 和 moved 中复用）
+    registerEggDiscoveryCallback: function() {
+      // 先取消旧回调（如果存在）
+      if (this.eggCallbackKey) {
+        eggSystem.unregisterEggDiscoveryCallback(this.eggCallbackKey);
+      }
+      // 注册新回调
       this.eggCallbackKey = eggSystem.setEggDiscoveryCallback((config) => {
         const rarityNames = {
           common: '普通',
@@ -150,15 +169,6 @@ Component({
       });
     },
 
-    detached() {
-      // 清理彩蛋回调
-      if (this.eggCallbackKey) {
-        eggSystem.unregisterEggDiscoveryCallback(this.eggCallbackKey);
-      }
-    }
-  },
-
-  methods: {
     // 添加操作日志
     addLog: function(action, target, details) {
       const { addLog: logAction } = require("../../utils/logger");
